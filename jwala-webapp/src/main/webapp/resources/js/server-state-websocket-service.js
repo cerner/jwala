@@ -15,8 +15,12 @@ var serverStateWebSocketService = {
         }, errorHandler);
     },
     disconnect: function() {
-        if (stompClient != null) {
-            stompClient.disconnect();
+        if (stompClient) {
+            try {
+                stompClient.disconnect();
+            } catch (e) {
+                console.log(e);
+            }
         }
         console.log("Disconnected");
     }
