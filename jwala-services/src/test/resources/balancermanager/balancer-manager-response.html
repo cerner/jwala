@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html><head><title>Balancer Manager</title>
+    <style type='text/css'>
+table {
+ border-width: 1px;
+ border-spacing: 3px;
+ border-style: solid;
+ border-color: gray;
+ border-collapse: collapse;
+ background-color: white;
+ text-align: center;
+}
+th {
+ border-width: 1px;
+ padding: 2px;
+ border-style: dotted;
+ border-color: gray;
+ background-color: white;
+ text-align: center;
+}
+td {
+ border-width: 1px;
+ padding: 2px;
+ border-style: dotted;
+ border-color: gray;
+ background-color: white;
+ text-align: center;
+}
+</style>
+</head>
+<body><h1>Load Balancer Manager for somehost0057</h1>
+
+<dl><dt>Server Version: Apache/2.4.20 (Win64) OpenSSL/1.0.2h</dt>
+    <dt>Server Built: Apr  5 2016 13:15:28</dt>
+    <dt>Balancer changes will NOT be persisted on restart.</dt><dt>Balancers are inherited from main server.</dt><dt>ProxyPass settings are inherited from main server.</dt></dl>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-health-check-4.0&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">balancer://lb-health-check-4.0</a> [p8b43d0f0_lb_health_check_4_0]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>8 [6 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>5</td>
+        <td>byrequests</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0057:9101/hct&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">https://somehost0057:9101/hct</a></td><td>SOMEHOST-HEALTH-CHECK-4.0-somehost0057-1</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0057:9111/hct&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">https://somehost0057:9111/hct</a></td><td>SOMEHOST-HEALTH-CHECK-4.0-somehost0057-2</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0057:9121/hct&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">https://somehost0057:9121/hct</a></td><td>SOMEHOST-HEALTH-CHECK-4.0-somehost0057-3</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0058:9101/hct&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">https://somehost0058:9101/hct</a></td><td>SOMEHOST-HEALTH-CHECK-4.0-somehost0058-1</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0058:9111/hct&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">https://somehost0058:9111/hct</a></td><td>SOMEHOST-HEALTH-CHECK-4.0-somehost0058-2</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0058:9121/hct&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">https://somehost0058:9121/hct</a></td><td>SOMEHOST-HEALTH-CHECK-4.0-somehost0058-3</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+</table>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-health-check-4.0&nonce=7bbf520f-8454-7b47-8edc-d5ade6c31357">balancer://lb-health-check-4.0</a> [p8b43d0f0_lb_health_check_4_0]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>0 [-2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>5</td>
+        <td>byrequests</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+</table>
+<hr />
+</body></html>

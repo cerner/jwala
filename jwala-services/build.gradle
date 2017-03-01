@@ -1,0 +1,57 @@
+description "This module is the service layer for Jwala, it mostly used by the webservice layers to manage the Jwala resources"
+
+configurations { providedCompile }
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(":jwala-persistence")
+    compile project(":jwala-common")
+
+    compile group: "org.springframework", name: "spring-core", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-context", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-web", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-aop", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-websocket", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-messaging", version: "$project.versions.spring"
+    compile group: "org.jgroups", name: "jgroups", version: "$project.versions.jgroups"
+
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: "$project.versions.commons_lang"
+    compile group: 'commons-logging', name: 'commons-logging', version: "$project.versions.commons_logging"
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: "$project.versions.httpcomponents_core"
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: "$project.versions.httpcomponents_client"
+    compile group: 'joda-time', name: 'joda-time', version: "$project.versions.jodaTime"
+    compile group: 'log4j', name: 'log4j', version: "$project.versions.log4j"
+    compile group: 'org.apache.openjpa', name: 'openjpa', version: "$project.versions.jpa"
+    compile group: "commons-io", name: "commons-io", version: "$project.versions.commons_io"
+
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: "$project.versions.spring_security"
+    compile group: "org.springframework.security", name: "spring-security-config", version: "$project.versions.spring_security"
+    compile group: "org.springframework.security", name: "spring-security-ldap", version: "$project.versions.spring_security"
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: "$project.versions.slf4j"
+    testCompile group: "org.slf4j", name:"slf4j-log4j12", version:"$project.versions.slf4j"
+    testCompile group: "log4j", name:"log4j", version:"$project.versions.log4j"
+
+    providedCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
+
+    compile group: "de.jkeylockmanager", name: "jkeylockmanager", version: "$project.versions.jkeylockmanager"
+
+    compile group: "org.apache.tika", name: "tika-parsers", version: "$project.versions.tika"
+
+    testCompile project(path: ":jwala-common", configuration: "commonTest")
+    testCompile group: "org.springframework", name: "spring-test", version: "$project.versions.spring"
+    testCompile group: "org.springframework", name: "spring-orm", version: "$project.versions.spring"
+    testCompile group: "org.springframework", name: "spring-test", version: "$project.versions.spring"
+    testCompile group: 'org.springframework', name: 'spring-tx', version: "$project.versions.spring"
+    testCompile group: "org.mockito", name: "mockito-core", version: "$project.versions.mockito"
+    testCompile group: 'org.objenesis', name: 'objenesis', version: "$project.versions.objenesis"
+    testCompile group: "com.h2database", name: "h2", version: "$project.versions.h2"
+    testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
+    testRuntime group: 'org.apache.tomcat', name: 'tomcat-util', version: "$project.versions.tomcat"
+
+}
+
+sourceSets.main.compileClasspath += configurations.providedCompile
+sourceSets.test.compileClasspath += configurations.providedCompile
+sourceSets.test.runtimeClasspath += configurations.providedCompile

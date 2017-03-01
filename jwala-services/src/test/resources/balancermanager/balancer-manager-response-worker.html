@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html><head><title>Balancer Manager</title>
+    <style type='text/css'>
+table {
+ border-width: 1px;
+ border-spacing: 3px;
+ border-style: solid;
+ border-color: gray;
+ border-collapse: collapse;
+ background-color: white;
+ text-align: center;
+}
+th {
+ border-width: 1px;
+ padding: 2px;
+ border-style: dotted;
+ border-color: gray;
+ background-color: white;
+ text-align: center;
+}
+td {
+ border-width: 1px;
+ padding: 2px;
+ border-style: dotted;
+ border-color: gray;
+ background-color: white;
+ text-align: center;
+}
+</style>
+</head>
+<body><h1>Load Balancer Manager for somehost0057</h1>
+
+<dl><dt>Server Version: Apache/2.4.20 (Win64) OpenSSL/1.0.2h</dt>
+    <dt>Server Built: Apr  5 2016 13:15:28</dt>
+    <dt>Balancer changes will NOT be persisted on restart.</dt><dt>Balancers are inherited from main server.</dt><dt>ProxyPass settings are inherited from main server.</dt></dl>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-health-check-4.0&nonce=1c84b050-2343-504f-8288-f861c432478b">balancer://lb-health-check-4.0</a> [p8b43d0f0_lb_health_check_4_0]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>8 [6 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>5</td>
+        <td>byrequests</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0057:9101/hct&nonce=1c84b050-2343-504f-8288-f861c432478b">https://somehost0057:9101/hct</a></td><td>SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0057-1</td><td></td><td>1</td><td>0</td><td>Init Drn Ok </td><td>0</td><td>0</td><td>1</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0057:9111/hct&nonce=1c84b050-2343-504f-8288-f861c432478b">https://somehost0057:9111/hct</a></td><td>SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0057-2</td><td></td><td>1</td><td>0</td><td>Init Ign Drn Ok </td><td>0</td><td>0</td><td>1</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0057:9121/hct&nonce=1c84b050-2343-504f-8288-f861c432478b">https://somehost0057:9121/hct</a></td><td>SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0057-3</td><td></td><td>1</td><td>0</td><td>Init Drn Dis </td><td>0</td><td>0</td><td>1</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0058:9101/hct&nonce=1c84b050-2343-504f-8288-f861c432478b">https://somehost0058:9101/hct</a></td><td>SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0058-1</td><td></td><td>1</td><td>0</td><td>Init Drn Stby Ok </td><td>0</td><td>0</td><td>1</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0058:9111/hct&nonce=1c84b050-2343-504f-8288-f861c432478b">https://somehost0058:9111/hct</a></td><td>SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0058-2</td><td></td><td>1</td><td>0</td><td>Init Drn Ok </td><td>0</td><td>0</td><td>1</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-health-check-4.0&w=https://somehost0058:9121/hct&nonce=1c84b050-2343-504f-8288-f861c432478b">https://somehost0058:9121/hct</a></td><td>SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0058-3</td><td></td><td>1</td><td>0</td><td>Init Drn Ok </td><td>0</td><td>0</td><td>1</td><td>  0 </td><td>  0 </td></tr>
+</table>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-health-check-4.0&nonce=1c84b050-2343-504f-8288-f861c432478b">balancer://lb-health-check-4.0</a> [p8b43d0f0_lb_health_check_4_0]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>0 [-2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>5</td>
+        <td>byrequests</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+</table>
+<hr />
+<h3>Edit worker settings for https://somehost0057:9101/hct</h3>
+<form method="POST" enctype="application/x-www-form-urlencoded" action="https://somehost0057/balancer-manager">
+    <dl>
+        <table><tr><td>Load factor:</td><td><input name='w_lf' id='w_lf' type=text value='1'></td></tr>
+            <tr><td>LB Set:</td><td><input name='w_ls' id='w_ls' type=text value='0'></td></tr>
+            <tr><td>Route:</td><td><input name='w_wr' id='w_wr' type=text value="SOMEHOST-LTST-HEALTH-CHECK-4.0-somehost0057-1"></td></tr>
+            <tr><td>Route Redirect:</td><td><input name='w_rr' id='w_rr' type=text value=""></td></tr>
+            <tr><td>Status:</td><td><table><tr><th>Ignore Errors</th><th>Draining Mode</th><th>Disabled</th><th>Hot Standby</th></tr>
+                <tr><td>On <input name='w_status_I' id='w_status_I' value='1' type=radio> <br/> Off <input name='w_status_I' id='w_status_I' value='0' type=radio checked></td>
+                    <td>On <input name='w_status_N' id='w_status_N' value='1' type=radio checked> <br/> Off <input name='w_status_N' id='w_status_N' value='0' type=radio></td>
+                    <td>On <input name='w_status_D' id='w_status_D' value='1' type=radio> <br/> Off <input name='w_status_D' id='w_status_D' value='0' type=radio checked></td>
+                    <td>On <input name='w_status_H' id='w_status_H' value='1' type=radio> <br/> Off <input name='w_status_H' id='w_status_H' value='0' type=radio checked></td>
+                </tr></table>
+            <tr><td colspan=2><input type=submit value='Submit'></td></tr>
+        </table>
+        <input type=hidden name='w' id='w' value='https://somehost0057:9101/hct'>
+        <input type=hidden name='b' id='b' value='lb-health-check-4.0'>
+        <input type=hidden name='nonce' id='nonce' value='1c84b050-2343-504f-8288-f861c432478b'>
+</form>
+<hr />
+</body></html>

@@ -1,0 +1,18 @@
+.RToolBar {
+    margin: 0;
+    padding: 0;
+}
+
+.RToolBar > li.button {
+    margin: 1px;
+    position: relative;
+    padding: 4px 0;
+    cursor: pointer;
+    float: left;
+    list-style: none;
+}
+
+.RToolBar span.ui-icon {
+    float: left;
+    margin: -2px 2px;
+}

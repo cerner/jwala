@@ -1,0 +1,207 @@
+description "This module has Jwala UI, which is used to manage Group of instances.  Group includes Web Apps, JVMs, Web Servers, and Resources."
+
+apply plugin: 'com.moowork.node'
+apply plugin: "war"
+apply plugin: 'maven-publish'
+
+ext {
+    localVersions = [jstl: "1.2"]
+}
+
+configurations {
+    all*.exclude group: 'org.apache.geronimo.specs', module: 'geronimo-jta_1.1_spec'
+    all*.exclude group: 'org.apache.geronimo.specs', module: 'geronimo-jms_1.1_spec'
+}
+
+dependencies {
+
+    compile group: "org.springframework", name: "spring-webmvc", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-messaging", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-websocket", version: "$project.versions.spring"
+    compile group: 'org.springframework', name: 'spring-aop', version: "$project.versions.spring"
+
+    compile group: "javax.servlet", name: "jstl", version: "$localVersions.jstl"
+    compile group: "org.codehaus.jackson", name: "jackson-mapper-asl", version: "$project.versions.jackson"
+    compile(group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2')
+
+    compile 'org.springframework.security:spring-security-web:4.1.1.RELEASE'
+    compile 'org.springframework.security:spring-security-config:4.1.1.RELEASE'
+    compile 'org.springframework.security:spring-security-ldap:4.1.1.RELEASE'
+    compile 'org.springframework.security:spring-security-test:4.1.1.RELEASE'
+
+    runtime group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.6.5'
+    runtime group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.6.5'
+
+    runtime group: "org.slf4j", name: "slf4j-log4j12", version: "$project.versions.slf4j"
+    runtime group: "log4j", name: "log4j", version: "$project.versions.log4j"
+    runtime group: "commons-logging", name: "commons-logging", version: "$project.versions.commons_logging"
+    runtime(group: 'junit', name: 'junit', version: '4.12')
+
+    providedCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
+    providedCompile group: "javax.servlet", name: "javax.servlet-api", version: "$project.versions.javax_servlet_api"
+    providedCompile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
+    providedCompile group: 'commons-codec', name: 'commons-codec', version: '1.6'
+    providedCompile group: 'joda-time', name: 'joda-time', version: "$project.versions.jodaTime"
+
+    compile project(":jwala-common")
+    compile project(":jwala-persistence")
+    compile project(":jwala-services")
+    compile project(":jwala-webservices")
+
+    testCompile group: "org.mockito", name: "mockito-core", version: "$project.versions.mockito"
+    testCompile group: 'org.objenesis', name: 'objenesis', version: "$project.versions.objenesis"
+}
+
+war {
+//	  PT 7/20/2016: Removed these following lines: they cause these files to be added twice to the WAR file.
+//    println 'Adding logging jars to the war that are excluded as transient provided dependencies.'
+//    configurations.runtime.files { dep -> dep.name == 'log4j' || dep.name == 'commons-logging' || dep.name == 'slf4j-log4j12' }.each { //		file ->
+//        println "... Adding jar $file.name"
+//        classpath file
+//    }
+}
+
+task generateMyResources {
+    doLast {
+        def generated = new File(generatedResources, "myGeneratedResource.properties")
+        generated.text = "message=Stay happy!"
+    }
+}
+
+def reactJsPath = "/react/js"
+def reactCompiledOutputPath = buildDir.absolutePath + reactJsPath
+def reactBuildPath = buildDir.toPath().fileName.toString() + reactJsPath
+def reactCachePath = buildDir.toPath().fileName.toString() + "/react"
+
+// we need to specify "resources/js/react"
+// since jsx does not recreate dir structures
+def reactCompiledOutputWarPath = "/gen/resources/js/react"
+def reactSrcPath = "src/main/webapp/resources/js/react"
+
+task compileJsx(type: Exec) {
+    build.mustRunAfter clean
+    workingDir "."
+
+    // jsx tool hangs (and does not say a word why)
+    // if the complete directory name was passed to it
+    commandLine "cmd",
+            "/c",
+            "jsx" +
+                    " ./" + reactSrcPath +
+                    " ./" + reactBuildPath +
+                    " --cache-dir ./" + reactCachePath
+
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+
+task watchJsx(type: Exec) {
+    //println "JSX Build " + reactBuildPath
+    //println "JSX WAR Build " + reactCompiledOutputPath
+    //println "JSX WAR Output " + reactCompiledOutputWarPath
+    //println "JSX Cache Path " + reactCachePath
+    build.mustRunAfter clean
+    workingDir "."
+
+    // jsx tool hangs (and does not say a word why)
+    // if the complete directory name was passed to it
+    commandLine "cmd",
+            "/c",
+            "jsx" +
+                    " -w" +
+                    " ./" + reactSrcPath +
+                    " ./" + reactBuildPath +
+                    " --cache-dir ./" + reactCachePath
+
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+node {
+    // Version of node to use.
+    version = '0.11.10'
+
+    npmVersion = '3.3.12'
+
+    // Base URL for fetching node distributions (change if you have a mirror).
+    distBaseUrl = 'https://nodejs.org/dist'
+
+    // If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.
+    download = true
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
+
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.buildDir}")
+}
+
+task buildReactInstalled(type: NodeTask) {
+    script = file("node_modules/babel-cli/bin/babel.js")
+    args = ['src/main/webapp/resources/js/react', '--out-dir', "${buildDir}/react/js", '--blacklist', 'useStrict']
+}
+
+task buildReact(type: NodeTask) {
+    script = file("node_modules/babel-cli/bin/babel.js")
+    args = ['src/main/webapp/resources/js/react', '--out-dir', "${buildDir}/react/js", '--blacklist', 'useStrict']
+}
+
+task installBabelCli(type: NpmTask) {
+    args = ['install', "babel-cli@$project.versions.babelcli", '--silent']
+}
+task installJsxTransform(type: NpmTask) {
+    args = ['install', "babel-plugin-transform-react-jsx-compat@$project.versions.babeltransform", '--silent']
+}
+
+buildReact.dependsOn npmInstall, installJsxTransform, installBabelCli
+
+war {
+    manifest {
+        attributes(
+                "Specification-Version": (null == System.getProperty("gitCommitId") ? "" : System.getProperty("gitCommitId")),
+                "Implementation-Title": project.name,
+                "Implementation-Version": buildVersion,
+                "Build-Number": (null == System.getProperty("buildNumber")) ? "" : System.getProperty("buildNumber"),
+                "Built-By": System.getProperty("user.name"),
+                "Built-JDK": System.getProperty("java.version"),
+                "Built-Host": InetAddress.getLocalHost(),
+                "Build-Time-ISO-8601": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        )
+    }
+
+    // dependsOn(compileJsx) // NOTE!!! If you're still using JSX, enable this and disable the line below (babel).
+    dependsOn(buildReact)
+
+    webInf {
+        from reactCompiledOutputPath
+        into reactCompiledOutputWarPath
+    }
+
+    /**
+     * This task is a tool for developers to deploy their WAR file.
+     * Note: Please check gradle.properties first before using this to set the properties to the correct values as
+     * defined by your particular environment !!!
+     */
+    task deployWar(type: Copy) {
+        from "build/libs"
+        into "${deployPath}"
+    }
+
+    task deleteWar(type: Delete) {
+        delete fileTree("${deployPath}") {
+            include project.name + "*.war"
+        }
+    }
+
+    task deleteExtractedWarPath(type: Delete) {
+        delete "${extractedWarPath}"
+    }
+
+    deployWar.dependsOn deleteWar, deleteExtractedWarPath
+}
+

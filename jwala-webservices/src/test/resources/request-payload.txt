@@ -1,0 +1,6 @@
+------WebKitFormBoundaryXRxegBGqTe4gApI2
+Content-Disposition: form-data; name="hct.properties"; filename="hotel-booking.txt"
+Content-Type: text/plain
+
+
+------WebKitFormBoundaryXRxegBGqTe4gApI2--

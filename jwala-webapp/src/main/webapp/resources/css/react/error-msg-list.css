@@ -1,0 +1,26 @@
+table.errMsgTable {
+    table-layout:fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.errMsgTable tr.odd > td {
+    background-color: #E7E7E7 !important;
+}
+
+table.errMsgTable td {
+    padding-right: 5px;
+}
+
+.cursorPointer {
+    cursor: pointer;
+}
+
+table.errMsgTable tr > td {
+    border: 1px solid #E6D6D6;
+    vertical-align: top;
+}
+
+table.errMsgTable td {
+    width:"auto";
+}

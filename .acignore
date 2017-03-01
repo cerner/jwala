@@ -1,0 +1,10 @@
+**/.gradle
+**/build
+**/bin
+**/classes
+**/.settings
+**/.classpath
+**/.project
+**/.idea
+**/*.iml
+**/rebel.xml

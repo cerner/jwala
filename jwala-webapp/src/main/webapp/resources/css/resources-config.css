@@ -1,0 +1,160 @@
+.resource-container {
+    width: 100%;
+    height: 610px !important;
+    border-bottom: 1px solid rgb(192, 192, 192);
+}
+
+.xml-editor-container {
+    height: 100%;
+}
+
+/* Was transferred here since IE8 can't load some of the css files for unknown reasons. */
+.xml-preview-container {
+    width: 1070px;
+    height: 100%;
+}
+
+.resources-div-container {
+    width:1074px;
+}
+
+.tabs-xml-preview {
+    list-style: none;
+    padding: 0;
+    height: 13px; /* Removes the space between the tabs and the div that holds the content */
+}
+
+.tabs-xml-preview > div > li {
+    background-image: url(../img/react/components/gray-tabs.png);
+    display: inline-block; /* Aligns the tabs side by side and align their bottoms with the top of the content div */
+    padding-left: 10px;
+    margin-right: 5px; /* li element shows the right side of the tab, this property sees to it that the right side tab does not overlap with the left side tab */
+    margin-bottom: -.5px /* Fixes small gap in between div content and inactive tabs for Chrome */
+}
+
+.tabs-xml-preview > div > li > a {
+
+    background-image: url(../img/react/components/gray-tabs.png);
+    background-position: right top;
+
+    color: C0C0C0;
+    float: left;
+    line-height: 21px; /* inactive tabs height */
+    padding-right: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    margin-right: -5px; /* li element shows the left side of the tab, this property sees to it that the left side tab does not overlapped with the right side tab */
+}
+
+.tabs-xml-preview > div > li.current {
+    background-position: 0 -40px;
+    margin-bottom: -1px /* Overlap the content div in such a way as to remove the div's top border which results to a tab & div merge effect just like in a real folder tab */
+}
+
+.tabs-xml-preview > div > li.current > a {
+    line-height: 26px;
+    background-position: 100% -40px;
+    color: black;
+    font-weight: bold;
+}
+
+.tabs-xml-preview-panel-selected {
+    border: #C0C0C0 solid 1px;
+    background: #E5E5E5;
+    clear: left;
+    height: 92%;
+    padding: 0 0 0 0;
+    top: 26px;
+    bottom: 0px;
+    position: absolute;
+    background: white;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    width: 100%;
+}
+
+.tabs-xml-preview {
+    margin-top: 1px;
+}
+
+.template-upload-form > div {
+    padding: 3px;
+}
+
+.xml-editor-preview-tab-component {
+    height: 267px;
+}
+
+.xml-editor-preview-tab-component .content {
+    border: #C0C0C0 solid 1px;
+    background: #E5E5E5;
+    clear: left;
+    height: 100%;
+}
+
+.select-meta-data-and-template-files-widget .file-input-container {
+    padding-bottom: 5px;
+}
+
+.select-meta-data-and-template-files-widget .error {
+    color: red;
+    padding-bottom: 2px;
+}
+
+.select-meta-data-and-template-files-widget .hide {
+    display: none;
+}
+
+.ui-dialog .note {
+    color: #2e6e9e;
+}
+
+.Warning {
+    margin: 5px 0 5px 0;
+}
+
+.Warning > span.icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background-image: url("../img/react/warning.png");
+}
+
+.Warning > span.msg {
+    color: rgb(240, 129, 3);
+    vertical-align: top;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.Resource.preview.msg {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 20em;
+    color: red;
+}
+
+.resource-preview-br {
+    height: 20px;
+}
+
+.select-meta-data-and-template-files-widget label {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.MetaDataEntryForm input[type=text] {
+    display: block;
+    width: 320px;
+}
+
+.MetaDataEntryForm input[type=checkbox] {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.MetaDataEntryForm select {
+    width: 150px;
+}

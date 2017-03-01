@@ -1,0 +1,189 @@
+html *
+{
+   font-family: Tahoma, Helvetica, sans-serif;
+   font-size: 12px;
+}
+
+body {
+    text-align: center;
+}
+
+.error {
+    color: red;
+}
+
+.ok {
+    color: green;
+}
+
+.textAlignLeft {
+    text-align: left;
+}
+
+.jwalaTable {
+  display:table;
+  width:100%;
+}
+.jwalaRow {
+  width:100%;
+  display:table-row;
+}
+.jwalaRowContent {
+  width:90%;
+  display:table-cell;
+  vertical-align: middle;  
+}
+.jwalaRowIcons {
+  min-width:55px;
+  width:10%;
+  display:table-cell;
+}
+
+.jwalaRowIcons img:hover {
+  -moz-box-shadow: 0 0 10px #ccc; 
+  -webkit-box-shadow: 0 0 10px #ccc;
+   box-shadow: 0 0 10px #ccc;    
+}
+
+.fileupload.row_selected {
+    transition: all 0.2s ease;
+    -webkit-animation: down-bump 0.4s ease;
+    animation: down-bump 0.4s ease;
+}
+
+.fileupload:hover  {
+   -webkit-animation: up-bump 0.4s ease;
+   animation: up-bump 0.4s ease;
+}
+
+@-webkit-keyframes up-bump {
+  0% { padding-top: 2em; }
+  50% { padding-top: 1.5em; }
+  100% { padding-top: 2em; }
+}
+@-webkit-keyframes down-bump {
+  0% { padding-top: 2em; }
+  50% { padding-top: 2.5em; }
+  100% { padding-top: 2em; }
+}
+@keyframes up-bump {
+  0% { padding-top: 2em; }
+  50% { padding-top: 1.5em; }
+  100% { padding-top: 2em; }
+}
+@keyframes down-bump {
+  0% { padding-top: 2em; }
+  50% { padding-top: 2.5em; }
+  100% { padding-top: 2em; }
+}
+
+/**
+ * CSS used specifically by JWALA buttons
+ */
+.busy-button {
+    background-image: url(../img/busy-circular.gif);
+    background-repeat:no-repeat;
+    background-position:center;
+    background-color:white;
+    display: inline-block;
+    position:relative;
+    padding: 0;
+    margin-right: .1em;
+    cursor: pointer;
+    overflow: visible;
+    height:22px;
+    width:18px;
+    vertical-align:middle;
+    border: none;
+    color: #2e6e9e;
+    font-weight: bold;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.accordion-title-text-position {
+    position: absolute;
+    left: 2.5em;
+    margin-top: -8px;
+    top: 50%;
+}
+
+/* Acts as a shim to push the JVM and web server accordion start/stop buttons to right align with the buttons below the accordion. */
+.header-component-label  {
+    width:125px; /* Works fine for Chrome and Fire Fox */
+}
+
+.started-count-text {
+    color: black !important;
+    font-weight: normal !important;
+    text-align: left;
+}
+
+.disabled {
+    color:gray !important;
+}
+
+div .state {
+    display:inline-block;
+    width:70px
+}
+
+/* used by dialog box content div */
+.maxHeight400px {
+    max-height:400px !important;
+}
+
+.vertical-align-top {
+    vertical-align: top !important;
+}
+
+.ui-tooltip {
+    text-align:left;
+}
+
+.default-icon-button-style {
+    padding: 0 0 3px 0;
+    margin: 2px 2px 2px 2px;
+}
+
+.width-max {
+    width: 100%;
+}
+
+.no-border {
+    border:none !important;
+}
+
+.react-dialog-container {
+    position: absolute; /* Makes sure that the child dialog's position is relative to it's container! */
+}
+
+div.preload {
+    display: none;
+}
+
+.zero-padding {
+    padding: 0;
+}
+
+.margin-right-5px {
+    margin-right: 5px !important;
+}
+
+.btnAppsDeploy {
+    padding: 4px;
+}

@@ -1,0 +1,11 @@
+{
+  "deployPath" : "${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf",
+  "templateName" : "tomcatUsers.tpl",
+  "deployFileName" : "tomcat-users.xml",
+  "contentType" : "application/xml",
+  "entity" : {
+    "type" : "GROUPED_JVMS",
+    "group" : "Postman-Test-Group",
+    "target" : "Postman-Test-Group"
+  }
+}

@@ -1,0 +1,3 @@
+<sample>
+    <!-- Sample Template-->
+</sample>

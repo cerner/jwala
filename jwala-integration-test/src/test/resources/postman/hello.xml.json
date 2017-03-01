@@ -1,0 +1,11 @@
+{
+    "deployFileName":"hello.xml",
+    "deployPath":"${vars['remote.paths.instances']}/${jvm.jvmName}/apache-tomcat-7.0.55/conf/stp/localhost",
+    "templateName":"hello.xml.tpl",
+    "contentType":"text/xml",
+    "entity":{
+                "type":"GROUPED_JVMS",
+                "group":"Postman-Test-Group",
+                "target":"Postman-Test-Group"
+        }
+}

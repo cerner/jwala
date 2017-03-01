@@ -1,0 +1,37 @@
+table.simple-data-table {
+    float: right;
+    width: 100%;
+    border: 1px solid #d3d3d3;
+    border-collapse:collapse;
+    border-spacing:0px 0px;
+}
+
+table.simple-data-table thead > tr > th {
+    text-align: left;
+    background-color: rgb(179, 217, 255)
+}
+
+table.simple-data-table tbody > tr > td {
+    border-bottom: 1px solid #d3d3d3;
+    background-color: white
+}
+
+table.simple-data-table tbody > tr > td.row-sub-component-container {
+    background: #E5E5E5
+}
+
+table.simple-data-table thead th {
+    padding: 1px 4px 0px 2px !important
+}
+
+table.simple-data-table td {
+    padding: 1px 4px 0px 2px !important
+}
+
+table.simple-data-table td > div > a {
+    color:#1d5987;
+}
+
+table.simple-data-table td > div > a:hover {
+    color:#4585C5;
+}

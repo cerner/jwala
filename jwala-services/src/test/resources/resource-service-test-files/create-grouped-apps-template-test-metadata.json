@@ -1,0 +1,11 @@
+{
+  "templateName": "app.xml.tpl",
+  "contentType": "text/xml",
+  "deployFileName":"app.xml",
+  "deployPath":"/conf",
+  "entity": {
+    "type": "GROUPED_APPS",
+    "group": "HEALTH CHECK 4.0",
+    "target": "some application"
+  }
+}

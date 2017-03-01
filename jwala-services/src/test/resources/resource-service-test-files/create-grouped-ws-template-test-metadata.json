@@ -1,0 +1,11 @@
+{
+  "templateName": "httpd.conf.tpl",
+  "contentType": "text/plain",
+  "deployFileName":"httpd.conf",
+  "deployPath":"/conf",
+  "entity": {
+    "type": "GROUPED_WEBSERVERS",
+    "group": "HEALTH CHECK 4.0",
+    "target": "some webserver"
+  }
+}

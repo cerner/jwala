@@ -1,0 +1,63 @@
+description "Common module used by other for jwala modules"
+apply plugin: 'groovy'
+
+ext {
+	localVersions = [jsch : "0.1.53", commonsPool : "2.4.2"]
+}
+
+configurations {
+    commonTest
+}
+
+task commonTestJar(type: Jar) {
+    baseName = "commonTest"
+    dependsOn classes
+    from sourceSets.test.output
+    include('com/cerner/jwala/common/IntegrationTestRule*')
+}
+
+artifacts {
+    commonTest commonTestJar
+}
+
+dependencies {
+	compile group: 'org.codehaus.groovy', name: 'groovy-all', version: "$project.versions.groovy"
+	
+	compile group: "org.springframework", name: "spring-core", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-context", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-orm", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-expression", version: "$project.versions.spring"
+    compile group: "org.springframework", name: "spring-beans", version: "$project.versions.spring"
+
+	compile group: "org.codehaus.jackson", name: "jackson-jaxrs", version: "$project.versions.jackson"
+	compile group: 'log4j', name: 'log4j', version: "$project.versions.log4j"
+	
+    compile group: "joda-time", name: "joda-time", version: "$project.versions.jodaTime"
+
+
+	compile group: "org.apache.commons", name: "commons-pool2", version: "$localVersions.commonsPool"
+	compile group: "com.jcraft", name: "jsch", version: "$localVersions.jsch"
+
+	compile group: "org.apache.tika", name: "tika-parsers", version: "$project.versions.tika"
+
+	testCompile group: "org.mockito", name: "mockito-core", version: "$project.versions.mockito"
+	testCompile group: 'org.objenesis', name: 'objenesis', version: "$project.versions.objenesis"
+	testCompile group: "org.springframework", name: "spring-test", version: "$project.versions.spring"
+
+	testCompile group: "com.h2database", name: "h2", version: "$project.versions.h2"
+	testCompile group: "junit", name: "junit", version: "$project.versions.junit"
+	testCompile group: 'org.springframework', name: 'spring-context', version: "$project.versions.spring"
+	testCompile group: 'org.springframework', name: 'spring-core', version: "$project.versions.spring"
+	testCompile group: "org.springframework", name: "spring-orm", version: "$project.versions.spring"
+	testCompile group: "org.springframework", name: "spring-test", version: "$project.versions.spring"
+	testCompile group: 'org.springframework', name: 'spring-tx', version: "$project.versions.spring"
+	testCompile group: "org.springframework", name: "spring-context", version: "$project.versions.spring"
+	testCompile group: "org.springframework", name: "spring-orm", version: "$project.versions.spring"
+	testCompile group: 'org.springframework', name: 'spring-test', version: "$project.versions.spring"
+
+}
+
+/*test {
+	workingDir(rootProject.projectDir)
+}*/
+

@@ -1,0 +1,12 @@
+{
+        "templateName":"httpdconf.tpl",
+        "contentType":"text/plain",
+        "deployPath":"${vars.'remote.paths.httpd.conf'}",
+        "deployFileName":"httpd.conf",
+        "entity":{
+                "type":"GROUPED_WEBSERVERS",
+                "group":"Postman-Test-Group",
+                "target":"Postman-Test-Group"
+        }
+}
+

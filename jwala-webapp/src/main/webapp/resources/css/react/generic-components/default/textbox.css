@@ -1,0 +1,21 @@
+.hint {
+    font-style: italic;
+    color: gray;
+    padding: 4px 5px;
+    position: absolute;
+    z-index: -1;
+}
+
+.input {
+    width: 150px
+}
+
+.input-on-focus {
+    background-color: white;
+    padding: 2px;
+}
+
+.input-on-blur {
+    background-color: transparent;
+    padding: 2px;
+}

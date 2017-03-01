@@ -1,0 +1,72 @@
+/**
+ *  TODO: Check what is using this css props, remove if there's nothing using it. If there is
+ *        something using it, document what and why. If this is being used by the data table
+ *        jquery.Datable.css and this css has to be unified.
+ */
+
+/** Custom Jwala */
+tr.row_selected > td {
+    background:#8BC6FF !important;
+}
+
+/**
+ * Sort arrow icon positioning
+ */
+span.DataTables_sort_icon {
+    display: inline-block !important;
+}
+
+table {
+    border-spacing: 0px;
+    border-color: red
+}
+
+.dataTables_wrapper .ui-toolbar {
+	padding: 5px;
+}
+
+th.ui-state-default {
+    border-left: none;
+    border-right: none;
+    border-top: none
+}
+
+td.row-sub-component-container {
+    padding-top: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 5px !important
+}
+
+/**
+ *  This is required to make sure that all other rows that aren't disabled
+ *  does not get the given color of a disabled row.
+ *  This happens in IE, particularly IE8
+ */
+tr {
+    color: black
+}
+
+tr.highlight {
+    font-weight: bold;
+    color: orange
+}
+
+table.hierarchical {
+    table-layout: fixed !important;
+}
+
+table.hierarchical > thead > tr > th {
+    padding: 1px 0px 0px 1px !important;
+}
+
+table.hierarchical > tbody > tr > td {
+    padding: 1px 4px 0px 1px !important;
+}
+
+span[class^="group-state-"] {
+    padding-left:7px
+}
+
+table > thead > tr > th {
+    text-align:left
+}

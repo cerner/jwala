@@ -1,0 +1,17 @@
+description "This module has the components enables Jwala to communicate with remote hosts managed by Jwala to get status, this jar is deploed to remote hosts "
+
+apply plugin: 'java'
+
+dependencies {
+    compile group: 'joda-time', name: 'joda-time', version: "$project.versions.jodaTime"
+    compile group: 'org.jgroups', name: 'jgroups', version: "$project.versions.jgroups"
+    compile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
+    compile group: "org.slf4j", name:"slf4j-log4j12", version:"$project.versions.slf4j"
+    compile group: 'junit', name: 'junit', version: "$project.versions.junit"
+
+    testCompile group: 'junit', name: 'junit', version: "$project.versions.junit"
+    testCompile group: 'org.mockito', name: 'mockito-core', version: "$versions.mockito"
+    testCompile group: 'org.objenesis', name: 'objenesis', version: "$project.versions.objenesis"
+    testCompile group: 'log4j', name: 'log4j', version: "$project.versions.log4j"
+    testCompile group: "org.slf4j", name:"slf4j-log4j12", version:"$project.versions.slf4j"
+}

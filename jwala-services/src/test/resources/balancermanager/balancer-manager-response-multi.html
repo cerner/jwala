@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html><head><title>Balancer Manager</title>
+    <style type='text/css'>
+table {
+ border-width: 1px;
+ border-spacing: 3px;
+ border-style: solid;
+ border-color: gray;
+ border-collapse: collapse;
+ background-color: white;
+ text-align: center;
+}
+th {
+ border-width: 1px;
+ padding: 2px;
+ border-style: dotted;
+ border-color: gray;
+ background-color: white;
+ text-align: center;
+}
+td {
+ border-width: 1px;
+ padding: 2px;
+ border-style: dotted;
+ border-color: gray;
+ background-color: white;
+ text-align: center;
+}
+</style>
+</head>
+<body><h1>Load Balancer Manager for somehost0052</h1>
+
+<dl><dt>Server Version: Apache/2.4.20 (Win64) OpenSSL/1.0.2h</dt>
+    <dt>Server Built: Apr  5 2016 13:15:28</dt>
+    <dt>Balancer changes will NOT be persisted on restart.</dt><dt>Balancers are inherited from main server.</dt><dt>ProxyPass settings are inherited from main server.</dt></dl>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-slpa-4.0.0800.02&nonce=6af7e4d6-531d-b343-95d4-99f2127609ad">balancer://lb-slpa-4.0.0800.02</a> [pad5c3069_lb_slpa_4_0_0800_02]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>4 [2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>1</td>
+        <td>bybusyness</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-slpa-4.0.0800.02&w=https://somehost0052:9101/slpa-test/slum&nonce=6af7e4d6-531d-b343-95d4-99f2127609ad">https://somehost0052:9101/slpa-test/slum</a></td><td>slpa_4.0.0800.02_slum_test_somehost0052-1</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>58</td><td>0</td><td>-37</td><td> 42K</td><td>239K</td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-slpa-4.0.0800.02&w=https://somehost0052:9111/slpa-test/slum&nonce=6af7e4d6-531d-b343-95d4-99f2127609ad">https://somehost0052:9111/slpa-test/slum</a></td><td>slpa_4.0.0800.02_slum_test_somehost0052-2</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>22</td><td>0</td><td>37</td><td> 16K</td><td>137K</td></tr>
+</table>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-slpa-ws-4.0.0800.02&nonce=c7a709c3-8bc5-af49-b894-a57c7ac55519">balancer://lb-slpa-ws-4.0.0800.02</a> [pad5c3069_lb_slpa_ws_4_0_0800_02]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>4 [2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>1</td>
+        <td>bybusyness</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-slpa-ws-4.0.0800.02&w=https://somehost0052:9101/slpa-test/slum/ws&nonce=c7a709c3-8bc5-af49-b894-a57c7ac55519">https://somehost0052:9101/slpa-test/slum/ws</a></td><td>slpa_4.0.0800.02_slum_test_somehost0052-1</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=lb-slpa-ws-4.0.0800.02&w=https://somehost0052:9111/slpa-test/slum/ws&nonce=c7a709c3-8bc5-af49-b894-a57c7ac55519">https://somehost0052:9111/slpa-test/slum/ws</a></td><td>slpa_4.0.0800.02_slum_test_somehost0052-2</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+</table>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=ping&nonce=a3f2dd40-8d20-e34e-9dec-6cfe264d87e2">balancer://ping</a> [pad5c3069_ping]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>4 [2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>1</td>
+        <td>bybusyness</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=ping&w=ajp://somehost0052:9103/&nonce=a3f2dd40-8d20-e34e-9dec-6cfe264d87e2">ajp://somehost0052:9103/</a></td><td>slpa_4.0.0800.02_slum_test_somehost0052-1</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+    <tr>
+        <td><a href="/balancer-manager?b=ping&w=ajp://somehost0052:9113/&nonce=a3f2dd40-8d20-e34e-9dec-6cfe264d87e2">ajp://somehost0052:9113/</a></td><td>slpa_4.0.0800.02_slum_test_somehost0052-2</td><td></td><td>1</td><td>0</td><td>Init Ok </td><td>0</td><td>0</td><td>0</td><td>  0 </td><td>  0 </td></tr>
+</table>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-slpa-4.0.0800.02&nonce=6af7e4d6-531d-b343-95d4-99f2127609ad">balancer://lb-slpa-4.0.0800.02</a> [pad5c3069_lb_slpa_4_0_0800_02]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>0 [-2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>1</td>
+        <td>bybusyness</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+</table>
+<hr />
+<h3>LoadBalancer Status for <a href="/balancer-manager?b=lb-slpa-ws-4.0.0800.02&nonce=c7a709c3-8bc5-af49-b894-a57c7ac55519">balancer://lb-slpa-ws-4.0.0800.02</a> [pad5c3069_lb_slpa_ws_4_0_0800_02]</h3>
+
+
+<table><tr><th>MaxMembers</th><th>StickySession</th><th>DisableFailover</th><th>Timeout</th><th>FailoverAttempts</th><th>Method</th><th>Path</th><th>Active</th></tr>
+    <tr><td>0 [-2 Used]</td>
+        <td>JSESSIONID | jsessionid<td>On</td>
+        </td><td>0</td><td>1</td>
+        <td>bybusyness</td>
+        <td>/</td>
+        <td>Yes</td>
+</table>
+<br />
+
+<table><tr><th>Worker URL</th><th>Route</th><th>RouteRedir</th><th>Factor</th><th>Set</th><th>Status</th><th>Elected</th><th>Busy</th><th>Load</th><th>To</th><th>From</th></tr>
+</table>
+<hr />
+</body></html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" threshold="null">
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%p] [%t] [%c{1}:%L] %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="TRACE_JWALA" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${catalina.base}/logs/jwala.log" />
+        <param name="DateFormat" value="yyyyMMdd" />
+        <param name="HeaderDateFormat" value="yyyy-MM-dd HH:mm:ss" />
+        <param name="Header" value="Jwala Log file\n" />
+        <param name="MaxFileSizeBeforeRoll" value="100000000" />
+        <param name="MaxBackupIndex" value="5" />
+        <!-- specify the layout -->
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%p] [%t] [%c{1}:%L] %m%n" />
+        </layout>
+    </appender>
+
+    <!-- Jwala logger -->
+    <logger name="com.cerner.jwala" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="TRACE_JWALA" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- INFO logging for the web services and business logic layers -->
+    <logger name="com.cerner.jwala.ws.rest.v1.service" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="TRACE_JWALA" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <logger name="com.cerner.jwala.service.webserver.WebServerStateRetrievalScheduledTaskHandler" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="TRACE_JWALA" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+
+    <logger name="com.cerner.jwala.service" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="TRACE_JWALA" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <logger name="org.springframework" additivity="false">
+        <level value="ERROR" />
+        <appender-ref ref="TRACE_JWALA" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- The root logger -->
+    <root>
+        <level value="ERROR" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="TRACE_JWALA" />
+    </root>
+
+
+</log4j:configuration>

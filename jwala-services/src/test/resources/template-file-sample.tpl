@@ -1,0 +1,1 @@
+<Context docBase="\${JWALA_HOME}/app/webapps/jedi-webapp.war"/>

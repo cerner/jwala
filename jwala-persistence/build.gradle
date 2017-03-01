@@ -1,0 +1,95 @@
+description "This modules has the persistance layer for Jwala. CRUD (create, read, update delete) logic resides here."
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(":jwala-common")
+
+    compile group: "org.apache.openjpa", name: "openjpa", version: "$project.versions.jpa"
+    compile group: "org.springframework.security", name: "spring-security-config", version: "$project.versions.spring_security"
+
+    compile group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    compile 'javax.el:javax.el-api:3.0.0'
+    compile 'org.glassfish:javax.el:3.0.0'
+    compile 'org.hibernate:hibernate-validator:5.3.4.Final'
+
+    testCompile group: 'org.springframework', name: 'spring-context', version: "$project.versions.spring"
+    testCompile group: 'org.springframework', name: 'spring-core', version: "$project.versions.spring"
+    testCompile group: "org.springframework", name: "spring-orm", version: "$project.versions.spring"
+    testCompile group: "org.springframework", name: "spring-test", version: "$project.versions.spring"
+    testCompile group: 'org.springframework', name: 'spring-tx', version: "$project.versions.spring"
+    testCompile group: "org.springframework", name: "spring-context", version: "$project.versions.spring"
+    testCompile group: "org.springframework", name: "spring-orm", version: "$project.versions.spring"
+    testCompile group: 'org.springframework', name: 'spring-test', version: "$project.versions.spring"
+    testCompile group: 'org.springframework', name: 'spring-aop', version: "$project.versions.spring"
+
+    testCompile group: "com.h2database", name: "h2", version: "$project.versions.h2"
+    testCompile group: "commons-logging", name: "commons-logging", version: "$project.versions.commons_logging"
+}
+
+Map<String, String> pm = new HashMap<String, String>()
+pm.put('openjpa.ConnectionDriverName', 'org.h2.Driver')
+pm.put('openjpa.ConnectionURL', 'jdbc:h2:~/test')
+pm.put('openjpa.ConnectionUserName', 'sa')
+pm.put('openjpa.ConnectionPassword', '')
+pm.put('org.apache.openjpa.jdbc.sql.DBDictionary','org.apache.openjpa.jdbc.sql.H2Dictionary')
+
+task createDdl (type:JavaExec) {
+    main = 'org.apache.openjpa.jdbc.meta.MappingTool'
+    classpath = files(project.buildDir.path + "/classes/main", sourceSets.test.compileClasspath)
+    systemProperties = pm
+    args = ["-action", "buildSchema",
+            "-schemaAction", "build",
+            "-sql", "create.sql",
+            "-pk", "true",
+            "-fk", "true",
+            "-ix", "true",
+            "-sq", "true",
+            "-p", "${project.projectDir.path}/src/main/resources/META-INF/persistence.xml"]
+
+    doLast {
+        def createSql = file(projectDir.absolutePath + "/create.sql")
+        def version = project.properties['buildVersion']
+        createSql.append('CREATE TABLE IF NOT EXISTS VERSION (RELEASE_VERSION VARCHAR(255), LAST_UPDATED TIMESTAMP);\n' +
+                'INSERT INTO VERSION (RELEASE_VERSION, LAST_UPDATED) VALUES (\'' + version + '\', NOW());')
+    }
+}
+
+task dropDdl (type:JavaExec) {
+    main = 'org.apache.openjpa.jdbc.meta.MappingTool'
+    classpath = files(project.buildDir.path + "/classes/main", sourceSets.test.compileClasspath)
+    systemProperties = pm
+    args = ["-action","buildSchema",
+            "-schemaAction","retain,drop",
+            "-sql","drop.sql",
+            "-p","${project.projectDir.path}/src/main/resources/META-INF/persistence.xml"]
+}
+
+task h2Reset (type:JavaExec) {
+    main = 'org.apache.openjpa.jdbc.meta.MappingTool'
+    classpath = files(project.buildDir.path + "/classes/main", sourceSets.test.compileClasspath)
+    systemProperties = pm
+    args = ["-action","buildSchema",
+            "-schemaAction","deleteTableContents,drop,add",
+            "-ignoreErrors","true",
+            "-p","${project.projectDir.path}/src/main/resources/META-INF/persistence.xml"]
+}
+
+task mappingToolHelp (type:JavaExec) {
+    main = 'org.apache.openjpa.jdbc.meta.MappingTool'
+    classpath = files(project.buildDir.path + "/classes/main", sourceSets.test.compileClasspath)
+    systemProperties = pm
+    args = ["-help"]
+}
+
+publish.dependsOn << createDdl << dropDdl
+
+
+task enhanceJpaEntities(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.apache.openjpa.enhance.PCEnhancer'
+}
+
+test.dependsOn enhanceJpaEntities
+jar.dependsOn enhanceJpaEntities

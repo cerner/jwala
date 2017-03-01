@@ -1,0 +1,74 @@
+.attr-list {
+    width: 100%;
+    border: 0 !important;
+    overflow-y: auto;
+}
+
+.attr-table {
+    border: 1px dotted #C0C0C0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.attr-table > tbody > tr > td {
+    border: 1px dotted #C0C0C0;
+    padding: 3px 2px 3px 2px;
+}
+
+.ws-table-container {
+    max-width: 100px;
+}
+
+.ws-table {
+    border: 1px dotted #C0C0C0;
+    border-collapse: collapse;
+    width: 405px;
+    margin-left: 15px;
+}
+
+.ws-table > tbody > tr > td {
+    border: 1px dotted #C0C0C0;
+    padding: 3px 2px 3px 2px;
+}
+
+.jvm-table-container {
+    max-width: 100px;
+}
+
+.jvm-table {
+    border: 1px dotted #C0C0C0;
+    border-collapse: collapse;
+    width: 405px;
+    margin-left: 15px;
+}
+
+.jvm-table > tbody > tr > td {
+    border: 1px dotted #C0C0C0;
+    padding: 3px 2px 3px 2px;
+}
+
+.webapp-table-container {
+    max-width: 100px;
+}
+
+.webapp-table {
+    border: 1px dotted #C0C0C0;
+    border-collapse: collapse;
+    width: 405px;
+    margin-left: 15px;
+}
+
+.webapp-table > tbody > tr > td {
+    border: 1px dotted #C0C0C0;
+    padding: 3px 2px 3px 2px;
+}
+
+.ResourceAttrPaneCopyPropValComponent .copyPropValBtn {
+    padding: 0 0 0 0 !important;
+}
+
+.ResourceAttrPaneCopyPropValComponent .propValStyle {
+    font-family: Courier New, Courier, monospace !important;
+    font-style: normal;
+    margin-left: 6px;
+}

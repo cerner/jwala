@@ -1,0 +1,10 @@
+{
+  "templateName": "some-webserver-file.tpl",
+  "contentType": "text/xml",
+  "deployFileName":"some-webserver-file.xml",
+  "deployPath":"${vars['remote.jwala.data.dir']}",
+  "entity": {
+    "type": "WEB_SERVER",
+    "group": "HEALTH CHECK 4.0"
+  }
+}

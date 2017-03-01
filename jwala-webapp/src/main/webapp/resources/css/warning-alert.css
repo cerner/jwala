@@ -1,0 +1,7 @@
+.ui-state-warn,
+.ui-widget-content .ui-state-warn,
+.ui-widget-header .ui-state-warn {
+   	border: 1px solid #ffff00;
+   	background: #ffffcc url("themes/dotluv/images/ui-bg_gloss-wave_35_f6a828_500x100.png") 50% 50% repeat;
+   	color: #ffffff;
+}

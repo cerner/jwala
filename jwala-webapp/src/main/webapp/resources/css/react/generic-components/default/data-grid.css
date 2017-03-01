@@ -1,0 +1,20 @@
+div.dataGrid-default {
+    position: absolute;
+    width: 98%;
+    height: 530px;
+    overflow: scroll;
+}
+
+table.dataGrid-default {
+    border-collapse: collapse;
+}
+
+table.dataGrid-default th {
+    border: 1px solid gray;
+    background: #87adb0;
+}
+
+table.dataGrid-default td {
+    border: 1px solid gray;
+    background: white;
+} 

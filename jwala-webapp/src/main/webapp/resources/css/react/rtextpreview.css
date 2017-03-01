@@ -1,0 +1,61 @@
+.text-preview-container {
+    width: 1063px; /* changeable */
+    height: 243px; /* changeable */
+    overflow-y: scroll;
+    vertical-align: top;
+    background: white;
+}
+
+.text-preview-content {
+    width: 100px; /* Content overflows so keep the width as is if not there's a possibility that the content is
+                     displayed after the line numbers. The container provides the white background. */
+    white-space: pre;
+    display: inline-block;
+    vertical-align:top;
+    font-size: 14px;
+    font-family: monospace;
+    padding-left: 1px;
+}
+
+.xml-comment {
+    color: gray;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.xml-less-than {
+    color: rgb(136, 18, 128);
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.attr {
+    color: rgb(153, 69, 0);
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.val {
+    color: blue;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.line-number-container {
+    display: inline-block;
+    background-color: rgb(229, 229, 229);
+    vertical-align:top;
+}
+
+.number-container {
+    padding: 0 5px 0 0;
+    margin: 0 10px 0 0;
+    text-align: right;
+    border-right: 1px solid #AAAAAA;
+    border-top: 0;
+    border-bottom: 0;
+    color: #AAAAAA;
+    font-family: monospace !important;
+    font-size: 14px;
+    width: 50px;
+}

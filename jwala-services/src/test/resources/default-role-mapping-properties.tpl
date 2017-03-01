@@ -1,0 +1,1 @@
+# Dummy role mapping properties file.

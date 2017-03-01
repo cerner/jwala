@@ -1,0 +1,15 @@
+.group-config-form-name-input {
+    width: 200px;
+}
+
+.group-config-table-type-container {
+    width:1074px;
+}
+
+.group-config-table {
+    layout: fixed;
+}
+
+.group-config-jvm-div-type-container {
+    padding: 0 0 0 15px;
+ }

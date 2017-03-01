@@ -1,0 +1,17 @@
+description "This modules has listener and service to manage H2 database used by Jwala"
+apply plugin: 'java'
+
+configurations { providedCompile }
+
+dependencies {
+    compile("commons-lang:commons-lang:2.6")
+    compile(group: 'com.h2database', name: 'h2', version: '1.3.175')
+
+    providedCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: '7.0.47'
+
+    testCompile group: 'junit', name: 'junit', version: "$project.versions.junit"
+}
+
+sourceSets.main.compileClasspath += configurations.providedCompile
+sourceSets.test.compileClasspath += configurations.providedCompile
+sourceSets.test.runtimeClasspath += configurations.providedCompile

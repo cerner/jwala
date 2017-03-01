@@ -1,0 +1,44 @@
+description "The module exposes the REST webservices to the Jwala UI and other clients"
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(":jwala-services")
+
+    testCompile group: "org.mockito", name: "mockito-core", version: "$project.versions.mockito"
+    testCompile group: 'org.objenesis', name: 'objenesis', version: "$project.versions.objenesis"
+    testCompile group: "org.springframework", name: "spring-test", version: "$project.versions.spring"
+	
+    compile group: "org.apache.cxf", name: "cxf-rt-frontend-jaxws", version: "$project.versions.cxf"
+    compile group: "org.apache.cxf", name: "cxf-rt-transports-http", version: "$project.versions.cxf"
+    compile group: "org.apache.cxf", name: "cxf-rt-frontend-jaxrs", version: "$project.versions.cxf"
+    
+	compile group: 'org.springframework.security', name: 'spring-security-web', version: "$project.versions.spring_security"
+	compile group: "org.springframework.security", name: "spring-security-config", version: "$project.versions.spring_security"
+    compile group: "org.springframework.security", name: "spring-security-ldap", version: "$project.versions.spring_security"
+	
+	
+    compile group: "javax.ws.rs", name: "javax.ws.rs-api", version: "$project.versions.javax_ws_rs_api"
+    compile group: "org.springframework", name: "spring-web", version: "$project.versions.spring"
+    compile group: "org.codehaus.jackson", name: "jackson-jaxrs", version: "$project.versions.jackson"
+    compile group: "javax.servlet", name: "javax.servlet-api", version: "$project.versions.javax_servlet_api"
+    compile group: "commons-fileupload", name: "commons-fileupload", version: "$project.versions.commons_fileupload"
+    compile group: "commons-io", name: "commons-io", version: "$project.versions.jodaTime"
+    compile group: "org.jgroups", name: "jgroups", version: "$project.versions.jgroups"
+
+	testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
+
+    testCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
+}
+
+test {
+    jacoco {
+        excludes = ["com.cerner.jwala.persistence.configuration.*",
+                    "com.cerner.jwala.persistence.domain.*",
+                    "com.cerner.jwala.common.domain.model.*",
+                    "com.cerner.jwala.common.*",
+                    "*.configuration.*",
+                    "**.configuration.**",
+                    "com.cerner.jwala.service.configuration.service.*"]
+    }
+}

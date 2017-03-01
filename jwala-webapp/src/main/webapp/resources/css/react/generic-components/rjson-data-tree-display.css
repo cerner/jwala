@@ -1,0 +1,32 @@
+.RJsonDataTreeDisplay {
+    padding-left: 15px;
+    white-space: nowrap;
+}
+
+.RJsonDataTreeDisplay > li {
+    list-style-type: none;
+    font-style: italic;
+    font-family: Consolas, Tahoma, Helvetica, sans-serif;
+    white-space: nowrap;
+}
+
+.RJsonDataTreeDisplay .nodeKey {
+    color: #881391;
+}
+
+.RJsonDataTreeDisplay .nodeVal {
+    cursor: pointer;
+}
+
+.RJsonDataTreeDisplay .openCollapseWidget {
+    display: inline-block !important;
+}
+
+.RJsonDataTreeDisplay .valNode {
+    padding-left: 15px;
+}
+
+.RJsonDataTreeDisplay .tooltip.container {
+    padding: 6px 6px 6px 6px !important;
+    max-width: 100% !important;
+}

@@ -1,0 +1,165 @@
+description "This module generates and deploys Jwala binaries. This layes creates the zip file which can be distributed and published to a repository for releases"
+
+apply plugin: 'de.undercouch.download'
+apply plugin: 'maven-publish'
+
+import org.apache.tools.ant.filters.FixCrLfFilter
+import de.undercouch.gradle.tasks.download.Download
+import groovy.sql.Sql
+
+configurations {
+    compile {
+        description = 'compile classpath'
+        transitive = false
+    }
+    jdbcdriver
+}
+
+dependencies {
+    jdbcdriver "com.h2database:h2:$project.versions.h2"
+
+    compile(group: 'commons-collections', name: 'commons-collections', version: '3.2.2')
+    compile(group: 'commons-httpclient', name: 'commons-httpclient', version: '3.1')
+    compile(group: 'commons-lang', name: 'commons-lang', version: '2.6')
+    compile(group: 'commons-logging', name: 'commons-logging', version: '1.1.1')
+    compile(group: 'org.owasp.esapi', name: 'esapi', version: '2.0.1')
+    compile(group: 'org.apache.geronimo.specs', name: 'geronimo-jpa_2.0_spec', version: '1.1')
+    compile(group: "com.h2database", name: "h2", version: "$project.versions.h2")
+    compile(group: 'joda-time', name: 'joda-time', version: '2.2')
+    compile(group: 'javax.servlet', name: 'jstl', version: '1.2')
+    compile(group: 'javax.transaction', name: 'jta', version: '1.1')
+    compile(group: 'log4j', name: 'log4j', version: '1.2.17')
+    compile(group: 'ca.juliusdavies', name: 'not-yet-commons-ssl', version: '0.3.9')
+    compile(group: 'org.opensaml', name: 'opensaml', version: '2.6.4')
+    compile(group: 'org.opensaml', name: 'openws', version: '1.5.4')
+    compile(group: 'org.slf4j', name: 'slf4j-api', version: '1.7.6')
+    compile(group: 'taglibs', name: 'standard', version: '1.1.2')
+    compile(group: 'org.apache.santuario', name: 'xmlsec', version: '1.5.6')
+    compile(group: 'org.opensaml', name: 'xmltooling', version: '1.4.4')
+    compile group: 'joda-time', name: 'joda-time', version: "$project.versions.jodaTime"
+    compile group: 'org.jgroups', name: 'jgroups', version: "$project.versions.jgroups"
+
+}
+
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'de.undercouch:gradle-download-task:3.1.1' }
+}
+
+task downloadDeploymentBinaries(type: Download) {
+        src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl, tomcatBinaryUrl, unZipExeBinaryUrl])
+        dest "$buildDir/$tomcatDir/data/binaries"
+}
+
+task downloadTomcat(dependsOn: downloadDeploymentBinaries, type: Download) {
+        src "${tomcatBinaryUrl}"
+        dest new File(buildDir, new File("${tomcatBinaryUrl}").getName())
+}
+
+task downloadAndUnzipTomcat(dependsOn: downloadTomcat, type: Copy) {
+        from zipTree(downloadTomcat.dest)
+        into buildDir
+}
+
+task deleteDownloadedZip(dependsOn: downloadAndUnzipTomcat, type: Delete) {
+        delete new File("$buildDir", new File("${tomcatBinaryUrl}").getName())
+        delete new File("$buildDir/$tomcatDir", 'webapps')
+}
+
+task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
+    from('src/main/resources') {
+        filter { it.replaceAll('@@buildVersion@@', "$buildVersion") }
+    }
+
+    from('src/main/resources') {
+        include '**/*.sh'
+        filter(FixCrLfFilter.class,
+                eol: FixCrLfFilter.CrLf.newInstance("lf")) //convert to unix format
+    }
+
+    into("$buildDir/$tomcatDir")
+}
+
+task deleteReadMeFiles(dependsOn: copyConfigurationOverrides, type: Delete) {
+    delete fileTree("$buildDir/$tomcatDir") {
+        include '**/ReadMe.txt'
+    }
+}
+
+task copyTomcatExtras(dependsOn: deleteReadMeFiles, type: Download) {
+    src 'http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.55/bin/extras/catalina-jmx-remote.jar'
+    dest new File("$buildDir/$tomcatDir/lib", "catalina-jmx-remote.jar")
+}
+
+task copyJwalaDependenciesToTomcatLib(dependsOn: copyTomcatExtras, type: Copy) {
+    from configurations.compile
+    into("$buildDir/$tomcatDir/lib")
+}
+
+task copyJwalaH2EmbededJar(dependsOn: copyJwalaDependenciesToTomcatLib, type: Copy) {
+    project(':jwala-h2-embedded') {
+        dependsOn(build)
+    }
+    from project(':jwala-h2-embedded').file("build/libs")
+    into file("$buildDir/$tomcatDir/lib")
+}
+task copyJwalaAgent(dependsOn: copyJwalaH2EmbededJar, type: Copy) {
+    project(':jwala-tomcat-agent') {
+        dependsOn(build)
+    }
+    from (project(':jwala-tomcat-agent').file("build/libs"))
+    from (file("$buildDir/$tomcatDir/lib/")){
+        include "$jgroups_lib"
+        include "$slf4j_lib"
+        include "$joda_time_lib"
+    }
+    into file("$buildDir/$tomcatDir/data/agent")
+}
+
+task copyJwalaWebappWar(dependsOn: copyJwalaAgent, type: Copy) {
+    project(':jwala-webapp') {
+        dependsOn(build)
+    }
+    from project(':jwala-webapp').file("build/libs")
+    into file("$buildDir/$tomcatDir/data/webapps")
+}
+task copySql(dependsOn: [':jwala-persistence:createDdl', copyJwalaWebappWar], type: Copy) {
+    from project(':jwala-persistence').projectDir
+    include 'create.sql'
+    include 'update.sql'
+    into file("$buildDir/$tomcatDir/data/db")
+}
+
+task createJwalaDb(dependsOn: copySql) << {
+
+    configurations.jdbcdriver.files.each {
+        Sql.classLoader.addURL(it.toURI().toURL())
+    }
+
+    def sql = Sql.newInstance(
+            "jdbc:h2:file://$buildDir/$tomcatDir/data/db/jwala;LOCK_MODE=0",
+            'sa',
+            '',
+            'org.h2.Driver')
+
+    def dbFile = file("$buildDir/$tomcatDir/data/db/jwala.h2.db")
+    if (dbFile.exists()) {
+        sql.execute('drop all objects')
+    }
+    sql.execute(file("$buildDir/$tomcatDir/data/db/create.sql").text)
+    sql.close()
+}
+
+task zipJwalaTomcat(dependsOn: createJwalaDb, type: Zip) {
+    from "$buildDir/$tomcatDir"
+    baseName = 'jwala-tomcat'
+    into "$tomcatDir"// note that this specifies path *in* the archive
+    destinationDir file("$buildDir") // directory that you want your archive to be placed in
+}
+
+task zipJwalaTomcatForLinux(dependsOn: createJwalaDb, type: Zip) {
+    from "$buildDir/$tomcatDir"
+    baseName = 'jwala-tomcat-linux'
+    into "$tomcatDir"// note that this specifies path *in* the archive
+    destinationDir file("$buildDir") // directory that you want your archive to be placed in
+}

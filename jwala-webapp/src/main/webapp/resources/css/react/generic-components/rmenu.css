@@ -1,0 +1,9 @@
+.RMenu.subMenu {
+    display: block;
+    top: -1px;
+    left: 150px;
+}
+
+.RMenu .menuItem {
+    white-space: nowrap;
+}

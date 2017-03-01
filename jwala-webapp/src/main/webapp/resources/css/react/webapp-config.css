@@ -1,0 +1,47 @@
+.WebAppConfig {
+    position: relative;
+}
+
+.WebAppConfig > .btnContainer {
+    float: right;
+    margin-bottom: 2px;
+}
+
+.upArrowIconBtn {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.trashIconBtn {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.UploadWarWidget {
+    text-align: left;
+}
+
+.UploadWarWidget label {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.UploadWarWidget input[type=checkbox] {
+    margin-left: 0;
+    margin-bottom: 8px;
+    width: 15px !important;
+}
+
+.UploadWarWidget input[type=file] {
+    margin-bottom: 5px;
+}
+
+.UploadWarWidget input {
+    width: 275px;
+}
+
+.UploadWarWidget .openCloseProperties > .ui-icon {
+    display: inline-block;
+    position: relative;
+    top: 4px;
+}

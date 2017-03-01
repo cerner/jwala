@@ -1,0 +1,1 @@
+JVM name = ${jvm.jvmName}

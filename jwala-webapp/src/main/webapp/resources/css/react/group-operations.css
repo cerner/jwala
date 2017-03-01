@@ -1,0 +1,105 @@
+.status-widget-container {
+    width: 125px;
+    float: left;
+}
+
+.error-indicator-button {
+    float: right;
+    display: inline-block;
+}
+
+.web-server-control-panel-widget {
+    width: 100%;
+    padding-right: 0px;
+    text-align: right;
+}
+
+.web-server-control-panel-widget > button {
+    display: inline-block;
+    float: right;
+    margin-left: 3px !important;
+}
+
+.WebAppControlPanelWidget {
+    width: 100%;
+    padding-right: 0px;
+    text-align: right;
+}
+
+.WebAppControlPanelWidget > button {
+    display: inline-block;
+    float: left;
+    margin-left: 3px !important;
+}
+
+.jvm-control-panel-widget {
+    width: 100%;
+    padding-right: 0px;
+    text-align: right;
+}
+
+.jvm-control-panel-widget > button {
+    display: inline-block;
+    float: right;
+    margin-left: 3px !important;
+}
+
+.command-status-header {
+    border: none !important;
+    padding: 1px 2px !important;
+}
+
+.command-status-content {
+    height: 120px !important;
+}
+
+.command-status-td {
+    vertical-align: top;
+    min-width: 120px;
+}
+
+.error-status-font {
+    color: rgb(154, 79, 81);
+}
+
+.action-status-font {
+    color: #2e6e9e;
+}
+
+.ui-icon-gear-custom {
+    background-image: url("../../img/react/gear-icon.png") !important;
+    background-position: -1px;
+}
+
+.ui-icon-drain-custom {
+    background-image: url("../../img/react/drain-icon.png") !important;
+        background-position: -1px;
+}
+
+.expand-collapse-loading-indicator-container {
+    height: 60px;
+}
+
+.expand-collapse-loading-indicator-img {
+    width: 50px;
+    height: 40px;
+    padding: 5px 0 5px 0;
+    background: url("../../img/blue-and-light-blue-gears.gif") no-repeat center;
+    vertical-align: middle;
+    margin-left: 450px;
+}
+
+.expand-collapse-loading-indicator-text {
+    color: #2498da;
+    font-size: 18px;
+    padding-left: 50px;
+}
+
+.display-none {
+    display: none;
+}
+
+.start-stop-groups-btn-container {
+    width: 100%;
+    text-align: right;
+}

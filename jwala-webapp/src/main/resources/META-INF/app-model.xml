@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <propertyset name="log4jproperties" />
+    <propertyset name="CommonSecurity" />
+    <propertyset name="JwalaFiles" />
+</properties>

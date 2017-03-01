@@ -1,0 +1,50 @@
+/* Override default theme button css */
+
+.ui-button-text-only .ui-button-text {
+    padding: .2em .5em;
+    font-weight: normal;
+}
+
+.ui-state-disabled {
+    opacity: .85;
+    border: 1px solid #D0D0D0;
+    background: #E8E8E8 url(images/ui-bg_glass_85_dfeffc_1x400.png) 50% 50% repeat-x;
+    font-weight: bold;
+    color: #C0C0C0;
+}
+
+.ui-button {
+    white-space: nowrap
+}
+
+.ui-button-height {
+    height: 22px !important
+}
+
+.ui-alert-border {
+    border: 1px solid #FFBBC8 !important
+}
+
+.flash {
+    border: 1px solid red !important
+}
+
+.ui-icon-thread-dump {
+    background-image: url(../../img/icons/thread-dump.png) !important
+}
+
+.ui-icon-heap-dump {
+    background-image: url(../../img/icons/heap-dump.png) !important
+}
+
+.ui-icon-health-check {
+    background-image: url(../../img/icons/health-check.png) !important
+}
+
+.ui-icon-mgr {
+    background-image: url(../../img/icons/mgr.png)  !important
+}
+
+.ui-button-hide {
+    display: none !important;
+}

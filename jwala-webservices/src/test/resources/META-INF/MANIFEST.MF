@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Implementation-Title: jwala-webservices-test
+Implementation-Version: 1.1.2.999
+Built-By: test_user
+Built-JDK: 1.7.0_45
+Built-Host: USMLVV1SRN464/127.0.0.1
+Build-Time-ISO-8601: 2014-01-01T00:00:00-0500

@@ -1,0 +1,13 @@
+{
+  "name": "JediContext",
+  "templateName": "jedi-context.tpl",
+  "contentType": "text/xml",
+  "configFileName":"jedi-context.xml",
+  "path":"/conf",
+  "entity": {
+    "type": "jvm",
+    "group": "HEALTH CHECK 4.0",
+    "target": "SOMEHOST-LTST-HEALTH-CHECK-4.0-someHost4900-2",
+    "parentName": ""
+  }
+}

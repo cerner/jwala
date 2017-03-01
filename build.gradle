@@ -1,0 +1,389 @@
+description "Jwala is a web application that provides management for a group of Tomcat servers. Jwala is capable of creating and persisting definitions of Group instances, and exposes a RESTful interface to do so. The definition of a Group includes Web Apps, JVMs, Web Servers, and Resources."
+ext {
+    versions = [
+            junit                 : "4.11",
+            pmd                   : "5.1.1",
+            spring                : "4.1.8.RELEASE",
+            spring_security       : "4.1.1.RELEASE",
+            jpa                   : "2.4.0",
+            h2                    : "1.3.175",
+            cxf                   : "3.0.0-milestone1",
+            javax_ws_rs_api       : "2.0",
+            mockito               : "1.9.5",
+            log4j                 : '1.2.17',
+            slf4j                 : '1.7.5',
+            slf4j_log4j12         : '1.7.5',
+            javax_servlet_api     : '3.0.1',
+            csa                   : "4.0.0700.00",
+            commons_fileupload    : '1.3.1',
+            jodaTime              : "2.2",
+            commons_lang          : "3.3.2",
+            commons_logging       : "1.1.1",
+            httpcomponents_core   : "4.3.3",
+            httpcomponents_client : "4.3.3",
+            tomcat                : '7.0.55',
+            ant                   : '1.8.2',
+            groovy                : '2.4.3',
+            jacoco                : '0.7.7.201606060606',
+            objenesis             : '1.0',
+            jgroups               : '3.6.6.Final',
+            commons_io            : '2.4',
+            jkeylockmanager       : '1.2.0',
+            jackson               : '1.9.13',
+            babelcli              : '6.6.4',
+            babeltransform        : '6.5.0',
+            tika                  : '1.14'
+    ]
+}
+
+task(clean) << {
+    delete "build/jacoco"
+}
+
+task(createRelease) << {
+    def gradleProperties = file("gradle.properties")
+    def lines = gradleProperties.readLines()
+    def line = lines.first()
+    def versions = line.split("=")
+    def version = versions.last().replace("-SNAPSHOT", "")
+    lines[0] = "buildVersion=" + version
+    gradleProperties.withWriter {
+        lines.eachWithIndex { l, i ->
+            it.write(l + "\n")
+        }
+    }
+}
+
+task(createSnapshot) << {
+    def gradleProperties = file("gradle.properties")
+    def lines = gradleProperties.readLines()
+    def line = lines.first()
+    def versions = line.split("=")
+    def version = versions.last().replace("-SNAPSHOT", "")
+    def numbers = version.split("\\.")
+    def newNumber = numbers.last().toInteger() + 1
+    numbers[numbers.size() - 1] = newNumber.toString()
+    version = new String()
+    numbers.eachWithIndex { num, i ->
+        if (i < numbers.size() - 1) {
+            version = version + num + "."
+        } else {
+            version = version + num
+        }
+    }
+    lines[0] = "buildVersion=" + version + "-SNAPSHOT"
+    gradleProperties.withWriter {
+        lines.eachWithIndex { l, i ->
+            it.write(l + "\n")
+        }
+    }
+}
+
+// displays progress information just as Gradle does when it retrieves an artifact from a repository.
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:3.1.1'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.1"
+    }
+}
+
+/*** Gradle Plugin for Node: start ***/
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.moowork.gradle:gradle-node-plugin:0.13"
+    }
+}
+
+apply plugin: 'com.moowork.node'
+/*** Gradle Plugin for Node: end ***/
+/*** Maven plugin: start  ***/
+apply plugin: 'maven'
+
+task createMasterPom << {
+    pom {
+        project {
+            groupId 'com.cerner.jwala'
+            artifactId "$project.name"
+            version "$buildVersion"
+            packaging "pom"
+            description "$project.description"
+            modules {
+                module "jwala-common"
+                module "jwala-persistence"
+                module "jwala-services"
+                module "jwala-webapp"
+                module "jwala-webservices"
+                module "jwala-tomcat"
+                module "jwala-tomcat-agent"
+                module "jwala-h2-embedded"
+            }
+            inceptionYear '2016'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            reporting {
+
+                outputDirectory "$project.buildDir/jwalasite"
+                plugins {
+                    plugin {
+                        groupId 'org.apache.maven.plugins'
+                        artifactId 'maven-javadoc-plugin'
+                        version '2.10.4'
+                        configuration {
+                            stylesheetfile "$project.buildDir/jwalasite/src/main/javadoc/stylesheet.css"
+                            show 'public'
+                        }
+                        reportSets{
+                            reportSet{
+                                id 'default'
+                                reports{
+                                    report 'javadoc'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            distributionManagement {
+                site{
+                    id 'jwala'
+                    url "file://$project.buildDir/jwalasite"
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
+
+/*** Maven plugin: start  ***/
+apply plugin: 'build-dashboard'
+buildDashboard {
+    reports {
+        html {
+            destination "build/dashboard.html"
+        }
+    }
+}
+apply plugin: 'project-report'
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "pmd"
+    apply plugin: "jacoco"
+    apply plugin: "eclipse"
+    apply plugin: "maven"
+    sourceCompatibility = 1.8
+
+    group = "com.cerner.jwala"
+
+    version = project.properties['buildVersion']
+/*** Create Module pom's start ***/
+    task createModulePom << {
+        pom {
+            project {
+                groupId 'com.cerner.jwala'
+                artifactId "$project.name"
+                name "$project.name"
+                description "$project.description"
+                version "$buildVersion"
+                inceptionYear '2016'
+                parent{
+                    groupId 'com.cerner.jwala'
+                    artifactId "$rootProject.name"
+                    version "$buildVersion"
+                }
+                 licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
+        }.writeTo("pom.xml")
+    }
+/*** Create Module pom's start ***/
+    plugins.withType(MavenPublishPlugin).whenPluginAdded {
+        publishing {
+            repositories {
+                maven {
+                    url project.properties['publishRepoUrl']
+                    credentials {
+                        username project.properties['publishRepoUser']
+                        password project.properties['publishRepoPassword']
+                    }
+                }
+            }
+            publications {
+                mavenJava(MavenPublication) {
+                    if (project.name.equals('jwala-webapp')) {
+                        from components.web
+                    }else if (project.name.equals('jwala-tomcat')) {
+                        artifact zipJwalaTomcat
+                    }else {
+                        from components.java
+                    }
+                    if (project.name.equals('jwala-persistence')) {
+                        artifact("drop.sql") {
+                            classifier "drop"
+                            extension "sql"
+                        }
+                        artifact("create.sql") {
+                            classifier "create"
+                            extension "sql"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // We need this since this sub project compiles Jwala which have dependencies
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: "$versions.commons_lang"
+        compile group: 'org.slf4j', name: 'slf4j-api', version: "$versions.slf4j"
+
+        testCompile "junit:junit:4.11"
+        testCompile group: 'org.mockito', name: 'mockito-core', version: "$versions.mockito"
+    }
+
+    jar {
+        manifest {
+            attributes(
+                    "Implementation-Title": project.name,
+                    "Implementation-Version": project.version,
+                    "Specification-Number": (null == System.getProperty("gitCommitId") ? "" : "." + System.getProperty("gitCommitId")),
+                    "Build-Number": (null == System.getProperty("buildNumber") ? "" : "." + System.getProperty("buildNumber")),
+                    "Built-By": System.getProperty("user.name"),
+                    "Built-JDK": System.getProperty("java.version"),
+                    "Built-Host": InetAddress.getLocalHost(),
+                    "Build-Time-ISO-8601": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            )
+        }
+    }
+
+    /*** PMD Config: start ***/
+    pmdMain {
+        reports {
+            xml.enabled = true
+            html.enabled = false
+        }
+    }
+
+    pmdTest {
+        reports {
+            xml.enabled = true
+            html.enabled = false
+        }
+    }
+    /*** PMD Config: end ***/
+
+    /*** Jacoco: start ***/
+    jacoco {
+        toolVersion = "$project.versions.jacoco"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled = false
+            csv.enabled = false
+            html.enabled = true
+            html.destination "${buildDir}/jacocoHtml"
+        }
+    }
+
+    test {
+        systemProperties['run.test.types'] = 'integration'
+        systemProperties['spring.profiles.active'] = 'integration'
+    }
+
+    task mergeTestCodeCoverageResults(type: JacocoMerge) {
+        description = 'Merge test code coverage results from all java projects'
+        destinationFile = file("${project.rootProject.buildDir.path}/jacoco/accum.exec")
+        def testFile = file("${project.buildDir.path}/jacoco/test.exec")
+        onlyIf {
+            testFile.exists()
+        }
+        executionData {
+            if (destinationFile.exists()) {
+                return files(destinationFile, testFile);
+            }
+            return files(testFile);
+        }
+    }
+
+    test.finalizedBy mergeTestCodeCoverageResults
+    /*** Jacoco: end ***/
+}
+
+/*** Sonar Runner: start ***/
+apply plugin: "sonar-runner"
+
+repositories {
+    mavenCentral()
+}
+
+// Project wide SonarRunner properties definition
+sonarRunner {
+    sonarProperties {
+        property 'sonar.host.url',  project.properties['sonarHostUrl']
+        property 'sonar.jdbc.url', project.properties['sonarJDBCUrl']
+        property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
+        property 'sonar.jdbc.username', 'sonar'
+        property 'sonar.jdbc.password', 'sonar'
+        property 'sonar.dynamicAnalysis', 'reuseReports'
+        properties["sonar.projectKey"] = 'cto.tco.toc'
+        properties["sonar.projectName"] = 'tomcat operations center'
+        properties["sonar.projectVersion"] =  '1.0.0'
+    }
+}
+
+// Sonar Runner requires sourceCompatibility 1.7 which is the reason why it's in its own subproject
+subprojects {
+    sourceCompatibility = 1.7
+
+    group = "com.cerner.jwala"
+
+    version = project.properties['buildVersion']
+
+    sonarRunner {
+        sonarProperties {
+            property "sonar.junit.reportsPath", test.reports.junitXml.destination   // will be fixed in Gradle 1.12
+            property "sonar.jacoco.reportPath", project.rootProject.buildDir.path + "/jacoco/" + "accum.exec"
+            property "sonar.jacoco.itReportPath", project.rootProject.buildDir.path + "/jacoco/" + "integration_test_jwala.exec"
+
+        }
+    }
+}
+/*** Sonar Runner: end ***/
+
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property 'sonar.jacoco.reportPath', project.rootProject.buildDir.path + "/jacoco/" + "accum.exec"
+        property 'sonar.jacoco.itReportPath', project.rootProject.buildDir.path + "/jacoco/" + "integration_test_jwala.exec"
+        property 'sonar.host.url',  project.properties['sonarHostUrl']
+        property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
+        property 'sonar.projectKey', 'cto.tco.toc'
+	    property 'sonar.projectName', 'tomcat operations center'
+        property 'sonar.projectVersion', '1.0.0'
+	}
+	
+}

@@ -1,0 +1,53 @@
+.tabs-default {
+    list-style: none;
+    padding: 0;
+    height: 13px; /* Removes the space between the tabs and the div that holds the content */
+}
+
+.tabs-default > div > li {
+    background-image: url(../../../../img/react/components/gray-tabs.png);
+    display: inline-block; /* Aligns the tabs side by side and align their bottoms with the top of the content div */
+    padding-left: 10px;
+    margin-right: 5px; /* li element shows the right side of the tab, this property sees to it that the right side tab does not overlap with the left side tab */
+    margin-bottom: -.5px /* Fixes small gap in between div content and inactive tabs for Chrome */
+}
+
+.tabs-default > div > li > a {
+
+    background-image: url(../../../../img/react/components/gray-tabs.png);
+    background-position: right top;
+
+    color: 000000; /* make tabs not look disabled */
+    float: left;
+    line-height: 21px; /* inactive tabs height */
+    padding-right: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    margin-right: -5px; /* li element shows the left side of the tab, this property sees to it that the left side tab does not overlapped with the right side tab */
+}
+
+.tabs-default > div > li.current {
+    background-position: 0 -40px;
+    margin-bottom: -1px /* Overlap the content div in such a way as to remove the div's top border which results to a tab & div merge effect just like in a real folder tab */
+}
+
+.tabs-default > div > li.current > a {
+    line-height: 26px;
+    background-position: 100% -40px;
+    color: black;
+    font-weight: bold;
+}
+
+.tabs-default-panel-selected {
+    border: #C0C0C0 solid 1px;
+    background: #E5E5E5;
+    clear: left;
+    min-height: 610px;
+    padding: 5px 5px 5px 5px;
+}
+
+.Tabs .disabled {
+    opacity: .85;
+    color: #C0C0C0 !important;
+    margin-bottom: -1px /* Fixes small gap in between div content and inactive tabs for Chrome */
+}

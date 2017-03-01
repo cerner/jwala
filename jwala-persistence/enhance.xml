@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":jwala-common")
+
+    compile group: "org.apache.geronimo.specs", name: "geronimo-jpa_2.0_spec", version: "$project.versions.jpa"
+}

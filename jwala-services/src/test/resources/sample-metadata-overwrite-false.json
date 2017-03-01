@@ -1,0 +1,13 @@
+{
+  "deployPath" : "c:/",
+  "templateName" : "ServerXMLTemplate.tpl",
+  "deployFileName" : "server.xml",
+  "contentType" : "application/xml",
+  "overwrite" : "false",
+  "entity" : {
+    "type" : "GROUPED_JVMS",
+    "group" : "HEALTH CHECK 4.0",
+    "target" : "HEALTH CHECK 4.0"
+  },
+  "unpack" : "true"
+}

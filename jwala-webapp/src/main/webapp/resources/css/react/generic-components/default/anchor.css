@@ -1,0 +1,20 @@
+.button-link {
+    text-align:left;
+    background:none!important;
+    border:none;
+    padding:0!important;
+    /* border-bottom:1px solid #444; */
+    text-decoration: underline;
+    cursor: pointer;
+    color: #1d5987;
+}
+
+.button-link:hover {
+    color:#4585C5
+}
+
+.anchor-font-style {
+     font-family: Tahoma, Helvetica, sans-serif !important;
+     font-size: 12px !important;
+     font-weight: normal !important;
+}

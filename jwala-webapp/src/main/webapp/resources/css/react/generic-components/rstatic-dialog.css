@@ -1,0 +1,19 @@
+.RStaticDialog.container {
+    width: 100%;
+    padding: 0 0 0 0 !important;
+    border: none;
+}
+
+.RStaticDialog div.header {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: 20px;
+    text-align: center;
+}
+
+.RStaticDialog div.content {
+    padding: 0 0 0 0 !important;
+    background: #fcfdfd;
+    border: none;
+    overflow: auto;
+}

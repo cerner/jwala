@@ -1,0 +1,8 @@
+.CommandStatusWidget.container {
+    padding: 0 0 0 0 !important;
+    position: relative !important;
+}
+
+.CommandStatusWidget > .title {
+    padding-left: 5px;
+}

@@ -1,0 +1,48 @@
+/* CUSTOM style independent of jQuery UI Theme goes here */
+
+div.noDataFoundMsg {
+    background-color: #F2F2F2;
+    padding: 2px 2px 2px 2px;
+    text-align: center;
+}
+
+tr.row_selected > td {
+    background:#DADADA !important;
+    font-weight:bold
+}
+
+table.dataTable tr.odd { background-color: #F2F2F2; }
+table.dataTable tr.even { background-color: white; }
+
+table.dataTable thead > tr > th {
+    padding: 4px 2px 4px 2px
+}
+
+table.dataTable thead > tr > th > div {
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+span.col-header-title {
+    display: inline-block;
+    float: left
+}
+
+span.col-header-sort-icon {
+    display: inline-block;
+    float: right
+}
+
+td.expand-collapse-control {
+    width: 15px
+}
+
+/* Expanded row container style here */
+
+td.expanded-row-container {
+    background-color: lemonchiffon;
+}
+
+div.expanded-row-container {
+    background-color: lemonchiffon;
+}

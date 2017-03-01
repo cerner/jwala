@@ -1,0 +1,39 @@
+.MediaConfig {
+    position: relative;
+}
+
+.MediaConfig > .btnContainer {
+    float: right;
+    margin-bottom: 2px;
+}
+
+.upArrowIconBtn {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.trashIconBtn {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.MediaConfig label {
+    display: block;
+}
+
+.MediaConfig form > select {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.MediaConfig input {
+    margin-bottom: 5px;
+}
+
+.uploadMediaBusyIcon {
+    padding: 0 0 0 4px;
+}
+
+.mediaTypeSelect {
+    width: 50%;
+}
