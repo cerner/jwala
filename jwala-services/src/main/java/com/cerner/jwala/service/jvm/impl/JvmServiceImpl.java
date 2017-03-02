@@ -496,7 +496,7 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
         //TODO move to constant
-        final String linuxJvmService = "/linux/jvm-service";
+        final String linuxJvmService = "/linux/jvm-service.sh";
         final CommandOutput commandOutput = jvmControlService.executeCreateDirectoryCommand(jvm, stagingArea + "/linux");
         if (commandOutput.getReturnCode().wasSuccessful()) {
             LOGGER.info("created {} directory successfully", stagingArea + "/linux");
@@ -518,7 +518,7 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
         //TODO fix constants
-        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea+"/linux", "jvm-service").getReturnCode().wasSuccessful()) {
+        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea+"/linux", "jvm-service.sh").getReturnCode().wasSuccessful()) {
             String message = "Failed to change the file permissions in " + stagingArea+linuxJvmService + duringCreationMessage + jvmName;
             LOGGER.error(message);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
