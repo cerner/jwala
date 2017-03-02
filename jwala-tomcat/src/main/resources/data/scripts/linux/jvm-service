@@ -15,7 +15,7 @@
 if [ -r /lib/lsb/init-functions ]; then
     . /lib/lsb/init-functions
 else
-    exit 1
+    . /etc/init.d/functions
 fi
 
 TOMCAT_HOME=@TOMCAT_HOME@
