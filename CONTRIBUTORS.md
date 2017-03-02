@@ -7,5 +7,4 @@ Cerner Corporation
 - Manick Prakash
 - Peter Teunissen
 - Rahul Sayini
-
 - Steven Ger
