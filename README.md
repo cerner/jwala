@@ -9,7 +9,7 @@ Jwala utilizes the defined file system structure and SSH agents on each machine 
 
 # _Building_
 
-Jwala can be build by using gradle. To build the jwala project run the "gradle build" command. This runs the build and test tasks. This task creates the jwala-tomcat.war file, which can be run bt dropping it in Apache Tomcat application server. 
+Jwala can be build by using gradle. To build the jwala project run the "gradle build" command. This runs the build and test tasks. This task creates the jwala-tomcat.war file, which can be run by dropping it in Apache Tomcat application server. 
 
 # _Availability_
 
