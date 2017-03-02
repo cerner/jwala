@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "021b2fc0-f280-ed15-8b63-45f77e079055",
+		"_postman_id": "b96d09da-75fc-cc9d-6911-4fea97c2a4f8",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1018,7 +1018,8 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Body matches string\"] = responseBody.has(\"SUCCESS\");"
 								]
 							}
 						}
@@ -1034,8 +1035,7 @@
 									"key": "file",
 									"type": "file",
 									"enabled": true,
-									"src": "../resources/postman/test.json",
-									"value": ""
+									"src": "../resources/postman/test.json"
 								}
 							]
 						},
@@ -5846,7 +5846,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert No file error\"] = jsonData.message === \"No external properties file has been uploaded. Cannot provide a download at this time.\";"
 								]
 							}
 						}
@@ -5883,7 +5886,10 @@
 						"url": "{{url}}/page-constants",
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
