@@ -25,7 +25,7 @@ public class BalancerManagerXmlParserTest {
             "<httpd:manager xmlns:httpd='http://httpd.apache.org'>\n" +
             "  <httpd:balancers>\n" +
             "    <httpd:balancer>\n" +
-            "      <httpd:name>balancer://lb-health-check-4.0</httpd:name>\n" +
+            "      <httpd:name>balancer://lb-myapp</httpd:name>\n" +
             "      <httpd:stickysession>JSESSIONID</httpd:stickysession>\n" +
             "      <httpd:nofailover>On</httpd:nofailover>\n" +
             "      <httpd:timeout>0</httpd:timeout>      <httpd:maxattempts>5</httpd:maxattempts>\n" +
@@ -50,7 +50,7 @@ public class BalancerManagerXmlParserTest {
             "          <httpd:transferred>0</httpd:transferred>\n" +
             "          <httpd:read>0</httpd:read>\n" +
             "          <httpd:elected>0</httpd:elected>\n" +
-            "          <httpd:route>CTO-N9SF-LTST-HEALTH-CHECK-4.0-localhost-3</httpd:route>\n" +
+            "          <httpd:route>jvm-localhost-3</httpd:route>\n" +
             "          <httpd:redirect></httpd:redirect>\n" +
             "          <httpd:busy>0</httpd:busy>\n" +
             "          <httpd:lbset>0</httpd:lbset>\n" +
@@ -88,18 +88,18 @@ public class BalancerManagerXmlParserTest {
         assertEquals(1, balancers.size());
         assertEquals(1, balancers.get(0).getWorkers().size());
 
-        final String balancerName = "lb-health-check-4.0";
+        final String balancerName = "lb-myapp";
         Map<String, String> workers = balancerManagerXmlParser.getWorkers(manager, balancerName);
         assertEquals(1, workers.size());
 
-        Map<String, String> jvmWorkers = balancerManagerXmlParser.getJvmWorkerByName(manager, balancerName, "CTO-N9SF-LTST-HEALTH-CHECK-4.0-localhost-3");
+        Map<String, String> jvmWorkers = balancerManagerXmlParser.getJvmWorkerByName(manager, balancerName, "jvm-localhost-3");
         assertEquals(1, jvmWorkers.size());
     }
 
     @Test
     public void testGetJvmByWorker() {
         Jvm mockJvm = mock(Jvm.class);
-        when(mockJvm.getJvmName()).thenReturn("CTO-N9SF-LTST-HEALTH-CHECK-4.0-localhost-3");
+        when(mockJvm.getJvmName()).thenReturn("jvm-localhost-3");
         when(mockJvm.getHostName()).thenReturn("localhost");
         when(mockJvm.getHttpPort()).thenReturn(9120);
         when(mockJvm.getHttpsPort()).thenReturn(9121);
@@ -107,13 +107,13 @@ public class BalancerManagerXmlParserTest {
         when(mockJvmService.getJvms()).thenReturn(Collections.singletonList(mockJvm));
 
         String jvmName = balancerManagerXmlParser.findJvmNameByWorker("https://localhost:9121/hct");
-        assertEquals("CTO-N9SF-LTST-HEALTH-CHECK-4.0-localhost-3", jvmName);
+        assertEquals("jvm-localhost-3", jvmName);
 
         jvmName = balancerManagerXmlParser.findJvmNameByWorker("http://localhost:9120/hct");
-        assertEquals("CTO-N9SF-LTST-HEALTH-CHECK-4.0-localhost-3", jvmName);
+        assertEquals("jvm-localhost-3", jvmName);
 
         jvmName = balancerManagerXmlParser.findJvmNameByWorker("ajp://localhost:9122/hct");
-        assertEquals("CTO-N9SF-LTST-HEALTH-CHECK-4.0-localhost-3", jvmName);
+        assertEquals("jvm-localhost-3", jvmName);
     }
 
 

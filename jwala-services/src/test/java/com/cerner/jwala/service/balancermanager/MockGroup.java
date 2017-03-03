@@ -123,7 +123,7 @@ public class MockGroup {
         Group myGroup = new Group(groupId, groupName, jvms);
         List<Application> applications = new LinkedList<>();
         Application application = new Application(id(0L, Application.class),
-                "HEALTH-CHECK-4.0",
+                "myapp",
                 "myaWarPath",
                 "/hct",
                 myGroup,
@@ -145,7 +145,7 @@ public class MockGroup {
         Group myGroup = new Group(groupId, groupName);
         List<Application> applications = new LinkedList<>();
         Application application = new Application(id(0L, Application.class),
-                "SLPA-WS-4.0.0800.02",
+                "myapp1",
                 "myaWarPath",
                 "/slpa-test/slum/ws",
                 myGroup,
@@ -166,7 +166,7 @@ public class MockGroup {
         Group myGroup = new Group(groupId, groupName);
         List<Application> applications = new LinkedList<>();
         Application application = new Application(id(0L, Application.class),
-                "HEALTH-CHECK-4.0",
+                "myapp",
                 "myaWarPath",
                 "/hct",
                 myGroup,
