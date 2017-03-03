@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.*;
@@ -123,13 +122,27 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void removeGroup(final String name) {
-        try {
-            groupPersistenceService.removeGroup(name);
-        } catch (PersistenceException e) {
-            LOGGER.error("Error removing group", e);
-            if (e.getMessage().contains("The transaction has been rolled back.  See the nested exceptions for details on the errors that occurred.")) {
-                throw new GroupServiceException("Please check for group dependents Web Apps, Web Servers or JVMs before deleting " + name);
-            }
+        checkForGroupAssociationsBeforeDelete(name);
+        groupPersistenceService.removeGroup(name);
+    }
+
+    private void checkForGroupAssociationsBeforeDelete(String name) {
+        final Group group = groupPersistenceService.getGroup(name);
+        final List<String> existingAssociations = new ArrayList<>();
+        if (group.getJvms().size() > 0) {
+            existingAssociations.add("JVM");
+        }
+        if (group.getApplications().size() > 0) {
+            existingAssociations.add("Application");
+        }
+        Group groupWithWebServers = groupPersistenceService.getGroupWithWebServers(group.getId());
+        if (groupWithWebServers.getWebServers().size() > 0) {
+            existingAssociations.add("Web Server");
+        }
+        if (existingAssociations.size() > 0) {
+            String message = MessageFormat.format("The group {0} cannot be deleted because it is still configured with the following: {1}. Please remove all associations before attempting to delete a group.", name, existingAssociations);
+            LOGGER.info(message);
+            throw new GroupServiceException(message);
         }
     }
 
@@ -380,10 +393,10 @@ public class GroupServiceImpl implements GroupService {
     /**
      * This method executes all the commands for copying the template over to the destination for a group app config file
      *
-     * @param groupName     name of the group in which the application can be found
-     * @param fileName      name of the file that needs to deployed
-     * @param application   the application object for the application to deploy the config file too
-     * @param hostName      name of the host which needs the application file
+     * @param groupName   name of the group in which the application can be found
+     * @param fileName    name of the file that needs to deployed
+     * @param application the application object for the application to deploy the config file too
+     * @param hostName    name of the host which needs the application file
      * @return returns a command output object
      */
     protected CommandOutput executeDeployGroupAppTemplate(final String groupName, final String fileName, final Application application, final String hostName) {

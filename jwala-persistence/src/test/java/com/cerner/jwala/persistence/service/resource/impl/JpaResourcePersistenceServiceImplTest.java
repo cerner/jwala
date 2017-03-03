@@ -51,7 +51,10 @@ public class JpaResourcePersistenceServiceImplTest extends AbstractResourcePersi
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(), getGroupJvmRelationshipService());
+            return new JpaGroupPersistenceServiceImpl(
+                    getGroupCrudService(),
+                    getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
         }
 
         @Bean

@@ -43,8 +43,10 @@ public class JpaJvmPersistenceServiceImplTest extends AbstractJvmPersistenceServ
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(),
-                                                      getGroupJvmRelationshipService());
+            return new JpaGroupPersistenceServiceImpl(
+                    getGroupCrudService(),
+                    getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
         }
 
         @Bean

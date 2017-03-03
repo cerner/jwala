@@ -45,8 +45,10 @@ public class JpaApplicationPersistenceServiceImplTest extends AbstractApplicatio
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(),
-                                                      getGroupJvmRelationshipService());
+            return new JpaGroupPersistenceServiceImpl(
+                    getGroupCrudService(),
+                    getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
         }
 
         @Bean

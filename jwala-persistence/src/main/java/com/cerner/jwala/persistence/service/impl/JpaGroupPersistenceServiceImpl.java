@@ -1,5 +1,6 @@
 package com.cerner.jwala.persistence.service.impl;
 
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.user.User;
@@ -13,11 +14,10 @@ import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.builder.JpaGroupBuilder;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.ConfigTemplate;
+import com.cerner.jwala.persistence.jpa.service.ApplicationCrudService;
 import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
 import com.cerner.jwala.persistence.jpa.service.GroupJvmRelationshipService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,15 +30,18 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
 
     private final GroupCrudService groupCrudService;
     private final GroupJvmRelationshipService groupJvmRelationshipService;
+    private ApplicationCrudService applicationCrudService;
 
 
     @PersistenceContext(unitName = "jwala-unit")
     protected EntityManager entityManager; // We're removing the CRUD layer in the near future so going forward, new methods will be using the entity manager in this class.
 
     public JpaGroupPersistenceServiceImpl(final GroupCrudService theGroupCrudService,
-                                          final GroupJvmRelationshipService theGroupJvmRelationshipService) {
+                                          final GroupJvmRelationshipService theGroupJvmRelationshipService,
+                                          ApplicationCrudService applicationCrudService) {
         groupCrudService = theGroupCrudService;
         groupJvmRelationshipService = theGroupJvmRelationshipService;
+        this.applicationCrudService = applicationCrudService;
     }
 
     @Override
@@ -124,11 +127,12 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
         return groupFrom(groupCrudService.getGroup(removeJvmFromGroupRequest.getGroupId()), false);
     }
 
-    protected Group groupFrom(final JpaGroup aJpaGroup, final boolean fetchWebServers) {
-        return new JpaGroupBuilder(aJpaGroup).setFetchWebServers(fetchWebServers).build();
+    private Group groupFrom(final JpaGroup aJpaGroup, final boolean fetchWebServers) {
+        List<Application> applications = applicationCrudService.findApplicationsBelongingTo(aJpaGroup.getName());
+        return new JpaGroupBuilder(aJpaGroup).setFetchWebServers(fetchWebServers).setApplications(applications).build();
     }
 
-    protected List<Group> groupsFrom(final List<JpaGroup> someJpaGroups, final boolean fetchWebServers) {
+    private List<Group> groupsFrom(final List<JpaGroup> someJpaGroups, final boolean fetchWebServers) {
         final List<Group> groups = new ArrayList<>();
         for (final JpaGroup jpaGroup : someJpaGroups) {
             groups.add(groupFrom(jpaGroup, fetchWebServers));

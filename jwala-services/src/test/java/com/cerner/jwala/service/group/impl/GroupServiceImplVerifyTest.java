@@ -18,6 +18,7 @@ import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.MessagingService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
+import com.cerner.jwala.service.exception.GroupServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
 import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.ResourceHandler;
@@ -395,9 +396,31 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
     @Test
     public void testRemoveGroupName() {
+        Group mockGroup = mock(Group.class);
+        when(mockGroup.getJvms()).thenReturn(new HashSet<Jvm>());
+        when(mockGroup.getApplications()).thenReturn(new HashSet<Application>());
+        Group mockGroupWithWS = mock(Group.class);
+        when(mockGroupWithWS.getWebServers()).thenReturn(new HashSet<WebServer>());
+
+        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(groupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroupWithWS);
+
         final String testGroupName = "testGroupName";
         groupService.removeGroup(testGroupName);
         verify(groupPersistenceService).removeGroup(testGroupName);
+    }
+
+    @Test (expected = GroupServiceException.class)
+    public void testRemoveGroupNameWithExistingAssociations() {
+        Group mockGroup = mock(Group.class);
+        when(mockGroup.getJvms()).thenReturn(Collections.singleton(mock(Jvm.class)));
+        when(mockGroup.getApplications()).thenReturn(Collections.singleton(mock(Application.class)));
+        Group mockGroupWithWS = mock(Group.class);
+        when(mockGroupWithWS.getWebServers()).thenReturn(Collections.singleton(mock(WebServer.class)));
+        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(groupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroupWithWS);
+
+        groupService.removeGroup("still-has-associations");
     }
 
     @Test

@@ -2,14 +2,8 @@ package com.cerner.jwala.persistence.service.webserver.impl;
 
 import com.cerner.jwala.common.configuration.TestExecutionProfile;
 import com.cerner.jwala.persistence.configuration.TestJpaConfiguration;
-import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
-import com.cerner.jwala.persistence.jpa.service.GroupJvmRelationshipService;
-import com.cerner.jwala.persistence.jpa.service.JvmCrudService;
-import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
-import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.GroupJvmRelationshipServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.JvmCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.WebServerCrudServiceImpl;
+import com.cerner.jwala.persistence.jpa.service.*;
+import com.cerner.jwala.persistence.jpa.service.impl.*;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.persistence.service.impl.JpaGroupPersistenceServiceImpl;
@@ -47,7 +41,15 @@ public class JpaWebServerPersistenceServiceImplTest extends AbstractWebServerPer
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService(){
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudServiceImpl(), getGroupJvmRelationshipService());
+            return new JpaGroupPersistenceServiceImpl(
+                    getGroupCrudServiceImpl(),
+                    getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
+        }
+
+        @Bean
+        public ApplicationCrudService getApplicationCrudService() {
+            return new ApplicationCrudServiceImpl();
         }
 
         @Bean
