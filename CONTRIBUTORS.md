@@ -2,7 +2,7 @@ Cerner Corporation
 
 - Arvindo Kinny
 - Jedd Cuison
-- Jeff Mahmood
+- Jeffrey Mahmood
 - Lin-Hung Wu
 - Manick Prakash
 - Peter Teunissen
