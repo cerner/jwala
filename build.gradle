@@ -231,7 +231,13 @@ subprojects {
                     if (project.name.equals('jwala-webapp')) {
                         from components.web
                     }else if (project.name.equals('jwala-tomcat')) {
-                        artifact zipJwalaTomcat
+                        def jwalaZipName = "jwala-tomcat"
+                        if (project.hasProperty("zipOs") && project.properties["zipOs"] == "linux") {
+                            jwalaZipName = 'jwala-tomcat-linux'
+                        }
+                        version = "${buildVersion}"
+                        artifactId = "${jwalaZipName}"
+                        artifact("$buildDir/${jwalaZipName}-${buildVersion}.zip")
                     }else {
                         from components.java
                     }
