@@ -122,28 +122,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void removeGroup(final String name) {
-        checkForGroupAssociationsBeforeDelete(name);
         groupPersistenceService.removeGroup(name);
-    }
-
-    private void checkForGroupAssociationsBeforeDelete(String name) {
-        final Group group = groupPersistenceService.getGroup(name);
-        final List<String> existingAssociations = new ArrayList<>();
-        if (group.getJvms().size() > 0) {
-            existingAssociations.add("JVM");
-        }
-        if (group.getApplications().size() > 0) {
-            existingAssociations.add("Application");
-        }
-        Group groupWithWebServers = groupPersistenceService.getGroupWithWebServers(group.getId());
-        if (groupWithWebServers.getWebServers().size() > 0) {
-            existingAssociations.add("Web Server");
-        }
-        if (existingAssociations.size() > 0) {
-            String message = MessageFormat.format("The group {0} cannot be deleted because it is still configured with the following: {1}. Please remove all associations before attempting to delete a group.", name, existingAssociations);
-            LOGGER.info(message);
-            throw new GroupServiceException(message);
-        }
     }
 
     @Override

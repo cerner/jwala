@@ -4,6 +4,7 @@ import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.user.User;
+import com.cerner.jwala.common.exception.GroupException;
 import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
 import com.cerner.jwala.common.request.group.CreateGroupRequest;
@@ -18,15 +19,20 @@ import com.cerner.jwala.persistence.jpa.service.ApplicationCrudService;
 import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
 import com.cerner.jwala.persistence.jpa.service.GroupJvmRelationshipService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaGroupPersistenceServiceImpl.class);
 
     private final GroupCrudService groupCrudService;
     private final GroupJvmRelationshipService groupJvmRelationshipService;
@@ -106,8 +112,30 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
 
     @Override
     public void removeGroup(final Identifier<Group> aGroupId) throws NotFoundException {
+        checkForExistingAssociationsBeforeRemove(aGroupId);
+
         groupJvmRelationshipService.removeRelationshipsForGroup(aGroupId);
         groupCrudService.removeGroup(aGroupId);
+    }
+
+    private void checkForExistingAssociationsBeforeRemove(Identifier<Group> aGroupId) {
+        final Group group = getGroup(aGroupId);
+        final List<String> existingAssociations = new ArrayList<>();
+        if (group.getJvms().size() > 0) {
+            existingAssociations.add("JVM");
+        }
+        if (group.getApplications().size() > 0) {
+            existingAssociations.add("Application");
+        }
+        Group groupWithWebServers = getGroupWithWebServers(group.getId());
+        if (groupWithWebServers.getWebServers().size() > 0) {
+            existingAssociations.add("Web Server");
+        }
+        if (existingAssociations.size() > 0) {
+            String message = MessageFormat.format("The group {0} cannot be deleted because it is still configured with the following: {1}. Please remove all associations before attempting to delete a group.", group.getName(), existingAssociations);
+            LOGGER.info(message);
+            throw new GroupException(message);
+        }
     }
 
     @Override
