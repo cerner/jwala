@@ -46,24 +46,38 @@ buildscript {
     dependencies { classpath 'de.undercouch:gradle-download-task:3.1.1' }
 }
 
-task downloadDeploymentBinaries(type: Download) {
-        src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl, tomcatBinaryUrl, unZipExeBinaryUrl])
-        dest "$buildDir/$tomcatDir/data/binaries"
+task deleteStagingDir(type: Delete) {
+    delete "$buildDir/$tomcatDir"
 }
 
-task downloadTomcat(dependsOn: downloadDeploymentBinaries, type: Download) {
-        src "${tomcatBinaryUrl}"
-        dest new File(buildDir, new File("${tomcatBinaryUrl}").getName())
+task downloadDeploymentBinaries(dependsOn: deleteStagingDir, type: Download) {
+    src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl, unZipExeBinaryUrl])
+    dest "$buildDir/$tomcatDir/data/binaries"
+}
+
+task downloadDeploymentBinariesLinux(dependsOn: deleteStagingDir, type: Download) {
+    src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl])
+    dest "$buildDir/$tomcatDir/data/binaries"
+}
+
+task downloadTomcat(type: Download) {
+    if (project.hasProperty("zipOs") && zipOs == "linux") {
+        dependsOn downloadDeploymentBinariesLinux
+    } else {
+        dependsOn downloadDeploymentBinaries
+    }
+    src "${tomcatBinaryUrl}"
+    dest new File(buildDir, new File("${tomcatBinaryUrl}").getName())
 }
 
 task downloadAndUnzipTomcat(dependsOn: downloadTomcat, type: Copy) {
-        from zipTree(downloadTomcat.dest)
-        into buildDir
+    from zipTree(downloadTomcat.dest)
+    into buildDir
 }
 
 task deleteDownloadedZip(dependsOn: downloadAndUnzipTomcat, type: Delete) {
-        delete new File("$buildDir", new File("${tomcatBinaryUrl}").getName())
-        delete new File("$buildDir/$tomcatDir", 'webapps')
+    delete new File("$buildDir", new File("${tomcatBinaryUrl}").getName())
+    delete new File("$buildDir/$tomcatDir", 'webapps')
 }
 
 task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
@@ -107,8 +121,8 @@ task copyJwalaAgent(dependsOn: copyJwalaH2EmbededJar, type: Copy) {
     project(':jwala-tomcat-agent') {
         dependsOn(build)
     }
-    from (project(':jwala-tomcat-agent').file("build/libs"))
-    from (file("$buildDir/$tomcatDir/lib/")){
+    from(project(':jwala-tomcat-agent').file("build/libs"))
+    from(file("$buildDir/$tomcatDir/lib/")) {
         include "$jgroups_lib"
         include "$slf4j_lib"
         include "$joda_time_lib"
@@ -152,14 +166,11 @@ task createJwalaDb(dependsOn: copySql) << {
 
 task zipJwalaTomcat(dependsOn: createJwalaDb, type: Zip) {
     from "$buildDir/$tomcatDir"
-    baseName = 'jwala-tomcat'
-    into "$tomcatDir"// note that this specifies path *in* the archive
-    destinationDir file("$buildDir") // directory that you want your archive to be placed in
-}
-
-task zipJwalaTomcatForLinux(dependsOn: createJwalaDb, type: Zip) {
-    from "$buildDir/$tomcatDir"
-    baseName = 'jwala-tomcat-linux'
+    if (project.hasProperty("zipOs") && zipOs == "linux") {
+        baseName = 'jwala-tomcat-linux'
+    } else {
+        baseName = 'jwala-tomcat'
+    }
     into "$tomcatDir"// note that this specifies path *in* the archive
     destinationDir file("$buildDir") // directory that you want your archive to be placed in
 }
