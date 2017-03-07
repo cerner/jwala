@@ -1,7 +1,7 @@
 package com.cerner.jwala.service.app.impl;
 
 import com.cerner.jwala.commandprocessor.impl.jsch.JschBuilder;
-import com.cerner.jwala.commandprocessor.impl.jsch.JschScpCmdProcessorImpl;
+import com.cerner.jwala.commandprocessor.impl.jsch.JschScpCommandProcessorImpl;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.exec.*;
@@ -35,7 +35,7 @@ public class ApplicationCommandServiceImpl implements ApplicationCommandService 
         ExecCommand execCommand = new ExecCommand("secure-copy", params[1], params[2]);
         RemoteExecCommand remoteCommand = new RemoteExecCommand(remoteConnection, execCommand);
         try {
-            final JschScpCmdProcessorImpl jschScpCommandProcessor = new JschScpCmdProcessorImpl(jschBuilder.build(), remoteCommand);
+            final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(jschBuilder.build(), remoteCommand);
             jschScpCommandProcessor.processCommand();
             // if processCommand fails it throws an exception before completing
             return new CommandOutput(new ExecReturnCode(0), "", "");
