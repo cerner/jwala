@@ -447,6 +447,11 @@ public class GroupServiceImpl implements GroupService {
         return group;
     }
 
+    /**
+     * Check for future error statuses of all jvms
+     *
+     * @param futureMap a map of all jvm keys and their Future object values
+     */
     private void checkJvmGenerateAndDeployFutureErrorStatus(final Map<String, Future<Jvm>> futureMap) {
         final Map<String, List<String>> errorMap = new HashMap<>(futureMap.size());
         final long timeout = Long.parseLong(ApplicationProperties.get("remote.jwala.execution.timeout.seconds", "600"));
