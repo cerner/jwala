@@ -87,6 +87,7 @@ task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
 
     from('src/main/resources') {
         include '**/*.sh'
+        include '**/*/*.sh'
         filter(FixCrLfFilter.class,
                 eol: FixCrLfFilter.CrLf.newInstance("lf")) //convert to unix format
     }

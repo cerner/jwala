@@ -11,8 +11,12 @@
 # chkconfig: 2345 99 10
 ### END INIT INFO
 
-# Source function library.
-. /etc/init.d/functions
+# Source LSB function library.
+if [ -r /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+else
+    . /etc/init.d/functions
+fi
 
 TOMCAT_HOME=@TOMCAT_HOME@
 TOMCAT_HOME_BIN=$TOMCAT_HOME/bin
@@ -83,6 +87,7 @@ start() {
     # chmod -R 755 ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/bin
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/work
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
+    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/temp
     $SU - $TOMCAT_USER -c "pushd $TOMCAT_HOME_BIN; ./startup.sh; popd"
     echo "."
 }
