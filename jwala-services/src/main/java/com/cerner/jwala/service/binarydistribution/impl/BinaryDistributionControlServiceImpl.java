@@ -7,6 +7,7 @@ import com.cerner.jwala.common.exec.*;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
+import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.control.configuration.AemSshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
+
+import static com.cerner.jwala.control.AemControl.Properties.*;
 
 /**
  * Created by Arvindo Kinny on 10/11/2016.
@@ -75,7 +78,7 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
 
     @Override
     public CommandOutput unzipBinary(final String hostname, final String zipPath, final String destination, final String exclude) throws CommandFailureException {
-        String command = getUnzipCommand(zipPath,destination);
+        String command = getUnzipCommand(zipPath, destination, exclude);
         RemoteCommandReturnInfo remoteCommandReturnInfo = remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(hostname),  new ExecCommand(command)));
         CommandOutput commandOutput = new CommandOutput(new ExecReturnCode(remoteCommandReturnInfo.retCode),
                 remoteCommandReturnInfo.standardOuput, remoteCommandReturnInfo.errorOupout);
@@ -136,14 +139,8 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
      * @param destination
      * @return
      */
-    private String getUnzipCommand(String zipFileName, String destination){
-            if(zipFileName.indexOf(".zip")>-1){
-            return ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR)+"/unzip.exe -q -o \"" + zipFileName + "\" -d \"" + destination + "\""; /*-x \" + aParams[3]"; TODO: exclude list*/
-        }else if(zipFileName.indexOf(".gz")>-1){
-            return String.format("tar xvf %s -C %s", zipFileName, destination);
-        }else{
-            throw new ApplicationException("Unknown zip file format");
-        }
+    private String getUnzipCommand(String zipFileName, String destination, String excludeFiles){
+            return ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR)+"/"+ UNZIP_SCRIPT_NAME +" " + zipFileName + " " + destination + " " + excludeFiles;
     }
 }
 

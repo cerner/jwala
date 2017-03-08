@@ -12,11 +12,7 @@
 ### END INIT INFO
 
 # Source LSB function library.
-if [ -r /lib/lsb/init-functions ]; then
-    . /lib/lsb/init-functions
-else
-    . /etc/init.d/functions
-fi
+. /etc/init.d/functions
 
 TOMCAT_HOME=@TOMCAT_HOME@
 TOMCAT_HOME_BIN=$TOMCAT_HOME/bin
@@ -88,6 +84,7 @@ start() {
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/work
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/temp
+    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/data
     $SU - $TOMCAT_USER -c "pushd $TOMCAT_HOME_BIN; ./startup.sh; popd"
     echo "."
 }

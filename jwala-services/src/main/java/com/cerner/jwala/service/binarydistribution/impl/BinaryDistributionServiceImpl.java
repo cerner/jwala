@@ -24,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.File;
 import java.text.MessageFormat;
 
+import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
+
 /**
  * Created by Arvindo Kinny on 10/11/2016
  */
@@ -199,6 +201,10 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
         return result;
     }
 
+    /**
+     * Distrubute unzip.exe for windows and unzip.sh for other OS
+     * @param hostname host name
+     */
     @Override
     public void distributeUnzip(String hostname) {
         LOGGER.info("Start deploy unzip for {}", hostname);
@@ -206,14 +212,20 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
         if (!remoteFileCheck(hostname, jwalaScriptsPath)) {
             remoteCreateDirectory(hostname, jwalaScriptsPath);
         }
-
         if (!remoteFileCheck(hostname, jwalaScriptsPath + "/" + UNZIPEXE)) {
             final String unzipFile = ApplicationProperties.get(PropertyKeys.LOCAL_JWALA_BINARY_DIR) + "/" + UNZIPEXE;
             LOGGER.info("SCP {} " + unzipFile);
             remoteSecureCopyFile(hostname, unzipFile,  jwalaScriptsPath + "/" + UNZIPEXE);
             changeFileMode(hostname, "a+x", jwalaScriptsPath, UNZIPEXE);
         }
-
+        final String remoteUnzipScriptPath = jwalaScriptsPath + "/" + UNZIP_SCRIPT_NAME;
+        final String destinationUnzipScriptPath = ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR) + "/" + UNZIP_SCRIPT_NAME;
+        if (!remoteFileCheck(hostname, remoteUnzipScriptPath)) {
+            final String unzipScriptFile = ApplicationProperties.get(PropertyKeys.SCRIPTS_PATH)+ "/" + UNZIP_SCRIPT_NAME;
+            LOGGER.info("SCP {} " + unzipScriptFile);
+            remoteSecureCopyFile(hostname, unzipScriptFile,  remoteUnzipScriptPath);
+            changeFileMode(hostname, "a+x", jwalaScriptsPath, UNZIP_SCRIPT_NAME.getValue());
+        }
         LOGGER.info("End deploy unzip for {}", hostname);
     }
 
