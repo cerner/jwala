@@ -60,6 +60,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.cerner.jwala.control.AemControl.Properties.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -333,7 +335,7 @@ public class JvmServiceImpl implements JvmService {
             // copy the install and deploy scripts
             deployScriptsToUserJwalaScriptsDir(jvm, user);
 
-            // delete the service, needs install-service.bat
+            // delete the service
             deleteJvmService(new ControlJvmRequest(jvm.getId(), JvmControlOperation.DELETE_SERVICE), jvm, user);
 
             // create the jar file
@@ -461,7 +463,7 @@ public class JvmServiceImpl implements JvmService {
         final ControlJvmRequest secureCopyRequest = new ControlJvmRequest(jvm.getId(), JvmControlOperation.SCP);
         final String commandsScriptsPath = ApplicationProperties.get("commands.scripts-path");
 
-        final String deployConfigJarPath = commandsScriptsPath + '/' + AemControl.Properties.DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME.getValue();
+        final String deployConfigJarPath = commandsScriptsPath + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
         final String jvmName = jvm.getJvmName();
         final String userId = user.getId();
         final String scriptsDir = ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR);
@@ -471,7 +473,7 @@ public class JvmServiceImpl implements JvmService {
         createParentDir(jvm, stagingArea);
         final String failedToCopyMessage = "Failed to secure copy ";
         final String duringCreationMessage = " during the creation of ";
-        final String destinationDeployJarPath = stagingArea + '/' + AemControl.Properties.DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME.getValue();
+        final String destinationDeployJarPath = stagingArea + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
         final boolean alwaysOverwriteScripts = true;
         if (!jvmControlService.secureCopyFile(secureCopyRequest, deployConfigJarPath, destinationDeployJarPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
             String message = failedToCopyMessage + deployConfigJarPath + duringCreationMessage + jvmName;
@@ -479,24 +481,24 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
 
-        final String installServicePath = commandsScriptsPath + '/' + AemControl.Properties.INSTALL_SERVICE_SCRIPT_NAME.getValue();
-        final String destinationInstallServicePath = stagingArea + '/' + AemControl.Properties.INSTALL_SERVICE_SCRIPT_NAME.getValue();
+        final String installServicePath = commandsScriptsPath + '/' + INSTALL_SERVICE_SCRIPT_NAME;
+        final String destinationInstallServicePath = stagingArea + '/' + INSTALL_SERVICE_SCRIPT_NAME;
 
         if (!jvmControlService.secureCopyFile(secureCopyRequest, installServicePath, destinationInstallServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
             String message = failedToCopyMessage + installServicePath + duringCreationMessage + jvmName;
             LOGGER.error(message);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
-        final String deleteServicePath = commandsScriptsPath + "/" + AemControl.Properties.DELETE_SERVICE_SCRIPT_NAME.getValue();
-        final String destinationDeleteServicePath = stagingArea + "/" + AemControl.Properties.DELETE_SERVICE_SCRIPT_NAME.getValue();
+        final String deleteServicePath = commandsScriptsPath + "/" + DELETE_SERVICE_SCRIPT_NAME;
+        final String destinationDeleteServicePath = stagingArea + "/" + DELETE_SERVICE_SCRIPT_NAME;
 
         if (!jvmControlService.secureCopyFile(secureCopyRequest, deleteServicePath, destinationDeleteServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + installServicePath + duringCreationMessage + jvmName;
+            String message = failedToCopyMessage + deleteServicePath + duringCreationMessage + jvmName;
             LOGGER.error(message);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
         //TODO move to constant
-        final String linuxJvmService = "/linux/jvm-service";
+        final String linuxJvmService = "/linux/jvm-service.sh";
         final CommandOutput commandOutput = jvmControlService.executeCreateDirectoryCommand(jvm, stagingArea + "/linux");
         if (commandOutput.getReturnCode().wasSuccessful()) {
             LOGGER.info("created {} directory successfully", stagingArea + "/linux");
@@ -518,7 +520,7 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
         //TODO fix constants
-        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea+"/linux", "jvm-service").getReturnCode().wasSuccessful()) {
+        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea+"/linux", "jvm-service.sh").getReturnCode().wasSuccessful()) {
             String message = "Failed to change the file permissions in " + stagingArea+linuxJvmService + duringCreationMessage + jvmName;
             LOGGER.error(message);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
@@ -622,7 +624,7 @@ public class JvmServiceImpl implements JvmService {
             String standardError =
                     execData.getStandardError().isEmpty() ? execData.getStandardOutput() : execData.getStandardError();
             LOGGER.error("Installing windows service {} failed :: ERROR: {}", jvm.getJvmName(), standardError);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Installing windows service failed for " + AemControl.Properties.INSTALL_SERVICE_SCRIPT_NAME  +".  Please refer to the history window.");
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Installing windows service failed for " + INSTALL_SERVICE_SCRIPT_NAME  +".  Please refer to the history window.");
         }
     }
 

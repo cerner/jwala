@@ -29,6 +29,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
 
+import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -267,9 +268,11 @@ public class BinaryDistributionServiceImplTest {
     public void testPrepareUnzip() throws CommandFailureException {
         final String hostname = "localhost";
         final String jwalaScriptsPath = ApplicationProperties.get("remote.commands.user-scripts");
+        final String remoteUnzipScriptPath = jwalaScriptsPath + "/" + UNZIP_SCRIPT_NAME;
         when(Config.mockBinaryDistributionControlService.checkFileExists(hostname, jwalaScriptsPath)).thenReturn(new CommandOutput(new ExecReturnCode(1), "FAIL", ""));
         when(Config.mockBinaryDistributionControlService.createDirectory(hostname, jwalaScriptsPath)).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
         when(Config.mockBinaryDistributionControlService.checkFileExists(hostname, jwalaScriptsPath + "/unzip.exe")).thenReturn(new CommandOutput(new ExecReturnCode(1), "FAIL", ""));
+        when(Config.mockBinaryDistributionControlService.checkFileExists(hostname, remoteUnzipScriptPath)).thenReturn(new CommandOutput(new ExecReturnCode(1), "FAIL", ""));
         when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
         when(Config.mockBinaryDistributionControlService.changeFileMode(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
         binaryDistributionService.distributeUnzip(hostname);

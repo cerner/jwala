@@ -31,7 +31,7 @@ public class BalancerManagerServiceRestImpl implements BalancerManagerServiceRes
             return ResponseBuilder.ok(balancerManagerState);
         } catch (InternalErrorException iee) {
             LOGGER.error("Failed to drain web servers {} of group {}!", webServerNames, groupName, iee);
-            final String message = "Please make sure that the ff web servers " + webServerNames + " in group " + groupName + " are STARTED before draining.";
+            final String message = "Please make sure that the following web servers " + webServerNames + " in group " + groupName + " are STARTED before draining.";
             return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR, new FaultCodeException(
                     FaultType.SERVICE_EXCEPTION, iee.getMessage() + " " + message, iee));
         }

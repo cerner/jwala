@@ -330,7 +330,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
 
         webServerControlService.secureCopyFile(webServerName, serviceDeleteScriptPath, remoteDestDeleteScriptPath, userId);
 
-        final String installLinuxServiceWsScriptName = "linux/httpd-ws-service";
+        final String installLinuxServiceWsScriptName = "linux/httpd-ws-service.sh";
         final String sourceLinuxInstallServiceWsServicePath = COMMANDS_SCRIPTS_PATH + "/" + installLinuxServiceWsScriptName;
         webServerControlService.createDirectory(webServer, remoteScriptDir+"/linux");
         webServerControlService.secureCopyFile(webServerName, sourceLinuxInstallServiceWsServicePath, remoteScriptDir + "/" + installLinuxServiceWsScriptName, userId);

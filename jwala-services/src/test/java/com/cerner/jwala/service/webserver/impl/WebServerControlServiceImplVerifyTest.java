@@ -24,7 +24,6 @@ import com.cerner.jwala.service.MessagingService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
 import com.cerner.jwala.service.binarydistribution.DistributionService;
-import com.cerner.jwala.service.host.HostService;
 import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import org.apache.commons.lang3.StringUtils;
@@ -71,7 +70,6 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
     @Before
     public void setup() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources");
-        when(Config.mockHostService.getUName(anyString())).thenReturn(HostService.UNAME_CYGWIN);
         user = new User("unused");
     }
 
@@ -270,9 +268,6 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         static DistributionService mockDistributionService;
 
         @Mock
-        static HostService mockHostService;
-
-        @Mock
         static WebServerService mockWebServerService;
 
         @Mock
@@ -299,11 +294,6 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         @Bean
         public DistributionService getMockDistributionService() {
             return mockDistributionService;
-        }
-
-        @Bean
-        public HostService getMockHostService() {
-            return mockHostService;
         }
 
         @Bean
@@ -334,7 +324,7 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         @Bean
         @Scope("prototype")
         public WebServerControlService getWebServerControlService() {
-            reset(mockWebServerCommandFactory, mockDistributionService, mockHostService, mockWebServerService,
+            reset(mockWebServerCommandFactory, mockDistributionService, mockWebServerService,
                   mockMessagingService, mockHistoryFacadeService, mockRemoteCommandExecutorService,
                   mockSshConfig);
             return new WebServerControlServiceImpl();
