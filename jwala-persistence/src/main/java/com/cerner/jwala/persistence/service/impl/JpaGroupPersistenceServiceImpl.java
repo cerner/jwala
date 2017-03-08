@@ -44,7 +44,7 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
 
     public JpaGroupPersistenceServiceImpl(final GroupCrudService theGroupCrudService,
                                           final GroupJvmRelationshipService theGroupJvmRelationshipService,
-                                          ApplicationCrudService applicationCrudService) {
+                                          final ApplicationCrudService applicationCrudService) {
         groupCrudService = theGroupCrudService;
         groupJvmRelationshipService = theGroupJvmRelationshipService;
         this.applicationCrudService = applicationCrudService;

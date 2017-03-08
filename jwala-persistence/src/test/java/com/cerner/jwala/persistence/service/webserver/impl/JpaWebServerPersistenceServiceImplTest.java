@@ -28,22 +28,20 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
         classes = {JpaWebServerPersistenceServiceImplTest.Config.class
         })
-public class JpaWebServerPersistenceServiceImplTest extends AbstractWebServerPersistenceServiceTest{
+public class JpaWebServerPersistenceServiceImplTest extends AbstractWebServerPersistenceServiceTest {
 
     @Configuration
     @Import(TestJpaConfiguration.class)
     static class Config {
 
         @Bean
-        public WebServerPersistenceService getWebServerPersistenceService(){
+        public WebServerPersistenceService getWebServerPersistenceService() {
             return new WebServerPersistenceServiceImpl(getGroupCrudServiceImpl(), getWebServerCrudServiceImpl());
         }
 
         @Bean
-        public GroupPersistenceService getGroupPersistenceService(){
-            return new JpaGroupPersistenceServiceImpl(
-                    getGroupCrudServiceImpl(),
-                    getGroupJvmRelationshipService(),
+        public GroupPersistenceService getGroupPersistenceService() {
+            return new JpaGroupPersistenceServiceImpl(getGroupCrudServiceImpl(), getGroupJvmRelationshipService(),
                     getApplicationCrudService());
         }
 
@@ -53,22 +51,22 @@ public class JpaWebServerPersistenceServiceImplTest extends AbstractWebServerPer
         }
 
         @Bean
-        public GroupCrudService getGroupCrudServiceImpl(){
+        public GroupCrudService getGroupCrudServiceImpl() {
             return new GroupCrudServiceImpl();
         }
 
         @Bean
-        public WebServerCrudService getWebServerCrudServiceImpl(){
+        public WebServerCrudService getWebServerCrudServiceImpl() {
             return new WebServerCrudServiceImpl();
         }
 
         @Bean
-        public GroupJvmRelationshipService getGroupJvmRelationshipService(){
+        public GroupJvmRelationshipService getGroupJvmRelationshipService() {
             return new GroupJvmRelationshipServiceImpl(getGroupCrudServiceImpl(), getJvmCrudServiceImpl());
         }
 
         @Bean
-        public JvmCrudService getJvmCrudServiceImpl(){
+        public JvmCrudService getJvmCrudServiceImpl() {
             return new JvmCrudServiceImpl();
         }
 

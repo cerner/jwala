@@ -33,8 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableTransactionManagement
 @IfProfileValue(name = TestExecutionProfile.RUN_TEST_TYPES, value = TestExecutionProfile.INTEGRATION)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
-                      classes = {JpaJvmPersistenceServiceImplTest.Config.class
-                      })
+        classes = {JpaJvmPersistenceServiceImplTest.Config.class
+        })
 public class JpaJvmPersistenceServiceImplTest extends AbstractJvmPersistenceServiceTest {
 
     @Configuration
@@ -43,9 +43,7 @@ public class JpaJvmPersistenceServiceImplTest extends AbstractJvmPersistenceServ
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(
-                    getGroupCrudService(),
-                    getGroupJvmRelationshipService(),
+            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(), getGroupJvmRelationshipService(),
                     getApplicationCrudService());
         }
 
@@ -67,7 +65,7 @@ public class JpaJvmPersistenceServiceImplTest extends AbstractJvmPersistenceServ
         @Bean
         public GroupJvmRelationshipService getGroupJvmRelationshipService() {
             return new GroupJvmRelationshipServiceImpl(getGroupCrudService(),
-                                                       getJvmCrudService());
+                    getJvmCrudService());
         }
 
         @Bean
@@ -76,6 +74,8 @@ public class JpaJvmPersistenceServiceImplTest extends AbstractJvmPersistenceServ
         }
 
         @Bean
-        public MediaDao getMediaDao() { return new MediaDaoImpl(); }
+        public MediaDao getMediaDao() {
+            return new MediaDaoImpl();
+        }
     }
 }

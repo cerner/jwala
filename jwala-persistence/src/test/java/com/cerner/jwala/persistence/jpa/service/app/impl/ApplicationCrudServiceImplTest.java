@@ -83,15 +83,13 @@ public class ApplicationCrudServiceImplTest {
     static class Config {
 
         @Bean
-        public MediaDao getMediaDao(){
+        public MediaDao getMediaDao() {
             return new MediaDaoImpl();
         }
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(
-                    getGroupCrudService(),
-                    getGroupJvmRelationshipService(),
+            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(), getGroupJvmRelationshipService(),
                     getApplicationCrudService());
         }
 
@@ -286,7 +284,7 @@ public class ApplicationCrudServiceImplTest {
         assertEquals("new template content", updatedContent);
     }
 
-    @Test (expected = ResourceTemplateUpdateException.class)
+    @Test(expected = ResourceTemplateUpdateException.class)
     public void testUpdateResourceTemplate() {
         CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "testHost", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
         JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
@@ -331,7 +329,7 @@ public class ApplicationCrudServiceImplTest {
         CreateApplicationRequest createTestApp = new CreateApplicationRequest(new Identifier<Group>(jpaGroup.getId()), "testAppName", "/testApp", true, true, false);
         JpaApplication jpaApp = applicationCrudService.createApplication(createTestApp, jpaGroup);
 
-        CreateJvmRequest createJvmRequest =new CreateJvmRequest("testJvmName", "hostName", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
+        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "hostName", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
         JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
 
         List<JpaJvm> jvmList = new ArrayList<>();
