@@ -20,10 +20,16 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+HTTPD_LANG=${HTTPD_LANG-"C"}
+
+INITLOGS_ARGS=""
+
 apache_home=@APACHE_HOME@
 httpd_conf=@HTTPD_CONF@
+httpd=${HTTPD-$apache_home/bin/httpd}
+prog=httpd
 pidfile=${PIDFILE-$apache_home/logs/httpd.pid}
-lockfile=${LOCKFILE-$apache_home/logs/httpd}
+lockfile=${LOCKFILE-$apache_home/logs/httpd.lck}
 RETVAL=0
 STOP_TIMEOUT=${STOP_TIMEOUT-10}
 
@@ -33,10 +39,8 @@ STOP_TIMEOUT=${STOP_TIMEOUT-10}
 # are expected to behave here.
 start() {
         echo -n $"Starting $prog: "
-        pushd $apache_home/bin
-        sudo ./apachectl -f $httpd_conf
+        LANG=$HTTPD_LANG daemon --pidfile=${pidfile} $httpd -f $httpd_conf $OPTIONS
         RETVAL=$?
-        popd
         echo
         [ $RETVAL = 0 ] && touch ${lockfile}
         return $RETVAL
