@@ -89,6 +89,8 @@ public class JvmCommandFactory {
                 -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForInstallService(jvm))));
         commands.put(JvmControlOperation.DELETE_SERVICE.getExternalValue(), (Jvm jvm)
                 -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForDeleteService(jvm))));
+        commands.put(JvmControlOperation.CHECK_SERVICE_STATUS.getExternalValue(), (Jvm jvm)
+                -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForCheckServiceStatus(jvm))));
 
     }
 
@@ -227,6 +229,13 @@ public class JvmCommandFactory {
         return new ExecCommand(ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR)+
                                 "/" + jvm.getJvmName() + "/" +
                                 DELETE_SERVICE_SCRIPT_NAME.getValue(), jvm.getJvmName());
+    }
+
+    private ExecCommand getExecCommandForCheckServiceStatus(Jvm jvm){
+        return new ExecCommand(
+                ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR)+
+                "/" + jvm.getJvmName() + "/" +
+                SERVICE_STATUS_SCRIPT_NAME.getValue(), jvm.getJvmName());
     }
 
     private ExecCommand getExecCommandForStopService(Jvm jvm){

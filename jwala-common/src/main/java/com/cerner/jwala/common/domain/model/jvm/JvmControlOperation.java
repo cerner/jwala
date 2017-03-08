@@ -40,7 +40,9 @@ public enum JvmControlOperation {
 
     CHANGE_FILE_MODE("changeFileMode", NO_JVM_IN_PROGRESS_STATE),
 
-    CHECK_FILE_EXISTS("checkFileExists", NO_JVM_IN_PROGRESS_STATE);
+    CHECK_FILE_EXISTS("checkFileExists", NO_JVM_IN_PROGRESS_STATE),
+
+    CHECK_SERVICE_STATUS("checkServiceStatus", NO_JVM_IN_PROGRESS_STATE);
 
     private static final Map<String, JvmControlOperation> LOOKUP_MAP = new HashMap<>();
 
