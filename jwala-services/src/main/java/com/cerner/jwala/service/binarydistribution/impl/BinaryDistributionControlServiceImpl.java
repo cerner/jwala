@@ -78,8 +78,10 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
 
     @Override
     public CommandOutput unzipBinary(final String hostname, final String zipPath, final String destination, final String exclude) throws CommandFailureException {
-        String command = getUnzipCommand(zipPath, destination, exclude);
-        RemoteCommandReturnInfo remoteCommandReturnInfo = remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(hostname),  new ExecCommand(command)));
+        String remoteUnZipScriptPath = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR) + "/" + UNZIP_SCRIPT_NAME;
+        RemoteCommandReturnInfo remoteCommandReturnInfo = remoteCommandExecutorService.executeCommand(
+                                                          new RemoteExecCommand(getConnection(hostname),
+                                                                  new ExecCommand(remoteUnZipScriptPath, zipPath, destination, exclude)));
         CommandOutput commandOutput = new CommandOutput(new ExecReturnCode(remoteCommandReturnInfo.retCode),
                 remoteCommandReturnInfo.standardOuput, remoteCommandReturnInfo.errorOupout);
         return commandOutput;
@@ -131,16 +133,6 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
      */
     private RemoteSystemConnection getConnection(String host) {
         return new RemoteSystemConnection(sshConfig.getUserName(), sshConfig.getEncryptedPassword(), host, sshConfig.getPort());
-    }
-
-    /**
-     * Determine to use unzip or tar
-     * @param zipFileName
-     * @param destination
-     * @return
-     */
-    private String getUnzipCommand(String zipFileName, String destination, String excludeFiles){
-            return ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR)+"/"+ UNZIP_SCRIPT_NAME +" " + zipFileName + " " + destination + " " + excludeFiles;
     }
 }
 
