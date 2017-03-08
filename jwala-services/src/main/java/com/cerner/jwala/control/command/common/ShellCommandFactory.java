@@ -5,7 +5,7 @@ package com.cerner.jwala.control.command.common;
  */
 
 
-import com.cerner.jwala.commandprocessor.impl.jsch.JschScpCmdProcessorImpl;
+import com.cerner.jwala.commandprocessor.impl.jsch.JschScpCommandProcessorImpl;
 import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exec.*;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
@@ -81,7 +81,7 @@ public class ShellCommandFactory {
         //TODO Refactor jscp
         try {
             RemoteExecCommand command = new RemoteExecCommand(getConnection(hostname),  new ExecCommand(Command.SCP.get(), source, destination));
-            final JschScpCmdProcessorImpl jschScpCommandProcessor = new JschScpCmdProcessorImpl(aemSshConfig.getJschBuilder().build(), command);
+            final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(aemSshConfig.getJschBuilder().build(), command);
             jschScpCommandProcessor.processCommand();
             return  new RemoteCommandReturnInfo(jschScpCommandProcessor.getExecutionReturnCode().getReturnCode(),
                     jschScpCommandProcessor.getCommandOutputStr(), jschScpCommandProcessor.getErrorOutputStr());

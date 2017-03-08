@@ -15,12 +15,12 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class JschScpCmdProcessorImpl implements CommandProcessor {
+public class JschScpCommandProcessorImpl implements CommandProcessor {
     private static final int TIMEOUT = 300000;
     public static final String JSCH_READ_ACK_SLEEP_DURATION = "jsch.read.ack.sleep.duration";
     public static final String READ_ACK_SLEEP_DEFAULT_VALUE = "250";
     private boolean checkAckOk;
-    private static final Logger LOGGER = LoggerFactory.getLogger(JschScpCmdProcessorImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JschScpCommandProcessorImpl.class);
 
     private final JSch jsch;
     private final RemoteExecCommand remoteCommand;
@@ -28,7 +28,7 @@ public class JschScpCmdProcessorImpl implements CommandProcessor {
     private OutputStream localInput;
     private InputStream remoteOutput;
 
-    public JschScpCmdProcessorImpl(JSch jsch, RemoteExecCommand remoteCommand) {
+    public JschScpCommandProcessorImpl(JSch jsch, RemoteExecCommand remoteCommand) {
         this.jsch = jsch;
         this.remoteCommand = remoteCommand;
     }

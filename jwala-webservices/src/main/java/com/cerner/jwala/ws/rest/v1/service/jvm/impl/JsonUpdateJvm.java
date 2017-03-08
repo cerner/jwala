@@ -3,6 +3,7 @@ package com.cerner.jwala.ws.rest.v1.service.jvm.impl;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
@@ -64,6 +65,11 @@ public class JsonUpdateJvm extends JsonCreateJvm {
 
     public UpdateJvmRequest toUpdateJvmRequest() throws BadRequestException {
 
+        Identifier<Media> jdkMediaId = null;
+        if (getJdkMediaId() != null && !getJdkMediaId().isEmpty()) {
+            jdkMediaId = new Identifier<>(getJdkMediaId());
+        }
+
         return new UpdateJvmRequest(convertJvmId(),
                 getJvmName(),
                 getHostName(),
@@ -77,7 +83,7 @@ public class JsonUpdateJvm extends JsonCreateJvm {
                 getSystemProperties(),
                 getUserName(),
                 getEncryptedPassword(),
-                getJdkMediaId().isEmpty() ? null : new Identifier<>(Long.parseLong(getJdkMediaId())));
+                jdkMediaId);
     }
 
     private Identifier<Jvm> convertJvmId() {

@@ -215,7 +215,7 @@ public class JvmServiceRestImplTest {
         assertEquals(jvm, received);
     }
 
-    @Test (expected = BadRequestException.class)
+    @Test(expected = BadRequestException.class)
     public void testNoGroupIdInUpdateRequest() {
         final Set<String> groupIds = new HashSet<>();
         final JsonUpdateJvm jsonUpdateJvm = new JsonUpdateJvm("1", name, hostName, groupIds, "5", "4", "3", "2", "1",
@@ -226,7 +226,8 @@ public class JvmServiceRestImplTest {
         updateJvmCommand.validate();
     }
 
-        @Test
+
+    @Test
     public void testRemoveJvm() {
         when(jvmService.getJvm(jvm.getId())).thenReturn(jvm);
         when(jvmService.getJvm(anyString())).thenReturn(jvm);
@@ -238,19 +239,6 @@ public class JvmServiceRestImplTest {
 
         final ApplicationResponse applicationResponse = (ApplicationResponse) response.getEntity();
         assertNull(applicationResponse);
-
-        // TODO move this test to the JvmServiceImpl tests
-//        Jvm mockJvmStarted = mock(Jvm.class);
-//        when(mockJvmStarted.getState()).thenReturn(JvmState.JVM_STARTED);
-//        when(jvmService.getJvm(any(Identifier.class))).thenReturn(mockJvmStarted);
-//        boolean exceptionThrown = false;
-//        try {
-//            response = jvmServiceRest.removeJvm(jvm.getId(), authenticatedUser);
-//        } catch (Exception e) {
-//            assertEquals("The target JVM must be stopped before attempting to delete it", e.getMessage());
-//            exceptionThrown = true;
-//        }
-//        assertTrue(exceptionThrown);
     }
 
     @Test
@@ -291,7 +279,7 @@ public class JvmServiceRestImplTest {
         when(authenticatedUser.getUser()).thenReturn(user);
         when(user.getId()).thenReturn("testUser");
         when(jvmService.performDiagnosis(jvm.getId(), user)).thenReturn("Good Diagnosis!");
-        Response response = jvmServiceRest.diagnoseJvm(jvm.getId(),authenticatedUser);
+        Response response = jvmServiceRest.diagnoseJvm(jvm.getId(), authenticatedUser);
         assertTrue(response.hasEntity());
     }
 

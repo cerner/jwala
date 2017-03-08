@@ -28,9 +28,10 @@ import com.cerner.jwala.template.exception.ResourceFileGeneratorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -401,6 +402,7 @@ public class GroupServiceImpl implements GroupService {
         return new ArrayList<>(allHosts);
     }
 
+    @Transactional
     @Override
     @SuppressWarnings("unchecked")
     public Group generateAndDeployGroupJvmFile(final String groupName, final String fileName, final User user) {
@@ -417,11 +419,13 @@ public class GroupServiceImpl implements GroupService {
             throw new GroupServiceException(errMsg);
         }
 
-        final Map<String, Future<Response>> futures = new HashMap<>(jvms.size());
+        final Map<String, Future<Jvm>> futures = new HashMap<>(jvms.size());
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String template = groupPersistenceService.getGroupJvmResourceTemplate(groupName, fileName);
         final String metaData = groupPersistenceService.getGroupJvmResourceTemplateMetaData(groupName, fileName);
         jvms.stream().forEach(jvm -> {
-            final Future<Response> future = (Future) executorService.submit(() -> {
+            final Future<Jvm> future = (Future) executorService.submit(() -> {
+                SecurityContextHolder.getContext().setAuthentication(auth);
                 jvmService.updateResourceTemplate(jvm.getJvmName(), fileName, template);
                 ResourceIdentifier resourceId = new ResourceIdentifier.Builder().setResourceName(fileName)
                         .setGroupName(groupName).setJvmName(jvm.getJvmName()).build();
@@ -431,17 +435,22 @@ public class GroupServiceImpl implements GroupService {
             futures.put(jvm.getJvmName(), future);
         });
 
-        checkResponsesForErrorStatus(futures);
+        checkJvmGenerateAndDeployFutureErrorStatus(futures);
         return group;
     }
 
-    private void checkResponsesForErrorStatus(final Map<String, Future<Response>> futureMap) {
+    /**
+     * Check for future error statuses of all jvms
+     *
+     * @param futureMap a map of all jvm keys and their Future object values
+     */
+    private void checkJvmGenerateAndDeployFutureErrorStatus(final Map<String, Future<Jvm>> futureMap) {
         final Map<String, List<String>> errorMap = new HashMap<>(futureMap.size());
         final long timeout = Long.parseLong(ApplicationProperties.get("remote.jwala.execution.timeout.seconds", "600"));
-        Response response = null;
+
         for (final String key : futureMap.keySet()) {
             try {
-                response = futureMap.get(key).get(timeout, TimeUnit.SECONDS);
+                futureMap.get(key).get(timeout, TimeUnit.SECONDS);
             } catch (final InterruptedException | ExecutionException | TimeoutException e) {
                 LOGGER.error("Remote Command Failure for {}!", key, e);
                 final Throwable cause = e.getCause();
@@ -454,12 +463,6 @@ public class GroupServiceImpl implements GroupService {
                 } else {
                     errorMap.put(key, Collections.singletonList(e.getMessage()));
                 }
-            }
-
-            if (response != null && response.getStatus() > 399) {
-                final String reasonPhrase = response.getStatusInfo().getReasonPhrase();
-                LOGGER.error("Remote command failure for {} : {}", key, reasonPhrase);
-                errorMap.put(key, Collections.singletonList(reasonPhrase));
             }
         }
 
