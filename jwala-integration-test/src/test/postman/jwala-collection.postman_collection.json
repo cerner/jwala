@@ -1051,7 +1051,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Error message\"] = jsonData.message.indexOf(\"The group \" + postman.getEnvironmentVariable(\"GroupName\") + \" cannot be deleted because it is still configured with the following:\") > -1"
 								]
 							}
 						}
@@ -5579,7 +5581,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Error message\"] = jsonData.message.indexOf(\"The group \" + postman.getEnvironmentVariable(\"GroupName\") + \" cannot be deleted because it is still configured with the following:\") > -1"
 								]
 							}
 						}

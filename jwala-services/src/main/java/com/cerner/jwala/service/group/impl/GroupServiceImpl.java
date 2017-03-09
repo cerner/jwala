@@ -32,7 +32,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -124,14 +123,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public void removeGroup(final String name) {
-        try {
-            groupPersistenceService.removeGroup(name);
-        } catch (PersistenceException e) {
-            LOGGER.error("Error removing group", e);
-            if (e.getMessage().contains("The transaction has been rolled back.  See the nested exceptions for details on the errors that occurred.")) {
-                throw new GroupServiceException("Please check for group dependents Web Apps, Web Servers or JVMs before deleting " + name);
-            }
-        }
+        groupPersistenceService.removeGroup(name);
     }
 
     @Override
