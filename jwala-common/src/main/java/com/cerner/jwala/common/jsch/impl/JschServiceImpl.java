@@ -1,5 +1,20 @@
 package com.cerner.jwala.common.jsch.impl;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cerner.jwala.commandprocessor.jsch.impl.ChannelSessionKey;
 import com.cerner.jwala.commandprocessor.jsch.impl.ChannelType;
 import com.cerner.jwala.common.domain.model.ssh.DecryptPassword;
@@ -10,16 +25,12 @@ import com.cerner.jwala.common.jsch.JschServiceException;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.exception.ExitCodeNotAvailableException;
-import com.jcraft.jsch.*;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 
 /**
  * Implements {@link JschService}
@@ -186,7 +197,7 @@ public class JschServiceImpl implements JschService {
         byte[] tmp = new byte[BYTE_CHUNK_SIZE];
         long startTime = System.currentTimeMillis();
         final long readWaitTime = Long.parseLong(ApplicationProperties.get("jwala.read.channel.wait.for.close", "250"));
-        
+
         while (true) {
             // read the stream
             while (in.available() > 0) {
@@ -251,6 +262,7 @@ public class JschServiceImpl implements JschService {
         final byte[] bytes = new byte[BYTE_CHUNK_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         String result;
+        LOGGER.debug("Default char encoding:" + Charset.defaultCharset());
         long startTime = System.currentTimeMillis();
         try {
             while (true) {
@@ -258,10 +270,25 @@ public class JschServiceImpl implements JschService {
                     final int size = buffIn.read(bytes);
 
                     if (size > 0) {
+                        LOGGER.debug("Read:" + size + " bytes");
                         out.write(bytes, 0, size);
+                        LOGGER.debug("Bytes read as String: " + new String(bytes));
                     }
 
                     startTime = System.currentTimeMillis();
+
+                    // Alternative method of checking if we got our 'EOF' character.
+                    boolean stopReading = false;
+                    for(int b=0;b<size;b++) {
+                        if (bytes[b]==-1) {
+                            LOGGER.debug("Read EOF byte '{}', stopping remote output reading...", bytes[size - 1]);
+                            stopReading=true;
+                        }
+                    }
+
+                    if (stopReading) {
+                        break;
+                    }
 
                     // need to verify this works on non-windows systems
                     // currently setting the encoding to UTF8, UTF16, ASCII, or ISO all fail this conditional
