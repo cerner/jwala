@@ -34,7 +34,8 @@ import java.util.concurrent.Future;
 public class JvmStateResolverWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmStateResolverWorker.class);
-    private static final String STOPPED = "STOPPED";
+    private static final String WINDOWS_SVC_STOPPED = "STOPPED";
+    private static final String LINUX_SVC_STOPPED = "is stopped";
     private static final String NOT_RECEIVING_JVM_STATE_ERR_MSG = "Jwala not receiving updates from this JVM. " +
             "Possible causes are messaging settings in vars.properties are wrong, JVM is not functioning correctly " +
             "(configuration error(s) etc) even though the service is running.";
@@ -102,11 +103,11 @@ public class JvmStateResolverWorker {
         try {
             final RemoteCommandReturnInfo remoteCommandReturnInfo = jvmStateService.getServiceStatus(jvm);
             LOGGER.debug("RemoteCommandReturnInfo = {}", remoteCommandReturnInfo);
-            if (remoteCommandReturnInfo.retCode == 0 && remoteCommandReturnInfo.standardOuput.contains(STOPPED)) {
+            if (isServiceStopped(remoteCommandReturnInfo)) {
                 jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
                 return new CurrentState<>(jvm.getId(), JvmState.JVM_STOPPED, DateTime.now(), StateType.JVM);
             }
-            LOGGER.error("Did not get a '0' return code and-or find the expected keyword \"STOPPED\"! RemoteCommandReturnInfo = {}",
+            LOGGER.error("Did not get the expected conditions for the service in the stopped state! RemoteCommandReturnInfo = {}",
                     remoteCommandReturnInfo);
         } catch (final RemoteCommandExecutorServiceException rcese) {
             LOGGER.error("State verification of {}@{} via SSH failed! Please note that this has nothing to do with the " +
@@ -123,6 +124,18 @@ public class JvmStateResolverWorker {
         final JvmState state = JvmState.JVM_UNKNOWN;
         jvmStateService.updateNotInMemOrStaleState(jvm, state, NOT_RECEIVING_JVM_STATE_ERR_MSG);
         return new CurrentState<>(jvm.getId(), state, DateTime.now(), StateType.JVM);
+    }
+
+    private boolean isServiceStopped(RemoteCommandReturnInfo remoteCommandReturnInfo) {
+        final int windowsRetCode = 0;
+        final int linuxRetCode = 3;
+        final boolean isWindowsServiceStopped = remoteCommandReturnInfo.retCode == windowsRetCode && remoteCommandReturnInfo.standardOuput.contains(WINDOWS_SVC_STOPPED);
+        final boolean isLinuxServiceStopped = remoteCommandReturnInfo.retCode == linuxRetCode && remoteCommandReturnInfo.standardOuput.contains(LINUX_SVC_STOPPED);
+
+        LOGGER.debug("Expecting {} and {}: {}", windowsRetCode, WINDOWS_SVC_STOPPED, isWindowsServiceStopped);
+        LOGGER.debug("Expecting {} and {}: {}", linuxRetCode, LINUX_SVC_STOPPED, isLinuxServiceStopped);
+        
+        return isWindowsServiceStopped || isLinuxServiceStopped;
     }
 
 }

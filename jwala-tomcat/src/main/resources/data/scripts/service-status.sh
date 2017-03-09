@@ -16,9 +16,10 @@ fi
 
 if $cygwin; then
     sc queryex $1 | grep STATE
-    exit 0
+    exit $?
 fi
 
 if $linux; then
     /usr/bin/sudo /sbin/service $1 status
+    exit $?
 fi
