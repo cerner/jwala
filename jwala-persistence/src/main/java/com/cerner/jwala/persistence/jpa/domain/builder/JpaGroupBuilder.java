@@ -1,5 +1,6 @@
 package com.cerner.jwala.persistence.jpa.domain.builder;
 
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.group.History;
 import com.cerner.jwala.common.domain.model.id.Identifier;
@@ -13,6 +14,7 @@ import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class JpaGroupBuilder {
@@ -20,6 +22,7 @@ public class JpaGroupBuilder {
     public static final Chronology USE_DEFAULT_CHRONOLOGY = null;
     private JpaGroup group;
     private boolean fetchWebServers = false;
+    private List<Application> applications;
 
     public JpaGroupBuilder() {
     }
@@ -35,15 +38,21 @@ public class JpaGroupBuilder {
 
     public Group build() {
         if (fetchWebServers) {
-            return new Group(new Identifier<Group>(group.getId()),
+            return new Group(
+                    new Identifier<Group>(group.getId()),
                     group.getName(),
                     getJvms(),
                     getWebServers(),
-                    getHistory());
+                    getHistory(),
+                    getApplications());
         }
-        return new Group(new Identifier<Group>(group.getId()),
+        return new Group(
+                new Identifier<Group>(group.getId()),
                 group.getName(),
-                getJvms());
+                getJvms(),
+                null,
+                getHistory(),
+                getApplications());
     }
 
     private DateTime getAsOf() {
@@ -91,6 +100,19 @@ public class JpaGroupBuilder {
 
     public JpaGroupBuilder setFetchWebServers(boolean fetchWebServers) {
         this.fetchWebServers = fetchWebServers;
+        return this;
+    }
+
+    public Set<Application> getApplications() {
+        if (applications != null) {
+            return new HashSet<>(applications);
+        } else {
+            return null;
+        }
+    }
+
+    public JpaGroupBuilder setApplications(List<Application> applications) {
+        this.applications = applications;
         return this;
     }
 }

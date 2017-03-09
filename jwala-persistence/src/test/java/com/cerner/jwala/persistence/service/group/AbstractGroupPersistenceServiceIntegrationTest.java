@@ -7,6 +7,7 @@ import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
+import com.cerner.jwala.common.exception.GroupException;
 import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.request.app.CreateApplicationRequest;
 import com.cerner.jwala.common.request.group.CreateGroupRequest;
@@ -275,7 +276,7 @@ public abstract class AbstractGroupPersistenceServiceIntegrationTest {
                                   userId);
     }
 
-    @Test
+    @Test (expected = GroupException.class)
     public void testRemoveGroupWithRelationships() {
 
         final Jvm aSecondJvm = jvmHelper.createJvm("anotherJvmName",

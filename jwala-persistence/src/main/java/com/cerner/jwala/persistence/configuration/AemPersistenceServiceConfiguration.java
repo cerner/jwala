@@ -29,21 +29,23 @@ public class AemPersistenceServiceConfiguration {
         return new JpaResourcePersistenceServiceImpl();
     }
 
-    @Bean(name="jvmPersistenceService")
+    @Bean(name = "jvmPersistenceService")
     public JvmPersistenceService getJvmPersistenceService() {
         return new JpaJvmPersistenceServiceImpl(getJvmCrudService(), getApplicationCrudService(), getGroupJvmRelationshipService());
     }
 
-    @Bean(name="groupPersistenceService")
+    @Bean(name = "groupPersistenceService")
     public GroupPersistenceService getGroupPersistenceService() {
-        return new JpaGroupPersistenceServiceImpl(getGroupCrudService(),
-                                                  getGroupJvmRelationshipService());
+        return new JpaGroupPersistenceServiceImpl(
+                getGroupCrudService(),
+                getGroupJvmRelationshipService(),
+                getApplicationCrudService());
     }
 
     @Bean
     protected GroupJvmRelationshipService getGroupJvmRelationshipService() {
         return new GroupJvmRelationshipServiceImpl(getGroupCrudService(),
-                                                   getJvmCrudService());
+                getJvmCrudService());
     }
 
     @Bean
@@ -71,7 +73,7 @@ public class AemPersistenceServiceConfiguration {
         return new WebServerPersistenceServiceImpl(getGroupCrudService(), getWebserverCrudService());
     }
 
-    @Bean(name="webServerCrudService")
+    @Bean(name = "webServerCrudService")
     public WebServerCrudService getWebserverCrudService() {
         return new WebServerCrudServiceImpl();
     }

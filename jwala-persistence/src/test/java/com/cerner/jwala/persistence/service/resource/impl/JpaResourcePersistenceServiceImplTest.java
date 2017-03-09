@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
         classes = {JpaResourcePersistenceServiceImplTest.Config.class
         })
 
-public class JpaResourcePersistenceServiceImplTest extends AbstractResourcePersistenceServiceTest{
+public class JpaResourcePersistenceServiceImplTest extends AbstractResourcePersistenceServiceTest {
 
     @Configuration
     @Import(TestJpaConfiguration.class)
@@ -45,13 +45,14 @@ public class JpaResourcePersistenceServiceImplTest extends AbstractResourcePersi
     static class Config {
 
         @Bean
-        public ResourcePersistenceService getResourcePersistenceService(){
+        public ResourcePersistenceService getResourcePersistenceService() {
             return new JpaResourcePersistenceServiceImpl();
         }
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(), getGroupJvmRelationshipService());
+            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(), getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
         }
 
         @Bean
@@ -70,7 +71,7 @@ public class JpaResourcePersistenceServiceImplTest extends AbstractResourcePersi
         }
 
         @Bean
-        public ApplicationPersistenceService getApplicationPersistenceService(){
+        public ApplicationPersistenceService getApplicationPersistenceService() {
             return new JpaApplicationPersistenceServiceImpl(getApplicationCrudService(), getGroupCrudService());
         }
 
