@@ -2,14 +2,8 @@ package com.cerner.jwala.persistence.service.webserver.impl;
 
 import com.cerner.jwala.common.configuration.TestExecutionProfile;
 import com.cerner.jwala.persistence.configuration.TestJpaConfiguration;
-import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
-import com.cerner.jwala.persistence.jpa.service.GroupJvmRelationshipService;
-import com.cerner.jwala.persistence.jpa.service.JvmCrudService;
-import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
-import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.GroupJvmRelationshipServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.JvmCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.WebServerCrudServiceImpl;
+import com.cerner.jwala.persistence.jpa.service.*;
+import com.cerner.jwala.persistence.jpa.service.impl.*;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.persistence.service.impl.JpaGroupPersistenceServiceImpl;
@@ -34,39 +28,45 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
         classes = {JpaWebServerPersistenceServiceImplTest.Config.class
         })
-public class JpaWebServerPersistenceServiceImplTest extends AbstractWebServerPersistenceServiceTest{
+public class JpaWebServerPersistenceServiceImplTest extends AbstractWebServerPersistenceServiceTest {
 
     @Configuration
     @Import(TestJpaConfiguration.class)
     static class Config {
 
         @Bean
-        public WebServerPersistenceService getWebServerPersistenceService(){
+        public WebServerPersistenceService getWebServerPersistenceService() {
             return new WebServerPersistenceServiceImpl(getGroupCrudServiceImpl(), getWebServerCrudServiceImpl());
         }
 
         @Bean
-        public GroupPersistenceService getGroupPersistenceService(){
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudServiceImpl(), getGroupJvmRelationshipService());
+        public GroupPersistenceService getGroupPersistenceService() {
+            return new JpaGroupPersistenceServiceImpl(getGroupCrudServiceImpl(), getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
         }
 
         @Bean
-        public GroupCrudService getGroupCrudServiceImpl(){
+        public ApplicationCrudService getApplicationCrudService() {
+            return new ApplicationCrudServiceImpl();
+        }
+
+        @Bean
+        public GroupCrudService getGroupCrudServiceImpl() {
             return new GroupCrudServiceImpl();
         }
 
         @Bean
-        public WebServerCrudService getWebServerCrudServiceImpl(){
+        public WebServerCrudService getWebServerCrudServiceImpl() {
             return new WebServerCrudServiceImpl();
         }
 
         @Bean
-        public GroupJvmRelationshipService getGroupJvmRelationshipService(){
+        public GroupJvmRelationshipService getGroupJvmRelationshipService() {
             return new GroupJvmRelationshipServiceImpl(getGroupCrudServiceImpl(), getJvmCrudServiceImpl());
         }
 
         @Bean
-        public JvmCrudService getJvmCrudServiceImpl(){
+        public JvmCrudService getJvmCrudServiceImpl() {
             return new JvmCrudServiceImpl();
         }
 

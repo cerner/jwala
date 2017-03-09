@@ -26,7 +26,6 @@ import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
-import com.cerner.jwala.service.host.HostService;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.jvm.exception.JvmControlServiceException;
@@ -70,7 +69,6 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
     @Before
     public void setup() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources");
-        when(Config.mockHostService.getUName(anyString())).thenReturn("CYGWIN_NT-6.3");
         user = new User("unused");
     }
 
@@ -94,7 +92,6 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockJvmCommandFactory.executeCommand(any(Jvm.class), any(JvmControlOperation.class))).thenReturn(new RemoteCommandReturnInfo(0, "", ""));
 
         jvmControlService.controlJvm(controlCommand, user);
-        when(Config.mockHostService.getUName("mockJvmHost")).thenReturn("CYGWIN_NT-6.3");
 
         verify(Config.mockJvmPersistenceService, times(1)).getJvm(eq(jvmId));
         verify(Config.mockJvmCommandFactory).executeCommand(any(Jvm.class), any(JvmControlOperation.class));
@@ -276,7 +273,6 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         when(Config.mockJvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.START)).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         final ControlJvmRequest controlJvmRequest = new ControlJvmRequest(new Identifier<Jvm>("1"), JvmControlOperation.START);
-        when(Config.mockHostService.getUName("mockJvmHost")).thenReturn("CYGWIN_NT-6.3");
         final CommandOutput commandOutput  = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
         assertTrue(commandOutput.getReturnCode().getWasSuccessful());
     }
@@ -284,7 +280,6 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
     @Test
     public void testStopControlJvmSynchronously() throws InterruptedException {
         final Jvm mockJvm = mock(Jvm.class);
-        when(Config.mockHostService.getUName("mockJvmHost")).thenReturn("CYGWIN_NT-6.3");
         when (mockJvm.getHostName()).thenReturn("mockJvmHost");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
@@ -329,9 +324,6 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         static ShellCommandFactory mockShellCommandFactory;
 
         @Mock
-        static HostService mockHostService;
-
-        @Mock
         static HistoryFacadeService mockHistoryFacadeService;
 
         @Mock
@@ -366,11 +358,6 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         }
 
         @Bean
-        public HostService getHostService() {
-            return mockHostService;
-        }
-
-        @Bean
         public HistoryFacadeService getHistoryFacadeService() {
             return mockHistoryFacadeService;
         }
@@ -398,7 +385,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         @Bean
         @Scope("prototype")
         public JvmControlService getJvmControlService() {
-            reset(mockJvmCommandFactory, mockAemSshConfig, mockShellCommandFactory, mockHostService, mockHistoryFacadeService,
+            reset(mockJvmCommandFactory, mockAemSshConfig, mockShellCommandFactory, mockHistoryFacadeService,
                     mockJvmStateService, mockRemoteCommandExecutorService, mockSshConfig,
                     mockJvmPersistenceService);
 

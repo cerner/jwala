@@ -37,8 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableTransactionManagement
 @IfProfileValue(name = TestExecutionProfile.RUN_TEST_TYPES, value = TestExecutionProfile.INTEGRATION)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
-                      classes = {JpaGroupPersistenceServiceImplIntegrationTest.Config.class
-                      })
+        classes = {JpaGroupPersistenceServiceImplIntegrationTest.Config.class
+        })
 public class JpaGroupPersistenceServiceImplIntegrationTest extends AbstractGroupPersistenceServiceIntegrationTest {
 
     @Configuration
@@ -50,8 +50,8 @@ public class JpaGroupPersistenceServiceImplIntegrationTest extends AbstractGroup
 
         @Bean
         public GroupPersistenceService getGroupPersistenceService() {
-            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(),
-                                                      getGroupJvmRelationshipService());
+            return new JpaGroupPersistenceServiceImpl(getGroupCrudService(), getGroupJvmRelationshipService(),
+                    getApplicationCrudService());
         }
 
         @Bean
@@ -72,7 +72,7 @@ public class JpaGroupPersistenceServiceImplIntegrationTest extends AbstractGroup
         @Bean
         public GroupJvmRelationshipService getGroupJvmRelationshipService() {
             return new GroupJvmRelationshipServiceImpl(getGroupCrudService(),
-                                                       getJvmCrudService());
+                    getJvmCrudService());
         }
 
         @Bean

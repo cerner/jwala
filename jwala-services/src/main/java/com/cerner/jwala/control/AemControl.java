@@ -28,6 +28,7 @@ public class AemControl {
         SERVICE_STATUS_SCRIPT_NAME("commands.cygwin.service-status", "service-status.sh"),
         INSTALL_SERVICE_WS_SERVICE_SCRIPT_NAME("commands.cygwin.install-ws-service", "install-ws-service.sh"),
         UNPACK_BINARY_SCRIPT_NAME("commands.cygwin.unpack.sh", "unpack.sh"),
+        UNZIP_SCRIPT_NAME("commands.unzip.sh", "unzip.sh"),
         SLEEP_TIME("net.stop.sleep.time.seconds", NET_STOP_SLEEP_TIME_SECONDS_DEFAULT);
 
         private final String propertyName;
