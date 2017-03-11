@@ -100,7 +100,7 @@ public class WebServerStateSetterWorker {
                          MessageFormat.format(RESPONSE_NOT_OK_MSG, webServer.getStatusUri(), response.getStatusCode()));
             }
         } catch (final IOException e) {
-            LOGGER.error("Failed to ping {}!", webServer.getName(), e);
+            LOGGER.error("Failed to ping {}!", webServer.getName());
             setState(webServer, WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
         } finally {
             if (response != null) {
