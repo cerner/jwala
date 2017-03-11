@@ -78,7 +78,7 @@ public class JvmCommandFactory {
         commands.put(JvmControlOperation.START.getExternalValue(), (Jvm jvm)
                 -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getShellCommand(START_SCRIPT_NAME.getValue(), jvm))));
         commands.put(JvmControlOperation.STOP.getExternalValue(), (Jvm jvm)
-                -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForStopService(jvm))));
+                -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getShellCommandForStopService(jvm))));
         commands.put(JvmControlOperation.THREAD_DUMP.getExternalValue(), (Jvm jvm)
                 -> remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForThreadDump(THREAD_DUMP_SCRIPT_NAME.getValue(), jvm))));
         commands.put(JvmControlOperation.HEAP_DUMP.getExternalValue(), (Jvm jvm)
@@ -232,13 +232,10 @@ public class JvmCommandFactory {
     }
 
     private ExecCommand getExecCommandForCheckServiceStatus(Jvm jvm){
-        return new ExecCommand(
-                ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR)+
-                "/" + jvm.getJvmName() + "/" +
-                SERVICE_STATUS_SCRIPT_NAME.getValue(), jvm.getJvmName());
+        return new ExecCommand(getFullPathScript(jvm, SERVICE_STATUS_SCRIPT_NAME.getValue()), jvm.getJvmName());
     }
 
-    private ExecCommand getExecCommandForStopService(Jvm jvm){
+    private ExecCommand getShellCommandForStopService(Jvm jvm){
         return new ShellCommand(getFullPathScript(jvm, STOP_SCRIPT_NAME.getValue()), jvm.getJvmName(), SLEEP_TIME.getValue());
     }
 }
