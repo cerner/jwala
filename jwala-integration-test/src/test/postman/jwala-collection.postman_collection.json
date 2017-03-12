@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "b96d09da-75fc-cc9d-6911-4fea97c2a4f8",
+		"_postman_id": "273873c5-b89a-aaeb-ae19-f84c6bdf5ba6",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1035,7 +1035,8 @@
 									"key": "file",
 									"type": "file",
 									"enabled": true,
-									"src": "../resources/postman/test.json"
+									"src": "../resources/postman/test.json",
+									"value": ""
 								}
 							]
 						},
@@ -5574,33 +5575,6 @@
 					"response": []
 				},
 				{
-					"name": "delete group error",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;",
-									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Error message\"] = jsonData.message.indexOf(\"The group \" + postman.getEnvironmentVariable(\"GroupName\") + \" cannot be deleted because it is still configured with the following:\") > -1"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}",
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "delete resource",
 					"event": [
 						{
@@ -5720,6 +5694,62 @@
 						"body": {
 							"mode": "raw",
 							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete group error check for dependencies",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId}}",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update webserver to remove postman group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/webservers/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\"webserverId\":\"1\",\"webserverName\":\"{{HealthCheckWebServer}}\",\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"}]}]"
 						},
 						"description": ""
 					},
@@ -5862,7 +5892,10 @@
 						"url": "{{url}}/v1.0/resources/properties/download",
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": "no external propertiy file has been uploaded"
 					},
 					"response": []
