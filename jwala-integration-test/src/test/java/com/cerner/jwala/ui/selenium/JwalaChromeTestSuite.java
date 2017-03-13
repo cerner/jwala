@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, AppCreateTest.class,
         ResourceTopologyTest.class, UploadResourceTest.class, AppDeleteTest.class, JvmDeleteTest.class, GroupDeleteTest.class,
         LogoutTest.class})
-public class JwalaResourceChromeTestSuite extends TestSuite {
+public class JwalaChromeTestSuite extends TestSuite {
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
