@@ -34,8 +34,8 @@ import java.util.concurrent.Future;
 public class JvmStateResolverWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmStateResolverWorker.class);
-    private static final String WINDOWS_SVC_STOPPED = "STOPPED";
-    private static final String LINUX_SVC_STOPPED = "is stopped";
+    private static final String SVC_STOPPED = "STOPPED";
+    private static final int SVC_STOPPED_RETURN_CODE=0;
     private static final String NOT_RECEIVING_JVM_STATE_ERR_MSG = "Jwala not receiving updates from this JVM. " +
             "Possible causes are messaging settings in vars.properties are wrong, JVM is not functioning correctly " +
             "(configuration error(s) etc) even though the service is running.";
@@ -127,15 +127,10 @@ public class JvmStateResolverWorker {
     }
 
     private boolean isServiceStopped(RemoteCommandReturnInfo remoteCommandReturnInfo) {
-        final int windowsRetCode = 0;
-        final int linuxRetCode = 3;
-        final boolean isWindowsServiceStopped = remoteCommandReturnInfo.retCode == windowsRetCode && remoteCommandReturnInfo.standardOuput.contains(WINDOWS_SVC_STOPPED);
-        final boolean isLinuxServiceStopped = remoteCommandReturnInfo.retCode == linuxRetCode && remoteCommandReturnInfo.standardOuput.contains(LINUX_SVC_STOPPED);
+        final boolean isServiceStopped = remoteCommandReturnInfo.retCode == SVC_STOPPED_RETURN_CODE && remoteCommandReturnInfo.standardOuput.contains(SVC_STOPPED);
+        LOGGER.debug("Expecting {} and {}: {}", SVC_STOPPED_RETURN_CODE, SVC_STOPPED, isServiceStopped);
 
-        LOGGER.debug("Expecting {} and {}: {}", windowsRetCode, WINDOWS_SVC_STOPPED, isWindowsServiceStopped);
-        LOGGER.debug("Expecting {} and {}: {}", linuxRetCode, LINUX_SVC_STOPPED, isLinuxServiceStopped);
-        
-        return isWindowsServiceStopped || isLinuxServiceStopped;
+        return isServiceStopped;
     }
 
 }
