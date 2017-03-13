@@ -26,7 +26,6 @@ import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
 import com.cerner.jwala.common.request.jvm.CreateJvmRequest;
 import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
-import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaJvmConfigTemplate;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -60,13 +59,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.cerner.jwala.control.AemControl.Properties.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static com.cerner.jwala.control.AemControl.Properties.*;
 
 public class JvmServiceImpl implements JvmService {
     private static final String DIAGNOSIS_INITIATED = "Diagnosis Initiated on JVM ${jvm.jvmName}, host ${jvm.hostName}";
@@ -144,7 +143,7 @@ public class JvmServiceImpl implements JvmService {
         final Jvm jvm = createAndAssignJvm(createJvmAndAddToGroupsRequest, user);
 
         // inherit the templates from the group
-        if (null != jvm.getGroups() && jvm.getGroups().size() > 0) {
+        if (null != jvm.getGroups() && !jvm.getGroups().isEmpty()) {
             final Group parentGroup = jvm.getGroups().iterator().next();
             createDefaultTemplates(jvm.getJvmName(), parentGroup);
             if (jvm.getGroups().size() > 1) {
@@ -880,12 +879,13 @@ public class JvmServiceImpl implements JvmService {
      * @return the location of the newly created temp file
      * @throws IOException
      */
-    protected String createConfigFile(String generatedResourcesTempDir, final String configFileName, String generatedResourceString) throws IOException {
+    protected String createConfigFile(String generatedResourcesTempDir, final String configFileName, final String generatedResourceString) throws IOException {
         File templateFile = new File(generatedResourcesTempDir + '/' + configFileName);
+        String content = generatedResourceString;
         if (configFileName.endsWith(".bat")) {
-            generatedResourceString = generatedResourceString.replaceAll("\n", "\r\n");
+            content = generatedResourceString.replaceAll("\n", "\r\n");
         }
-        FileUtils.writeStringToFile(templateFile, generatedResourceString);
+        FileUtils.writeStringToFile(templateFile, content);
         return templateFile.getAbsolutePath();
     }
 
