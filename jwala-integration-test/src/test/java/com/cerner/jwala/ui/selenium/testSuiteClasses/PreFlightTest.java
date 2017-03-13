@@ -1,6 +1,5 @@
 package com.cerner.jwala.ui.selenium.testSuiteClasses;
 
-import com.cerner.jwala.ui.selenium.testSuiteClasses.JwalaTest;
 import org.junit.Test;
 
 import java.io.IOException;
