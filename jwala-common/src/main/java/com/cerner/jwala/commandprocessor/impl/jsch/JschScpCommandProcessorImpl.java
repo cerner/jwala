@@ -255,12 +255,12 @@ public class JschScpCommandProcessorImpl implements CommandProcessor {
             } catch (final InterruptedException e) {
                 final String errMsg = "readAck was interrupted while waiting for input from JSch channel!";
                 LOGGER.error(errMsg, e);
-                throw new RuntimeException(errMsg, e);
+                throw new JscScpCommandProcessorImplException(errMsg, e);
             }
         }
         final String errMsg = "Reading ack timeout!!!";
         LOGGER.error(errMsg);
-        throw new RuntimeException("Timeout!");
+        throw new JscScpCommandProcessorImplException("Timeout!");
     }
 
     @Override
