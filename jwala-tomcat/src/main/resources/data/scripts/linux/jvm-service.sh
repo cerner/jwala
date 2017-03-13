@@ -14,6 +14,8 @@
 # Source LSB function library.
 . /etc/init.d/functions
 
+NAME=`basename "$0"`
+
 TOMCAT_HOME=@TOMCAT_HOME@
 TOMCAT_HOME_BIN=$TOMCAT_HOME/bin
 
@@ -65,7 +67,7 @@ function status()
       echo "PID file exists, but process is not running"
       failure
    else
-      pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_GROUP} java)"
+      pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_GROUP} ${NAME})"
       if [ -z "$pid" ]; then
           echo "${NAME} is stopped"
           success
