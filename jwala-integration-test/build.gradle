@@ -13,5 +13,5 @@ dependencies {
 
 test {
     systemProperty "selenium.property.path", System.getProperty("selenium.property.path")
-    exclude '**/testSuiteClasses/**'
+    exclude '**/testsuite/**'
 }

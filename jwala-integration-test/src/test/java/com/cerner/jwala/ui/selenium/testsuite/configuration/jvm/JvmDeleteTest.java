@@ -1,6 +1,6 @@
-package com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.jvm;
+package com.cerner.jwala.ui.selenium.testsuite.configuration.jvm;
 
-import com.cerner.jwala.ui.selenium.testSuiteClasses.JwalaTest;
+import com.cerner.jwala.ui.selenium.testsuite.JwalaTest;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
