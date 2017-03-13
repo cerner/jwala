@@ -15,10 +15,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,13 +27,10 @@ import java.util.concurrent.TimeUnit;
 @Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, AppCreateTest.class,
         ResourceTopologyTest.class, UploadResourceTest.class, AppDeleteTest.class, JvmDeleteTest.class, GroupDeleteTest.class,
         LogoutTest.class})
-public class JwalaResourceChromeTestSuite {
+public class JwalaResourceChromeTestSuite extends TestSuite {
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
-    public static WebDriver driver;
-    public static Properties properties;
-    public static final long CURRENT_TIME_MILLIS = System.currentTimeMillis();
 
     @BeforeClass
     public static void setup() throws IOException, InterruptedException {

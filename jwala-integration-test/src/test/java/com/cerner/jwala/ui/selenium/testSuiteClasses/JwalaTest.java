@@ -1,6 +1,6 @@
 package com.cerner.jwala.ui.selenium.testSuiteClasses;
 
-import com.cerner.jwala.ui.selenium.JwalaResourceChromeTestSuite;
+import com.cerner.jwala.ui.selenium.TestSuite;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class JwalaTest {
 
-    protected final WebDriver driver = JwalaResourceChromeTestSuite.driver;
-    protected final Properties properties = JwalaResourceChromeTestSuite.properties;
-    protected final static long CURRENT_TIME_MILLIS = JwalaResourceChromeTestSuite.CURRENT_TIME_MILLIS;
+    protected final WebDriver driver = TestSuite.driver;
+    protected final Properties properties = TestSuite.properties;
+    protected final static long CURRENT_TIME_MILLIS = TestSuite.CURRENT_TIME_MILLIS;
 
     protected void clickTab(final String tabLabel) {
         final WebElement configTag = driver.findElement(By.xpath("//li[a[text()='" + tabLabel + "']]"));
