@@ -59,19 +59,19 @@ function status()
 {
    checkpidfile
    if [ "$RETVAL" -eq "0" ]; then
-      echo "${NAME} (pid ${kpid}) is running..."
+      echo "${NAME} (pid ${kpid}) is RUNNING..."
       success
    elif [ "$RETVAL" -eq "1" ]; then
-      echo "PID file exists, but process is not running"
+      echo "PID file exists, but process is NOT RUNNING"
       failure
    else
       pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_GROUP} java)"
       if [ -z "$pid" ]; then
-          echo "${NAME} is stopped"
+          echo "${NAME} is STOPPED"
           success
-          RETVAL="3"
+          RETVAL="0"
       else
-          echo "${NAME} (pid ${kpid}) is running..."
+          echo "${NAME} (pid ${kpid}) is RUNNING..."
           success
           RETVAL="0"
       fi
