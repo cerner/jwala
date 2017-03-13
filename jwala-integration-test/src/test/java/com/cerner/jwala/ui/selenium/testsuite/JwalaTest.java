@@ -1,4 +1,4 @@
-package com.cerner.jwala.ui.selenium.testSuiteClasses;
+package com.cerner.jwala.ui.selenium.testsuite;
 
 import com.cerner.jwala.ui.selenium.TestSuite;
 import org.openqa.selenium.By;

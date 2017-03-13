@@ -1,7 +1,6 @@
-package com.cerner.jwala.ui.selenium.testSuiteClasses;
+package com.cerner.jwala.ui.selenium.testsuite;
 
 import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.JwalaTest;
 import org.junit.Test;
 import org.openqa.selenium.By;
 

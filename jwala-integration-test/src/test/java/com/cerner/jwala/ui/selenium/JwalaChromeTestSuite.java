@@ -1,16 +1,16 @@
 package com.cerner.jwala.ui.selenium;
 
-import com.cerner.jwala.ui.selenium.testSuiteClasses.LoginTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.LogoutTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.PreFlightTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.app.AppCreateTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.app.AppDeleteTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.group.GroupCreateTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.group.GroupDeleteTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.jvm.JvmCreateTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.jvm.JvmDeleteTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.resources.ResourceTopologyTest;
-import com.cerner.jwala.ui.selenium.testSuiteClasses.configuration.resources.UploadResourceTest;
+import com.cerner.jwala.ui.selenium.testsuite.LoginTest;
+import com.cerner.jwala.ui.selenium.testsuite.LogoutTest;
+import com.cerner.jwala.ui.selenium.testsuite.PreFlightTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.app.AppCreateTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.app.AppDeleteTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupCreateTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupDeleteTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmCreateTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmDeleteTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.ResourceTopologyTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.UploadResourceTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
