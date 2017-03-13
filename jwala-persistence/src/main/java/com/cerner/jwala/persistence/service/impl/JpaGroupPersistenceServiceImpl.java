@@ -121,17 +121,17 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
     private void checkForExistingAssociationsBeforeRemove(Identifier<Group> aGroupId) {
         final Group group = getGroup(aGroupId);
         final List<String> existingAssociations = new ArrayList<>();
-        if (group.getJvms().size() > 0) {
+        if (!group.getJvms().isEmpty()) {
             existingAssociations.add("JVM");
         }
-        if (group.getApplications().size() > 0) {
+        if (!group.getApplications().isEmpty()) {
             existingAssociations.add("Application");
         }
         Group groupWithWebServers = getGroupWithWebServers(group.getId());
-        if (groupWithWebServers.getWebServers().size() > 0) {
+        if (!groupWithWebServers.getWebServers().isEmpty()) {
             existingAssociations.add("Web Server");
         }
-        if (existingAssociations.size() > 0) {
+        if (!existingAssociations.isEmpty()) {
             String message = MessageFormat.format("The group {0} cannot be deleted because it is still configured with the following: {1}. Please remove all associations before attempting to delete a group.", group.getName(), existingAssociations);
             LOGGER.info(message);
             throw new GroupException(message);
