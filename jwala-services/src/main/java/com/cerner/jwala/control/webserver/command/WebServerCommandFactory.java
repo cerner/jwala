@@ -56,17 +56,7 @@ public class WebServerCommandFactory {
         if (commands.containsKey(operation.getExternalValue())) {
             return commands.get(operation.getExternalValue()).apply(webserver);
         }
-        throw new ApplicationServiceException("WebServerCommand  not found: " + operation.getExternalValue());
-    }
-
-    /**
-     *
-     */
-    public void listCommands() {
-        LOGGER.debug("Available webserver commands");
-        for (String command : commands.keySet()) {
-            LOGGER.debug(command);
-        }
+        throw new WebServerServiceException("WebServerCommand  not found: " + operation.getExternalValue());
     }
 
     @PostConstruct
