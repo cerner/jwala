@@ -8,6 +8,10 @@ var MainArea = React.createClass({
     render: function() {
         var content = this.state.hasRole ? <MainTabs/> : <p></p>;
         return <div className={this.props.className}>
+                   <div className="AppBusyScreen">
+                       <div className="busyAnimation"/>
+                       <div className="grayOutCover"/>
+                   </div>
                    <div id="txt"/>
                    <table className="main-area-table">
                        <tr>
@@ -15,10 +19,6 @@ var MainArea = React.createClass({
                        </tr>
                        <tr>
                            <td>
-                               <div id="loading" style={{display:"none"}}>
-                                   <br/>
-                                   <img src="public-resources/img/gears-2d.gif"/>
-                               </div>
                                {content}
                            </td>
                        </tr>

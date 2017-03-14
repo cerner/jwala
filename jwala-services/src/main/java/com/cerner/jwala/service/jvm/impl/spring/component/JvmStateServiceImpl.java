@@ -2,17 +2,15 @@ package com.cerner.jwala.service.jvm.impl.spring.component;
 
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.state.StateType;
-import com.cerner.jwala.common.exec.ExecCommand;
-import com.cerner.jwala.common.exec.RemoteExecCommand;
-import com.cerner.jwala.common.exec.RemoteSystemConnection;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
+import com.cerner.jwala.control.jvm.command.JvmCommandFactory;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.MessagingService;
-import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.group.GroupStateNotificationService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
@@ -54,7 +52,7 @@ public class JvmStateServiceImpl implements JvmStateService {
     private final long jvmStateUpdateInterval;
     private final MessagingService messagingService;
     private final GroupStateNotificationService groupStateNotificationService;
-    private final RemoteCommandExecutorService remoteCommandExecutorService;
+    private final JvmCommandFactory jvmCommandFactory;
     private final SshConfiguration sshConfig;
     private final KeyLockManager lockManager;
 
@@ -67,7 +65,7 @@ public class JvmStateServiceImpl implements JvmStateService {
                                final GroupStateNotificationService groupStateNotificationService,
                                @Value("${jvm.state.update.interval:60000}")
                                final long jvmStateUpdateInterval,
-                               final RemoteCommandExecutorService remoteCommandExecutorService,
+                               final JvmCommandFactory jvmCommandFactory,
                                final SshConfiguration sshConfig,
                                @Value("${jvm.state.key.lock.timeout.millis:600000}")
                                final long lockTimeout,
@@ -79,7 +77,7 @@ public class JvmStateServiceImpl implements JvmStateService {
         this.jvmStateUpdateInterval = jvmStateUpdateInterval;
         this.messagingService = messagingService;
         this.groupStateNotificationService = groupStateNotificationService;
-        this.remoteCommandExecutorService = remoteCommandExecutorService;
+        this.jvmCommandFactory = jvmCommandFactory;
         this.sshConfig = sshConfig;
         lockManager = new StripedKeyLockManager(lockTimeout, TimeUnit.MILLISECONDS, keyLockStripeCount);
 
@@ -191,10 +189,7 @@ public class JvmStateServiceImpl implements JvmStateService {
 
     @Override
     public RemoteCommandReturnInfo getServiceStatus(final Jvm jvm) {
-        final RemoteExecCommand remoteExecCommand = new RemoteExecCommand(new RemoteSystemConnection(sshConfig.getUserName(),
-                sshConfig.getEncryptedPassword(), jvm.getHostName(), sshConfig.getPort()), new ExecCommand("sc query '" +
-                jvm.getJvmName() + "' | grep STATE"));
-        return remoteCommandExecutorService.executeCommand(remoteExecCommand);
+        return jvmCommandFactory.executeCommand(jvm, JvmControlOperation.CHECK_SERVICE_STATUS);
     }
 
     @Override
