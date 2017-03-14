@@ -35,7 +35,7 @@ public class JvmStateResolverWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmStateResolverWorker.class);
     private static final String SVC_STOPPED = "STOPPED";
-    private static final int SVC_STOPPED_RETURN_CODE=0;
+    private static final int SVC_STOPPED_RETURN_CODE = 0;
     private static final String NOT_RECEIVING_JVM_STATE_ERR_MSG = "Jwala not receiving updates from this JVM. " +
             "Possible causes are messaging settings in vars.properties are wrong, JVM is not functioning correctly " +
             "(configuration error(s) etc) even though the service is running.";
