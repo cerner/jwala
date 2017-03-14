@@ -14,7 +14,7 @@ public class HistoryTablePopupTest extends JwalaTest {
     private static final String GROUP_NAME_1 = "zGroup1-" + CURRENT_TIME_MILLIS;
 
     @Test
-    public void testHistoryTablePopup() throws InterruptedException {
+    public void testHistoryTablePopup() {
         clickTab("Configuration");
         clickTab("Operations");
         driver.findElement(By.xpath("//td[text()='" + GROUP_NAME_1 + "']/preceding-sibling::td")).click();
