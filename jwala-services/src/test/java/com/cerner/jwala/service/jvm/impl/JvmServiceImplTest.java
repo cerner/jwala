@@ -28,6 +28,7 @@ import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
 import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
@@ -408,12 +409,9 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockClientFactoryHelper.requestGet(any(URI.class))).thenReturn(mockResponse);
 
         when(jvm.getState()).thenReturn(JvmState.JVM_START);
-        String diagnosis = jvmService.performDiagnosis(aJvmId, mockUser);
-        assertTrue(!diagnosis.isEmpty());
-
-        when(mockResponse.getStatusCode()).thenReturn(HttpStatus.REQUEST_TIMEOUT);
-        diagnosis = jvmService.performDiagnosis(aJvmId, mockUser);
-        assertTrue(!diagnosis.isEmpty());
+        jvmService.performDiagnosis(aJvmId, mockUser);
+        verify(mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
+                eq(EventType.USER_ACTION_INFO), anyString());
     }
 
     @Test
@@ -426,8 +424,9 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         when(mockClientFactoryHelper.requestGet(any(URI.class))).thenThrow(new IOException("TEST IO EXCEPTION"));
         when(jvm.getState()).thenReturn(JvmState.JVM_STARTED);
-        String diagnosis = jvmService.performDiagnosis(aJvmId, mockUser);
-        assertTrue(!diagnosis.isEmpty());
+        jvmService.performDiagnosis(aJvmId, mockUser);
+        verify(mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
+                eq(EventType.USER_ACTION_INFO), anyString());
     }
 
     @Test
@@ -440,8 +439,9 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         when(mockClientFactoryHelper.requestGet(any(URI.class))).thenThrow(new RuntimeException("RUN!!"));
         when(jvm.getState()).thenReturn(JvmState.JVM_STARTED);
-        String diagnosis = jvmService.performDiagnosis(aJvmId, mockUser);
-        assertTrue(!diagnosis.isEmpty());
+        jvmService.performDiagnosis(aJvmId, mockUser);
+        verify(mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
+                eq(EventType.USER_ACTION_INFO), anyString());
     }
 
     @Test
