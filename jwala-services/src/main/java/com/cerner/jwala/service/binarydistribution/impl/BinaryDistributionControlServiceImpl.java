@@ -7,7 +7,6 @@ import com.cerner.jwala.common.exec.*;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
-import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.control.configuration.AemSshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
@@ -20,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 
-import static com.cerner.jwala.control.AemControl.Properties.*;
+import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
 
 /**
  * Created by Arvindo Kinny on 10/11/2016.
@@ -46,7 +45,6 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
 
     @Override
     public CommandOutput secureCopyFile(final String hostname, final String source, final String destination) throws CommandFailureException  {
-//TODO: refactor scp
         RemoteExecCommand command = new RemoteExecCommand(getConnection(hostname),  new ExecCommand(SECURE_COPY, source, destination));
         try {
             final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(aemSshConfig.getJschBuilder().build(), command);
