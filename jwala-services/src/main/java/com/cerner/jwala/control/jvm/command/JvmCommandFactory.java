@@ -76,7 +76,7 @@ public class JvmCommandFactory {
         });
         commands.put(JvmControlOperation.STOP.getExternalValue(), jvm -> {
             checkExistsAndCopy(jvm, STOP_SCRIPT_NAME.getValue());
-            return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getExecCommandForStopService(jvm)));
+            return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getShellCommandForStopService(jvm)));
         });
         commands.put(JvmControlOperation.THREAD_DUMP.getExternalValue(), jvm -> {
             final String threadDumpScriptName = THREAD_DUMP_SCRIPT_NAME.getValue();
@@ -99,6 +99,10 @@ public class JvmCommandFactory {
         commands.put(JvmControlOperation.DELETE_SERVICE.getExternalValue(), jvm -> {
             checkExistsAndCopy(jvm, DELETE_SERVICE_SCRIPT_NAME.getValue());
             return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getExecCommandForDeleteService(jvm)));
+        });
+        commands.put(JvmControlOperation.CHECK_SERVICE_STATUS.getExternalValue(), jvm -> {
+            checkExistsAndCopy(jvm, SERVICE_STATUS_SCRIPT_NAME.getValue());
+            return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForCheckServiceStatus(jvm)));
         });
 
     }
@@ -263,7 +267,11 @@ public class JvmCommandFactory {
                 DELETE_SERVICE_SCRIPT_NAME.getValue(), jvm.getJvmName());
     }
 
-    private ExecCommand getExecCommandForStopService(Jvm jvm) {
+    private ExecCommand getExecCommandForCheckServiceStatus(Jvm jvm){
+        return new ExecCommand(getFullPathScript(jvm, SERVICE_STATUS_SCRIPT_NAME.getValue()), jvm.getJvmName());
+    }
+
+    private ExecCommand getShellCommandForStopService(Jvm jvm){
         return new ShellCommand(getFullPathScript(jvm, STOP_SCRIPT_NAME.getValue()), jvm.getJvmName(), SLEEP_TIME.getValue());
     }
 }

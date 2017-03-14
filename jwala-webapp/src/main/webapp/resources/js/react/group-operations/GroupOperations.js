@@ -395,7 +395,14 @@ var GroupOperations = React.createClass({
         ServiceFactory.getServerStateWebSocketService().connect(this.msgHandler, this.stompConnectedCallback, this.stompConnectErrorHandler);
     },
     stompConnectedCallback: function(frame) {
-        React.unmountComponentAtNode(this.refs.stompMsgDiv.getDOMNode());
+        if (this.refs.stompMsgDiv) {
+            React.unmountComponentAtNode(this.refs.stompMsgDiv.getDOMNode());
+        } else {
+            // If stompMsgDiv is undefined this means that we're no longer in the operations page so we try to
+            // disconnect Stomp Client in case it has not been disconnected yet
+            console.log("Disconnecting Stomp Client since we're no longer in the group operations page!");
+            ServiceFactory.getServerStateWebSocketService().disconnect();
+        }
     },
     stompConnectErrorHandler: function(e) {
         React.renderComponent(<span>Connecting to a web socket...</span>, this.refs.stompMsgDiv.getDOMNode());
