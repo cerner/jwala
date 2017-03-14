@@ -278,9 +278,8 @@ public class JvmServiceRestImplTest {
         User user = mock(User.class);
         when(authenticatedUser.getUser()).thenReturn(user);
         when(user.getId()).thenReturn("testUser");
-        when(jvmService.performDiagnosis(jvm.getId(), user)).thenReturn("Good Diagnosis!");
-        Response response = jvmServiceRest.diagnoseJvm(jvm.getId(), authenticatedUser);
-        assertTrue(response.hasEntity());
+        Response response = jvmServiceRest.diagnoseJvm(jvm.getId(),authenticatedUser);
+        assertEquals(Response.ok().build().getStatus(), response.getStatus());
     }
 
     @Test
