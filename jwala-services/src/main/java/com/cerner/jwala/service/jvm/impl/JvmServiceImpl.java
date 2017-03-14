@@ -14,7 +14,6 @@ import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.state.StateType;
 import com.cerner.jwala.common.domain.model.user.User;
-import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.CommandOutputReturnCode;
@@ -26,7 +25,6 @@ import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
 import com.cerner.jwala.common.request.jvm.CreateJvmRequest;
 import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
-import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaJvmConfigTemplate;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -45,12 +43,10 @@ import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
-import groovy.text.SimpleTemplateEngine;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.mime.MediaType;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +65,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class JvmServiceImpl implements JvmService {
-    private static final String DIAGNOSIS_INITIATED = "Diagnosis Initiated on JVM ${jvm.jvmName}, host ${jvm.hostName}";
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImpl.class);
     private static final String MEDIA_TYPE_TEXT = "text";
     private static final String SET_ENV_BAT = "setenv.bat";
@@ -682,27 +677,13 @@ public class JvmServiceImpl implements JvmService {
 
     @Override
     @Transactional
-    public String performDiagnosis(Identifier<Jvm> aJvmId, final User user) {
+    public void performDiagnosis(Identifier<Jvm> aJvmId, final User user) {
         // if the Jvm does not exist, we'll get a 404 NotFoundException
         Jvm jvm = jvmPersistenceService.getJvm(aJvmId);
 
         pingAndUpdateJvmState(jvm);
-
-        final String message = "Diagnose and resolve state";
-        historyFacadeService.write(jvm.getJvmName(), new ArrayList<>(jvm.getGroups()), message, EventType.USER_ACTION_INFO, user.getId());
-        SimpleTemplateEngine engine = new SimpleTemplateEngine();
-        Map<String, Object> binding = new HashMap<>();
-        binding.put("jvm", jvm);
-
-        try {
-            return engine.createTemplate(DIAGNOSIS_INITIATED).make(binding).toString();
-        } catch (CompilationFailedException | ClassNotFoundException | IOException e) {
-            throw new ApplicationException(DIAGNOSIS_INITIATED, e);
-            // why do this? Because if there was a problem with the template that made
-            // it past initial testing, then it is probably due to the jvm in the binding
-            // so just dump out the diagnosis template and the exception so it can be
-            // debugged.
-        }
+        historyFacadeService.write(jvm.getJvmName(), new ArrayList<>(jvm.getGroups()), "Diagnose and resolve state",
+                EventType.USER_ACTION_INFO, user.getId());
     }
 
 

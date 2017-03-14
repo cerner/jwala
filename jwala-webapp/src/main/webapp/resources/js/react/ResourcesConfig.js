@@ -265,8 +265,10 @@ var ResourcesConfig = React.createClass({
         });
 
     },
+
+    // TODO: We need to refactor this. For starters we should put external properties in its own event handler.
     onCreateResourceOkClicked: function() {
-        if (this.refs.selectMetaDataAndTemplateFilesWidget && !$(this.refs.selectMetaDataAndTemplateFilesWidget.refs.form.getDOMNode()).validate().form()) {
+        if (this.refs.selectMetaDataAndTemplateFilesWidget && !$(this.refs.selectMetaDataAndTemplateFilesWidget.refs.form.getDOMNode())) {
             return;
         }
 
