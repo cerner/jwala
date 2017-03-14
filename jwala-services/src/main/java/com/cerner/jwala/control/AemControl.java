@@ -25,6 +25,7 @@ public class AemControl {
         DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME("commands.cygwin.deploy-config-tar", "unjar-jvm.sh"),
         DELETE_SERVICE_SCRIPT_NAME("commands.cygwin.delete-service", "delete-service.sh"),
         INSTALL_SERVICE_SCRIPT_NAME("commands.cygwin.install-service", "install-service.sh"),
+        SERVICE_STATUS_SCRIPT_NAME("commands.cygwin.service-status", "service-status.sh"),
         INSTALL_SERVICE_WS_SERVICE_SCRIPT_NAME("commands.cygwin.install-ws-service", "install-ws-service.sh"),
         UNPACK_BINARY_SCRIPT_NAME("commands.cygwin.unpack.sh", "unpack.sh"),
         UNZIP_SCRIPT_NAME("commands.unzip.sh", "unzip.sh"),
