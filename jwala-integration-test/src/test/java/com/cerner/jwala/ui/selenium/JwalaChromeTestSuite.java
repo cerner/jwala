@@ -10,10 +10,7 @@ import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupDeleteTes
 import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmCreateTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmDeleteTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.operations.HistoryTablePopupTest;
-import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.AddExternalProperty;
-import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.DeleteExternalProperty;
-import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.ResourceTopologyTest;
-import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.UploadResourceTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -28,8 +25,9 @@ import java.util.concurrent.TimeUnit;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, AppCreateTest.class,
-        ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class, DeleteExternalProperty.class,
-        HistoryTablePopupTest.class, AppDeleteTest.class, JvmDeleteTest.class, GroupDeleteTest.class, LogoutTest.class})
+        ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class, ModifyExternalPropertyResource.class,
+        DeleteExternalProperty.class, HistoryTablePopupTest.class, AppDeleteTest.class, JvmDeleteTest.class, GroupDeleteTest.class,
+        LogoutTest.class})
 public class JwalaChromeTestSuite extends TestSuite {
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
