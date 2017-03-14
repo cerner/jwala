@@ -200,15 +200,6 @@ public class JvmCommandFactory {
      * @param jvm
      * @return
      */
-    private ExecCommand getExecCommand(String scriptName, Jvm jvm) {
-        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJvmName());
-    }
-
-    /**
-     * @param scriptName
-     * @param jvm
-     * @return
-     */
     private ExecCommand getShellCommand(String scriptName, Jvm jvm) {
         return new ShellCommand(getFullPathScript(jvm, scriptName), jvm.getJvmName());
     }

@@ -11,6 +11,7 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.exception.ApplicationServiceException;
+import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -165,6 +166,79 @@ public class JvmCommandFactoryTest {
         assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
         verify(Config.mockSshConfig, times(1)).getEncryptedPassword();
         verify(Config.mockSshConfig, times(1)).getUserName();
+    }
+
+    @Test
+    public void testJvmDeleteServiceWithSecureCopy() {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+
+        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
+
+        when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "File doesn't exist - create directory, copy script, and make executable", ""));
+        when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Successfully created directory",""));
+        when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Successfully copied script",""));
+        when(Config.mockBinaryDistributionControlService.changeFileMode(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Successfully changed file mode",""));
+
+        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DELETE_SERVICE);
+
+        assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
+        verify(Config.mockSshConfig, times(1)).getEncryptedPassword();
+        verify(Config.mockSshConfig, times(1)).getUserName();
+    }
+
+    @Test (expected = JvmServiceException.class)
+    public void testJvmDeleteServiceFailsMakeDirectory() {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+
+        when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "File doesn't exist - create directory, copy script, and make executable", ""));
+        when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "","Failed to create directory"));
+
+        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DELETE_SERVICE);
+
+        assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
+        verify(Config.mockSshConfig, times(1)).getEncryptedPassword();
+        verify(Config.mockSshConfig, times(1)).getUserName();
+        verify(Config.mockBinaryDistributionControlService, never()).secureCopyFile(anyString(), anyString(), anyString());
+        verify(Config.mockBinaryDistributionControlService, never()).changeFileMode(anyString(), anyString(), anyString(), anyString());
+        verify(Config.mockRemoteCommandExecutorService, never()).executeCommand(any(RemoteExecCommand.class));
+    }
+
+    @Test (expected = JvmServiceException.class)
+    public void testJvmDeleteServiceFailsSecureCopy() {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+
+        when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "File doesn't exist - create directory, copy script, and make executable", ""));
+        when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Successfully created directory",""));
+        when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "","Failed secure copy"));
+
+        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DELETE_SERVICE);
+
+        assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
+        verify(Config.mockSshConfig, times(1)).getEncryptedPassword();
+        verify(Config.mockSshConfig, times(1)).getUserName();
+        verify(Config.mockBinaryDistributionControlService, never()).changeFileMode(anyString(), anyString(), anyString(), anyString());
+        verify(Config.mockRemoteCommandExecutorService, never()).executeCommand(any(RemoteExecCommand.class));
+    }
+
+    @Test (expected = JvmServiceException.class)
+    public void testJvmDeleteServiceFailsChangeFileMode() {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+
+        when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "File doesn't exist - create directory, copy script, and make executable", ""));
+        when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Successfully created directory",""));
+        when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Successfully secure copied script",""));
+        when(Config.mockBinaryDistributionControlService.changeFileMode(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "","Failed to change the file mode"));
+
+        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DELETE_SERVICE);
+
+        assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
+        verify(Config.mockSshConfig, times(1)).getEncryptedPassword();
+        verify(Config.mockSshConfig, times(1)).getUserName();
+        verify(Config.mockRemoteCommandExecutorService, never()).executeCommand(any(RemoteExecCommand.class));
     }
 
     @Configuration
