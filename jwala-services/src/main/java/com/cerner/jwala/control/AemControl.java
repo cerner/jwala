@@ -26,6 +26,7 @@ public class AemControl {
         DELETE_SERVICE_SCRIPT_NAME("commands.cygwin.delete-service", "delete-service.sh"),
         INSTALL_SERVICE_SCRIPT_NAME("commands.cygwin.install-service", "install-service.sh"),
         INSTALL_WS_SERVICE_SCRIPT_NAME("commands.cygwin.install-ws-service", "install-ws-service.sh"),
+        SERVICE_STATUS_SCRIPT_NAME("commands.cygwin.service-status", "service-status.sh"),
         UNPACK_BINARY_SCRIPT_NAME("commands.cygwin.unpack.sh", "unpack.sh"),
         UNZIP_SCRIPT_NAME("commands.unzip.sh", "unzip.sh"),
         SLEEP_TIME("net.stop.sleep.time.seconds", NET_STOP_SLEEP_TIME_SECONDS_DEFAULT);
