@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.util.HashMap;
 
 import static com.cerner.jwala.control.AemControl.Properties.*;
@@ -102,7 +101,7 @@ public class JvmCommandFactory {
         });
         commands.put(JvmControlOperation.CHECK_SERVICE_STATUS.getExternalValue(), jvm -> {
             checkExistsAndCopy(jvm, SERVICE_STATUS_SCRIPT_NAME.getValue());
-            return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm),getExecCommandForCheckServiceStatus(jvm)));
+            return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getExecCommandForCheckServiceStatus(jvm)));
         });
 
     }
@@ -120,7 +119,11 @@ public class JvmCommandFactory {
     private void copyScriptToRemoteDestination(Jvm jvm, String scriptName, String destAbsolutePath) {
         LOGGER.info("{} does not exist at remote location. Performing secure copy.", scriptName);
 
-        final String destDir = new File(getFullPathScript(jvm, scriptName)).getParent();
+        // Don't use java.io.File here to get the parent directory from getFullPathScript - we need to use the
+        // path derived from the method in order to support deploying JVMs across platforms (i.e. from a
+        // Windows deployed jwala to a Linux remote host and vice versa).
+        // So don't pass the script name here to just get the path of the parent directory
+        final String destDir = getFullPathScript(jvm, "");
         CommandOutput createDirResult = binaryDistributionControlService.createDirectory(jvm.getHostName(), destDir);
         if (!createDirResult.getReturnCode().wasSuccessful()) {
             LOGGER.error("Failed to create directory {}", destDir);
@@ -267,11 +270,11 @@ public class JvmCommandFactory {
                 DELETE_SERVICE_SCRIPT_NAME.getValue(), jvm.getJvmName());
     }
 
-    private ExecCommand getExecCommandForCheckServiceStatus(Jvm jvm){
+    private ExecCommand getExecCommandForCheckServiceStatus(Jvm jvm) {
         return new ExecCommand(getFullPathScript(jvm, SERVICE_STATUS_SCRIPT_NAME.getValue()), jvm.getJvmName());
     }
 
-    private ExecCommand getShellCommandForStopService(Jvm jvm){
+    private ExecCommand getShellCommandForStopService(Jvm jvm) {
         return new ShellCommand(getFullPathScript(jvm, STOP_SCRIPT_NAME.getValue()), jvm.getJvmName(), SLEEP_TIME.getValue());
     }
 }
