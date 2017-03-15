@@ -128,7 +128,10 @@ public class WebServerCommandFactory {
             throw new WebServerServiceException("Failed to create directory " + destDir);
         }
 
-        CommandOutput copyResult = binaryDistributionControlService.secureCopyFile(webserver.getHost(), ApplicationProperties.getRequired("commands.scripts-path") + "/" + scriptName, destAbsolutePath);
+        CommandOutput copyResult = binaryDistributionControlService.secureCopyFile(
+                webserver.getHost(),
+                ApplicationProperties.getRequired("commands.scripts-path") + "/" + scriptName,
+                destAbsolutePath);
         if (copyResult.getReturnCode().wasSuccessful()) {
             LOGGER.info("Secure copy success to {}", destAbsolutePath);
         } else {
