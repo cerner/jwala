@@ -115,7 +115,7 @@ public class WebServerCommandFactory {
      */
     private void checkExistsAndCopy(WebServer webserver, String scriptName) {
         final String destAbsolutePath = getFullPathScript(scriptName, webserver.getName());
-        CommandOutput fileExistsResult = binaryDistributionControlService.checkFileExists(webserver.getHost(), destAbsolutePath);
+        final CommandOutput fileExistsResult = binaryDistributionControlService.checkFileExists(webserver.getHost(), destAbsolutePath);
         if (!fileExistsResult.getReturnCode().wasSuccessful()) {
             copyScriptToRemoteDestination(webserver, scriptName, destAbsolutePath);
         } else {
@@ -135,13 +135,13 @@ public class WebServerCommandFactory {
         LOGGER.info("{} does not exist at remote location. Performing secure copy.", scriptName);
 
         final String destDir = new File(getFullPathScript(scriptName, webserver.getName())).getParent();
-        CommandOutput createDirResult = binaryDistributionControlService.createDirectory(webserver.getHost(), destDir);
+        final CommandOutput createDirResult = binaryDistributionControlService.createDirectory(webserver.getHost(), destDir);
         if (!createDirResult.getReturnCode().wasSuccessful()) {
             LOGGER.error("Failed to create directory {}", destDir);
             throw new WebServerServiceException("Failed to create directory " + destDir);
         }
 
-        CommandOutput copyResult = binaryDistributionControlService.secureCopyFile(
+        final CommandOutput copyResult = binaryDistributionControlService.secureCopyFile(
                 webserver.getHost(),
                 ApplicationProperties.getRequired("commands.scripts-path") + "/" + scriptName,
                 destAbsolutePath);
@@ -151,7 +151,7 @@ public class WebServerCommandFactory {
         }
         LOGGER.info("Secure copy success to {}", destAbsolutePath);
 
-        CommandOutput fileModeResult = binaryDistributionControlService.changeFileMode(webserver.getHost(), "a+x", destDir, "*.sh");
+        final CommandOutput fileModeResult = binaryDistributionControlService.changeFileMode(webserver.getHost(), "a+x", destDir, "*.sh");
         if (!fileModeResult.getReturnCode().wasSuccessful()) {
             LOGGER.error("Failed to make the files executable in {}", destDir);
             throw new WebServerServiceException("Failed to make the files executable in " + destDir);
