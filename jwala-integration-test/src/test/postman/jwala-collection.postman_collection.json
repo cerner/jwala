@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "273873c5-b89a-aaeb-ae19-f84c6bdf5ba6",
+		"_postman_id": "32edadb5-4fb4-3910-d0b9-a8e7791ea5a4",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -3027,6 +3027,56 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "k) health check application",
+			"description": "",
+			"item": [
+				{
+					"name": "get health check app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{host}}:9101/hct/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "hct get status",
+					"request": {
+						"url": "https://{{host}}:9101/hct/services/rest/v1/status?message=hello",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get hct classloaderInfo",
+					"request": {
+						"url": "https://{{host}}:9101/hct/classLoaderInfo",
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []
