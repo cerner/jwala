@@ -56,13 +56,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.cerner.jwala.control.AemControl.Properties.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static com.cerner.jwala.control.AemControl.Properties.*;
 
 public class JvmServiceImpl implements JvmService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImpl.class);
@@ -468,6 +468,8 @@ public class JvmServiceImpl implements JvmService {
         createParentDir(jvm, stagingArea);
         final String failedToCopyMessage = "Failed to secure copy ";
         final String duringCreationMessage = " during the creation of ";
+
+        // copy the unjar script
         final String destinationDeployJarPath = stagingArea + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
         final boolean alwaysOverwriteScripts = true;
         if (!jvmControlService.secureCopyFile(secureCopyRequest, deployConfigJarPath, destinationDeployJarPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
@@ -476,6 +478,7 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
 
+        // copy the install service script
         final String installServicePath = commandsScriptsPath + '/' + INSTALL_SERVICE_SCRIPT_NAME;
         final String destinationInstallServicePath = stagingArea + '/' + INSTALL_SERVICE_SCRIPT_NAME;
 
@@ -487,11 +490,63 @@ public class JvmServiceImpl implements JvmService {
         final String deleteServicePath = commandsScriptsPath + "/" + DELETE_SERVICE_SCRIPT_NAME;
         final String destinationDeleteServicePath = stagingArea + "/" + DELETE_SERVICE_SCRIPT_NAME;
 
+        // copy the delete service script
         if (!jvmControlService.secureCopyFile(secureCopyRequest, deleteServicePath, destinationDeleteServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
             String message = failedToCopyMessage + deleteServicePath + duringCreationMessage + jvmName;
             LOGGER.error(message);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
         }
+
+        // copy the start service script
+        final String startServicePath = commandsScriptsPath + "/" + START_SCRIPT_NAME;
+        final String destinationStartServicePath = stagingArea + "/" + START_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, startServicePath, destinationStartServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + startServicePath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+
+        // copy the stop service script
+        final String stopServicePath = commandsScriptsPath + "/" + STOP_SCRIPT_NAME;
+        final String destinationStopServicePath = stagingArea + "/" + STOP_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, stopServicePath, destinationStopServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + stopServicePath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+
+        // copy the thread dump script
+        final String threadDumpPath = commandsScriptsPath + "/" + THREAD_DUMP_SCRIPT_NAME;
+        final String destinationThreadDumpPath = stagingArea + "/" + THREAD_DUMP_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, threadDumpPath, destinationThreadDumpPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + threadDumpPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+
+        // copy the heap dump script
+        final String heapDumpPath = commandsScriptsPath + "/" + HEAP_DUMP_SCRIPT_NAME;
+        final String destinationHeapDumpPath = stagingArea + "/" + HEAP_DUMP_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, heapDumpPath, destinationHeapDumpPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + heapDumpPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+
+        // copy the status service script
+        final String serviceStatusPath = commandsScriptsPath + "/" + SERVICE_STATUS_SCRIPT_NAME;
+        final String destinationServiceStatusPath = stagingArea + "/" + SERVICE_STATUS_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, serviceStatusPath, destinationServiceStatusPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + serviceStatusPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+
         //TODO move to constant
         final String linuxJvmService = "/linux/jvm-service.sh";
         final CommandOutput commandOutput = jvmControlService.executeCreateDirectoryCommand(jvm, stagingArea + "/linux");
