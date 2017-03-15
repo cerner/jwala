@@ -26,6 +26,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
+import static com.cerner.jwala.common.properties.PropertyKeys.TOMCAT_MANAGER_XML_SSL_PATH;
+
 /**
  * Created by Steven Ger on 12/16/16.
  */
@@ -75,9 +77,31 @@ public class ManagedJvmBuilder {
                 stageTomcat().
                 addScripts().
                 overwriteServerXml().
+                addSSLManagerXml().
                 addLibs().
                 createDirInJvmTomcat("/logs").
                 jar();
+    }
+
+    private ManagedJvmBuilder addSSLManagerXml() {
+        final String destManagerXmlPath = ApplicationProperties.get(TOMCAT_MANAGER_XML_SSL_PATH);
+        final String templatesPath = ApplicationProperties.getRequired("paths.resource-templates");
+        final String managerXmlFileName = "/manager.xml";
+        final File srcManagerXmlFile = new File(templatesPath + managerXmlFileName);
+        if (null == destManagerXmlPath || destManagerXmlPath.isEmpty() || !srcManagerXmlFile.exists()) {
+            LOGGER.info("No source manager.xml file template at {} or destination path specified at {}", srcManagerXmlFile.getAbsolutePath(), TOMCAT_MANAGER_XML_SSL_PATH.getPropertyName());
+            return this;
+        }
+
+        String generatedDestDir = getTomcatStagingDir().getAbsolutePath() + destManagerXmlPath + managerXmlFileName;
+        LOGGER.info("Copying {} to generated JVM destination {}", srcManagerXmlFile.getAbsolutePath(), generatedDestDir);
+        try {
+            FileUtils.copyFile(srcManagerXmlFile, new File(generatedDestDir));
+        } catch (IOException e) {
+            LOGGER.error("Error adding the manager.xml to the generated staging directory. Could not copy {} to {}", srcManagerXmlFile.getAbsolutePath(), generatedDestDir, e);
+            throw new JvmServiceException(e);
+        }
+        return this;
     }
 
     protected ManagedJvmBuilder createDirInJvmTomcat(final String createDirName) {
@@ -282,7 +306,7 @@ public class ManagedJvmBuilder {
     private File getTomcatStagingLibDir() {
         final File generatedJvmDestDirLib = new File(getTomcatStagingDir().getAbsolutePath() + "/lib");
         if (!generatedJvmDestDirLib.exists() && !generatedJvmDestDirLib.mkdir()) {
-                LOGGER.warn("Failed to create directory " + generatedJvmDestDirLib.getAbsolutePath());
+            LOGGER.warn("Failed to create directory " + generatedJvmDestDirLib.getAbsolutePath());
         }
 
         return generatedJvmDestDirLib;
