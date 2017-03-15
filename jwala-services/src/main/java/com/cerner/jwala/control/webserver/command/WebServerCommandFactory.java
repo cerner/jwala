@@ -47,10 +47,10 @@ public class WebServerCommandFactory {
     private BinaryDistributionControlService binaryDistributionControlService;
 
     /**
-     * @param webserver
-     * @param operation
-     * @return
-     * @throws ApplicationServiceException
+     * @param webserver the web server target for the command
+     * @param operation the operation to be executed
+     * @return the result of the executed command
+     * @throws WebServerServiceException if the operation is not supported
      */
     public RemoteCommandReturnInfo executeCommand(WebServer webserver, WebServerControlOperation operation) throws ApplicationServiceException {
         if (commands.containsKey(operation.getExternalValue())) {
@@ -147,28 +147,32 @@ public class WebServerCommandFactory {
     }
 
     /**
-     * @param webserver
-     * @return
+     *  Get the connection object to the remote system
+     *
+     * @param webserver provides the host for the connection
+     * @return the connection object to the remote host
      */
     private RemoteSystemConnection getConnection(WebServer webserver) {
         return new RemoteSystemConnection(sshConfig.getUserName(), sshConfig.getEncryptedPassword(), webserver.getHost(), sshConfig.getPort());
     }
 
     /**
-     * Get
+     * Get the full path to the script
      *
-     * @param scriptName
-     * @param webServerName
-     * @return
+     * @param scriptName the name of the script
+     * @param webServerName the name of the web server; used to create the directory where the script will reside
+     * @return the absolute path of the script
      */
     private String getFullPathScript(String scriptName, String webServerName) {
         return ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR) + "/" + webServerName + "/" + scriptName;
     }
 
     /**
-     * @param scriptName
-     * @param webserver
-     * @return
+     * Get the command object to be executed
+     *
+     * @param scriptName the name of the script
+     * @param webserver the web server used to provide the directory name
+     * @return the command object to execute
      */
     private ExecCommand getExecCommand(String scriptName, WebServer webserver, String... params) {
         String paramConcat = "";
@@ -180,9 +184,11 @@ public class WebServerCommandFactory {
     }
 
     /**
-     * @param scriptName
-     * @param webserver
-     * @return
+     * Get the shell command object to be executed
+     *
+     * @param scriptName the script name
+     * @param webserver the name of the web server used to provide the directory name
+     * @return the shell command object to execute
      */
     private ExecCommand getShellCommand(String scriptName, WebServer webserver, String... params) {
         String paramConcat = "";
