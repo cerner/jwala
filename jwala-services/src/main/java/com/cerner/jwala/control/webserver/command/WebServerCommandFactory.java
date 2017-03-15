@@ -132,18 +132,18 @@ public class WebServerCommandFactory {
                 webserver.getHost(),
                 ApplicationProperties.getRequired("commands.scripts-path") + "/" + scriptName,
                 destAbsolutePath);
-        if (copyResult.getReturnCode().wasSuccessful()) {
-            LOGGER.info("Secure copy success to {}", destAbsolutePath);
-        } else {
+        if (!copyResult.getReturnCode().wasSuccessful()) {
             LOGGER.error("Failed to secure copy {}", destAbsolutePath);
             throw new WebServerServiceException("Failed to secure copy " + destAbsolutePath);
         }
+        LOGGER.info("Secure copy success to {}", destAbsolutePath);
 
         CommandOutput fileModeResult = binaryDistributionControlService.changeFileMode(webserver.getHost(), "a+x", destDir, "*.sh");
         if (!fileModeResult.getReturnCode().wasSuccessful()) {
             LOGGER.error("Failed to make the files executable in {}", destDir);
             throw new WebServerServiceException("Failed to make the files executable in " + destDir);
         }
+        LOGGER.info("Change file mode to executable success: {}", destDir);
     }
 
     /**
