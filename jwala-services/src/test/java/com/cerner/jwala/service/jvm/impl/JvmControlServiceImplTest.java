@@ -26,6 +26,7 @@ import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
+import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.jvm.exception.JvmControlServiceException;
@@ -217,7 +218,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         assertEquals("Skipping scp of file: ./dest/filename already exists and overwrite is set to false.", result.getStandardOutput());
     }
 
-    @Test (expected = InternalErrorException.class)
+    @Test(expected = InternalErrorException.class)
     public void testSecureCopyConfFileFailsBackup() throws CommandFailureException {
         when(Config.mockShellCommandFactory.executeRemoteCommand(anyString(), eq(Command.CREATE_DIR), anyString())).thenReturn(mock(RemoteCommandReturnInfo.class));
         when(Config.mockShellCommandFactory.executeRemoteCommand(anyString(), eq(Command.CHECK_FILE_EXISTS), anyString())).thenReturn(mock(RemoteCommandReturnInfo.class));
@@ -233,7 +234,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         jvmControlService.secureCopyFile(mockControlJvmRequest, "./source/path", "./dest/path", "user-id", true);
     }
 
-    @Test (expected = InternalErrorException.class)
+    @Test(expected = InternalErrorException.class)
     public void testSecureCopyConfFileFailsCreateDirectory() throws CommandFailureException {
         when(Config.mockShellCommandFactory.executeRemoteCommand(anyString(), eq(Command.CREATE_DIR), anyString())).thenReturn(new RemoteCommandReturnInfo(1, "", "FAILED BACK UP"));
 
@@ -273,20 +274,20 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         when(Config.mockJvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.START)).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         final ControlJvmRequest controlJvmRequest = new ControlJvmRequest(new Identifier<Jvm>("1"), JvmControlOperation.START);
-        final CommandOutput commandOutput  = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
+        final CommandOutput commandOutput = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
         assertTrue(commandOutput.getReturnCode().getWasSuccessful());
     }
 
     @Test
     public void testStopControlJvmSynchronously() throws InterruptedException {
         final Jvm mockJvm = mock(Jvm.class);
-        when (mockJvm.getHostName()).thenReturn("mockJvmHost");
+        when(mockJvm.getHostName()).thenReturn("mockJvmHost");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         when(Config.mockJvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.STOP)).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         final ControlJvmRequest controlJvmRequest = new ControlJvmRequest(new Identifier<Jvm>("1"), JvmControlOperation.STOP);
-        final CommandOutput commandOutput  = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
+        final CommandOutput commandOutput = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
         assertTrue(commandOutput.getReturnCode().getWasSuccessful());
     }
 
@@ -297,7 +298,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "***heapdump-start***hi there***heapdump-end***", ""));
         when(Config.mockJvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.HEAP_DUMP)).thenReturn(new RemoteCommandReturnInfo(0, "***heapdump-start***hi there***heapdump-end***", ""));
         final ControlJvmRequest controlJvmRequest = new ControlJvmRequest(new Identifier<Jvm>("1"), JvmControlOperation.HEAP_DUMP);
-        final CommandOutput commandOutput  = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
+        final CommandOutput commandOutput = jvmControlService.controlJvmSynchronously(controlJvmRequest, 60000, new User("jedi"));
     }
 
     @Test(expected = JvmControlServiceException.class)
@@ -308,7 +309,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Success!", ""));
         final ControlJvmRequest controlJvmRequest = new ControlJvmRequest(new Identifier<Jvm>("1"), JvmControlOperation.STOP);
         when(Config.mockJvmCommandFactory.executeCommand(any(Jvm.class), any(JvmControlOperation.class))).thenReturn(mock(RemoteCommandReturnInfo.class));
-        final CommandOutput commandOutput  = jvmControlService.controlJvmSynchronously(controlJvmRequest, 3000, new User("jedi"));
+        final CommandOutput commandOutput = jvmControlService.controlJvmSynchronously(controlJvmRequest, 3000, new User("jedi"));
     }
 
     @ContextConfiguration
@@ -316,6 +317,9 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
 
         @Mock
         static JvmCommandFactory mockJvmCommandFactory;
+
+        @Mock
+        static BinaryDistributionControlService mockBinaryDistributionControlService;
 
         @Mock
         static AemSshConfig mockAemSshConfig;
@@ -345,6 +349,11 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         @Bean
         public JvmCommandFactory getJvmCommandFactory() {
             return mockJvmCommandFactory;
+        }
+
+        @Bean
+        public BinaryDistributionControlService getMockBinaryDistributionControlService() {
+            return mockBinaryDistributionControlService;
         }
 
         @Bean
