@@ -12,8 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Properties;
 
-import static org.junit.Assert.fail;
-
 /**
  * Utility class that contains commonly used static methods
  * Created by Jedd Cuison on 2/22/2017
@@ -58,36 +56,6 @@ public class SeleniumTestHelper {
         } catch (final NoSuchElementException e) {
             return false;
         }
-    }
-
-    /**
-     * Wait for an element {@link HtmlElement} to get rendered
-     * @param timeout in seconds that specifies how long the method should wait for the element to render
-     * @param htmlElement The element to verify is it has been rendered
-     */
-    public static void waitForElementToRender(final long timeout, final HtmlElement htmlElement) {
-        for (int second = 0;; second++) {
-            if (second > timeout) {
-                fail("timeout!");
-            }
-
-            if (htmlElement.isRendered()) {
-               break;
-            }
-
-            try {
-                Thread.sleep(1000);
-            } catch (final InterruptedException e) {
-                throw new SeleniumTestCaseException("Failed to wait for element to render!", e);
-            }
-        }
-    }
-
-    /**
-     * Describes an element that will be rendered by a browser
-     */
-    public interface HtmlElement {
-        boolean isRendered();
     }
 
     public static Properties getProperties() throws IOException {
