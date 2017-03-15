@@ -108,6 +108,11 @@ public class WebServerCommandFactory {
 
     }
 
+    /**
+     * Check to see if the script exists and copy it to the remote server if it doesn't
+     * @param webserver the target web server of the script execution
+     * @param scriptName the name of the script to be executed
+     */
     private void checkExistsAndCopy(WebServer webserver, String scriptName) {
         final String destAbsolutePath = getFullPathScript(scriptName, webserver.getName());
         CommandOutput fileExistsResult = binaryDistributionControlService.checkFileExists(webserver.getHost(), destAbsolutePath);
@@ -118,6 +123,14 @@ public class WebServerCommandFactory {
         }
     }
 
+    /**
+     * The script doesn't exist so copy it to the remote server. This method will create the parent directory of the
+     * script if it doesn't exist, copy the script to that location, and then change the permissions of the script
+     * to be executable.
+     * @param webserver the target web server
+     * @param scriptName the script to be executed
+     * @param destAbsolutePath the destination of the script on the remote server
+     */
     private void copyScriptToRemoteDestination(WebServer webserver, String scriptName, String destAbsolutePath) {
         LOGGER.info("{} does not exist at remote location. Performing secure copy.", scriptName);
 
