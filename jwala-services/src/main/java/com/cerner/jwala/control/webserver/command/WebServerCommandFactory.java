@@ -38,13 +38,13 @@ public class WebServerCommandFactory {
     private HashMap<String, WebServerCommand> commands;
 
     @Autowired
-    protected SshConfiguration sshConfig;
+    private SshConfiguration sshConfig;
 
     @Autowired
-    protected RemoteCommandExecutorService remoteCommandExecutorService;
+    private RemoteCommandExecutorService remoteCommandExecutorService;
 
     @Autowired
-    protected BinaryDistributionControlService binaryDistributionControlService;
+    private BinaryDistributionControlService binaryDistributionControlService;
 
     /**
      * @param webserver
