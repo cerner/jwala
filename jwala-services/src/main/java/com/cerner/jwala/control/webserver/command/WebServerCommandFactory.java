@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.util.HashMap;
 
 import static com.cerner.jwala.control.AemControl.Properties.*;
@@ -134,7 +133,11 @@ public class WebServerCommandFactory {
     private void copyScriptToRemoteDestination(WebServer webserver, String scriptName, String destAbsolutePath) {
         LOGGER.info("{} does not exist at remote location. Performing secure copy.", scriptName);
 
-        final String destDir = new File(getFullPathScript(scriptName, webserver.getName())).getParent();
+        // Don't use java.io.File here to get the parent directory from getFullPathScript - we need to use the
+        // path derived from the method in order to support deploying Web Servers across platforms (i.e. from a
+        // Windows deployed jwala to a Linux remote host and vice versa).
+        // So don't pass the script name here to just get the path of the parent directory
+        final String destDir = getFullPathScript("", webserver.getName());
         final CommandOutput createDirResult = binaryDistributionControlService.createDirectory(webserver.getHost(), destDir);
         if (!createDirResult.getReturnCode().wasSuccessful()) {
             LOGGER.error("Failed to create directory {}", destDir);
