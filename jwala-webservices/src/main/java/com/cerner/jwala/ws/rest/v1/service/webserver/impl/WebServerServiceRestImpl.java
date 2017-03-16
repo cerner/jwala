@@ -37,7 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 
 import javax.persistence.EntityExistsException;
 import javax.ws.rs.core.Response;
@@ -46,7 +45,10 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 public class WebServerServiceRestImpl implements WebServerServiceRest {
 
@@ -303,7 +305,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
     }
 
     protected void deployStartStopScripts(WebServer webServer, String userId) throws CommandFailureException {
-        final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
+        final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR) + "/" +webServer.getName();
 
         final String webServerName = webServer.getName();
         final String serviceStartScriptName = AemControl.Properties.START_SCRIPT_NAME.getValue();
@@ -319,7 +321,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
 
         webServerControlService.secureCopyFile(webServerName, serviceStopScriptPath, remoteDestStopScriptPath, userId);
 
-        final String installServiceWsScriptName = AemControl.Properties.INSTALL_SERVICE_WS_SERVICE_SCRIPT_NAME.getValue();
+        final String installServiceWsScriptName = AemControl.Properties.INSTALL_WS_SERVICE_SCRIPT_NAME.getValue();
         final String sourceInstallServiceWsServicePath = COMMANDS_SCRIPTS_PATH + "/" + installServiceWsScriptName;
         webServerControlService.secureCopyFile(webServerName, sourceInstallServiceWsServicePath, remoteScriptDir + "/" + installServiceWsScriptName, userId);
 
@@ -342,7 +344,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
 
     protected void installWebServerService(final AuthenticatedUser user, final ControlWebServerRequest installServiceRequest, final WebServer webServer) throws CommandFailureException {
 
-        final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
+        final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR) + "/" + webServer.getName();
 
         // create the install_serviceWS.bat file
         String installServiceScriptText = webServerService.generateInstallServiceScript(webServer);
