@@ -26,6 +26,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
+import static com.cerner.jwala.common.properties.PropertyKeys.PATHS_RESOURCE_TEMPLATES;
 import static com.cerner.jwala.common.properties.PropertyKeys.TOMCAT_MANAGER_XML_SSL_PATH;
 
 /**
@@ -35,7 +36,6 @@ public class ManagedJvmBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagedJvmBuilder.class);
 
-    private static final String PATHS_RESOURCE_TEMPLATES = "paths.resource-templates";
     private static final String INSTALL_SERVICE_TEMPLATE = "install-service-jvm.bat.tpl";
     private static final String SERVER_XML_TEMPLATE = "server.xml.tpl";
     public static final String INSTALL_SERVICE_BAT = "install-service.bat";
@@ -87,7 +87,7 @@ public class ManagedJvmBuilder {
 
         // check for the template and the destination property - both are required
         final String destManagerXmlPath = ApplicationProperties.get(TOMCAT_MANAGER_XML_SSL_PATH);
-        final String templatesPath = ApplicationProperties.getRequired("paths.resource-templates");
+        final String templatesPath = ApplicationProperties.getRequired(PATHS_RESOURCE_TEMPLATES);
         final String managerXmlFileName = "/manager.xml";
         final File srcManagerXmlFile = new File(templatesPath + managerXmlFileName);
         if (null == destManagerXmlPath || destManagerXmlPath.isEmpty() || !srcManagerXmlFile.exists()) {
