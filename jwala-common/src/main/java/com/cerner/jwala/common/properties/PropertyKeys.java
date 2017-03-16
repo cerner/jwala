@@ -23,7 +23,8 @@ public enum PropertyKeys {
     REMOTE_PATHS_TOMCAT_CORE("remote.paths.tomcat.core"),
     LOCAL_JWALA_BINARY_DIR("jwala.binary.dir"),
     JMAP_DUMP_LIVE_ENABLED("jmap.dump.live.enabled"),
-    TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path");
+    TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
+    PATHS_RESOURCE_TEMPLATES("paths.resource-templates");
 
 
     private String propertyName;
