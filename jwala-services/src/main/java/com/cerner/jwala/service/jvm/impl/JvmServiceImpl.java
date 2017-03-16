@@ -139,7 +139,7 @@ public class JvmServiceImpl implements JvmService {
         final Jvm jvm = createAndAssignJvm(createJvmAndAddToGroupsRequest, user);
 
         // inherit the templates from the group
-        if (null != jvm.getGroups() && jvm.getGroups().size() > 0) {
+        if (null != jvm.getGroups() && !jvm.getGroups().isEmpty()) {
             final Group parentGroup = jvm.getGroups().iterator().next();
             createDefaultTemplates(jvm.getJvmName(), parentGroup);
             if (jvm.getGroups().size() > 1) {
@@ -916,12 +916,13 @@ public class JvmServiceImpl implements JvmService {
      * @return the location of the newly created temp file
      * @throws IOException
      */
-    protected String createConfigFile(String generatedResourcesTempDir, final String configFileName, String generatedResourceString) throws IOException {
+    protected String createConfigFile(String generatedResourcesTempDir, final String configFileName, final String generatedResourceString) throws IOException {
         File templateFile = new File(generatedResourcesTempDir + '/' + configFileName);
+        String content = generatedResourceString;
         if (configFileName.endsWith(".bat")) {
-            generatedResourceString = generatedResourceString.replaceAll("\n", "\r\n");
+            content = generatedResourceString.replaceAll("\n", "\r\n");
         }
-        FileUtils.writeStringToFile(templateFile, generatedResourceString);
+        FileUtils.writeStringToFile(templateFile, content);
         return templateFile.getAbsolutePath();
     }
 
