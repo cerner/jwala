@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.cerner.jwala.common.properties.PropertyKeys.PATHS_RESOURCE_TEMPLATES;
+import static com.cerner.jwala.common.properties.PropertyKeys.TOMCAT_MANAGER_XML_SSL_PATH;
+
 /**
  * Created by Steven Ger on 12/16/16.
  */
@@ -34,7 +37,6 @@ public class ManagedJvmBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagedJvmBuilder.class);
 
-    private static final String PATHS_RESOURCE_TEMPLATES = "paths.resource-templates";
     private static final String INSTALL_SERVICE_TEMPLATE = "install-service-jvm.bat.tpl";
     private static final String SERVER_XML_TEMPLATE = "server.xml.tpl";
     public static final String INSTALL_SERVICE_BAT = "install-service.bat";
@@ -76,9 +78,52 @@ public class ManagedJvmBuilder {
                 stageTomcat().
                 addScripts().
                 overwriteServerXml().
+                addSSLManagerXml().
                 addLibs().
                 createDirInJvmTomcat("/logs").
                 jar();
+    }
+
+    private ManagedJvmBuilder addSSLManagerXml() {
+
+        // check for the template and the destination property - both are required
+        final String destManagerXmlPath = ApplicationProperties.get(TOMCAT_MANAGER_XML_SSL_PATH);
+        final String templatesPath = ApplicationProperties.getRequired(PATHS_RESOURCE_TEMPLATES);
+        final String managerXmlFileName = "/manager.xml";
+        final File srcManagerXmlFile = new File(templatesPath + managerXmlFileName);
+        if (null == destManagerXmlPath || destManagerXmlPath.isEmpty() || !srcManagerXmlFile.exists()) {
+            LOGGER.info("No source manager.xml file template at {} or destination path specified at {}", srcManagerXmlFile.getAbsolutePath(), TOMCAT_MANAGER_XML_SSL_PATH.getPropertyName());
+            return this;
+        }
+
+        // generate the manager.xml and put it in the generated JVM jar
+        String generatedDestDir = getTomcatStagingDir().getAbsolutePath() + destManagerXmlPath + managerXmlFileName;
+        String generatedManagerXmlContent = generateManagerXml(srcManagerXmlFile);
+        LOGGER.info("Writing content {} to generated JVM destination {}", generatedManagerXmlContent, generatedDestDir);
+        try {
+            FileUtils.writeStringToFile(new File(generatedDestDir), generatedManagerXmlContent, Charset.forName("UTF-8"));
+        } catch (IOException e) {
+            LOGGER.error("Error adding the manager.xml to the generated staging directory. Could not write content {} to {}", generatedManagerXmlContent, generatedDestDir, e);
+            throw new JvmServiceException(e);
+        }
+        return this;
+    }
+
+    private String generateManagerXml(File srcManagerXmlFile) {
+        try {
+            final FileInputStream managerXmlTemplateContent = new FileInputStream(srcManagerXmlFile);
+            String scriptContent = resourceService.generateResourceFile("manager.xml",
+                    IOUtils.toString(managerXmlTemplateContent, Charset.forName("UTF-8")),
+                    resourceService.generateResourceGroup(), jvm,
+                    ResourceGeneratorType.TEMPLATE);
+
+            LOGGER.debug("Generated manager.xml text: {}", scriptContent);
+
+            return scriptContent;
+        } catch (final IOException e) {
+            throw new JvmServiceException("Failed to generate install service batch file!", e);
+        }
+
     }
 
     protected ManagedJvmBuilder createDirInJvmTomcat(final String createDirName) {
@@ -224,11 +269,11 @@ public class ManagedJvmBuilder {
                     resourceService.generateResourceGroup(), jvm,
                     ResourceGeneratorType.TEMPLATE);
 
-            LOGGER.debug("Generated install-service.bat text: {}", scriptContent);
+            LOGGER.debug("Generated server.xml text: {}", scriptContent);
 
             return scriptContent;
         } catch (final IOException e) {
-            throw new JvmServiceException("Failed to generate install service batch file!", e);
+            throw new JvmServiceException("Failed to generate server XML file!", e);
         }
     }
 
@@ -268,7 +313,7 @@ public class ManagedJvmBuilder {
     private File getTomcatStagingLibDir() {
         final File generatedJvmDestDirLib = new File(getTomcatStagingDir().getAbsolutePath() + "/lib");
         if (!generatedJvmDestDirLib.exists() && !generatedJvmDestDirLib.mkdir()) {
-                LOGGER.warn("Failed to create directory " + generatedJvmDestDirLib.getAbsolutePath());
+            LOGGER.warn("Failed to create directory " + generatedJvmDestDirLib.getAbsolutePath());
         }
 
         return generatedJvmDestDirLib;
