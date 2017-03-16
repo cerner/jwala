@@ -886,4 +886,38 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
             LOGGER.error("Failed to generate remote jar.", e);
         }
     }
+
+    @Test
+    public void testGenerateJvmConfigJarCopiesManagerXML() {
+        String restorePath = System.getProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
+        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources/managerXml");
+        ApplicationProperties.reload();
+
+        Set<Group> groups = new HashSet<Group>() {{
+            add(new Group(Identifier.id(2L, Group.class), "junit-group"));
+        }};
+
+        Jvm jvm = new Jvm(Identifier.id(1L, Jvm.class), JUNIT_JVM, groups);
+
+        jvmServiceImpl = new JvmServiceImpl(mockJvmPersistenceService, mockGroupPersistenceService, mockApplicationService,
+                mockMessagingTemplate, mockGroupStateNotificationService, mockResourceService, mockClientFactoryHelper,
+                "/topic/server-states", mockJvmControlService, mockBinaryDistributionService, mockBinaryDistributionLockManager,
+                mockHistoryFacadeService, new FileUtility());
+
+        when(mockJvmPersistenceService.findJvmByExactName(jvm.getJvmName())).thenReturn(jvm);
+        when(mockResourceService.generateResourceFile(anyString(),
+                anyString(),
+                any(ResourceGroup.class),
+                any(Jvm.class),
+                eq(ResourceGeneratorType.TEMPLATE))).thenReturn("some file content");
+        try {
+            jvmServiceImpl.generateJvmConfigJar(jvm);
+        } catch (CommandFailureException e) {
+            LOGGER.error("Failed to generate remote jar.", e);
+        } finally {
+            System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, restorePath);
+            ApplicationProperties.reload();
+        }
+    }
+
 }
