@@ -82,7 +82,7 @@ public class JschServiceImpl implements JschService {
     @Override
     public RemoteCommandReturnInfo runExecCommand(RemoteSystemConnection remoteSystemConnection, String command, long timeout) {
         Session session = null;
-        Channel channel = null;
+        ChannelExec channel = null;
         try {
             // We can't keep the session and the channels open for type exec since we need the exit code and the
             // standard error e.g. thread dump uses this and requires the exit code and the standard error.
@@ -90,8 +90,16 @@ public class JschServiceImpl implements JschService {
             session = prepareSession(remoteSystemConnection);
             session.connect();
             LOGGER.debug("session connected");
-            channel = session.openChannel(ChannelType.EXEC.getChannelType());
-            return runExecCommand(command, (ChannelExec) channel, timeout);
+            channel = (ChannelExec) session.openChannel(ChannelType.EXEC.getChannelType());
+
+            LOGGER.debug("Executing command \"{}\"...", command);
+            channel.setCommand(command.getBytes(StandardCharsets.UTF_8));
+
+            LOGGER.debug("channel {} connecting...", channel.getId());
+            channel.connect(CHANNEL_CONNECT_TIMEOUT);
+            LOGGER.debug("channel {} connected!", channel.getId());
+
+            return getExecRemoteCommandReturnInfo(channel, timeout);
         } catch (final Exception e) {
             final String errMsg = MessageFormat.format("Failed to run the following command: {0}", command);
             LOGGER.error(errMsg, e);
@@ -145,18 +153,12 @@ public class JschServiceImpl implements JschService {
      * Runs a command via jsch's exec channel.
      * Unlike the shell channel, an exec channel closes after an execution of a command.
      *
-     * @param command     the command to run
      * @param channelExec the channel where the command is sent for execution
      * @param timeout     the length of time in ms in which the method waits for a available byte(s) as a result of command
      * @return result of the command
      */
-    private RemoteCommandReturnInfo runExecCommand(final String command, final ChannelExec channelExec, final long timeout) throws IOException, JSchException {
-        LOGGER.debug("Executing command \"{}\"...", command);
-        channelExec.setCommand(command.getBytes(StandardCharsets.UTF_8));
-
-        LOGGER.debug("channel {} connecting...", channelExec.getId());
-        channelExec.connect(CHANNEL_CONNECT_TIMEOUT);
-        LOGGER.debug("channel {} connected!", channelExec.getId());
+    private RemoteCommandReturnInfo getExecRemoteCommandReturnInfo(final ChannelExec channelExec, final long timeout)
+            throws IOException, JSchException {
 
         final String output = readExecRemoteOutput(channelExec, timeout);
         LOGGER.debug("remote output = {}", output);
