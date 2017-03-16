@@ -99,7 +99,15 @@ public class ApplicationProperties {
     }
 
     private void init() {
-        String propertiesFile = System.getProperty(PROPERTIES_ROOT_PATH) + "/" + PROPERTIES_FILE_NAME;
+
+        String propertiesRootPath = System.getProperty(PROPERTIES_ROOT_PATH);
+        if (propertiesRootPath == null) {
+            propertiesRootPath = this.getClass().getClassLoader().getResource(PROPERTIES_FILE_NAME).getPath();
+            propertiesRootPath = propertiesRootPath.substring(0, propertiesRootPath.lastIndexOf('/'));
+            LOGGER.error("Properties root path not set! Loading default resource root path: {}", propertiesRootPath);
+        }
+
+        String propertiesFile = propertiesRootPath + "/" + PROPERTIES_FILE_NAME;
         Properties tempProperties = new Properties();
         try {
             tempProperties.load(new FileReader(new File(propertiesFile)));
