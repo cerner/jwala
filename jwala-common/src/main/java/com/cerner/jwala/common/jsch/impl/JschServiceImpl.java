@@ -50,6 +50,8 @@ public class JschServiceImpl implements JschService {
     private static final int CHANNEL_EXEC_CLOSE_TIMEOUT = 300000;
     private static final String JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION = "jsch.channel.shell.read.input.sleep.duration";
     private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
+    private static final String JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME = "jsch.exec.read.remote.output.loop.sleep.time";
+    private static final String READ_LOOP_SLEEP_TIME_DEFAULT_VALUE = "100";
 
     @Autowired
     private JSch jsch;
@@ -191,17 +193,18 @@ public class JschServiceImpl implements JschService {
      * @throws IOException for any issues encoutered when retrieving the input stream from the channel
      */
     private String readExecRemoteOutput(ChannelExec channelExec, long timeout) throws IOException {
-        InputStream in = channelExec.getInputStream();
-        StringBuilder outputBuilder = new StringBuilder();
+        final BufferedInputStream bufIn = new BufferedInputStream(channelExec.getInputStream());
+        final StringBuilder outputBuilder = new StringBuilder();
 
-        byte[] tmp = new byte[BYTE_CHUNK_SIZE];
-        long startTime = System.currentTimeMillis();
-        final long readWaitTime = Long.parseLong(ApplicationProperties.get("jwala.read.channel.wait.for.close", "250"));
+        final byte[] tmp = new byte[BYTE_CHUNK_SIZE];
+        final long startTime = System.currentTimeMillis();
+        final long readLoopSleepTime = Long.parseLong(ApplicationProperties.get(JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME,
+                                                                                READ_LOOP_SLEEP_TIME_DEFAULT_VALUE));
 
         while (true) {
             // read the stream
-            while (in.available() > 0) {
-                int i = in.read(tmp, 0, BYTE_CHUNK_SIZE);
+            while (bufIn.available() > 0) {
+                int i = bufIn.read(tmp, 0, BYTE_CHUNK_SIZE);
                 if (i < 0) {
                     break;
                 }
@@ -211,32 +214,39 @@ public class JschServiceImpl implements JschService {
             // check if the channel is closed
             if (channelExec.isClosed()) {
                 // check for any more bytes on the input stream
-                try {
-                    Thread.sleep(readWaitTime);
-                } catch (Exception ee) {
-                    LOGGER.error("Interrupted sleep while reading jsch exec remote output", ee);
-                }
-                if (in.available() > 0) {
+                sleep(readLoopSleepTime);
+
+                if (bufIn.available() > 0) {
                     continue;
                 }
+
                 LOGGER.debug("exit-status: {}", channelExec.getExitStatus());
                 break;
             }
 
-            // check max timeout
+            // check timeout
             if ((System.currentTimeMillis() - startTime) > timeout) {
                 LOGGER.warn("Remote exec output reading timeout!");
                 break;
             }
 
-            // wait for channel to be closed
-            try {
-                Thread.sleep(readWaitTime);
-            } catch (Exception ee) {
-                LOGGER.error("Interrupted sleep while reading jsch exec remote output", ee);
-            }
+            // If for some reason the channel is not getting closed, we should not hog CPU time with this loop hence
+            // we sleep for a while
+            sleep(readLoopSleepTime);
         }
         return outputBuilder.toString();
+    }
+
+    /**
+     * Puts the current thread to sleep. If the sleep is interrupted, the error is caught and logged.
+     * @param val the period of time in ms for the thread to sleep
+     */
+    private void sleep(final long val) {
+        try {
+            Thread.sleep(val);
+        } catch (final InterruptedException ie) {
+            LOGGER.error("Sleep interrupted while reading JSch exec remote output!", ie);
+        }
     }
 
     /**
