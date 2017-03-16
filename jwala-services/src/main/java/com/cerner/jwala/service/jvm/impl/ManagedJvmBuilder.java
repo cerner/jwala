@@ -84,6 +84,8 @@ public class ManagedJvmBuilder {
     }
 
     private ManagedJvmBuilder addSSLManagerXml() {
+
+        // check for the template and the destination property - both are required
         final String destManagerXmlPath = ApplicationProperties.get(TOMCAT_MANAGER_XML_SSL_PATH);
         final String templatesPath = ApplicationProperties.getRequired("paths.resource-templates");
         final String managerXmlFileName = "/manager.xml";
@@ -93,15 +95,34 @@ public class ManagedJvmBuilder {
             return this;
         }
 
+        // generate the manager.xml and put it in the generated JVM jar
         String generatedDestDir = getTomcatStagingDir().getAbsolutePath() + destManagerXmlPath + managerXmlFileName;
-        LOGGER.info("Copying {} to generated JVM destination {}", srcManagerXmlFile.getAbsolutePath(), generatedDestDir);
+        String generatedManagerXmlContent = generateManagerXml(srcManagerXmlFile);
+        LOGGER.info("Writing content {} to generated JVM destination {}", generatedManagerXmlContent, generatedDestDir);
         try {
-            FileUtils.copyFile(srcManagerXmlFile, new File(generatedDestDir));
+            FileUtils.writeStringToFile(new File(generatedDestDir), generatedManagerXmlContent, Charset.forName("UTF-8"));
         } catch (IOException e) {
-            LOGGER.error("Error adding the manager.xml to the generated staging directory. Could not copy {} to {}", srcManagerXmlFile.getAbsolutePath(), generatedDestDir, e);
+            LOGGER.error("Error adding the manager.xml to the generated staging directory. Could not write content {} to {}", generatedManagerXmlContent, generatedDestDir, e);
             throw new JvmServiceException(e);
         }
         return this;
+    }
+
+    private String generateManagerXml(File srcManagerXmlFile) {
+        try {
+            final FileInputStream managerXmlTemplateContent = new FileInputStream(srcManagerXmlFile);
+            String scriptContent = resourceService.generateResourceFile("manager.xml",
+                    IOUtils.toString(managerXmlTemplateContent, Charset.forName("UTF-8")),
+                    resourceService.generateResourceGroup(), jvm,
+                    ResourceGeneratorType.TEMPLATE);
+
+            LOGGER.debug("Generated manager.xml text: {}", scriptContent);
+
+            return scriptContent;
+        } catch (final IOException e) {
+            throw new JvmServiceException("Failed to generate install service batch file!", e);
+        }
+
     }
 
     protected ManagedJvmBuilder createDirInJvmTomcat(final String createDirName) {
@@ -262,11 +283,11 @@ public class ManagedJvmBuilder {
                     resourceService.generateResourceGroup(), jvm,
                     ResourceGeneratorType.TEMPLATE);
 
-            LOGGER.debug("Generated install-service.bat text: {}", scriptContent);
+            LOGGER.debug("Generated server.xml text: {}", scriptContent);
 
             return scriptContent;
         } catch (final IOException e) {
-            throw new JvmServiceException("Failed to generate install service batch file!", e);
+            throw new JvmServiceException("Failed to generate server XML file!", e);
         }
     }
 
