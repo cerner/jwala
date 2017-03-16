@@ -4,7 +4,7 @@ Jwala is a web application that provides management for a group of Tomcat server
 
 Once defined, a Group may also be managed through Jwala’s REST API, to perform management operations on the group. The management operations are listed under Component Responsibilities below. The primary user of Jwala will be the enterprise package manager application, which will interact with Jwala using the REST API.
 
-Jwala utilizes the defined file system structure and SSH agents on each machine to manage running Tomcat instances on remote Windows Servers. Jwala utilizes the Cerner Tomcat Platform application deployment model to know how to request current status from each Tomcat instance and HTTPD instance. Jwala is also able to update each instance as changes are made to the configuration, and allows maintenance operations to be executed from a central console.
+Jwala utilizes the defined file system structure and SSH agents on each machine to manage running Tomcat instances on remote Servers. Jwala utilizes the Cerner Tomcat Platform application deployment model to know how to request current status from each Tomcat instance and HTTPD instance. Jwala is also able to update each instance as changes are made to the configuration, and allows maintenance operations to be executed from a central console.
 
 
 # _Building_
