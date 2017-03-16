@@ -79,6 +79,38 @@ public class JschServiceImpl implements JschService {
         }
     }
 
+    /**
+     * Runs a command in a shell
+     *
+     * @param command      the command to run
+     * @param channelShell the channel where the command is sent for execution
+     * @param timeout      the length of time in ms in which the method waits for a available byte(s) as a result of command
+     * @return result of the command
+     * @throws IOException
+     */
+    private RemoteCommandReturnInfo runShellCommand(final String command, final ChannelShell channelShell, final long timeout)
+            throws IOException {
+        final InputStream in = channelShell.getInputStream();
+        final OutputStream out = channelShell.getOutputStream();
+
+        LOGGER.debug("Executing command \"{}\"...", command);
+        out.write(command.getBytes(StandardCharsets.UTF_8));
+        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
+        out.write("echo 'EXIT_CODE='$?***".getBytes(StandardCharsets.UTF_8));
+        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
+        out.write("echo -n -e '\\xff'".getBytes(StandardCharsets.UTF_8));
+        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
+        out.flush();
+
+        LOGGER.debug("Reading remote output ...");
+        final String remoteOutput = readRemoteOutput(in, (char) 0xff, timeout);
+        LOGGER.debug("****** output: start ******");
+        LOGGER.debug(remoteOutput);
+        LOGGER.debug("****** output: end ******");
+
+        return new RemoteCommandReturnInfo(parseReturnCode(remoteOutput, command), remoteOutput, null);
+    }
+
     @Override
     public RemoteCommandReturnInfo runExecCommand(RemoteSystemConnection remoteSystemConnection, String command, long timeout) {
         Session session = null;
@@ -115,38 +147,6 @@ public class JschServiceImpl implements JschService {
                 LOGGER.debug("session disconnected");
             }
         }
-    }
-
-    /**
-     * Runs a command in a shell
-     *
-     * @param command      the command to run
-     * @param channelShell the channel where the command is sent for execution
-     * @param timeout      the length of time in ms in which the method waits for a available byte(s) as a result of command
-     * @return result of the command
-     * @throws IOException
-     */
-    private RemoteCommandReturnInfo runShellCommand(final String command, final ChannelShell channelShell, final long timeout)
-            throws IOException {
-        final InputStream in = channelShell.getInputStream();
-        final OutputStream out = channelShell.getOutputStream();
-
-        LOGGER.debug("Executing command \"{}\"...", command);
-        out.write(command.getBytes(StandardCharsets.UTF_8));
-        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
-        out.write("echo 'EXIT_CODE='$?***".getBytes(StandardCharsets.UTF_8));
-        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
-        out.write("echo -n -e '\\xff'".getBytes(StandardCharsets.UTF_8));
-        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
-        out.flush();
-
-        LOGGER.debug("Reading remote output ...");
-        final String remoteOutput = readRemoteOutput(in, (char) 0xff, timeout);
-        LOGGER.debug("****** output: start ******");
-        LOGGER.debug(remoteOutput);
-        LOGGER.debug("****** output: end ******");
-
-        return new RemoteCommandReturnInfo(parseReturnCode(remoteOutput, command), remoteOutput, null);
     }
 
     /**
