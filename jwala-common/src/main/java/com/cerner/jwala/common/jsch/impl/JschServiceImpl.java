@@ -93,11 +93,12 @@ public class JschServiceImpl implements JschService {
     }
 
     /**
-     * Reads data from inputstream which is wrapped inside {@link RemoteCommandReturnInfo}
+     * Reads remote output which is then wrapped inside {@link RemoteCommandReturnInfo}
      *
      * @param command the command to run
      * @param in the input stream
      * @param timeout the length of time in ms in which the method waits for a available byte(s) as a result of command  @return result of the command
+     * @return {@link RemoteCommandReturnInfo}
      * @throws IOException
      */
     private RemoteCommandReturnInfo getShellRemoteCommandReturnInfo(final String command, final InputStream in, final long timeout)
@@ -150,12 +151,11 @@ public class JschServiceImpl implements JschService {
     }
 
     /**
-     * Runs a command via jsch's exec channel.
-     * Unlike the shell channel, an exec channel closes after an execution of a command.
+     * Reads std and error remote output which are then wrapped inside {@link RemoteCommandReturnInfo}
      *
      * @param channelExec the channel where the command is sent for execution
-     * @param timeout     the length of time in ms in which the method waits for a available byte(s) as a result of command
-     * @return result of the command
+     * @param timeout the length of time in ms in which the method waits for a available byte(s) as a result of command
+     * @return {@link RemoteCommandReturnInfo}
      */
     private RemoteCommandReturnInfo getExecRemoteCommandReturnInfo(final ChannelExec channelExec, final long timeout)
             throws IOException, JSchException {
