@@ -110,10 +110,11 @@ public class ManagedJvmBuilder {
     }
 
     private String generateManagerXml(File srcManagerXmlFile) {
+        FileInputStream managerXmlTemplateStream = null;
         try {
-            final FileInputStream managerXmlTemplateContent = new FileInputStream(srcManagerXmlFile);
+            managerXmlTemplateStream = new FileInputStream(srcManagerXmlFile);
             String scriptContent = resourceService.generateResourceFile("manager.xml",
-                    IOUtils.toString(managerXmlTemplateContent, Charset.forName("UTF-8")),
+                    IOUtils.toString(managerXmlTemplateStream, Charset.forName("UTF-8")),
                     resourceService.generateResourceGroup(), jvm,
                     ResourceGeneratorType.TEMPLATE);
 
@@ -122,6 +123,8 @@ public class ManagedJvmBuilder {
             return scriptContent;
         } catch (final IOException e) {
             throw new JvmServiceException("Failed to generate install service batch file!", e);
+        } finally {
+            IOUtils.closeQuietly(managerXmlTemplateStream);
         }
 
     }
@@ -207,12 +210,13 @@ public class ManagedJvmBuilder {
     }
 
     protected String generateServiceScriptContent() {
+        FileInputStream installServiceBatTemplateContentStream = null;
         try {
             final Path templatesPath = Paths.get(ApplicationProperties.get(PATHS_RESOURCE_TEMPLATES));
-            final FileInputStream installServiceBatTemplateContent = new FileInputStream(templatesPath.toAbsolutePath()
+            installServiceBatTemplateContentStream = new FileInputStream(templatesPath.toAbsolutePath()
                     .normalize().toString() + "/" + new File(INSTALL_SERVICE_TEMPLATE));
             String scriptContent = resourceService.generateResourceFile("install_service.bat",
-                    IOUtils.toString(installServiceBatTemplateContent, StandardCharsets.UTF_8),
+                    IOUtils.toString(installServiceBatTemplateContentStream, StandardCharsets.UTF_8),
                     resourceService.generateResourceGroup(), jvm,
                     ResourceGeneratorType.TEMPLATE);
 
@@ -221,6 +225,8 @@ public class ManagedJvmBuilder {
             return scriptContent;
         } catch (final IOException e) {
             throw new JvmServiceException("Failed to generate install service batch file!", e);
+        } finally {
+            IOUtils.closeQuietly(installServiceBatTemplateContentStream);
         }
     }
 
@@ -260,12 +266,13 @@ public class ManagedJvmBuilder {
     }
 
     protected String generateServerXml() {
+        FileInputStream installServiceBatTemplateContentStream = null;
         try {
             final Path templatesPath = Paths.get(ApplicationProperties.get(PATHS_RESOURCE_TEMPLATES));
-            final FileInputStream installServiceBatTemplateContent = new FileInputStream(templatesPath.toAbsolutePath()
+            installServiceBatTemplateContentStream = new FileInputStream(templatesPath.toAbsolutePath()
                     .normalize().toString() + "/" + new File(SERVER_XML_TEMPLATE));
             String scriptContent = resourceService.generateResourceFile("server.xml",
-                    IOUtils.toString(installServiceBatTemplateContent, Charset.forName("UTF-8")),
+                    IOUtils.toString(installServiceBatTemplateContentStream, Charset.forName("UTF-8")),
                     resourceService.generateResourceGroup(), jvm,
                     ResourceGeneratorType.TEMPLATE);
 
@@ -274,6 +281,8 @@ public class ManagedJvmBuilder {
             return scriptContent;
         } catch (final IOException e) {
             throw new JvmServiceException("Failed to generate server XML file!", e);
+        } finally {
+            IOUtils.closeQuietly(installServiceBatTemplateContentStream);
         }
     }
 
