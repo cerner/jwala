@@ -1,0 +1,80 @@
+apply plugin: "java"
+apply plugin: "maven-publish"
+
+group = "CTP"
+version = "0.0.1"
+
+// Publish fortify files
+publishing {
+    publications {
+
+        jwalaCommonsMbs(MavenPublication) {
+            artifact ("../$jwalaCommon/build/fortify/${jwalaCommon}.mbs") {
+                artifactId = "$jwalaCommon"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+        jwalaH2EmbeddedMbs(MavenPublication) {
+            artifact ("../$jwalaH2Embedded/build/fortify/${jwalaH2Embedded}.mbs") {
+                artifactId = "$jwalaH2Embedded"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+        jwalaPersistenceMbs(MavenPublication) {
+            artifact ("../$jwalaPersistence/build/fortify/${jwalaPersistence}.mbs") {
+                artifactId = "$jwalaPersistence"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+        jwalaServicesMbs(MavenPublication) {
+            artifact ("../$jwalaServices/build/fortify/${jwalaServices}.mbs") {
+                artifactId = "$jwalaServices"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+        jwalaTomcatMbs(MavenPublication) {
+            artifact ("../$jwalaTomcat/build/fortify/${jwalaTomcat}.mbs") {
+                artifactId = "$jwalaTomcat"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+        jwalaWebAppMbs(MavenPublication) {
+            artifact ("../$jwalaWebApp/build/fortify/${jwalaWebApp}.mbs") {
+                artifactId = "$jwalaWebApp"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+        jwalaWebServicesMbs(MavenPublication) {
+            artifact ("../$jwalaWebServices/build/fortify/${jwalaWebServices}.mbs") {
+                artifactId = "$jwalaWebServices"
+                classifier = 'fortify'
+                extension  = 'mbs'
+            }
+        }
+
+    }
+
+    repositories {
+        maven {
+
+            credentials {
+                username "$fortifyMbsRepoUserName"
+                password "$fortifyMbsRepoPwd"
+            }
+
+            url "$fortifyMbsRepo"
+        }
+    }
+}
