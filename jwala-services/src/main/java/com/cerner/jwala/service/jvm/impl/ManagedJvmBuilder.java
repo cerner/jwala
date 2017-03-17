@@ -8,7 +8,6 @@ import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
-import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
@@ -24,7 +23,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.cerner.jwala.common.properties.PropertyKeys.PATHS_RESOURCE_TEMPLATES;
 import static com.cerner.jwala.common.properties.PropertyKeys.TOMCAT_MANAGER_XML_SSL_PATH;
@@ -187,23 +188,8 @@ public class ManagedJvmBuilder {
 
     protected ManagedJvmBuilder addScripts() {
         createServiceInstallScript();
-        createServiceControlScripts();
 
         return this;
-    }
-
-    protected void createServiceControlScripts() {
-        final String commandsScriptsPath = ApplicationProperties.getRequired(PropertyKeys.SCRIPTS_PATH);
-        final File generatedJvmDestDirBin = new File(getTomcatStagingDir() + "/bin");
-        try {
-            FileUtils.copyFileToDirectory(new File(commandsScriptsPath + "/" + AemControl.Properties.START_SCRIPT_NAME.getValue()), generatedJvmDestDirBin);
-            FileUtils.copyFileToDirectory(new File(commandsScriptsPath + "/" + AemControl.Properties.STOP_SCRIPT_NAME.getValue()), generatedJvmDestDirBin);
-            FileUtils.copyFileToDirectory(new File(commandsScriptsPath + "/" + AemControl.Properties.HEAP_DUMP_SCRIPT_NAME.getValue()), generatedJvmDestDirBin);
-            FileUtils.copyFileToDirectory(new File(commandsScriptsPath + "/" + AemControl.Properties.THREAD_DUMP_SCRIPT_NAME.getValue()), generatedJvmDestDirBin);
-            FileUtils.copyFileToDirectory(new File(commandsScriptsPath + "/" + AemControl.Properties.SERVICE_STATUS_SCRIPT_NAME.getValue()), generatedJvmDestDirBin);
-        } catch (IOException e) {
-            throw new JvmServiceException(e);
-        }
     }
 
     protected void createServiceInstallScript() {

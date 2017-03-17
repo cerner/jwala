@@ -19,11 +19,9 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipFile;
 
-;
-
 /**
  * A utility class for file related operations
- *
+ * <p>
  * Created by Jedd Anthony Cuison on 12/1/2016
  */
 @Component
@@ -35,6 +33,7 @@ public class FileUtility {
 
     /**
      * Unzips the file to the specified destination
+     *
      * @param destination the destination e.g. c:/scratch
      */
     public void unzip(final File zipFile, final File destination) {
@@ -76,6 +75,7 @@ public class FileUtility {
 
     /**
      * Closes a {@link JarFile}
+     *
      * @param jarFile the jar file to close
      */
     private void closeJarFile(final JarFile jarFile) {
@@ -91,16 +91,17 @@ public class FileUtility {
 
     /**
      * Gets the root directories of a zip file
+     *
      * @param zipFilename the zip filename
      * @return zip file root directories
      */
     public Set<String> getZipRootDirs(final String zipFilename) {
         final Set<String> zipRootDirs = new HashSet<>();
         try {
-            if(zipFilename.indexOf(TAR_GZIP_FILE_EXT)>0){
+            if (zipFilename.indexOf(TAR_GZIP_FILE_EXT) > 0) {
                 return getGZipRootDirs(zipFilename);
             }
-            final ZipFile zipFile =  new ZipFile(zipFilename);
+            final ZipFile zipFile = new ZipFile(zipFilename);
             final Enumeration zipEntryEnumeration = zipFile.entries();
             while (zipEntryEnumeration.hasMoreElements()) {
                 final String zipEntry = zipEntryEnumeration.nextElement().toString();
@@ -118,6 +119,7 @@ public class FileUtility {
 
     /**
      * Create archive in zip format
+     *
      * @param archiveFile
      * @param filesToBeJared
      * @param parent
@@ -177,7 +179,7 @@ public class FileUtility {
      * @return the list of extracted filenames
      * @throws IOException
      */
-    public static Set<String> getGZipRootDirs(String tarGzipFile){
+    public static Set<String> getGZipRootDirs(String tarGzipFile) {
         final Set<String> zipRootDirs = new HashSet<>();
         TarArchiveInputStream in = null;
         try {
@@ -190,16 +192,15 @@ public class FileUtility {
                 }
                 entry = in.getNextTarEntry();
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new ApplicationException(ex);
-        }
-        finally {
+        } finally {
             try {
-                if(in !=null) {
+                if (in != null) {
                     in.close();
                 }
-            }catch (IOException e){
-                LOGGER.error("Error closing gzip stream",e);
+            } catch (IOException e) {
+                LOGGER.error("Error closing gzip stream", e);
             }
         }
 

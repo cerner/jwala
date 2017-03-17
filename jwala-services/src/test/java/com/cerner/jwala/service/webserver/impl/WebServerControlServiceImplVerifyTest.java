@@ -16,6 +16,7 @@ import com.cerner.jwala.common.exec.RemoteExecCommand;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
+import com.cerner.jwala.control.configuration.AemSshConfig;
 import com.cerner.jwala.control.webserver.command.WebServerCommandFactory;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
@@ -23,7 +24,9 @@ import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.MessagingService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
+import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.binarydistribution.DistributionService;
+import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionControlServiceImpl;
 import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import org.apache.commons.lang3.StringUtils;
@@ -158,7 +161,7 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         verify(Config.mockDistributionService).remoteSecureCopyFile(HOST_NAME, SOURCE_DIR, DEST_DIR);
     }
 
-    @Test (expected = InternalErrorException.class)
+    @Test(expected = InternalErrorException.class)
     public void testSecureCopyFailsBackup() throws CommandFailureException {
         final WebServer mockWebServer = mock(WebServer.class);
         when(mockWebServer.getName()).thenReturn(WEB_SERVER_NAME);
@@ -194,7 +197,7 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         webServerControlService.secureCopyFile(WEB_SERVER_NAME, SOURCE_DIR, UNIX_HOME_DEST_PATH, USER_ID);
     }
 
-    @Test (expected = InternalErrorException.class)
+    @Test(expected = InternalErrorException.class)
     public void testSecureCopyCreateParentFail() throws CommandFailureException {
         final Identifier<WebServer> webServerIdentifier = new Identifier<>(12L);
         WebServer webserver = new WebServer(webServerIdentifier, new HashSet<Group>(), WEB_SERVER_NAME);
@@ -248,7 +251,7 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         assertTrue(result);
     }
 
-    @Test (expected = InternalErrorException.class)
+    @Test(expected = InternalErrorException.class)
     public void testWaitStateForUnexpectedOperation() {
         final ControlWebServerRequest mockControlWebServerRequest = mock(ControlWebServerRequest.class);
         final WebServer mockWebServer = mock(WebServer.class);
@@ -281,6 +284,12 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
 
         @Mock
         static SshConfiguration mockSshConfig;
+
+        @Mock
+        static AemSshConfig mockAemSshConfig;
+
+        @Mock
+        static BinaryDistributionControlServiceImpl binaryDistributionControlService;
 
         public Config() {
             initMocks(this);
@@ -322,11 +331,21 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         }
 
         @Bean
+        public AemSshConfig getMockAemSshConfig() {
+            return mockAemSshConfig;
+        }
+
+        @Bean
+        public BinaryDistributionControlService getBinaryDistributionControlService() {
+            return binaryDistributionControlService;
+        }
+
+        @Bean
         @Scope("prototype")
         public WebServerControlService getWebServerControlService() {
             reset(mockWebServerCommandFactory, mockDistributionService, mockWebServerService,
-                  mockMessagingService, mockHistoryFacadeService, mockRemoteCommandExecutorService,
-                  mockSshConfig);
+                    mockMessagingService, mockHistoryFacadeService, mockRemoteCommandExecutorService,
+                    mockSshConfig, binaryDistributionControlService, mockAemSshConfig);
             return new WebServerControlServiceImpl();
         }
 
