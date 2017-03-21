@@ -1,5 +1,7 @@
 package com.cerner.jwala.common.jsch.impl;
 
+import static com.cerner.jwala.common.properties.PropertyKeys.*;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,9 +50,7 @@ public class JschServiceImpl implements JschService {
     private static final String EXIT_CODE_END_MARKER = "***";
     private static final int BYTE_CHUNK_SIZE = 1024;
     private static final int CHANNEL_EXEC_CLOSE_TIMEOUT = 300000;
-    private static final String JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION = "jsch.channel.shell.read.input.sleep.duration";
     private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
-    private static final String JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME = "jsch.exec.read.remote.output.loop.sleep.time";
     private static final String READ_LOOP_SLEEP_TIME_DEFAULT_VALUE = "100";
 
     @Autowired
@@ -200,8 +200,8 @@ public class JschServiceImpl implements JschService {
 
         final byte[] tmp = new byte[BYTE_CHUNK_SIZE];
         final long startTime = System.currentTimeMillis();
-        final long readLoopSleepTime = Long.parseLong(ApplicationProperties.get(JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME,
-                                                                                READ_LOOP_SLEEP_TIME_DEFAULT_VALUE));
+        final long readLoopSleepTime = Long.parseLong(ApplicationProperties.get(
+                JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME.getPropertyName(), READ_LOOP_SLEEP_TIME_DEFAULT_VALUE));
 
         while (true) {
             // read the stream
@@ -268,8 +268,8 @@ public class JschServiceImpl implements JschService {
             throw new JschServiceException("Expecting non-null end marker when reading remote output");
         }
 
-        final int readInputSleepDuration = Integer.parseInt(ApplicationProperties.get(JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION,
-                SHELL_READ_SLEEP_DEFAULT_VALUE));
+        final int readInputSleepDuration = Integer.parseInt(ApplicationProperties.get(
+                JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION.getPropertyName(), SHELL_READ_SLEEP_DEFAULT_VALUE));
         final BufferedInputStream buffIn = new BufferedInputStream(remoteOutput);
         final byte[] bytes = new byte[BYTE_CHUNK_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();

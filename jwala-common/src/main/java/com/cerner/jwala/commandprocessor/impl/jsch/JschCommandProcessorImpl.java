@@ -1,5 +1,7 @@
 package com.cerner.jwala.commandprocessor.impl.jsch;
 
+import static com.cerner.jwala.common.properties.PropertyKeys.*;
+
 import com.cerner.jwala.commandprocessor.CommandProcessor;
 import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.exec.RemoteExecCommand;
@@ -12,8 +14,6 @@ import java.io.IOException;
 
 public class JschCommandProcessorImpl implements CommandProcessor {
 
-    private static final String JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT = "jsch.shell.read.remote.output.timeout";
-    private static final String JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT = "jsch.exec.read.remote.output.timeout";
     private static final String DEFAULT_READ_REMOTE_OUTPUT_TIMEOUT = "180000";
 
     private final JschService jschService;
@@ -38,12 +38,14 @@ public class JschCommandProcessorImpl implements CommandProcessor {
         final RemoteCommandReturnInfo remoteCommandReturnInfo;
         if (remoteExecCommand.getCommand().getRunInShell()) {
             final int shellReadRemoteOutputTimeout =
-                    Integer.parseInt(ApplicationProperties.get(JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT, DEFAULT_READ_REMOTE_OUTPUT_TIMEOUT));
+                    Integer.parseInt(ApplicationProperties.get(JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT.getPropertyName(),
+                                                               DEFAULT_READ_REMOTE_OUTPUT_TIMEOUT));
             remoteCommandReturnInfo = jschService.runShellCommand(remoteExecCommand.getRemoteSystemConnection(),
                     remoteExecCommand.getCommand().toCommandString(), shellReadRemoteOutputTimeout);
         } else {
             final int execReadRemoteOutputTimeout =
-                    Integer.parseInt(ApplicationProperties.get(JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT, DEFAULT_READ_REMOTE_OUTPUT_TIMEOUT));
+                    Integer.parseInt(ApplicationProperties.get(JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT.getPropertyName(),
+                                                               DEFAULT_READ_REMOTE_OUTPUT_TIMEOUT));
             remoteCommandReturnInfo = jschService.runExecCommand(remoteExecCommand.getRemoteSystemConnection(),
                     remoteExecCommand.getCommand().toCommandString(), execReadRemoteOutputTimeout);
 
