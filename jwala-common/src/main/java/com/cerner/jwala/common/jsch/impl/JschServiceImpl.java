@@ -1,5 +1,7 @@
 package com.cerner.jwala.common.jsch.impl;
 
+import static com.cerner.jwala.common.properties.PropertyKeys.*;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,8 +50,8 @@ public class JschServiceImpl implements JschService {
     private static final String EXIT_CODE_END_MARKER = "***";
     private static final int BYTE_CHUNK_SIZE = 1024;
     private static final int CHANNEL_EXEC_CLOSE_TIMEOUT = 300000;
-    private static final String JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION = "jsch.channel.shell.read.input.sleep.duration";
     private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
+    private static final String READ_LOOP_SLEEP_TIME_DEFAULT_VALUE = "100";
 
     @Autowired
     private JSch jsch;
@@ -64,7 +66,20 @@ public class JschServiceImpl implements JschService {
         Channel channel = null;
         try {
             channel = getChannelShell(channelSessionKey);
-            return runShellCommand(command, (ChannelShell) channel, timeout);
+
+            final InputStream in = channel.getInputStream();
+            final OutputStream out = channel.getOutputStream();
+
+            LOGGER.debug("Executing command \"{}\"...", command);
+            out.write(command.getBytes(StandardCharsets.UTF_8));
+            out.write(CRLF.getBytes(StandardCharsets.UTF_8));
+            out.write("echo 'EXIT_CODE='$?***".getBytes(StandardCharsets.UTF_8));
+            out.write(CRLF.getBytes(StandardCharsets.UTF_8));
+            out.write("echo -n -e '\\xff'".getBytes(StandardCharsets.UTF_8));
+            out.write(CRLF.getBytes(StandardCharsets.UTF_8));
+            out.flush();
+
+            return getShellRemoteCommandReturnInfo(command, in, timeout);
         } catch (final Exception e) {
             final String errMsg = MessageFormat.format("Failed to run the following command: {0}", command);
             LOGGER.error(errMsg, e);
@@ -77,10 +92,30 @@ public class JschServiceImpl implements JschService {
         }
     }
 
+    /**
+     * Reads remote output which is then wrapped inside {@link RemoteCommandReturnInfo}
+     *
+     * @param command the command to run
+     * @param in the input stream
+     * @param timeout the length of time in ms in which the method waits for a available byte(s) as a result of command  @return result of the command
+     * @return {@link RemoteCommandReturnInfo}
+     * @throws IOException
+     */
+    private RemoteCommandReturnInfo getShellRemoteCommandReturnInfo(final String command, final InputStream in, final long timeout)
+            throws IOException {
+        LOGGER.debug("Reading remote output ...");
+        final String remoteOutput = readRemoteOutput(in, (char) 0xff, timeout);
+        LOGGER.debug("****** output: start ******");
+        LOGGER.debug(remoteOutput);
+        LOGGER.debug("****** output: end ******");
+
+        return new RemoteCommandReturnInfo(parseReturnCode(remoteOutput, command), remoteOutput, null);
+    }
+
     @Override
     public RemoteCommandReturnInfo runExecCommand(RemoteSystemConnection remoteSystemConnection, String command, long timeout) {
         Session session = null;
-        Channel channel = null;
+        ChannelExec channel = null;
         try {
             // We can't keep the session and the channels open for type exec since we need the exit code and the
             // standard error e.g. thread dump uses this and requires the exit code and the standard error.
@@ -88,8 +123,16 @@ public class JschServiceImpl implements JschService {
             session = prepareSession(remoteSystemConnection);
             session.connect();
             LOGGER.debug("session connected");
-            channel = session.openChannel(ChannelType.EXEC.getChannelType());
-            return runExecCommand(command, (ChannelExec) channel, timeout);
+            channel = (ChannelExec) session.openChannel(ChannelType.EXEC.getChannelType());
+
+            LOGGER.debug("Executing command \"{}\"...", command);
+            channel.setCommand(command.getBytes(StandardCharsets.UTF_8));
+
+            LOGGER.debug("channel {} connecting...", channel.getId());
+            channel.connect(CHANNEL_CONNECT_TIMEOUT);
+            LOGGER.debug("channel {} connected!", channel.getId());
+
+            return getExecRemoteCommandReturnInfo(channel, timeout);
         } catch (final Exception e) {
             final String errMsg = MessageFormat.format("Failed to run the following command: {0}", command);
             LOGGER.error(errMsg, e);
@@ -108,53 +151,14 @@ public class JschServiceImpl implements JschService {
     }
 
     /**
-     * Runs a command in a shell
+     * Reads std and error remote output which are then wrapped inside {@link RemoteCommandReturnInfo}
      *
-     * @param command      the command to run
-     * @param channelShell the channel where the command is sent for execution
-     * @param timeout      the length of time in ms in which the method waits for a available byte(s) as a result of command
-     * @return result of the command
-     * @throws IOException
-     */
-    private RemoteCommandReturnInfo runShellCommand(final String command, final ChannelShell channelShell, final long timeout)
-            throws IOException {
-        final InputStream in = channelShell.getInputStream();
-        final OutputStream out = channelShell.getOutputStream();
-
-        LOGGER.debug("Executing command \"{}\"...", command);
-        out.write(command.getBytes(StandardCharsets.UTF_8));
-        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
-        out.write("echo 'EXIT_CODE='$?***".getBytes(StandardCharsets.UTF_8));
-        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
-        out.write("echo -n -e '\\xff'".getBytes(StandardCharsets.UTF_8));
-        out.write(CRLF.getBytes(StandardCharsets.UTF_8));
-        out.flush();
-
-        LOGGER.debug("Reading remote output ...");
-        final String remoteOutput = readRemoteOutput(in, (char) 0xff, timeout);
-        LOGGER.debug("****** output: start ******");
-        LOGGER.debug(remoteOutput);
-        LOGGER.debug("****** output: end ******");
-
-        return new RemoteCommandReturnInfo(parseReturnCode(remoteOutput, command), remoteOutput, null);
-    }
-
-    /**
-     * Runs a command via jsch's exec channel.
-     * Unlike the shell channel, an exec channel closes after an execution of a command.
-     *
-     * @param command     the command to run
      * @param channelExec the channel where the command is sent for execution
-     * @param timeout     the length of time in ms in which the method waits for a available byte(s) as a result of command
-     * @return result of the command
+     * @param timeout the length of time in ms in which the method waits for a available byte(s) as a result of command
+     * @return {@link RemoteCommandReturnInfo}
      */
-    private RemoteCommandReturnInfo runExecCommand(final String command, final ChannelExec channelExec, final long timeout) throws IOException, JSchException {
-        LOGGER.debug("Executing command \"{}\"...", command);
-        channelExec.setCommand(command.getBytes(StandardCharsets.UTF_8));
-
-        LOGGER.debug("channel {} connecting...", channelExec.getId());
-        channelExec.connect(CHANNEL_CONNECT_TIMEOUT);
-        LOGGER.debug("channel {} connected!", channelExec.getId());
+    private RemoteCommandReturnInfo getExecRemoteCommandReturnInfo(final ChannelExec channelExec, final long timeout)
+            throws IOException, JSchException {
 
         final String output = readExecRemoteOutput(channelExec, timeout);
         LOGGER.debug("remote output = {}", output);
@@ -191,17 +195,18 @@ public class JschServiceImpl implements JschService {
      * @throws IOException for any issues encoutered when retrieving the input stream from the channel
      */
     private String readExecRemoteOutput(ChannelExec channelExec, long timeout) throws IOException {
-        InputStream in = channelExec.getInputStream();
-        StringBuilder outputBuilder = new StringBuilder();
+        final BufferedInputStream bufIn = new BufferedInputStream(channelExec.getInputStream());
+        final StringBuilder outputBuilder = new StringBuilder();
 
-        byte[] tmp = new byte[BYTE_CHUNK_SIZE];
-        long startTime = System.currentTimeMillis();
-        final long readWaitTime = Long.parseLong(ApplicationProperties.get("jwala.read.channel.wait.for.close", "250"));
+        final byte[] tmp = new byte[BYTE_CHUNK_SIZE];
+        final long startTime = System.currentTimeMillis();
+        final long readLoopSleepTime = Long.parseLong(ApplicationProperties.get(
+                JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME.getPropertyName(), READ_LOOP_SLEEP_TIME_DEFAULT_VALUE));
 
         while (true) {
             // read the stream
-            while (in.available() > 0) {
-                int i = in.read(tmp, 0, BYTE_CHUNK_SIZE);
+            while (bufIn.available() > 0) {
+                int i = bufIn.read(tmp, 0, BYTE_CHUNK_SIZE);
                 if (i < 0) {
                     break;
                 }
@@ -211,32 +216,39 @@ public class JschServiceImpl implements JschService {
             // check if the channel is closed
             if (channelExec.isClosed()) {
                 // check for any more bytes on the input stream
-                try {
-                    Thread.sleep(readWaitTime);
-                } catch (Exception ee) {
-                    LOGGER.error("Interrupted sleep while reading jsch exec remote output", ee);
-                }
-                if (in.available() > 0) {
+                sleep(readLoopSleepTime);
+
+                if (bufIn.available() > 0) {
                     continue;
                 }
+
                 LOGGER.debug("exit-status: {}", channelExec.getExitStatus());
                 break;
             }
 
-            // check max timeout
+            // check timeout
             if ((System.currentTimeMillis() - startTime) > timeout) {
                 LOGGER.warn("Remote exec output reading timeout!");
                 break;
             }
 
-            // wait for channel to be closed
-            try {
-                Thread.sleep(readWaitTime);
-            } catch (Exception ee) {
-                LOGGER.error("Interrupted sleep while reading jsch exec remote output", ee);
-            }
+            // If for some reason the channel is not getting closed, we should not hog CPU time with this loop hence
+            // we sleep for a while
+            sleep(readLoopSleepTime);
         }
         return outputBuilder.toString();
+    }
+
+    /**
+     * Puts the current thread to sleep. If the sleep is interrupted, the error is caught and logged.
+     * @param val the period of time in ms for the thread to sleep
+     */
+    private void sleep(final long val) {
+        try {
+            Thread.sleep(val);
+        } catch (final InterruptedException ie) {
+            LOGGER.error("Sleep interrupted while reading JSch exec remote output!", ie);
+        }
     }
 
     /**
@@ -256,8 +268,8 @@ public class JschServiceImpl implements JschService {
             throw new JschServiceException("Expecting non-null end marker when reading remote output");
         }
 
-        final int readInputSleepDuration = Integer.parseInt(ApplicationProperties.get(JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION,
-                SHELL_READ_SLEEP_DEFAULT_VALUE));
+        final int readInputSleepDuration = Integer.parseInt(ApplicationProperties.get(
+                JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION.getPropertyName(), SHELL_READ_SLEEP_DEFAULT_VALUE));
         final BufferedInputStream buffIn = new BufferedInputStream(remoteOutput);
         final byte[] bytes = new byte[BYTE_CHUNK_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
