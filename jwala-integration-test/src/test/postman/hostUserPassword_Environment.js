@@ -5,6 +5,7 @@ var args = process.argv.slice(2);
 var host = args[0];
 var userName = args[1];
 var Password = args[2];
+var target_os = args[3];
 
 var myEnvironment = require('./jwala.postman_environment.json');
 	myEnvironment.values.push({
@@ -25,6 +26,13 @@ var myEnvironment = require('./jwala.postman_environment.json');
       "key": "Password",
       "type": "text",
       "value": Password,
+      "enabled": true,
+      "warning": ""
+    });
+	myEnvironment.values.push({
+      "key": "target_os",
+      "type": "text",
+      "value": target_os,
       "enabled": true,
       "warning": ""
     });
