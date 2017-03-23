@@ -6,3 +6,4 @@ include "jwala-common",
         "jwala-tomcat",
         "jwala-tomcat-agent",
         "jwala-h2-embedded"
+
