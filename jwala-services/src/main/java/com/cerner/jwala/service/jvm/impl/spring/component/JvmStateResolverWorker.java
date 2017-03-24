@@ -73,7 +73,8 @@ public class JvmStateResolverWorker {
             LOGGER.error("{} {}", jvm.getJvmName(), ioe.getMessage(), ioe);
             currentState = verifyIfJvmWinServiceIsStoppedAndDoAnUpdate(jvm, jvmStateService);
         } catch (final RuntimeException rte) {
-            // This method is executed asynchronously and we do not want to interrupt the thread's lifecycle.
+            // This method is executed asynchronously and we do not want to interrupt the thread's lifecycle so we
+            // just catch and log runtime exceptions instead of rethrowing it
             LOGGER.error(rte.getMessage(), rte);
         } finally {
             if (response != null) {
