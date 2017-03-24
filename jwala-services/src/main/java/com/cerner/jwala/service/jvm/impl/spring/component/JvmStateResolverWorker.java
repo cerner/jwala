@@ -4,11 +4,10 @@ import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.state.StateType;
-import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
-import com.cerner.jwala.service.exception.RemoteCommandExecutorServiceException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
+import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -21,6 +20,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.concurrent.Future;
 
 /**
@@ -34,18 +34,12 @@ import java.util.concurrent.Future;
 public class JvmStateResolverWorker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmStateResolverWorker.class);
-    private static final String SVC_STOPPED = "STOPPED";
-    private static final int SVC_STOPPED_RETURN_CODE = 0;
-    private static final String NOT_RECEIVING_JVM_STATE_ERR_MSG = "Jwala not receiving updates from this JVM. " +
-            "Possible causes are messaging settings in vars.properties are wrong, JVM is not functioning correctly " +
-            "(configuration error(s) etc) even though the service is running.";
-
-    private final ClientFactoryHelper clientFactoryHelper;
 
     @Autowired
-    public JvmStateResolverWorker(final ClientFactoryHelper clientFactoryHelper) {
-        this.clientFactoryHelper = clientFactoryHelper;
-    }
+    private ClientFactoryHelper clientFactoryHelper;
+
+    @Autowired
+    private HistoryFacadeService historyFacadeService;
 
     @Async("jvmTaskExecutor")
     public Future<CurrentState<Jvm, JvmState>> pingAndUpdateJvmState(final Jvm jvm, final JvmStateService jvmStateService) {
@@ -63,15 +57,21 @@ public class JvmStateResolverWorker {
         try {
             response = clientFactoryHelper.requestGet(jvm.getStatusUri());
             LOGGER.debug(">>> Response = {} from JVM {}", response.getStatusCode(), jvm.getId().getId());
-            if (response.getStatusCode() == HttpStatus.OK) {
-                jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STARTED, StringUtils.EMPTY);
-                currentState = new CurrentState<>(jvm.getId(), JvmState.JVM_STARTED, DateTime.now(), StateType.JVM);
-            } else {
-                currentState = verifyIfJvmWinServiceIsStoppedAndDoAnUpdate(jvm, jvmStateService);
+
+            jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STARTED, StringUtils.EMPTY);
+            currentState = new CurrentState<>(jvm.getId(), JvmState.JVM_STARTED, DateTime.now(), StateType.JVM);
+
+            if (response.getStatusCode() != HttpStatus.OK) {
+                final String msg = MessageFormat.format("Request {0} sent expecting a response code of {1} but got {2} instead",
+                        jvm.getStatusUri(), HttpStatus.OK.value(), response.getRawStatusCode());
+                historyFacadeService.write(jvm.getJvmName(), jvm.getGroups(), msg, EventType.SYSTEM_ERROR, "");
             }
+
         } catch (final IOException ioe) {
-            LOGGER.error("{} {}", jvm.getJvmName(), ioe.getMessage(), ioe);
-            currentState = verifyIfJvmWinServiceIsStoppedAndDoAnUpdate(jvm, jvmStateService);
+            LOGGER.warn("{} {} {}", jvm.getJvmName(), ioe.getMessage(), "Setting JVM state to STOPPED.", ioe);
+            historyFacadeService.write(jvm.getJvmName(), jvm.getGroups(), ioe.getMessage(), EventType.SYSTEM_INFO, "");
+            jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
+            currentState = new CurrentState<>(jvm.getId(), JvmState.JVM_STOPPED, DateTime.now(), StateType.JVM);
         } catch (final RuntimeException rte) {
             // This method is executed asynchronously and we do not want to interrupt the thread's lifecycle so we
             // just catch and log runtime exceptions instead of rethrowing it
@@ -84,54 +84,6 @@ public class JvmStateResolverWorker {
             LOGGER.debug("--- pingAndUpdateJvmState");
         }
         return new AsyncResult<>(currentState);
-    }
-
-    /**
-     * Verify if the JVM Window's service is stopped and update the state.
-     * This method was intended to be called after an unsuccessful ping.
-     * It verifies if the Windows service is stopped and if it is, then we can say that the JVM is stopped.
-     * If the Window's service is not stopped and then we set the JVM state to UNKNOWN.
-     * The reason for setting the JVM state to UNKNOWN even if the Window's service is running is because
-     * the Window's service state is NOT THE SAME as the JVM state. There can be a case where the Window's service is
-     * running but the JVM is not running as it should, meaning it's not serving the web applications and it's not
-     * sending state messages.
-     *
-     * @param jvm the JVM
-     * @param jvmStateService {@link JvmStateService}
-     * @return {@link CurrentState}
-     */
-    private CurrentState<Jvm, JvmState> verifyIfJvmWinServiceIsStoppedAndDoAnUpdate(final Jvm jvm, final JvmStateService jvmStateService) {
-        try {
-            final RemoteCommandReturnInfo remoteCommandReturnInfo = jvmStateService.getServiceStatus(jvm);
-            LOGGER.debug("RemoteCommandReturnInfo = {}", remoteCommandReturnInfo);
-            if (isServiceStopped(remoteCommandReturnInfo)) {
-                jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
-                return new CurrentState<>(jvm.getId(), JvmState.JVM_STOPPED, DateTime.now(), StateType.JVM);
-            }
-            LOGGER.error("Did not get the expected conditions for the service in the stopped state! RemoteCommandReturnInfo = {}",
-                    remoteCommandReturnInfo);
-        } catch (final RemoteCommandExecutorServiceException rcese) {
-            LOGGER.error("State verification of {}@{} via SSH failed! Please note that this has nothing to do with the " +
-                    "JVM not receiving any state. This is just a redundancy check after an unsuccessful URL ping. " +
-                    "Please check the next error message (JVM state listener is not receiving any state...) for possible " +
-                    "causes.", jvm.getJvmName(), jvm.getHostName(), rcese);
-        }
-
-        LOGGER.error(NOT_RECEIVING_JVM_STATE_ERR_MSG);
-
-        // The state should be unknown if we can't verify the JVM's state.
-        // In addition, if we just leave the state as is and just report an error, if that state is in started,
-        // the state resolver (reverse heartbeat) will always end up trying to ping it which will eat CPU resources.
-        final JvmState state = JvmState.JVM_UNKNOWN;
-        jvmStateService.updateNotInMemOrStaleState(jvm, state, NOT_RECEIVING_JVM_STATE_ERR_MSG);
-        return new CurrentState<>(jvm.getId(), state, DateTime.now(), StateType.JVM);
-    }
-
-    private boolean isServiceStopped(RemoteCommandReturnInfo remoteCommandReturnInfo) {
-        final boolean isServiceStopped = remoteCommandReturnInfo.retCode == SVC_STOPPED_RETURN_CODE && remoteCommandReturnInfo.standardOuput.contains(SVC_STOPPED);
-        LOGGER.debug("Expecting {} and {}: {}", SVC_STOPPED_RETURN_CODE, SVC_STOPPED, isServiceStopped);
-
-        return isServiceStopped;
     }
 
 }
