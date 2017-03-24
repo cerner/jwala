@@ -39,6 +39,7 @@ import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.group.GroupStateNotificationService;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmService;
+import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
@@ -50,6 +51,7 @@ import org.apache.tika.mime.MediaType;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -60,6 +62,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static com.cerner.jwala.control.AemControl.Properties.*;
@@ -83,6 +86,9 @@ public class JvmServiceImpl implements JvmService {
     private final HistoryFacadeService historyFacadeService;
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
+
+    @Autowired
+    private JvmStateService jvmStateService;
 
     public JvmServiceImpl(final JvmPersistenceService jvmPersistenceService,
                           final GroupPersistenceService groupPersistenceService,
@@ -578,7 +584,7 @@ public class JvmServiceImpl implements JvmService {
 
     }
 
-    public String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
+    String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Start generateJvmConfigJar ");
         ManagedJvmBuilder managedJvmBuilder =
@@ -733,12 +739,18 @@ public class JvmServiceImpl implements JvmService {
     @Override
     @Transactional
     public void performDiagnosis(Identifier<Jvm> aJvmId, final User user) {
-        // if the Jvm does not exist, we'll get a 404 NotFoundException
         Jvm jvm = jvmPersistenceService.getJvm(aJvmId);
-
-        pingAndUpdateJvmState(jvm);
         historyFacadeService.write(jvm.getJvmName(), new ArrayList<>(jvm.getGroups()), "Diagnose and resolve state",
                 EventType.USER_ACTION_INFO, user.getId());
+        final JvmHttpRequestResult jvmHttpRequestResult = pingAndUpdateJvmState(jvm);
+
+        if (StringUtils.isNotEmpty(jvmHttpRequestResult.details)) {
+            final EventType eventType = jvmHttpRequestResult.details.isEmpty() || jvmHttpRequestResult.jvmState.equals(JvmState.JVM_STOPPED) ||
+                                        jvmHttpRequestResult.jvmState.equals(JvmState.FORCED_STOPPED) ? EventType.SYSTEM_INFO :
+                                        EventType.SYSTEM_ERROR;
+            historyFacadeService.write(jvm.getJvmName(), new ArrayList<>(jvm.getGroups()), jvmHttpRequestResult.details,
+                    eventType, user.getId());
+        }
     }
 
 
@@ -814,21 +826,28 @@ public class JvmServiceImpl implements JvmService {
 
     @Override
     @Transactional
-    public void pingAndUpdateJvmState(final Jvm jvm) {
+    public JvmHttpRequestResult pingAndUpdateJvmState(final Jvm jvm) {
         ClientHttpResponse response = null;
+        JvmState jvmState = jvm.getState();
+        String responseDetails = StringUtils.EMPTY;
         try {
             response = clientFactoryHelper.requestGet(jvm.getStatusUri());
             LOGGER.info(">>> Response = {} from jvm {}", response.getStatusCode(), jvm.getId().getId());
+            jvmState = JvmState.JVM_STARTED;
             if (response.getStatusCode() == HttpStatus.OK) {
-                setState(jvm, JvmState.JVM_STARTED, StringUtils.EMPTY);
+                jvmStateService.updateState(jvm, jvmState, StringUtils.EMPTY);
             } else {
-                setState(jvm, JvmState.JVM_STOPPED,
-                        "Request for '" + jvm.getStatusUri() + "' failed with a response code of '" +
-                                response.getStatusCode() + "'");
+                // As long as we get a response even if it's not a 200 it means that the JVM is alive
+                jvmStateService.updateState(jvm, jvmState, StringUtils.EMPTY);
+                responseDetails =  MessageFormat.format("Request {0} sent expecting a response code of {1} but got {2} instead",
+                        jvm.getStatusUri(), HttpStatus.OK.value(), response.getRawStatusCode());
+
             }
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             LOGGER.info(ioe.getMessage(), ioe);
-            setState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
+            jvmStateService.updateState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
+            responseDetails = MessageFormat.format("Request {0} sent and got: {1}", jvm.getStatusUri(), ioe.getMessage());
+            jvmState = JvmState.JVM_STOPPED;
         } catch (RuntimeException rte) {
             LOGGER.error(rte.getMessage(), rte);
         } finally {
@@ -836,6 +855,7 @@ public class JvmServiceImpl implements JvmService {
                 response.close();
             }
         }
+        return new JvmHttpRequestResult(jvmState, responseDetails);
     }
 
     @Override
