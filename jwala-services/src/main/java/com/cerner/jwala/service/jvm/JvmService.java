@@ -8,6 +8,7 @@ import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
 import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
+import com.cerner.jwala.service.jvm.impl.JvmHttpRequestResult;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public interface JvmService {
      *
      * @param jvm the JVM
      */
-    void pingAndUpdateJvmState(Jvm jvm);
+    JvmHttpRequestResult pingAndUpdateJvmState(Jvm jvm);
 
     /**
      * Deploy application context xml for JVM's
