@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "d8dbd6f9-33a2-425d-a134-dbc2edb1f985",
+		"_postman_id": "f6e173b5-efb6-a3f7-80f4-b57ea2427efd",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -4671,7 +4671,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/1/commands",
+						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands",
 						"method": "POST",
 						"header": [
 							{
@@ -4702,7 +4702,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/1/commands?wait=FALSE",
+						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=FALSE",
 						"method": "POST",
 						"header": [
 							{
@@ -5726,7 +5726,10 @@
 						"url": "{{url}}/v1.0/webservers/CTO-N9SF-LTST-HTTP-{{host}}/conf/httpd.conf",
 						"method": "PUT",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -5757,6 +5760,37 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\"controlOperation\":\"start\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "stop webserver with wait true",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=TRUE",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"stop\"}"
 						},
 						"description": ""
 					},
@@ -5802,7 +5836,27 @@
 					"response": []
 				},
 				{
-					"name": "logout copy",
+					"name": "start all jvms",
+					"request": {
+						"url": "{{url}}/v1.0/groups/1/jvms/commands",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"start\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "logout ",
 					"event": [
 						{
 							"listen": "test",
