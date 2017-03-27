@@ -13,6 +13,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.io.File;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +33,7 @@ public class PathValidatorTest {
 
     @Test
     public void testIsValid() throws Exception {
-        final String existingFile = this.getClass().getResource("/i-exists.txt").getPath().substring(1);
+        final String existingFile = new File(this.getClass().getResource("/i-exists.txt").getPath()).getAbsolutePath();
 
         Set<ConstraintViolation<PathsWrapper>> constraintViolations =
                 validator.validate(new PathsWrapper("c:/test", "c:/test/jdk.zip", existingFile));
