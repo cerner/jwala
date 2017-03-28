@@ -33,7 +33,7 @@ var WebServerControlPanelWidget = React.createClass({
 
                     <button ref="httpdConfBtn" className="button-link anchor-font-style">httpd.conf</button>
 
-                    <a ref="statusLink" href={"https://" + this.props.data.host + ":" + this.props.data.httpsPort
+                    <a target="_blank" ref="statusLink" href={"https://" + this.props.data.host + ":" + this.props.data.httpsPort
                             + jwalaVars.loadBalancerStatusMount}>status</a>
 
                </div>
