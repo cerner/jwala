@@ -3,6 +3,7 @@ package com.cerner.jwala.service.webserver.impl;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -14,6 +15,7 @@ import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -29,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -50,17 +53,21 @@ public class WebServerServiceImpl implements WebServerService {
 
     private final BinaryDistributionLockManager binaryDistributionLockManager;
 
+    private final JvmPersistenceService jvmPersistenceService;
+
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
                                 @Qualifier("webServerInMemoryStateManagerService")
                                 final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
                                 final String templatePath,
-                                final BinaryDistributionLockManager binaryDistributionLockManager) {
+                                final BinaryDistributionLockManager binaryDistributionLockManager,
+                                final JvmPersistenceService jvmPersistenceService) {
         this.webServerPersistenceService = webServerPersistenceService;
         this.inMemoryStateManagerService = inMemoryStateManagerService;
         this.templatePath = templatePath;
         this.resourceService = resourceService;
         this.binaryDistributionLockManager = binaryDistributionLockManager;
+        this.jvmPersistenceService = jvmPersistenceService;
         initInMemoryStateService();
     }
 
@@ -75,6 +82,13 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer createWebServer(final CreateWebServerRequest createWebServerRequest,
                                      final User aCreatingUser) {
         createWebServerRequest.validate();
+
+        List<Jvm> jvmList = jvmPersistenceService.getJvms();
+        for (Jvm jvm : jvmList) {
+            if(createWebServerRequest.getName().equals(jvm.getJvmName())){
+                throw new EntityExistsException("Jvm already exists with this name "+ createWebServerRequest.getName());
+            }
+        }
 
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
@@ -134,6 +148,12 @@ public class WebServerServiceImpl implements WebServerService {
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
 
+        List<Jvm> jvmList = jvmPersistenceService.getJvms();
+        for (Jvm jvm : jvmList) {
+            if(anUpdateWebServerCommand.getNewName().equals(jvm.getJvmName())){
+                throw new EntityExistsException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
+            }
+        }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));

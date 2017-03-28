@@ -16,6 +16,7 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -54,6 +55,9 @@ public class WebServerServiceImplTest {
 
     @Mock
     private WebServerPersistenceService webServerPersistenceService;
+
+    @Mock
+    private JvmPersistenceService jvmPersistenceService;
 
     private WebServerServiceImpl wsService;
 
@@ -132,7 +136,7 @@ public class WebServerServiceImplTest {
         mockWebServers11.add(mockWebServer);
         mockWebServers12.add(mockWebServer2);
 
-        wsService = new WebServerServiceImpl(webServerPersistenceService, resourceService, inMemService, StringUtils.EMPTY, binaryDistributionLockManager);
+        wsService = new WebServerServiceImpl(webServerPersistenceService, resourceService, inMemService, StringUtils.EMPTY, binaryDistributionLockManager, jvmPersistenceService);
 
         resourceGroup = new ResourceGroup(new ArrayList<>(groups));
     }

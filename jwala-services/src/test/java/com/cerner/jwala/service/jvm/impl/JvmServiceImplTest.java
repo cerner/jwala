@@ -30,6 +30,7 @@ import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResource
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.HistoryService;
 import com.cerner.jwala.service.MessagingService;
@@ -916,6 +917,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         static HistoryFacadeService mockHistoryFacadeService = mock(HistoryFacadeService.class);
 
+        static WebServerPersistenceService mockWebServerPersistenceService = mock(WebServerPersistenceService.class);
+
         @Bean
         public JvmPersistenceService getMockJvmPersistenceService() {
             return mockJvmPersistenceService;
@@ -1006,7 +1009,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
             return new JvmServiceImpl(mockJvmPersistenceService, mockGroupPersistenceService, mockApplicationService,
                     mockMessagingTemplate, mockGroupStateNotificationService, mockResourceService, mockClientFactoryHelper,
                     "/topic/server-states", mockJvmControlService, mockBinaryDistributionService, mockBinaryDistributionLockManager,
-                    mockHistoryFacadeService, new FileUtility());
+                    mockHistoryFacadeService, mockWebServerPersistenceService, new FileUtility());
         }
 
     }

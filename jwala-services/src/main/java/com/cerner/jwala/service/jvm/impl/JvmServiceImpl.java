@@ -14,6 +14,7 @@ import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.state.StateType;
 import com.cerner.jwala.common.domain.model.user.User;
+import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.CommandOutputReturnCode;
@@ -32,6 +33,7 @@ import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdate
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
@@ -58,6 +60,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -86,6 +89,7 @@ public class JvmServiceImpl implements JvmService {
     private final HistoryFacadeService historyFacadeService;
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
+    private final WebServerPersistenceService webServerPersistenceService;
 
     @Autowired
     private JvmStateService jvmStateService;
@@ -102,6 +106,7 @@ public class JvmServiceImpl implements JvmService {
                           final BinaryDistributionService binaryDistributionService,
                           final BinaryDistributionLockManager binaryDistributionLockManager,
                           final HistoryFacadeService historyFacadeService,
+                          final WebServerPersistenceService webServerPersistenceService,
                           final FileUtility fileUtility) {
         this.jvmPersistenceService = jvmPersistenceService;
         this.groupPersistenceService = groupPersistenceService;
@@ -115,11 +120,18 @@ public class JvmServiceImpl implements JvmService {
         this.binaryDistributionService = binaryDistributionService;
         this.binaryDistributionLockManager = binaryDistributionLockManager;
         this.historyFacadeService = historyFacadeService;
+        this.webServerPersistenceService = webServerPersistenceService;
         this.fileUtility = fileUtility;
     }
 
 
     protected Jvm createJvm(final CreateJvmRequest aCreateJvmRequest) {
+        List<WebServer> webServerList = webServerPersistenceService.getWebServers();
+        for (WebServer webserver : webServerList) {
+            if (aCreateJvmRequest.getJvmName().equals(webserver.getName())) {
+                throw new EntityExistsException("Webserver already exists with this name "+ aCreateJvmRequest.getJvmName());
+            }
+        }
         return jvmPersistenceService.createJvm(aCreateJvmRequest);
     }
 
@@ -143,7 +155,6 @@ public class JvmServiceImpl implements JvmService {
     public Jvm createJvm(CreateJvmAndAddToGroupsRequest createJvmAndAddToGroupsRequest, User user) {
         // create the JVM in the database
         final Jvm jvm = createAndAssignJvm(createJvmAndAddToGroupsRequest, user);
-
         // inherit the templates from the group
         if (null != jvm.getGroups() && !jvm.getGroups().isEmpty()) {
             final Group parentGroup = jvm.getGroups().iterator().next();
@@ -246,7 +257,12 @@ public class JvmServiceImpl implements JvmService {
     public Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword) {
 
         updateJvmRequest.validate();
-
+        List<WebServer> webServerList = webServerPersistenceService.getWebServers();
+        for (WebServer webserver : webServerList) {
+            if (updateJvmRequest.getNewJvmName().equals(webserver.getName())) {
+                throw new EntityExistsException("Webserver already exists with this name "+ updateJvmRequest.getNewJvmName());
+            }
+        }
         jvmPersistenceService.removeJvmFromGroups(updateJvmRequest.getId());
 
         addJvmToGroups(updateJvmRequest.getAssignmentCommands());
@@ -622,7 +638,15 @@ public class JvmServiceImpl implements JvmService {
 
     private void deployJvmConfigJar(Jvm jvm, User user, String jvmJar) throws CommandFailureException {
         final String parentDir = ApplicationProperties.get("remote.paths.instances");
-        CommandOutput execData = jvmControlService.controlJvm(
+        CommandOutput execData = jvmControlService.executeCreateDirectoryCommand(jvm, parentDir+"/"+jvm.getJvmName());
+        if (execData.getReturnCode().wasSuccessful()) {
+            LOGGER.info("Successfully created the parent directory {}", parentDir);
+        } else {
+            String standardError = execData.getStandardError().isEmpty() ? execData.getStandardOutput() : execData.getStandardError();
+            LOGGER.error("Deploy command completed with error trying to extract and back up JVM config {} :: ERROR: {}", jvm.getJvmName(), standardError);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, standardError.isEmpty() ? CommandOutputReturnCode.fromReturnCode(execData.getReturnCode().getReturnCode()).getDesc() : standardError);
+        }
+        execData = jvmControlService.controlJvm(
                 new ControlJvmRequest(jvm.getId(), JvmControlOperation.DEPLOY_CONFIG_ARCHIVE), user);
         execData.getStandardOutput();
         if (execData.getReturnCode().wasSuccessful()) {
