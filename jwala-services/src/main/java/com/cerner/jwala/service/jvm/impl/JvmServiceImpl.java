@@ -14,7 +14,6 @@ import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.state.StateType;
 import com.cerner.jwala.common.domain.model.user.User;
-import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.CommandOutputReturnCode;
@@ -126,13 +125,12 @@ public class JvmServiceImpl implements JvmService {
 
 
     protected Jvm createJvm(final CreateJvmRequest aCreateJvmRequest) {
-        List<WebServer> webServerList = webServerPersistenceService.getWebServers();
-        for (WebServer webserver : webServerList) {
-            if (aCreateJvmRequest.getJvmName().equalsIgnoreCase(webserver.getName())) {
-                LOGGER.error("Webserver already exists with this name {}", aCreateJvmRequest.getJvmName());
-                throw new EntityExistsException("Webserver already exists with this name "+ aCreateJvmRequest.getJvmName());
-            }
+
+        if (null != webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName())) {
+            LOGGER.error("Webserver already exists with this name {}", aCreateJvmRequest.getJvmName());
+            throw new EntityExistsException("Webserver already exists with this name "+ aCreateJvmRequest.getJvmName());
         }
+
         return jvmPersistenceService.createJvm(aCreateJvmRequest);
     }
 
@@ -258,12 +256,9 @@ public class JvmServiceImpl implements JvmService {
     public Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword) {
 
         updateJvmRequest.validate();
-        List<WebServer> webServerList = webServerPersistenceService.getWebServers();
-        for (WebServer webserver : webServerList) {
-            if (updateJvmRequest.getNewJvmName().equalsIgnoreCase(webserver.getName())) {
-                LOGGER.error("Webserver already exists with this name {}", updateJvmRequest.getNewJvmName());
-                throw new EntityExistsException("Webserver already exists with this name "+ updateJvmRequest.getNewJvmName());
-            }
+        if (null != webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName())) {
+            LOGGER.error("Webserver already exists with this name {}", updateJvmRequest.getNewJvmName());
+            throw new EntityExistsException("Webserver already exists with this name "+ updateJvmRequest.getNewJvmName());
         }
         jvmPersistenceService.removeJvmFromGroups(updateJvmRequest.getId());
 

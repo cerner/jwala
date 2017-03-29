@@ -3,7 +3,6 @@ package com.cerner.jwala.service.webserver.impl;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
-import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -82,15 +81,10 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer createWebServer(final CreateWebServerRequest createWebServerRequest,
                                      final User aCreatingUser) {
         createWebServerRequest.validate();
-
-        List<Jvm> jvmList = jvmPersistenceService.getJvms();
-        for (Jvm jvm : jvmList) {
-            if(createWebServerRequest.getName().equalsIgnoreCase(jvm.getJvmName())){
-                LOGGER.error("Jvm already exists with this name {}", createWebServerRequest.getName());
-                throw new EntityExistsException("Jvm already exists with this name "+ createWebServerRequest.getName());
-            }
+        if (null != jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName())) {
+            LOGGER.error("Jvm already exists with this name {}", createWebServerRequest.getName());
+            throw new EntityExistsException("Jvm already exists with this name "+ createWebServerRequest.getName());
         }
-
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
             groups.add(new Group(id, null));
@@ -148,13 +142,9 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand,
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
-
-        List<Jvm> jvmList = jvmPersistenceService.getJvms();
-        for (Jvm jvm : jvmList) {
-            if(anUpdateWebServerCommand.getNewName().equalsIgnoreCase(jvm.getJvmName())){
-                LOGGER.error("Jvm already exists with this name {}", anUpdateWebServerCommand.getNewName());
-                throw new EntityExistsException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
-            }
+        if (null != jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName())) {
+            LOGGER.error("Jvm already exists with this name {}", anUpdateWebServerCommand.getNewName());
+            throw new EntityExistsException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
         }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
