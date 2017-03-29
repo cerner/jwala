@@ -19,6 +19,8 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class GroupWebServerControlServiceImplTest {
@@ -64,8 +66,15 @@ public class GroupWebServerControlServiceImplTest {
 
     @Test
     public void testControlGroup() {
-        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_REACHABLE);
+        when(mockWebServer.getStateLabel()).thenReturn(WebServerReachableState.WS_REACHABLE.toStateLabel());
         cut.controlGroup(controlGroupWebServerRequest, testUser);
     }
 
+    @Test
+    public void testCheckSameState(){
+        assertTrue(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_REACHABLE.toStateLabel()));
+        assertTrue(cut.checkSameState(WebServerControlOperation.STOP, WebServerReachableState.WS_UNREACHABLE.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_UNREACHABLE.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.STOP, WebServerReachableState.WS_REACHABLE.toStateLabel()));
+    }
 }

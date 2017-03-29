@@ -2,6 +2,8 @@ package com.cerner.jwala.service.group.impl;
 
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
+import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.properties.ApplicationProperties;
@@ -10,10 +12,12 @@ import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.service.group.GroupJvmControlService;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.jvm.JvmControlService;
+import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +27,7 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
     private final GroupService groupService;
     private final JvmControlService jvmControlService;
     private final ExecutorService executorService;
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GroupJvmControlServiceImpl.class);
+    private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GroupJvmControlServiceImpl.class);
 
     public GroupJvmControlServiceImpl(final GroupService theGroupService, final JvmControlService theJvmControlService) {
         groupService = theGroupService;
@@ -47,24 +51,20 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
 
     @Override
     public void controlAllJvms(final ControlGroupJvmRequest controlGroupJvmRequest, final User user) {
-        Set<Jvm> jvms = new HashSet<>();
+        Set<Jvm> jvms = new TreeSet<>(new JvmTreeSet());
         for (Group group : groupService.getGroups()) {
             Set<Jvm> groupsJvms = group.getJvms();
             if (groupsJvms != null && !groupsJvms.isEmpty()) {
                 jvms.addAll(groupsJvms);
             }
         }
-        LOGGER.info("jvm size: " + jvms.size());
+        LOGGER.info("jvm size to perform ControlJvms: " + jvms.size());
         controlJvms(controlGroupJvmRequest, user, jvms);
     }
 
     private void controlJvms(final ControlGroupJvmRequest controlGroupJvmRequest, final User user, Set<Jvm> jvms) {
         for (final Jvm jvm : jvms) {
-            if ("START".equalsIgnoreCase(controlGroupJvmRequest.getControlOperation().name()) && jvm.getState().isStartedState()) {
-                LOGGER.info("JVM {} already in state: {}.", jvm.getJvmName(), jvm.getState().toStateLabel());
-            } else if ("STOP".equalsIgnoreCase(controlGroupJvmRequest.getControlOperation().name()) && !jvm.getState().isStartedState()) {
-                LOGGER.info("JVM {} already in state: {}.", jvm.getJvmName(), jvm.getState().toStateLabel());
-            } else {
+            if (!checkSameState(controlGroupJvmRequest.getControlOperation(), jvm.getState())) {
                 executorService.submit(new Callable<CommandOutput>() {
                     @Override
                     public CommandOutput call() throws Exception {
@@ -74,5 +74,17 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
                 });
             }
         }
+    }
+
+    public boolean checkSameState(final JvmControlOperation jvmControlOperation, final JvmState jvmState) {
+        return (jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState()) ||
+                (jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState()) ? true : false;
+    }
+}
+
+class JvmTreeSet implements Comparator<Jvm> {
+    @Override
+    public int compare(Jvm jvm1, Jvm jvm2) {
+        return jvm1.getJvmName().compareToIgnoreCase(jvm2.getJvmName());
     }
 }
