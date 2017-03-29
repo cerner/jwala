@@ -1,6 +1,7 @@
 package com.cerner.jwala.persistence.jpa.domain.constraint.validator;
 
 import com.cerner.jwala.persistence.jpa.domain.constraint.ValidPath;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +51,14 @@ public class PathValidatorTest {
         assertEquals("invalid dirAndFilename", constraintViolations.iterator().next().getMessage());
 
         constraintViolations = validator.validate(new PathsWrapper("c:\\test/any", "c:\\jdk.peanuts", existingFile));
-        assertTrue(constraintViolations.size() == 1);
         assertEquals("invalid dirAndFilename", constraintViolations.iterator().next().getMessage());
-
-        constraintViolations = validator.validate(new PathsWrapper("c::\\test/any", "c:\\jdk.zip", existingFile));
         assertTrue(constraintViolations.size() == 1);
-        assertEquals("invalid dir", constraintViolations.iterator().next().getMessage());
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            constraintViolations = validator.validate(new PathsWrapper("c::\\test/any", "c:\\jdk.zip", existingFile));
+            assertEquals("invalid dir", constraintViolations.iterator().next().getMessage());
+            assertTrue(constraintViolations.size() == 1);
+        }
 
         constraintViolations = validator.validate(new PathsWrapper("/unix/path", "/jdk.zip", existingFile));
         assertTrue(constraintViolations.isEmpty());

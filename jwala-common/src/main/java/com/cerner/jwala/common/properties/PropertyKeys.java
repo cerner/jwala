@@ -1,7 +1,7 @@
 package com.cerner.jwala.common.properties;
 
 /**
- * Created by Steven Ger on 12/21/16.
+ * Created by Steven Ger on 12/21/16
  */
 public enum PropertyKeys {
 
@@ -17,7 +17,6 @@ public enum PropertyKeys {
     REMOTE_PATHS_DEPLOY_DIR("remote.paths.deploy.dir"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
     REMOTE_JAVA_HOME("remote.jwala.java.home"),
-    REMOTE_JWALA_JAVA_ROOT_DIR_NAME("remote.jwala.java.root.dir.name"),
     JDK_BINARY_FILE_NAME("jwala.default.jdk.zip"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     REMOTE_PATHS_TOMCAT_CORE("remote.paths.tomcat.core"),
