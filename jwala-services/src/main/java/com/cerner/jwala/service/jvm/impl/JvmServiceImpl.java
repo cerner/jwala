@@ -262,20 +262,33 @@ public class JvmServiceImpl implements JvmService {
 
     @Override
     @Transactional
-    public void removeJvm(final Identifier<Jvm> aJvmId, User user) {
-        final Jvm jvm = getJvm(aJvmId);
-        if (!jvm.getState().isStartedState()) {
-            LOGGER.info("Removing JVM from the database and deleting the service for id {}", aJvmId.getId());
-            if (!jvm.getState().equals(JvmState.JVM_NEW)) {
-                deleteJvmService(new ControlJvmRequest(aJvmId, JvmControlOperation.DELETE_SERVICE), jvm, user);
-            }
-            jvmPersistenceService.removeJvm(aJvmId);
-        } else {
-            LOGGER.error("The target JVM {} must be stopped before attempting to delete it", jvm.getJvmName());
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
-                    "The target JVM must be stopped before attempting to delete it");
+    public void deleteJvm(final Identifier<Jvm> id, boolean hardDelete, final User user) {
+        LOGGER.info("Deleting JVM with id = {} and hardDelete = {}", id, hardDelete);
+        final Jvm jvm = jvmPersistenceService.getJvm(id);
+
+        if (!hardDelete && !JvmState.JVM_NEW.equals(jvm.getState())) {
+            final String msg = MessageFormat.format("Cannot delete JVM {0} since it has already been deployed",
+                    jvm.getJvmName());
+            LOGGER.error(msg);
+            throw new JvmServiceException(msg);
         }
 
+        if (hardDelete) {
+            LOGGER.info("Deleting JVM service {}", jvm.getJvmName());
+
+            if (!JvmState.JVM_STOPPED.equals(jvm.getState()) && !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
+                final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
+                        jvm.getJvmName());
+                LOGGER.error(msg);
+                throw new JvmServiceException(msg);
+            }
+
+            // delete the service
+            throw new UnsupportedOperationException();
+        }
+
+        jvmPersistenceService.removeJvm(id);
+        // TODO: Remove JVM id in memory too!
     }
 
     @Override

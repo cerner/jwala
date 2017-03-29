@@ -156,10 +156,23 @@ var JvmConfig = React.createClass({
     },
     confirmDeleteCallback: function() {
         var self = this;
-        this.props.service.deleteJvm(this.state.selectedJvm.id.id,
-                                       this.refreshData.bind(this,
-                                                             {showDeleteConfirmDialog: false},
-                                                             function(){self.state.selectedJvm = null}));
+        this.props.service.deleteJvm(this.state.selectedJvm.id.id, false).then(function(e) {
+            self.refreshData({showDeleteConfirmDialog: false}, function(){self.state.selectedJvm = null});
+        }).caught(
+            function(e){
+                self.setState({showDeleteConfirmDialog: false})
+                let msg;
+                if (e.responseText) {
+                    msg = JSON.parse(e.responseText).message;
+                    if (msg && msg.indexOf("already been deployed") > -1) {
+                        msg += ". Please go to operations page to delete the JVM.";
+                    }
+                } else {
+                    msg = JSON.stringify(e);
+                }
+                $.errorAlert(msg, "Error");
+            }
+        )
     },
     cancelDeleteCallback: function() {
         this.cancelFlag.set();

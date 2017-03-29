@@ -360,29 +360,14 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         }
     }
 
-    @Test
-    public void testRemoveJvm() {
-
-        final Identifier<Jvm> id = new Identifier<>(-123456L);
-        Jvm mockJvm = mockJvmWithId(id);
-        when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
-        when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
-
-        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
-
-        jvmService.removeJvm(id, Config.mockUser);
-
-        verify(Config.mockJvmPersistenceService, times(1)).removeJvm(eq(id));
-    }
-
-    @Test(expected = InternalErrorException.class)
-    public void testRemoveJvmInStartedState() {
+    @Test(expected = JvmServiceException.class)
+    public void testDeleteJvmInStartedState() {
         final Identifier<Jvm> id = new Identifier<>(-123456L);
         Jvm mockJvm = mockJvmWithId(id);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
 
-        jvmService.removeJvm(id, Config.mockUser);
+        jvmService.deleteJvm(id, false, Config.mockUser);
     }
 
     @Test
