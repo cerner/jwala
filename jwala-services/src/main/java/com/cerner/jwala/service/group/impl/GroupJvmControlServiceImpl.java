@@ -23,6 +23,7 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
     private final GroupService groupService;
     private final JvmControlService jvmControlService;
     private final ExecutorService executorService;
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GroupJvmControlServiceImpl.class);
 
     public GroupJvmControlServiceImpl(final GroupService theGroupService, final JvmControlService theJvmControlService) {
         groupService = theGroupService;
@@ -53,19 +54,25 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
                 jvms.addAll(groupsJvms);
             }
         }
-
+        LOGGER.info("jvm size: " + jvms.size());
         controlJvms(controlGroupJvmRequest, user, jvms);
     }
 
     private void controlJvms(final ControlGroupJvmRequest controlGroupJvmRequest, final User user, Set<Jvm> jvms) {
         for (final Jvm jvm : jvms) {
-            executorService.submit(new Callable<CommandOutput>() {
-                @Override
-                public CommandOutput call() throws Exception {
-                    ControlJvmRequest controlJvmRequest = new ControlJvmRequest(jvm.getId(), controlGroupJvmRequest.getControlOperation());
-                    return jvmControlService.controlJvm(controlJvmRequest, user);
-                }
-            });
+            if ("START".equalsIgnoreCase(controlGroupJvmRequest.getControlOperation().name()) && jvm.getState().isStartedState()) {
+                LOGGER.info("JVM {} already in state: {}.", jvm.getJvmName(), jvm.getState().toStateLabel());
+            } else if ("STOP".equalsIgnoreCase(controlGroupJvmRequest.getControlOperation().name()) && !jvm.getState().isStartedState()) {
+                LOGGER.info("JVM {} already in state: {}.", jvm.getJvmName(), jvm.getState().toStateLabel());
+            } else {
+                executorService.submit(new Callable<CommandOutput>() {
+                    @Override
+                    public CommandOutput call() throws Exception {
+                        ControlJvmRequest controlJvmRequest = new ControlJvmRequest(jvm.getId(), controlGroupJvmRequest.getControlOperation());
+                        return jvmControlService.controlJvm(controlJvmRequest, user);
+                    }
+                });
+            }
         }
     }
 }
