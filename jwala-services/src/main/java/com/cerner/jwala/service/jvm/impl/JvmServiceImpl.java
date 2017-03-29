@@ -284,11 +284,17 @@ public class JvmServiceImpl implements JvmService {
             }
 
             // delete the service
-            throw new UnsupportedOperationException();
+            final CommandOutput commandOutput = jvmControlService.controlJvm(new ControlJvmRequest(jvm.getId(),
+                    JvmControlOperation.DELETE_SERVICE), user);
+            if (!commandOutput.getReturnCode().wasSuccessful()) {
+                final String msg = MessageFormat.format("Failed to delete the JVM service {0}! CommandOutput = {1}",
+                        jvm.getJvmName(), commandOutput);
+                LOGGER.error(msg);
+                throw new JvmServiceException(msg);
+            }
         }
 
         jvmPersistenceService.removeJvm(id);
-        // TODO: Remove JVM id in memory too!
     }
 
     @Override
