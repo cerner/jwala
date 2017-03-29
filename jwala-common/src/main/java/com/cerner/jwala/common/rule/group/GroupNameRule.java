@@ -20,4 +20,9 @@ public class GroupNameRule extends ValidNameRule implements Rule {
     protected String getMessage() {
         return "Invalid Group Name: \"" + name + "\"";
     }
+
+    @Override
+    public boolean isValid() {
+        return name != null && !"".equals(name.trim()) && name.matches("[A-Za-z0-9._\\s-]+");
+    }
 }
