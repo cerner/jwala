@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -157,9 +158,33 @@ public class WebServerServiceImpl implements WebServerService {
 
     @Override
     @Transactional
-    public void removeWebServer(final Identifier<WebServer> aWebServerId) {
-        webServerPersistenceService.removeWebServer(aWebServerId);
-        inMemoryStateManagerService.remove(aWebServerId);
+    public void deleteWebServer(final Identifier<WebServer> id, final boolean hardDelete) {
+        LOGGER.info("Deleting web server with id = {} and hardDelete = {}", id, hardDelete);
+        final WebServer webServer = webServerPersistenceService.getWebServer(id);
+
+        if (!hardDelete && !WebServerReachableState.WS_NEW.equals(webServer.getState())) {
+            final String msg = MessageFormat.format("Cannot delete web server {0} since it has already been deployed",
+                    webServer.getName());
+            LOGGER.error(msg);
+            throw new WebServerServiceException(msg);
+        }
+
+        if (hardDelete) {
+            LOGGER.info("Deleting web server service {}", webServer.getName());
+
+            if (isStarted(webServer)) {
+                final String msg = MessageFormat.format("Please stop web server {0} first before attempting to delete it",
+                        webServer.getName());
+                LOGGER.error(msg);
+                throw new WebServerServiceException(msg);
+            }
+
+            // delete the service
+            throw new UnsupportedOperationException();
+        }
+
+        webServerPersistenceService.removeWebServer(id);
+        inMemoryStateManagerService.remove(id);
     }
 
     @Override

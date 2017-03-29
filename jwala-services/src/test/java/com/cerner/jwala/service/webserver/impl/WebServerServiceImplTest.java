@@ -200,15 +200,6 @@ public class WebServerServiceImplTest {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
-    @Test
-    public void testDeleteWebServers() {
-        when(webServerPersistenceService.getWebServers()).thenReturn(mockWebServersAll);
-        wsService.removeWebServer(mockWebServer.getId());
-        verify(webServerPersistenceService, atLeastOnce()).removeWebServer(mockWebServer.getId());
-        assertNull(inMemService.get(mockWebServer.getId()));
-    }
-
-
     @SuppressWarnings("unchecked")
     @Test
     public void testUpdateWebServers() {
