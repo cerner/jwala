@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -83,7 +82,7 @@ public class WebServerServiceImpl implements WebServerService {
         createWebServerRequest.validate();
         if (null != jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName())) {
             LOGGER.error("Jvm already exists with this name {}", createWebServerRequest.getName());
-            throw new EntityExistsException("Jvm already exists with this name "+ createWebServerRequest.getName());
+            throw new WebServerServiceException("Jvm already exists with this name "+ createWebServerRequest.getName());
         }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
@@ -144,7 +143,7 @@ public class WebServerServiceImpl implements WebServerService {
         anUpdateWebServerCommand.validate();
         if (null != jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName())) {
             LOGGER.error("Jvm already exists with this name {}", anUpdateWebServerCommand.getNewName());
-            throw new EntityExistsException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
+            throw new WebServerServiceException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
         }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {

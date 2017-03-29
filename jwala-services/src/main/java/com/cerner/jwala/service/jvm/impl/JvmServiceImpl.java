@@ -59,7 +59,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -128,7 +127,7 @@ public class JvmServiceImpl implements JvmService {
 
         if (null != webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName())) {
             LOGGER.error("Webserver already exists with this name {}", aCreateJvmRequest.getJvmName());
-            throw new EntityExistsException("Webserver already exists with this name "+ aCreateJvmRequest.getJvmName());
+            throw new JvmServiceException("Webserver already exists with this name "+ aCreateJvmRequest.getJvmName());
         }
 
         return jvmPersistenceService.createJvm(aCreateJvmRequest);
@@ -258,7 +257,7 @@ public class JvmServiceImpl implements JvmService {
         updateJvmRequest.validate();
         if (null != webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName())) {
             LOGGER.error("Webserver already exists with this name {}", updateJvmRequest.getNewJvmName());
-            throw new EntityExistsException("Webserver already exists with this name "+ updateJvmRequest.getNewJvmName());
+            throw new JvmServiceException("Webserver already exists with this name "+ updateJvmRequest.getNewJvmName());
         }
         jvmPersistenceService.removeJvmFromGroups(updateJvmRequest.getId());
 
@@ -632,18 +631,9 @@ public class JvmServiceImpl implements JvmService {
         secureCopyFileToJvm(jvm, jvmJarFile, destination , user, alwaysOverwriteJvmConfigJar);
         LOGGER.info("Copy of config jar successful: {} in {}ms ", jvmConfigJar, System.currentTimeMillis() - startTime);
     }
-
     private void deployJvmConfigJar(Jvm jvm, User user, String jvmJar) throws CommandFailureException {
         final String parentDir = ApplicationProperties.get("remote.paths.instances");
-        CommandOutput execData = jvmControlService.executeCreateDirectoryCommand(jvm, parentDir+"/"+jvm.getJvmName());
-        if (execData.getReturnCode().wasSuccessful()) {
-            LOGGER.info("Successfully created the parent directory {}", parentDir);
-        } else {
-            String standardError = execData.getStandardError().isEmpty() ? execData.getStandardOutput() : execData.getStandardError();
-            LOGGER.error("Deploy command completed with error trying to extract and back up JVM config {} :: ERROR: {}", jvm.getJvmName(), standardError);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, standardError.isEmpty() ? CommandOutputReturnCode.fromReturnCode(execData.getReturnCode().getReturnCode()).getDesc() : standardError);
-        }
-        execData = jvmControlService.controlJvm(
+        CommandOutput execData = jvmControlService.controlJvm(
                 new ControlJvmRequest(jvm.getId(), JvmControlOperation.DEPLOY_CONFIG_ARCHIVE), user);
         execData.getStandardOutput();
         if (execData.getReturnCode().wasSuccessful()) {

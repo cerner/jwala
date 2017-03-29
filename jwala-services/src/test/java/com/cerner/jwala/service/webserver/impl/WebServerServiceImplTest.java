@@ -32,7 +32,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.persistence.EntityExistsException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -202,7 +201,7 @@ public class WebServerServiceImplTest {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
-    @Test(expected = EntityExistsException.class)
+    @Test(expected = WebServerServiceException.class)
     public void testCreateWebServerValidateJvmName() {
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
 
@@ -259,7 +258,7 @@ public class WebServerServiceImplTest {
         assertEquals("d:/some-dir/httpd.conf", webServer.getHttpConfigFile().getUriPath());
     }
 
-    @Test(expected = EntityExistsException.class)
+    @Test(expected = WebServerServiceException.class)
     public void testUpdateWebServerShouldValidateJvmName() {
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
         when(webServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);

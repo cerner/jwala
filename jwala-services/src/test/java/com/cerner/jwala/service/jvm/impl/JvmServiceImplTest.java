@@ -70,7 +70,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import javax.persistence.EntityExistsException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -143,7 +142,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
-    @Test(expected = EntityExistsException.class)
+    @Test(expected = JvmServiceException.class)
     public void testCreateValidateWebserverName() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
 
@@ -349,7 +348,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         }
     }
 
-    @Test(expected = EntityExistsException.class)
+    @Test(expected = JvmServiceException.class)
     public void testUpdateJvmShouldValidateWebserverName() {
 
         final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
