@@ -3,6 +3,7 @@ package com.cerner.jwala.service.group.impl;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
+import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecReturnCode;
@@ -13,6 +14,8 @@ import com.cerner.jwala.service.jvm.JvmControlService;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,5 +50,13 @@ public class GroupJvmControlServiceImplTest {
     public void testControlGroupWithInvalidGroup() {
         ControlGroupJvmRequest controlGroupJvmRequest = new ControlGroupJvmRequest(groupId, JvmControlOperation.START);
         cut.controlGroup(controlGroupJvmRequest, testUser);
+    }
+
+    @Test
+    public void testcheckSameState(){
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STARTED));
+        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STOPPED));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STARTED));
+        assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STOPPED));
     }
 }
