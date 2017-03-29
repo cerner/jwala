@@ -148,7 +148,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
     @Override
     public Response deleteWebServer(final Identifier<WebServer> id, boolean hardDelete, final AuthenticatedUser user) {
         webServerService.deleteWebServer(id, hardDelete);
-        return ResponseBuilder.ok();
+        return Response.noContent().build();
     }
 
     @Override
