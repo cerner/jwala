@@ -395,7 +395,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Transactional
+    @Transactional (readOnly = true)
     public void deployConf(final String appName, final String hostName, final User user) {
         final Application application = applicationPersistenceService.getApplication(appName);
         final Group group = groupPersistenceService.getGroup(application.getGroup().getId());
