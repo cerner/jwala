@@ -1,5 +1,6 @@
 package com.cerner.jwala.common;
 
+import com.cerner.jwala.common.properties.PropertyKeys;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,4 +47,15 @@ public class ApplicationPropertiesTest extends TestCase {
         assertEquals("reloaded", ApplicationProperties.get("reload.property"));
         assertNull(ApplicationProperties.get("home team"));
     }
+    public void testPropertyAsInteger() {
+        assertEquals(new Integer(100), ApplicationProperties.getAsInteger(PropertyKeys.MAX_JWALA_HISTORY, 100));
+        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources/properties/reload");
+        ApplicationProperties.reload();
+        try {
+            assertEquals(new Integer(1000), ApplicationProperties.getAsInteger(PropertyKeys.MAX_JWALA_HISTORY, 1000));
+        } catch (ApplicationException e) {
+            assertTrue(true);
+        }
+    }
+
 }

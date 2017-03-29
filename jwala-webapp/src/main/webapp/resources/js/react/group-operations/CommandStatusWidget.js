@@ -7,7 +7,7 @@ var CommandStatusWidget = React.createClass({
     },
     render: function() {
         var self = this;
-
+        this.props.numofRec=0;
         var openCloseBtnClassName = "ui-icon-triangle-1-e";
         var content = null;
         if (this.state.isOpen) {
@@ -38,6 +38,7 @@ var CommandStatusWidget = React.createClass({
     },
     onCloseFullPreviewWindowHandler: function() {
         this.refs.processingIcon.getDOMNode().style.visibility = "hidden";
+        this.props.numofRec=0;
         this.setState({fullPreviewMode: false});
     },
     componentDidMount: function() {
@@ -57,7 +58,7 @@ var CommandStatusWidget = React.createClass({
     },
     readHistory: function(readSuccessfulCallback) {
         var self = this;
-        historyService.read(this.props.groupName, this.props.serverName)
+        historyService.read(this.props.groupName, this.props.serverName, this.props.numofRec)
             .then(function(data) {
                       var statusArray = [];
                       for (var i = data.length - 1; i >= 0; i--) {
@@ -82,6 +83,8 @@ var CommandStatusWidget = React.createClass({
         this.setState({isOpen: !this.state.isOpen});
     },
     clickOpenInNewWindowHandler: function() {
+        //TODO: parameterise and paginate
+        this.props.numofRec=10000;
         var self = this;
         this.readHistory(function(){
             self.refs.processingIcon.getDOMNode().style.visibility = "visible";
@@ -160,7 +163,7 @@ var JQueryDataTableComponent = React.createClass({
         var colDefs = [{sWidth: "350px", aTargets: [0]}, {sWidth: "150px", aTargets: [2]}];
 
         // TODO: aaSorting should not be hard coded
-        $(this.refs.dataTable.getDOMNode()).dataTable({bJQueryUI: true, iDisplayLength: -1, aLengthMenu: [[25, 50, 100, 200, -1],
+        $(this.refs.dataTable.getDOMNode()).dataTable({bJQueryUI: true, iDisplayLength: 100, aLengthMenu: [[25, 50, 100, 200, -1],
                                                        [25, 50, 100, 200, "All"]], aaSorting: [[2, "asc"]], aoColumnDefs: colDefs});
     }
 });

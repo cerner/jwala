@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 public class ApplicationProperties {
@@ -85,6 +86,15 @@ public class ApplicationProperties {
         return Integer.parseInt(getProperties().getProperty(key));
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
+    public static Integer getAsInteger(PropertyKeys key) {
+        return getAsInteger(key.getPropertyName());
+    }
+
     public static Boolean getAsBoolean(String key) {
         return Boolean.parseBoolean(getProperties().getProperty(key));
     }
@@ -120,5 +130,26 @@ public class ApplicationProperties {
 
     public static String get(String key, String defaultValue) {
         return getProperties().getProperty(key, defaultValue);
+    }
+
+    /**
+     * Method to get Integer as from property using ProperyKeys
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static Integer getAsInteger(PropertyKeys key, Integer defaultValue) {
+        final String returnVal = getProperties().getProperty(key.getPropertyName());
+        if (null == returnVal) {
+            LOGGER.debug("No property key found for {}, using default value {}", key, defaultValue);
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(returnVal);
+        } catch (NumberFormatException ex) {
+            String errorMsg = MessageFormat.format("Expecting an integer value for property with key {0} but instead found {1}", key, returnVal);
+            LOGGER.error(errorMsg, ex);
+            throw new ApplicationException(errorMsg, ex);
+        }
     }
 }
