@@ -32,14 +32,12 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.persistence.EntityExistsException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -204,6 +202,26 @@ public class WebServerServiceImplTest {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
+    @Test(expected = EntityExistsException.class)
+    public void testCreateWebServerValidateJvmName() {
+        final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
+
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+        when(webServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
+        when(jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(jvm);
+        CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
+                mockWebServer.getName(),
+                mockWebServer.getHost(),
+                mockWebServer.getPort(),
+                mockWebServer.getHttpsPort(),
+                mockWebServer.getStatusPath(),
+                mockWebServer.getSvrRoot(),
+                mockWebServer.getDocRoot(),
+                mockWebServer.getState(),
+                mockWebServer.getErrorStatus());
+        final WebServer webServer = wsService.createWebServer(cmd, testUser);
+    }
+
     @Test
     public void testDeleteWebServers() {
         when(webServerPersistenceService.getWebServers()).thenReturn(mockWebServersAll);
@@ -231,6 +249,35 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer2.getDocRoot(),
                                                                 mockWebServer2.getState(),
                                                                 mockWebServer2.getErrorStatus());
+        final WebServer webServer = wsService.updateWebServer(cmd, testUser);
+
+        assertEquals(new Identifier<WebServer>(2L), webServer.getId());
+        assertEquals(group2.getId(), webServer.getGroups().iterator().next().getId());
+        assertEquals("the-ws-name-2", webServer.getName());
+        assertEquals(group2.getName(), webServer.getGroups().iterator().next().getName());
+        assertEquals("the-ws-hostname", webServer.getHost());
+        assertEquals("d:/some-dir/httpd.conf", webServer.getHttpConfigFile().getUriPath());
+    }
+
+    @Test(expected = EntityExistsException.class)
+    public void testUpdateWebServerShouldValidateJvmName() {
+        final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
+        when(webServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
+        when(webServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
+        when(jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(jvm);
+
+        UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
+                groupIds2,
+                mockWebServer2.getName(),
+                mockWebServer2.getHost(),
+                mockWebServer2.getPort(),
+                mockWebServer2.getHttpsPort(),
+                mockWebServer2.getStatusPath(),
+                mockWebServer2.getHttpConfigFile(),
+                mockWebServer2.getSvrRoot(),
+                mockWebServer2.getDocRoot(),
+                mockWebServer2.getState(),
+                mockWebServer2.getErrorStatus());
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
