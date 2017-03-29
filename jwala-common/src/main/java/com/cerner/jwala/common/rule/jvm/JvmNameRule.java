@@ -19,4 +19,9 @@ public class JvmNameRule extends ValidNameRule {
     protected String getMessage() {
         return "Invalid Jvm Name : \"" + name + "\"";
     }
+
+    @Override
+    public boolean isValid() {
+        return name != null && !"".equals(name.trim()) && name.matches("[A-Za-z0-9._\\s-]+");
+    }
 }
