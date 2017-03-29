@@ -5,6 +5,7 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
+import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecReturnCode;
@@ -50,6 +51,7 @@ public class GroupWebServerControlServiceImplTest {
         when(mockGroupService.getGroup(groupId)).thenReturn(mockGroup);
         when(mockGroupService.getGroupWithWebServers(groupId)).thenReturn(mockGroup);
         when(mockWebServer.getId()).thenReturn(new Identifier<WebServer>(111L));
+
         when(mockGroup.getWebServers()).thenReturn(mockWebServersSet);
         when(mockWebServerControlService.controlWebServer(any(ControlWebServerRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
     }
@@ -62,6 +64,7 @@ public class GroupWebServerControlServiceImplTest {
 
     @Test
     public void testControlGroup() {
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_REACHABLE);
         cut.controlGroup(controlGroupWebServerRequest, testUser);
     }
 
