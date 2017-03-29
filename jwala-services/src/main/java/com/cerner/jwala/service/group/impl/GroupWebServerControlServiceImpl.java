@@ -24,6 +24,7 @@ public class GroupWebServerControlServiceImpl implements GroupWebServerControlSe
     private final GroupService groupService;
     private final WebServerControlService webServerControlService;
     private final ExecutorService executorService;
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GroupWebServerControlServiceImpl.class);
 
     public GroupWebServerControlServiceImpl(final GroupService theGroupService, WebServerControlService theWebServerControlService) {
         groupService = theGroupService;
@@ -59,13 +60,19 @@ public class GroupWebServerControlServiceImpl implements GroupWebServerControlSe
 
     private void controlWebServers(final ControlGroupWebServerRequest controlGroupWebServerRequest, final User user, Set<WebServer> webServers) {
         for (final WebServer webServer : webServers) {
-            executorService.submit(new Callable<CommandOutput>() {
-                @Override
-                public CommandOutput call() throws Exception {
-                    final ControlWebServerRequest controlWebServerRequest = new ControlWebServerRequest(webServer.getId(), controlGroupWebServerRequest.getControlOperation());
-                    return webServerControlService.controlWebServer(controlWebServerRequest, user);
-                }
-            });
+            if ("START".equalsIgnoreCase(controlGroupWebServerRequest.getControlOperation().name()) && "STARTED".equalsIgnoreCase(webServer.getState().toStateLabel())) {
+                LOGGER.info("webServer {} already in state {}.", webServer.getName(), webServer.getState().toStateLabel());
+            } else if ("STOP".equalsIgnoreCase(controlGroupWebServerRequest.getControlOperation().name()) && "STOPPED".equalsIgnoreCase(webServer.getState().toStateLabel())) {
+                LOGGER.info("webServer {} already in state {}.", webServer.getName(), webServer.getState().toStateLabel());
+            } else {
+                executorService.submit(new Callable<CommandOutput>() {
+                    @Override
+                    public CommandOutput call() throws Exception {
+                        final ControlWebServerRequest controlWebServerRequest = new ControlWebServerRequest(webServer.getId(), controlGroupWebServerRequest.getControlOperation());
+                        return webServerControlService.controlWebServer(controlWebServerRequest, user);
+                    }
+                });
+            }
         }
     }
 
