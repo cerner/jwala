@@ -27,7 +27,8 @@ public enum PropertyKeys {
     JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION("jsch.channel.shell.read.input.sleep.duration"),
     JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME("jsch.exec.read.remote.output.loop.sleep.time"),
     JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT("jsch.shell.read.remote.output.timeout"),
-    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout");
+    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout"),
+    MAX_JWALA_HISTORY("max.jwala.history");
 
     private String propertyName;
 
