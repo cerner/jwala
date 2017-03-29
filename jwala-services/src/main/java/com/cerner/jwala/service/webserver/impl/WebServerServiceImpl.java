@@ -85,7 +85,7 @@ public class WebServerServiceImpl implements WebServerService {
 
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         for (Jvm jvm : jvmList) {
-            if(createWebServerRequest.getName().equals(jvm.getJvmName())){
+            if(createWebServerRequest.getName().equalsIgnoreCase(jvm.getJvmName())){
                 LOGGER.error("Jvm already exists with this name {}", createWebServerRequest.getName());
                 throw new EntityExistsException("Jvm already exists with this name "+ createWebServerRequest.getName());
             }
@@ -151,7 +151,7 @@ public class WebServerServiceImpl implements WebServerService {
 
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         for (Jvm jvm : jvmList) {
-            if(anUpdateWebServerCommand.getNewName().equals(jvm.getJvmName())){
+            if(anUpdateWebServerCommand.getNewName().equalsIgnoreCase(jvm.getJvmName())){
                 LOGGER.error("Jvm already exists with this name {}", anUpdateWebServerCommand.getNewName());
                 throw new EntityExistsException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
             }
