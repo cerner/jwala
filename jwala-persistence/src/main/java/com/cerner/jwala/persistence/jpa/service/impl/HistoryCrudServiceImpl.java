@@ -54,7 +54,7 @@ public class HistoryCrudServiceImpl extends AbstractCrudServiceImpl<JpaHistory> 
         if (numOfRec != null && numOfRec > 0) {
             q.setMaxResults(numOfRec);
         }else{
-            q.setMaxResults(ApplicationProperties.getAsInteger(PropertyKeys.MAX_JWALA_HISTORY, 500));
+            q.setMaxResults(ApplicationProperties.getAsInteger(PropertyKeys.JWALA_HISTORY_RESULT_FETCH_COUNT, 500));
         }
 
         return q.getResultList();

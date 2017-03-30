@@ -28,8 +28,8 @@ public enum PropertyKeys {
     JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME("jsch.exec.read.remote.output.loop.sleep.time"),
     JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT("jsch.shell.read.remote.output.timeout"),
     JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout"),
-    MAX_JWALA_HISTORY("max.jwala.history"),
-    MAX_JWALA_HISTORY_REC_COUNT("jwala.history.max.rec.count");
+    JWALA_HISTORY_RESULT_FETCH_COUNT("jwala.history.result.fetch.count"),
+    JWALA_HISTORY_MAX_REC_DEAFULT("jwala.history.max.rec.default");
 
     private String propertyName;
 
