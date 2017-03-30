@@ -29,7 +29,7 @@ public class GroupNameRuleTest {
 
     @Test
     public void testValidNames() {
-        final String[] validNames = {"abc", "def", "  123","group123","group_123. "};
+        final String[] validNames = {"abc", "def", "123","group123","group_123."};
 
         for (final String name : validNames) {
             final GroupNameRule rule = new GroupNameRule(name);
@@ -40,7 +40,7 @@ public class GroupNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null,"$group*",};
+        final String[] invalidNames = {"", "    ", null,"$group*","\\group","/group","  myGroup","myGroup "," myGroup   "};
 
         for (final String name : invalidNames) {
             final GroupNameRule rule = new GroupNameRule(name);
