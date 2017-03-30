@@ -84,7 +84,7 @@ var CommandStatusWidget = React.createClass({
     },
     clickOpenInNewWindowHandler: function() {
         //TODO: parameterise and paginate
-        this.props.numofRec=10000;
+        this.props.numofRec=jwalaVars["historyReadMaxRecCount"];
         var self = this;
         this.readHistory(function(){
             self.refs.processingIcon.getDOMNode().style.visibility = "visible";
