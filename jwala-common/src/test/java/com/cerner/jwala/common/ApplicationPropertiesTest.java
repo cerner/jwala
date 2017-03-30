@@ -48,11 +48,11 @@ public class ApplicationPropertiesTest extends TestCase {
         assertNull(ApplicationProperties.get("home team"));
     }
     public void testPropertyAsInteger() {
-        assertEquals(new Integer(100), ApplicationProperties.getAsInteger(PropertyKeys.MAX_JWALA_HISTORY, 100));
+        assertEquals(new Integer(100), ApplicationProperties.getAsInteger(PropertyKeys.JWALA_HISTORY_RESULT_FETCH_COUNT, 100));
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources/properties/reload");
         ApplicationProperties.reload();
         try {
-            assertEquals(new Integer(1000), ApplicationProperties.getAsInteger(PropertyKeys.MAX_JWALA_HISTORY, 1000));
+            assertEquals(new Integer(1000), ApplicationProperties.getAsInteger(PropertyKeys.JWALA_HISTORY_RESULT_FETCH_COUNT, 1000));
         } catch (ApplicationException e) {
             assertTrue(true);
         }
