@@ -42,8 +42,8 @@ var GroupOperationsDataTable = React.createClass({
             colWidth: "130px" }, { mData: "jvmDetails", bVisible: false }];
 
         var webServerOfGrpChildTableDef = [{ sTitle: "Web Server ID", mData: "id.id", bVisible: false },
-          { mData: null, colWidth: "10px" },
-          { sTitle: "Name", mData: "name", colWidth: "340px", maxDisplayTextLen: 45 },
+          { mData: null, colWidth: "5px" },
+          { sTitle: "Name", mData: "name", colWidth: "335px", maxDisplayTextLen: 45 },
           { sTitle: "Host", mData: "host", colWidth: "140px", maxDisplayTextLen: 20 },
           { sTitle: "HTTP", mData: "port", colWidth: "41px" },
           { sTitle: "HTTPS", mData: "httpsPort", colWidth: "48px" },
@@ -51,15 +51,15 @@ var GroupOperationsDataTable = React.createClass({
             mData: "groups",
             jwalaType: "array",
             displayProperty: "name",
-            maxDisplayTextLen: 20,
-            colWidth: "129px" }, { mData: null,
+            maxDisplayTextLen: 17,
+            colWidth: "125px" }, { mData: null,
             jwalaType: "custom",
             jwalaRenderCfgFn: this.renderWebServerControlPanelWidget.bind(this, "grp", "webServer") }, { sTitle: "State",
             mData: "stateLabel",
             sSortDataType: "ServerStateWidget",
             jwalaType: "custom",
             jwalaRenderCfgFn: this.renderWebServerStateRowData.bind(this, "grp", "webServer"),
-            colWidth: "120px" }];
+            colWidth: "115px" }];
 
         var webServerOfGrpChildTableDetails = { tableIdPrefix: "ws-child-table_",
             className: "simple-data-table",
@@ -194,9 +194,9 @@ var GroupOperationsDataTable = React.createClass({
             isColResizable: true,
             selectItemCallback: this.onSelectJvmTableRow };
 
-        var jvmChildTableDef = [{ mData: null, colWidth: "10px" },
+        var jvmChildTableDef = [{ mData: null, colWidth: "5px" },
         { sTitle: "JVM ID", mData: "id.id", bVisible: false },
-        { sTitle: "Name", mData: "jvmName", colWidth: "340px", maxDisplayTextLen: 48 },
+        { sTitle: "Name", mData: "jvmName", colWidth: "335px", maxDisplayTextLen: 48 },
         { sTitle: "Host", mData: "hostName", colWidth: "140", maxDisplayTextLen: 17 },
         { sTitle: "HTTP", mData: "httpPort", colWidth: "41px" },
         { sTitle: "HTTPS", mData: "httpsPort", colWidth: "48px" },
@@ -204,15 +204,15 @@ var GroupOperationsDataTable = React.createClass({
             mData: "groups",
             jwalaType: "array",
             displayProperty: "name",
-            maxDisplayTextLen: 20,
-            colWidth: "138px" }, { mData: null,
+            maxDisplayTextLen: 17,
+            colWidth: "125px" }, { mData: null,
             jwalaType: "custom",
             jwalaRenderCfgFn: this.renderJvmControlPanelWidget.bind(this, "grp", "jvm") }, { sTitle: "State",
             mData: "stateLabel",
             sSortDataType: "ServerStateWidget",
             jwalaType: "custom",
             jwalaRenderCfgFn: this.renderJvmStateRowData.bind(this, "grp", "jvm"),
-            colWidth: "120px" }];
+            colWidth: "115px" }];
 
         jvmChildTableDetails["tableDef"] = jvmChildTableDef;
 
@@ -308,6 +308,7 @@ var GroupOperationsDataTable = React.createClass({
                 jvmStartCallback: this.jvmStart,
                 jvmStopCallback: this.jvmStop,
                 jvmGenerateConfigCallback: this.jvmGenerateConfig,
+                jvmDeleteCallback: this.jvmDelete,
                 jvmHeapDumpCallback: this.jvmHeapDump,
                 jvmDiagnoseCallback: this.jvmDiagnose }), nTd, function () {});
         }.bind(this);
@@ -327,7 +328,8 @@ var GroupOperationsDataTable = React.createClass({
                 parentGroup: parentName,
                 webServerService: webServerService,
                 webServerStartCallback: this.webServerStart,
-                webServerStopCallback: this.webServerStop }), nTd, function () {});
+                webServerStopCallback: this.webServerStop,
+                webServerDeleteCallback: this.webServerDelete}), nTd, function () {});
         }.bind(this);
     },
     renderWebAppControlPanelWidget: function (parentPrefix, type, dataTable, data, aoColumnDefs, itemIndex, parentId, parentName) {
@@ -487,8 +489,16 @@ var GroupOperationsDataTable = React.createClass({
         var enable = this.enableJvmGenerateButtonThunk(selector);
         Promise.method(disable)().then(requestTask).lastly(enable);
     },
-    confirmStartStopGroupDialogBox: function (id, buttonSelector, msg, callbackOnConfirm) {
-        var dialogId = "group-stop-confirm-dialog-" + id;
+
+    /**
+     * Displays a confirmation dialog box
+     * @param id forms part of the dialog box's id e.g. JVM id
+     * @param buttonSelector the jquery selector which identifies to which button this dialog box will be mounted to
+     * @param msg the message to display in the dialog box
+     * @param callbackOnConfirm callback to execute when action is confirmed
+     */
+    confirmActionDialogBox: function (id, buttonSelector, msg, callbackOnConfirm) {
+        let dialogId = "group-confirm-action-dialog-" + id;
         $(buttonSelector).parent().append("<div id='" + dialogId + "' style='text-align:left'>" + msg + "</div>");
         $(buttonSelector).parent().find("#" + dialogId).dialog({
             title: "Confirmation",
@@ -509,6 +519,7 @@ var GroupOperationsDataTable = React.createClass({
             }
         });
     },
+
     /**
      * Verifies and confirms to the user whether to continue the operation or not.
      * @param id the id (e.g. group id)
@@ -524,8 +535,8 @@ var GroupOperationsDataTable = React.createClass({
         groupService.getChildrenOtherGroupConnectionDetails(id, groupChildType).then(function (data) {
             if (data.applicationResponseContent instanceof Array && data.applicationResponseContent.length > 0) {
                 var membershipDetails = groupOperationsHelper.createMembershipDetailsHtmlRepresentation(data.applicationResponseContent);
-
-                self.confirmStartStopGroupDialogBox(id, buttonSelector, membershipDetails + "<br/><b>Are you sure you want to " + operation + " <span style='color:#2a70d0'>" + name + "</span> ?</b>", operationCallback);
+                self.confirmActionDialogBox(id, buttonSelector, membershipDetails + "<br/><b>Are you sure you want to "
+                    + operation + " <span style='color:#2a70d0'>" + name + "</span> ?</b>", operationCallback);
             } else {
                 operationCallback(id, buttonSelector);
             }
@@ -794,5 +805,61 @@ var GroupOperationsDataTable = React.createClass({
         };
 
         this.verifyAndConfirmJvmWebServerControlOperation(id, parentItemId, buttonSelector, data.name, data.groups, "stop", doWebServerStop, cancelCallback, "Web Server");
+    },
+
+    webServerDelete: function(buttonSelector, data) {
+        this.confirmActionDialogBox(data.id.id, buttonSelector, "Are you sure you want to delete web server " + data.name,
+                                    this.webServerConfirmDeleteCallback.bind(this, data));
+    },
+
+    webServerConfirmDeleteCallback: function(data) {
+        let self = this;
+        webServerService.deleteWebServer(data.id.id, true).then(function(e){
+            // Remove deleted row
+            $("tr td:contains('" + data.name + "')").filter(function() {
+                if ($(this).text() === data.name) {
+                    $(this).parent().remove();
+                }
+            });
+        }).caught(
+            function(e) {
+                self.setState({showDeleteConfirmDialog: false})
+                let msg;
+                if (e.responseText) {
+                    msg = JSON.parse(e.responseText).message;
+                } else {
+                    msg = JSON.stringify(e);
+                }
+                $.errorAlert(msg, "Error");
+            }
+        );
+    },
+
+    jvmDelete: function(buttonSelector, data) {
+        this.confirmActionDialogBox(data.id.id, buttonSelector, "Are you sure you want to delete JVM " + data.jvmName,
+                                    this.jvmConfirmDeleteCallback.bind(this, data));
+    },
+
+    jvmConfirmDeleteCallback: function(data) {
+        let self = this;
+        jvmService.deleteJvm(data.id.id, true).then(function(e){
+            // Remove deleted row
+            $("tr td:contains('" + data.jvmName + "')").filter(function() {
+                if ($(this).text() === data.jvmName) {
+                    $(this).parent().remove();
+                }
+            });
+        }).caught(
+            function(e) {
+                self.setState({showDeleteConfirmDialog: false})
+                let msg;
+                if (e.responseText) {
+                    msg = JSON.parse(e.responseText).message;
+                } else {
+                    msg = JSON.stringify(e);
+                }
+                $.errorAlert(msg, "Error");
+            }
+        );
     }
 });
