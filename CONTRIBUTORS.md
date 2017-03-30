@@ -8,3 +8,4 @@ Cerner Corporation
 - Peter Teunissen
 - Rahul Sayini
 - Steven Ger
+- Brett Okken
