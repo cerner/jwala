@@ -12,7 +12,7 @@ public class WebServerNameRuleTest {
 
     @Test
     public void testValidNames() {
-        final String[] validNames = {"abc", "def", "a really long name","ws123","ws_123. "};
+        final String[] validNames = {"abc", "def", "a really long name","ws123","ws_123."};
 
         for (final String name : validNames) {
             final WebServerNameRule rule = new WebServerNameRule(name);
@@ -23,7 +23,7 @@ public class WebServerNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null,"$web_server*",};
+        final String[] invalidNames = {"", "    ", null,"$web_server*","\\web-server","/123","ws   ","  ws"};
 
         for (final String name : invalidNames) {
             final WebServerNameRule rule = new WebServerNameRule(name);
