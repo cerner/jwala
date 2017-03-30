@@ -55,6 +55,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,7 @@ import static org.mockito.Mockito.anyCollection;
 import static org.mockito.Mockito.anyObject;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {JvmServiceImplTest.Config.class})
@@ -98,20 +100,15 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImplTest.class);
 
-    @BeforeClass
-    public static void init() {
-        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH,
-                JvmServiceImplTest.class.getClassLoader().getResource("vars.properties").getPath()
-                        .replace("/vars.properties", ""));
-    }
+    final Identifier<Jvm> id = new Identifier<>(1L);
+    final User user = new User("user");
 
-    @AfterClass
-    public static void destroy() {
-        System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
-    }
+    @Mock
+    private Jvm mockJvm;
 
     @Before
     public void setup() throws IOException {
+        initMocks(this);
         FileUtils.forceMkdir(new File(ApplicationProperties.get("paths.generated.resource.dir") + "/" + JUNIT_JVM));
 
         reset(Config.mockJvmPersistenceService, Config.mockGroupService, Config.mockApplicationService,
@@ -871,9 +868,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     @Test
     public void testDeleteNewJvms() {
-        final Identifier<Jvm> id = new Identifier<>(1L);
-        final User user = new User("user");
-        final Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
         jvmService.deleteJvm(id, false, user);
@@ -883,9 +877,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     @Test
     public void testDeleteStoppedJvms() {
-        final Identifier<Jvm> id = new Identifier<>(1L);
-        final User user = new User("user");
-        final Jvm mockJvm = mock(Jvm.class);
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
@@ -898,9 +889,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     @Test
     public void testDeleteForcedStoppedJvms() {
-        final Identifier<Jvm> id = new Identifier<>(1L);
-        final User user = new User("user");
-        final Jvm mockJvm = mock(Jvm.class);
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
@@ -913,9 +901,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     @Test
     public void testFailedDeleteServiceOfStoppedJvms() {
-        final Identifier<Jvm> id = new Identifier<>(1L);
-        final User user = new User("user");
-        final Jvm mockJvm = mock(Jvm.class);
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getJvmName()).thenReturn("testJvm");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
@@ -933,9 +918,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     @Test
     public void testDeleteNonStoppedAndNotNewJvms() {
-        final Identifier<Jvm> id = new Identifier<>(1L);
-        final User user = new User("user");
-        final Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
         try {
