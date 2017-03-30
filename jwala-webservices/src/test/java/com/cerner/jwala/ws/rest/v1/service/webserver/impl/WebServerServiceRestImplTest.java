@@ -219,7 +219,6 @@ public class WebServerServiceRestImplTest {
     }
 
     @Test
-    @Ignore // TODO: Fix when delete web server with service deletion is completed
     public void testUpdateWebServer() {
         final JsonUpdateWebServer jsonUpdateWebServer = mock(JsonUpdateWebServer.class);
         when(mockWebServerService.updateWebServer(any(UpdateWebServerRequest.class), any(User.class))).thenReturn(webServer);
@@ -239,52 +238,32 @@ public class WebServerServiceRestImplTest {
     @Test
     public void testRemoveWebServer() {
         final Identifier<WebServer> id = new Identifier<>(1L);
-        webServerServiceRest.deleteWebServer(id, false, new AuthenticatedUser());
-        verify(mockWebServerService).deleteWebServer(id, false);
+        final User user = new User("user");
+        when(authenticatedUser.getUser()).thenReturn(user);
+        webServerServiceRest.deleteWebServer(id, false, authenticatedUser);
+        verify(mockWebServerService).deleteWebServer(id, false, user);
     }
 
     @Test
-    @Ignore // TODO: Fix when delete web server with service deletion is completed
     public void testRemoveWebServerWhenWebServerNotStopped() {
         when(mockWebServerService.getWebServer(any(Identifier.class))).thenReturn(webServer);
         when(mockWebServerService.isStarted(any(WebServer.class))).thenReturn(true);
         final Response response = webServerServiceRest.deleteWebServer(Identifier.id(1l, WebServer.class), false, authenticatedUser);
-        assertEquals("Web server webserverName must be stopped before it can be deleted!",
-                ((ApplicationResponse) response.getEntity()).getApplicationResponseContent());
+        assertEquals(204, response.getStatus());
     }
 
-    @Test
-    @Ignore // TODO: Fix when delete web server with service deletion is completed
-    public void testRemoveWebServerForceDelete() {
-        when(webServerControlService.controlWebServer(any(ControlWebServerRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
-        when(mockWebServerService.getWebServer(any(Identifier.class))).thenReturn(webServer);
-        when(mockWebServerService.getWebServer(anyString())).thenReturn(webServer);
-        final Response response = webServerServiceRest.deleteWebServer(Identifier.id(1l, WebServer.class), false, authenticatedUser);
-        verify(mockWebServerService, atLeastOnce()).deleteWebServer(any(Identifier.class), false);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        final ApplicationResponse applicationResponse = (ApplicationResponse) response.getEntity();
-        assertEquals("successful", applicationResponse.getApplicationResponseContent());
-    }
-
-    @Test
-    @Ignore // TODO: Fix when delete web server with service deletion is completed
+    @Test(expected = WebServerServiceException.class)
     public void testRemoveWebServerException() {
-        when(webServerControlService.controlWebServer(any(ControlWebServerRequest.class), any(User.class))).thenThrow(new RuntimeException("java.net.UnknownHostException"));
-        when(mockWebServerService.getWebServer(any(Identifier.class))).thenReturn(webServer);
-        when(mockWebServerService.getWebServer(anyString())).thenReturn(webServer);
-        final Response response = webServerServiceRest.deleteWebServer(Identifier.id(1l, WebServer.class), false, authenticatedUser);
-        System.out.println(response.getStatus());
-        System.out.println(response.getStatusInfo().toString());
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-
-        final ApplicationResponse applicationResponse = (ApplicationResponse) response.getEntity();
-        assertEquals("java.net.UnknownHostException", applicationResponse.getApplicationResponseContent());
+        final Identifier<WebServer> id = new Identifier<>(1L);
+        final User user = new User("user");
+        final AuthenticatedUser mockAuthUser = mock(AuthenticatedUser.class);
+        when(mockAuthUser.getUser()).thenReturn(user);
+        doThrow(WebServerServiceException.class).when(mockWebServerService).deleteWebServer(id, false, user);
+        webServerServiceRest.deleteWebServer(id, false, mockAuthUser);
     }
 
     @Test
     public void testControlWebServer() {
-
         final CommandOutput execData = mock(CommandOutput.class);
         final ExecReturnCode execDataReturnCode = mock(ExecReturnCode.class);
         when(execDataReturnCode.wasSuccessful()).thenReturn(true);

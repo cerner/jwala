@@ -8,8 +8,11 @@ import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
+import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.InternalErrorException;
+import com.cerner.jwala.common.exec.CommandOutput;
+import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -19,12 +22,14 @@ import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
+import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +55,9 @@ public class WebServerServiceImpl implements WebServerService {
     private final String templatePath;
 
     private final BinaryDistributionLockManager binaryDistributionLockManager;
+
+    @Autowired
+    private WebServerControlService webServerControlService;
 
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
@@ -158,7 +166,7 @@ public class WebServerServiceImpl implements WebServerService {
 
     @Override
     @Transactional
-    public void deleteWebServer(final Identifier<WebServer> id, final boolean hardDelete) {
+    public void deleteWebServer(final Identifier<WebServer> id, final boolean hardDelete, final User user) {
         LOGGER.info("Deleting web server with id = {} and hardDelete = {}", id, hardDelete);
         final WebServer webServer = webServerPersistenceService.getWebServer(id);
 
@@ -180,7 +188,15 @@ public class WebServerServiceImpl implements WebServerService {
             }
 
             // delete the service
-            throw new UnsupportedOperationException();
+            // delete the service
+            final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
+                    WebServerControlOperation.DELETE_SERVICE), user);
+            if (!commandOutput.getReturnCode().wasSuccessful()) {
+                final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
+                        webServer.getName(), commandOutput);
+                LOGGER.error(msg);
+                throw new WebServerServiceException(msg);
+            }
         }
 
         webServerPersistenceService.removeWebServer(id);
