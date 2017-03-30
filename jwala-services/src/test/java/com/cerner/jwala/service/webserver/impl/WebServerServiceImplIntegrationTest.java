@@ -79,7 +79,7 @@ public class WebServerServiceImplIntegrationTest {
 
     @Before
     public void setup() {
-        webServerService = new WebServerServiceImpl(webServerPersistenceService, resourceService, inMemService, "d:/jwala/app/data/types", binaryDistributionLockManager, jvmPersistenceService);
+        webServerService = new WebServerServiceImpl(webServerPersistenceService, resourceService, inMemService, "d:/jwala/app/data/types", binaryDistributionLockManager);
     }
 
     @Test(expected = NotFoundException.class)

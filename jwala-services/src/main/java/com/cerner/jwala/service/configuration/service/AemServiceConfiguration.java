@@ -169,12 +169,12 @@ public class AemServiceConfiguration {
                                     final ResourceService resourceService, final ClientFactoryHelper clientFactoryHelper,
                                     @Value("${spring.messaging.topic.serverStates:/topic/server-states}") final String topicServerStates,
                                     final JvmControlService jvmControlService, final HistoryFacadeService historyFacadeService,
-                                    final FileUtility fileUtility, final WebServerPersistenceService webServerPersistenceService) {
+                                    final FileUtility fileUtility) {
         final JvmPersistenceService jvmPersistenceService = aemPersistenceServiceConfiguration.getJvmPersistenceService();
         return new JvmServiceImpl(jvmPersistenceService, groupPersistenceService, applicationService,
                 messagingTemplate, groupStateNotificationService, resourceService,
                 clientFactoryHelper, topicServerStates, jvmControlService, binaryDistributionService, binaryDistributionLockManager,
-                historyFacadeService, webServerPersistenceService, fileUtility);
+                historyFacadeService, fileUtility);
     }
 
     @Bean(name = "binaryDistributionLockManager")
@@ -205,8 +205,7 @@ public class AemServiceConfiguration {
                 resourceService,
                 inMemoryStateManagerService,
                 templatePath,
-                binaryDistributionLockManager,
-                jvmPersistenceService);
+                binaryDistributionLockManager);
     }
 
     @Bean

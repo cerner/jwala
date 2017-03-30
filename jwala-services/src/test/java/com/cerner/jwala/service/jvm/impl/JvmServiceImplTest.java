@@ -153,8 +153,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         when(Config.mockJvmPersistenceService.createJvm(any(CreateJvmRequest.class))).thenReturn(jvm);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
-        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(webServer);
         when(createJvmAndAddToGroupsRequest.getCreateCommand()).thenReturn(createJvmRequest);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(webServer);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -223,7 +223,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
         when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
 
-
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
         verify(createJvmAndAddToGroupsRequest, times(1)).validate();
@@ -250,12 +249,12 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         when(createJvmAndAddToGroupsRequest.getCreateCommand()).thenReturn(createJvmRequest);
         when(Config.mockJvmPersistenceService.createJvm(any(CreateJvmRequest.class))).thenReturn(jvm);
-        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
         when(Config.mockResourceService.generateResourceGroup()).thenReturn(mock(ResourceGroup.class));
         when(mockGroup.getName()).thenReturn("mock-group-name");
         when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
         when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(appTemplateNames);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -1056,7 +1055,12 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
             return new JvmServiceImpl(mockJvmPersistenceService, mockGroupPersistenceService, mockApplicationService,
                     mockMessagingTemplate, mockGroupStateNotificationService, mockResourceService, mockClientFactoryHelper,
                     "/topic/server-states", mockJvmControlService, mockBinaryDistributionService, mockBinaryDistributionLockManager,
-                    mockHistoryFacadeService, mockWebServerPersistenceService, new FileUtility());
+                    mockHistoryFacadeService, new FileUtility());
+        }
+
+        @Bean
+        public WebServerPersistenceService getWebServerPersistenceService() {
+            return mockWebServerPersistenceService;
         }
 
     }

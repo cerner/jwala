@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,9 @@ public class WebServerServiceImpl implements WebServerService {
     private static final String INSTALL_SERVICE_WSBAT_TEMPLATE_TPL_PATH = "/install-service-http.bat.tpl";
     public static final String INSTALL_SERVICE_SCRIPT_NAME = "install-service-http.bat";
 
+    @Autowired
+    private JvmPersistenceService jvmPersistenceService;
+
     private final WebServerPersistenceService webServerPersistenceService;
 
     private final ResourceService resourceService;
@@ -51,21 +55,17 @@ public class WebServerServiceImpl implements WebServerService {
 
     private final BinaryDistributionLockManager binaryDistributionLockManager;
 
-    private final JvmPersistenceService jvmPersistenceService;
-
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
                                 @Qualifier("webServerInMemoryStateManagerService")
                                 final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
                                 final String templatePath,
-                                final BinaryDistributionLockManager binaryDistributionLockManager,
-                                final JvmPersistenceService jvmPersistenceService) {
+                                final BinaryDistributionLockManager binaryDistributionLockManager) {
         this.webServerPersistenceService = webServerPersistenceService;
         this.inMemoryStateManagerService = inMemoryStateManagerService;
         this.templatePath = templatePath;
         this.resourceService = resourceService;
         this.binaryDistributionLockManager = binaryDistributionLockManager;
-        this.jvmPersistenceService = jvmPersistenceService;
         initInMemoryStateService();
     }
 

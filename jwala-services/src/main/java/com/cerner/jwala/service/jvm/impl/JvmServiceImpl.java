@@ -87,10 +87,12 @@ public class JvmServiceImpl implements JvmService {
     private final HistoryFacadeService historyFacadeService;
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
-    private final WebServerPersistenceService webServerPersistenceService;
 
     @Autowired
     private JvmStateService jvmStateService;
+
+    @Autowired
+    private WebServerPersistenceService webServerPersistenceService;
 
     public JvmServiceImpl(final JvmPersistenceService jvmPersistenceService,
                           final GroupPersistenceService groupPersistenceService,
@@ -104,7 +106,6 @@ public class JvmServiceImpl implements JvmService {
                           final BinaryDistributionService binaryDistributionService,
                           final BinaryDistributionLockManager binaryDistributionLockManager,
                           final HistoryFacadeService historyFacadeService,
-                          final WebServerPersistenceService webServerPersistenceService,
                           final FileUtility fileUtility) {
         this.jvmPersistenceService = jvmPersistenceService;
         this.groupPersistenceService = groupPersistenceService;
@@ -118,7 +119,6 @@ public class JvmServiceImpl implements JvmService {
         this.binaryDistributionService = binaryDistributionService;
         this.binaryDistributionLockManager = binaryDistributionLockManager;
         this.historyFacadeService = historyFacadeService;
-        this.webServerPersistenceService = webServerPersistenceService;
         this.fileUtility = fileUtility;
     }
 
