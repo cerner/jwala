@@ -102,7 +102,7 @@ var MediaConfig = React.createClass({
                 self.state.selectedMedia = null;
             });
         }).caught(function(response){
-            $.errorAlert(response);
+            $.errorAlert(JSON.parse(response.responseText).message);
         });
     },
     mediaNameRenderCallback: function(name, media) {
