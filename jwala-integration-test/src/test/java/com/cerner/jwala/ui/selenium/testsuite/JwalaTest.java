@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class JwalaTest {
 
     protected final WebDriver driver = TestSuite.driver;
+    protected final WebDriverWait webDriverWait = new WebDriverWait(driver, 5);
     protected final Properties properties = TestSuite.properties;
     protected final static long CURRENT_TIME_MILLIS = TestSuite.CURRENT_TIME_MILLIS;
 
@@ -26,6 +27,14 @@ public class JwalaTest {
         if (!configTag.getAttribute("class").equalsIgnoreCase("current")) {
             configTag.click();
         }
+    }
+
+    /**
+     * Wait until element is clickable before clicking
+     * @param by
+     */
+    protected void waitClick(By by) {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
     }
 
     protected WebElement clickTreeItemExpandCollapseIcon(final String itemLabel) {
