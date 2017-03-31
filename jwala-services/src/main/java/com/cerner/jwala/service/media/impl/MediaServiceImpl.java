@@ -99,7 +99,9 @@ public class MediaServiceImpl implements MediaService {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         for (Jvm jvm : jvmList) {
             if (jvm.getJdkMedia().getName().equals(name)) {
-                throw new MediaServiceException("Cannot delete media check for jvm dependencies");
+                LOGGER.error("The media {} cannot be deleted because it is still configured with Jvm", name);
+                throw new MediaServiceException(MessageFormat
+                        .format("The media {0} cannot be deleted because it is still configured with Jvm", name));
             }
         }
     }
