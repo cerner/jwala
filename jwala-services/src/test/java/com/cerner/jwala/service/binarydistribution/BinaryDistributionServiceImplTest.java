@@ -8,7 +8,7 @@ import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecCommand;
 import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
@@ -291,7 +291,7 @@ public class BinaryDistributionServiceImplTest {
         static HistoryFacadeService historyFacadeService;
 
         @Mock
-        static AemSshConfig mockAemSshConfig;
+        static SshConfig mockSshConfig;
 
         @Mock
         static SshConfiguration mockSshConfiguration;
@@ -320,15 +320,15 @@ public class BinaryDistributionServiceImplTest {
         }
 
         @Bean
-        public AemSshConfig getMockAemSshConfig() {
-            return mockAemSshConfig;
+        public SshConfig getMockSshConfig() {
+            return mockSshConfig;
         }
 
         @Bean
         @Scope("prototype")
         public BinaryDistributionService getBinaryDistributionService() {
             reset(mockBinaryDistributionControlService, mockBinaryDistributionLockManager,
-                    historyFacadeService, mockAemSshConfig, mockSshConfiguration, mockRemoteCommandExecutorService);
+                    historyFacadeService, mockSshConfig, mockSshConfiguration, mockRemoteCommandExecutorService);
             return new BinaryDistributionServiceImpl();
         }
 

@@ -621,7 +621,6 @@ public class JvmServiceImpl implements JvmService {
     }
 
     private void deployJvmConfigJar(Jvm jvm, User user, String jvmJar) throws CommandFailureException {
-        final String parentDir = ApplicationProperties.get("remote.paths.instances");
         CommandOutput execData = jvmControlService.controlJvm(
                 new ControlJvmRequest(jvm.getId(), JvmControlOperation.DEPLOY_CONFIG_ARCHIVE), user);
         execData.getStandardOutput();

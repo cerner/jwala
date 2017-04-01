@@ -16,7 +16,7 @@ import com.cerner.jwala.common.exec.RemoteExecCommand;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.control.webserver.command.WebServerCommandFactory;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
@@ -283,10 +283,10 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         static RemoteCommandExecutorService mockRemoteCommandExecutorService;
 
         @Mock
-        static SshConfiguration mockSshConfig;
+        static SshConfiguration mockSshConfiguration;
 
         @Mock
-        static AemSshConfig mockAemSshConfig;
+        static SshConfig mockSshConfig;
 
         @Mock
         static BinaryDistributionControlServiceImpl binaryDistributionControlService;
@@ -326,13 +326,13 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         }
 
         @Bean
-        public SshConfiguration getMockSshConfig() {
-            return mockSshConfig;
+        public SshConfiguration getMockSshConfiguration() {
+            return mockSshConfiguration;
         }
 
         @Bean
-        public AemSshConfig getMockAemSshConfig() {
-            return mockAemSshConfig;
+        public SshConfig getMockSshConfig() {
+            return mockSshConfig;
         }
 
         @Bean
@@ -345,7 +345,7 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         public WebServerControlService getWebServerControlService() {
             reset(mockWebServerCommandFactory, mockDistributionService, mockWebServerService,
                     mockMessagingService, mockHistoryFacadeService, mockRemoteCommandExecutorService,
-                    mockSshConfig, binaryDistributionControlService, mockAemSshConfig);
+                    mockSshConfig, binaryDistributionControlService, mockSshConfig);
             return new WebServerControlServiceImpl();
         }
 

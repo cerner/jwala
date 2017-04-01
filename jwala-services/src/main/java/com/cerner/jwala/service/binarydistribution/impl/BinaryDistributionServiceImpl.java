@@ -73,12 +73,13 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
         final Media jdkMedia = jvm.getJdkMedia();
         final String binaryDeployDir = jdkMedia.getRemoteHostPath().replaceAll("\\\\", "/");
         if (binaryDeployDir != null && !binaryDeployDir.isEmpty()) {
-            historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), "DISTRIBUTE_JDK " + jdkMedia.getName(),
-                    EventType.APPLICATION_EVENT, getUserNameFromSecurityContext());
             if (!checkIfMediaDirExists(jvm.getJdkMedia().getMediaDir().split(","), jvm.getHostName(), binaryDeployDir)) {
+                historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), "Installing JDK " + jdkMedia.getName() +
+                        " to host " + jvm.getHostName(),
+                        EventType.APPLICATION_EVENT, getUserNameFromSecurityContext());
                 distributeBinary(jvm.getHostName(), jdkMedia.getPath(), jdkMedia.getRemoteHostPath(), "");
             } else {
-                LOGGER.warn("Jdk directories already exists, installation of {} skipped!", jvm.getJdkMedia().getName());
+                LOGGER.warn("JDK directories already exists, installation of {} skipped!", jvm.getJdkMedia().getName());
             }
         } else {
             final String errMsg = MessageFormat.format("JDK dir location is null or empty for JVM {0}. Not deploying JDK.", jvm.getJvmName());

@@ -19,7 +19,7 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.app.CreateApplicationRequest;
 import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
@@ -65,7 +65,7 @@ public class ApplicationServiceImplTest {
 
     static final String META_DATA_TEST_VALUES = "{\"deployPath\":\"./test/deploy-path/conf/CatalinaSSL/localhost\",\"contentType\":\"text/xml\",\"entity\":{\"type\":\"APPLICATION\",\"target\":\"soarcom-hct\",\"group\":\"soarcom-616\",\"parentName\":null,\"deployToJvms\":true},\"templateName\":\"hctXmlTemplate.tpl\",\"deployFileName\":\"hct.xml\"}";
 
-    private AemSshConfig aemSshConfig;
+    private SshConfig sshConfig;
 
     @Autowired
     private ApplicationServiceImpl applicationService;
@@ -118,9 +118,9 @@ public class ApplicationServiceImplTest {
         uploadedFile = new ByteArrayInputStream(buf.array());
 
         SshConfiguration mockSshConfig = mock(SshConfiguration.class);
-        aemSshConfig = mock(AemSshConfig.class);
+        sshConfig = mock(SshConfig.class);
         when(mockSshConfig.getUserName()).thenReturn("mockUser");
-        when(aemSshConfig.getSshConfiguration()).thenReturn(mockSshConfig);
+        when(sshConfig.getSshConfiguration()).thenReturn(mockSshConfig);
     }
 
     @SuppressWarnings("unchecked")

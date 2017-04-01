@@ -17,7 +17,7 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.control.command.common.Command;
 import com.cerner.jwala.control.command.common.ShellCommandFactory;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.control.jvm.command.JvmCommandFactory;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
@@ -322,7 +322,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         static BinaryDistributionControlService mockBinaryDistributionControlService;
 
         @Mock
-        static AemSshConfig mockAemSshConfig;
+        static SshConfig mockSshConfig;
 
         @Mock
         static ShellCommandFactory mockShellCommandFactory;
@@ -337,7 +337,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         static RemoteCommandExecutorService mockRemoteCommandExecutorService;
 
         @Mock
-        static SshConfiguration mockSshConfig;
+        static SshConfiguration mockSshConfiguration;
 
         @Mock
         static JvmPersistenceService mockJvmPersistenceService;
@@ -357,8 +357,8 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         }
 
         @Bean
-        public static AemSshConfig getAemSshConfig() {
-            return mockAemSshConfig;
+        public static SshConfig getSshConfig() {
+            return mockSshConfig;
         }
 
         @Bean
@@ -382,8 +382,8 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         }
 
         @Bean
-        public SshConfiguration getSshConfig() {
-            return mockSshConfig;
+        public SshConfiguration getMockSshConfiguration() {
+            return mockSshConfiguration;
         }
 
         @Bean
@@ -394,7 +394,7 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         @Bean
         @Scope("prototype")
         public JvmControlService getJvmControlService() {
-            reset(mockJvmCommandFactory, mockAemSshConfig, mockShellCommandFactory, mockHistoryFacadeService,
+            reset(mockJvmCommandFactory, mockSshConfig, mockShellCommandFactory, mockHistoryFacadeService,
                     mockJvmStateService, mockRemoteCommandExecutorService, mockSshConfig,
                     mockJvmPersistenceService);
 

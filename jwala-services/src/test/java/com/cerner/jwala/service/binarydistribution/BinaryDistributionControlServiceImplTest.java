@@ -5,7 +5,7 @@ import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.exec.RemoteExecCommand;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionControlServiceImpl;
 import com.jcraft.jsch.ChannelExec;
@@ -55,8 +55,8 @@ public class BinaryDistributionControlServiceImplTest {
 
     @After
     public void tearDown() {
+        reset(Config.mockSshConfiguration);
         reset(Config.mockSshConfig);
-        reset(Config.mockAemSshConfig);
         reset(Config.mockRemoteCommandExecutorService);
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
@@ -74,11 +74,11 @@ public class BinaryDistributionControlServiceImplTest {
         when(mockSession.openChannel(eq("exec"))).thenReturn(mockChannelExec);
         when(mockJsch.getSession(anyString(), anyString(), anyInt())).thenReturn(mockSession);
         when(mockJschBuilder.build()).thenReturn(mockJsch);
-        when(Config.mockAemSshConfig.getJschBuilder()).thenReturn(mockJschBuilder);
+        when(Config.mockSshConfig.getJschBuilder()).thenReturn(mockJschBuilder);
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(mock(RemoteCommandReturnInfo.class));
         final String source = BinaryDistributionControlServiceImplTest.class.getClassLoader().getResource("binarydistribution/copy.txt").getPath();
         binaryDistributionControlService.secureCopyFile("someHost", source, "./build/tmp");
-        verify(Config.mockAemSshConfig).getJschBuilder();
+        verify(Config.mockSshConfig).getJschBuilder();
         assertEquals("C0644 12 copy.txt\nsome content\0", out.toString(StandardCharsets.UTF_8));
     }
 
@@ -114,10 +114,10 @@ public class BinaryDistributionControlServiceImplTest {
     static class Config {
 
         @Mock
-        static SshConfiguration mockSshConfig;
+        static SshConfiguration mockSshConfiguration;
 
         @Mock
-        static AemSshConfig mockAemSshConfig;
+        static SshConfig mockSshConfig;
 
         @Mock
         static RemoteCommandExecutorService mockRemoteCommandExecutorService;
@@ -128,12 +128,12 @@ public class BinaryDistributionControlServiceImplTest {
 
         @Bean
         public SshConfiguration getSshConfiguration() {
-            return mockSshConfig;
+            return mockSshConfiguration;
         }
 
         @Bean
-        public AemSshConfig getAemSshConfig() {
-            return mockAemSshConfig;
+        public SshConfig getSshConfig() {
+            return mockSshConfig;
         }
 
         @Bean
