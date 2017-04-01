@@ -19,7 +19,6 @@ public enum PropertyKeys {
     REMOTE_JAVA_HOME("remote.jwala.java.home"),
     JDK_BINARY_FILE_NAME("jwala.default.jdk.zip"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
-    REMOTE_PATHS_TOMCAT_CORE("remote.paths.tomcat.core"),
     LOCAL_JWALA_BINARY_DIR("jwala.binary.dir"),
     JMAP_DUMP_LIVE_ENABLED("jmap.dump.live.enabled"),
     TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
@@ -27,7 +26,13 @@ public enum PropertyKeys {
     JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION("jsch.channel.shell.read.input.sleep.duration"),
     JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME("jsch.exec.read.remote.output.loop.sleep.time"),
     JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT("jsch.shell.read.remote.output.timeout"),
-    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout");
+    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout"),
+    USER_NAME("ssh.userName"),
+    PORT("ssh.port"),
+    PRIVATE_KEY_FILE("ssh.privateKeyFile"),
+    KNOWN_HOSTS_FILE("ssh.knownHostsFile"),
+    ENCRYPTED_PASSWORD("ssh.encrypted.password");
+
 
     private String propertyName;
 

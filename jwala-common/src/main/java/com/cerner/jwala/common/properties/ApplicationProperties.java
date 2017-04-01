@@ -43,12 +43,12 @@ public class ApplicationProperties {
         getInstance().init();
     }
 
-    public static String getRequired(PropertyKeys propertyNames) {
-        if (propertyNames == null) {
+    public static String getRequired(PropertyKeys propertyName) {
+        if (propertyName == null) {
             throw new ApplicationException("Attempted to call " + ApplicationProperties.class.getName() + ".get(property) with a null property key");
         }
 
-        return getRequired(propertyNames.getPropertyName());
+        return getRequired(propertyName.getPropertyName());
     }
 
     public static String getRequired(String key) {
@@ -62,12 +62,12 @@ public class ApplicationProperties {
         return propVal;
     }
 
-    public static String get(PropertyKeys propertyNames) {
-        if (propertyNames == null) {
+    public static String get(PropertyKeys propertyName) {
+        if (propertyName == null) {
             throw new ApplicationException("Attempted to call " + ApplicationProperties.class.getName() + ".get(property) with a null property key");
         }
 
-        return get(propertyNames.getPropertyName());
+        return get(propertyName.getPropertyName());
     }
 
     public static String get(String key) {
@@ -81,6 +81,14 @@ public class ApplicationProperties {
         return propVal;
     }
 
+    public static Integer getAsInteger(PropertyKeys propertyKey) {
+        return Integer.parseInt(get(propertyKey));
+    }
+
+    public static Integer getAsInteger(PropertyKeys propertyKey, Integer defaultValue) {
+        return Integer.parseInt(get(propertyKey.getPropertyName(), String.valueOf(defaultValue)));
+    }
+
     public static Integer getAsInteger(String key) {
         return Integer.parseInt(getProperties().getProperty(key));
     }
@@ -92,6 +100,10 @@ public class ApplicationProperties {
     public static Boolean getRequiredAsBoolean(PropertyKeys key) {
         String value = getRequired(key);
         return Boolean.parseBoolean(value);
+    }
+
+    public static String get(String key, String defaultValue) {
+        return getProperties().getProperty(key, defaultValue);
     }
 
     public static int size() {
@@ -116,9 +128,5 @@ public class ApplicationProperties {
         }
         properties = tempProperties;
         LOGGER.info("Properties loaded from path " + propertiesFile);
-    }
-
-    public static String get(String key, String defaultValue) {
-        return getProperties().getProperty(key, defaultValue);
     }
 }
