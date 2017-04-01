@@ -42,7 +42,7 @@ public class ApplicationContextListener {
 
         // skip the BrokerAvailabilityEvent, and ignore all other events (SessionConnectedEvent, ServletRequestHandledEvent, ContextClosedEvent, etc.)
         if (!(event instanceof ContextRefreshedEvent)) {
-            LOGGER.debug("Expecting ContextRefreshedEvent. Skipping.");
+//            LOGGER.debug("Expecting ContextRefreshedEvent. Skipping.");
             return;
         }
 
