@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
-import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.Request;
 import com.cerner.jwala.common.rule.jvm.JvmIdRule;
 
@@ -17,21 +16,11 @@ public class ControlJvmRequest implements Serializable, Request {
 
     private final Identifier<Jvm> jvmId;
     private final JvmControlOperation controlOperation;
-    private final String message;
 
     public ControlJvmRequest(final Identifier<Jvm> theId,
                              final JvmControlOperation theControlOperation) {
         this.jvmId = theId;
         this.controlOperation = theControlOperation;
-        this.message = null;
-    }
-
-    public ControlJvmRequest(final Identifier<Jvm> theId,
-                             final JvmControlOperation theControlOperation,
-                             final String message) {
-        this.jvmId = theId;
-        this.controlOperation = theControlOperation;
-        this.message = message;
     }
 
     public Identifier<Jvm> getJvmId() {
@@ -43,7 +32,7 @@ public class ControlJvmRequest implements Serializable, Request {
     }
 
     public String getMessage() {
-        return message;
+        return controlOperation.getExternalValue();
     }
 
     @Override
@@ -66,7 +55,6 @@ public class ControlJvmRequest implements Serializable, Request {
         return new EqualsBuilder()
                 .append(this.jvmId, rhs.jvmId)
                 .append(this.controlOperation, rhs.controlOperation)
-                .append(this.message, rhs.message)
                 .isEquals();
     }
 
@@ -75,7 +63,6 @@ public class ControlJvmRequest implements Serializable, Request {
         return new HashCodeBuilder()
                 .append(jvmId)
                 .append(controlOperation)
-                .append(message)
                 .toHashCode();
     }
 
@@ -84,7 +71,6 @@ public class ControlJvmRequest implements Serializable, Request {
         return new ToStringBuilder(this)
                 .append("jvmId", jvmId)
                 .append("controlOperation", controlOperation)
-                .append("message", message)
                 .toString();
     }
 }

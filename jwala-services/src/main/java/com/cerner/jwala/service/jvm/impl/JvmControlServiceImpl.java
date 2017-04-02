@@ -30,7 +30,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -186,7 +185,7 @@ public class JvmControlServiceImpl implements JvmControlService {
                 case CHECK_FILE_EXISTS:
                 case CREATE_DIRECTORY:
                 case DELETE_SERVICE:
-                case DEPLOY_CONFIG_ARCHIVE:
+                case DEPLOY_JVM_ARCHIVE:
                 case HEAP_DUMP:
                 case INSTALL_SERVICE:
                 case SCP:

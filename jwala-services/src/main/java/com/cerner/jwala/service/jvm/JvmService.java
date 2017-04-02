@@ -27,7 +27,7 @@ public interface JvmService {
 
     void removeJvm(final Identifier<Jvm> aJvmId, User user);
 
-    void deleteJvmService(ControlJvmRequest controlJvmRequest, Jvm jvm, User user);
+    void deleteJvmService(Jvm jvm, User user);
 
     Jvm generateAndDeployJvm(String jvmName, User user);
 

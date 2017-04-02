@@ -21,10 +21,7 @@ import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
-import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
-import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
-import com.cerner.jwala.common.request.jvm.CreateJvmRequest;
-import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
+import com.cerner.jwala.common.request.jvm.*;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaJvmConfigTemplate;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -259,9 +256,7 @@ public class JvmServiceImpl implements JvmService {
         if (!jvm.getState().isStartedState()) {
             LOGGER.info("Removing JVM from the database and deleting the service for id {}", aJvmId.getId());
             if (!jvm.getState().equals(JvmState.JVM_NEW)) {
-                deleteJvmService(new ControlJvmRequest(aJvmId, JvmControlOperation.DELETE_SERVICE,
-                                "Deleting JVM service " + jvm.getJvmName() + " on host " + jvm.getHostName()),
-                        jvm, user);
+                deleteJvmService(jvm, user);
             }
             jvmPersistenceService.removeJvm(aJvmId);
         } else {
@@ -273,7 +268,8 @@ public class JvmServiceImpl implements JvmService {
     }
 
     @Override
-    public void deleteJvmService(ControlJvmRequest controlJvmRequest, Jvm jvm, User user) {
+    public void deleteJvmService(Jvm jvm, User user) {
+        ControlJvmRequest controlJvmRequest = new DeleteServiceControlJvmRequest(jvm);
         if (!jvm.getState().equals(JvmState.JVM_NEW)) {
             CommandOutput commandOutput = jvmControlService.controlJvm(controlJvmRequest, user);
             final String jvmName = jvm.getJvmName();
@@ -310,8 +306,7 @@ public class JvmServiceImpl implements JvmService {
         LOGGER.debug("Start generateAndDeployJvm for {} by user {}", jvmName, user.getId());
 
         historyFacadeService.write(jvm.getHostName(), jvm.getGroups(),
-                "Starting to generate remote JVM " + jvm.getJvmName() + " on host " + jvm.getHostName(),
-                EventType.USER_ACTION_INFO, user.getId());
+                "Starting to generate remote JVM " + jvm.getJvmName() + " on host " + jvm.getHostName(), EventType.USER_ACTION_INFO, user.getId());
 
         //add write lock for multiple write
         binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
@@ -336,14 +331,9 @@ public class JvmServiceImpl implements JvmService {
             deployScriptsToUserJwalaScriptsDir(jvm, user);
 
             // delete the service
-            deleteJvmService(
-                    new ControlJvmRequest(jvm.getId(),
-                            JvmControlOperation.DELETE_SERVICE,
-                            "Deleting JVM service " + jvm.getJvmName() + " on host " + jvm.getHostName()),
-                    jvm, user);
+            deleteJvmService(jvm, user);
 
             // create the jar file
-            //
             final String jvmConfigJar = generateJvmConfigJar(jvm);
 
             // copy the jar file
@@ -624,8 +614,7 @@ public class JvmServiceImpl implements JvmService {
     }
 
     private void deployJvmConfigJar(Jvm jvm, User user, String jvmJar) throws CommandFailureException {
-        CommandOutput execData = jvmControlService.controlJvm(
-                new ControlJvmRequest(jvm.getId(), JvmControlOperation.DEPLOY_CONFIG_ARCHIVE, "Deploying JVM archive jar " + jvmJar + " to host " + jvm.getHostName()), user);
+        CommandOutput execData = jvmControlService.controlJvm(new DeployArchiveControlJvmRequest(jvm, jvmJar), user);
         execData.getStandardOutput();
         if (!execData.getReturnCode().wasSuccessful()) {
             String standardError = execData.standardErrorOrStandardOut();
@@ -665,10 +654,7 @@ public class JvmServiceImpl implements JvmService {
 
     private void installJvmWindowsService(Jvm jvm, User user) {
 
-        CommandOutput execData = jvmControlService.controlJvm(new ControlJvmRequest(jvm.getId(),
-                        JvmControlOperation.INSTALL_SERVICE,
-                        "Installing JVM service " + jvm.getJvmName() + " on host " + jvm.getHostName()),
-                user);
+        CommandOutput execData = jvmControlService.controlJvm(new InstallServiceControlJvmRequest(jvm), user);
         if (execData.getReturnCode().wasSuccessful()) {
             LOGGER.info("Install of windows service {} was successful", jvm.getJvmName());
         } else {
@@ -936,12 +922,7 @@ public class JvmServiceImpl implements JvmService {
         if (!jvm.getState().isStartedState()) {
             LOGGER.info("Removing JVM from the database and deleting the service for jvm {}", name);
             if (!jvm.getState().equals(JvmState.JVM_NEW)) {
-                deleteJvmService(new ControlJvmRequest(
-                                jvm.getId(),
-                                JvmControlOperation.DELETE_SERVICE,
-                                "Deleting JVM " + jvm.getJvmName()),
-                        jvm,
-                        new User(userName));
+                deleteJvmService(jvm, new User(userName));
             }
             jvmPersistenceService.removeJvm(jvm.getId());
         } else {

@@ -16,7 +16,6 @@ public enum PropertyKeys {
     REMOTE_PATH_INSTANCES_DIR("remote.paths.instances"),
     REMOTE_PATHS_DEPLOY_DIR("remote.paths.deploy.dir"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
-    REMOTE_JAVA_HOME("remote.jwala.java.home"),
     JDK_BINARY_FILE_NAME("jwala.default.jdk.zip"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     LOCAL_JWALA_BINARY_DIR("jwala.binary.dir"),

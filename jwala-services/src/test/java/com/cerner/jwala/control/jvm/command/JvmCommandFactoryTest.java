@@ -132,7 +132,7 @@ public class JvmCommandFactoryTest {
 
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists", ""));
 
-        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DEPLOY_CONFIG_ARCHIVE);
+        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DEPLOY_JVM_ARCHIVE);
 
         assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
         verify(Config.mockSshConfig, times(1)).getEncryptedPassword();

@@ -24,7 +24,7 @@ public enum JvmControlOperation {
 
     HEAP_DUMP("heapDump", null),
 
-    DEPLOY_CONFIG_ARCHIVE("deployConfigArchive", null),
+    DEPLOY_JVM_ARCHIVE("deployConfigArchive", null),
 
     DELETE_SERVICE("deleteService", null),
 

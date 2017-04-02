@@ -87,7 +87,7 @@ public class JvmCommandFactory {
             checkExistsAndCopy(jvm, heapDumpScriptName);
             return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getExecCommandForHeapDump(heapDumpScriptName, jvm)));
         });
-        commands.put(JvmControlOperation.DEPLOY_CONFIG_ARCHIVE.getExternalValue(), jvm -> {
+        commands.put(JvmControlOperation.DEPLOY_JVM_ARCHIVE.getExternalValue(), jvm -> {
             checkExistsAndCopy(jvm, DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME.getValue());
             return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getExecCommandForDeploy(jvm)));
         });
