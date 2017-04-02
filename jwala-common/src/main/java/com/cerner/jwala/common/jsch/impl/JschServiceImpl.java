@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -134,6 +135,12 @@ public class JschServiceImpl implements JschService {
 
             return getExecRemoteCommandReturnInfo(channel, timeout);
         } catch (final Exception e) {
+            if (e.getCause() instanceof ConnectException) {
+                throw new JschServiceException(
+                        MessageFormat.format("SSH connection to {0}:{1} for user {2} failed. Check your host, port, user and password.",
+                                remoteSystemConnection.getHost(), remoteSystemConnection.getPort(), remoteSystemConnection.getUser()), e);
+            }
+
             final String errMsg = MessageFormat.format("Failed to run the following command: {0}", command);
             LOGGER.error(errMsg, e);
             throw new JschServiceException(errMsg, e);
