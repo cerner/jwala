@@ -38,7 +38,7 @@ import com.jcraft.jsch.Session;
 /**
  * Implements {@link JschService}
  * <p>
- * Created by JC043760 on 12/26/2016
+ * Created by Jedd Cuison on 12/26/2016
  */
 @Service
 public class JschServiceImpl implements JschService {
