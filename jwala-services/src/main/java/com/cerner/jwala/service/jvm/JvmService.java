@@ -101,12 +101,6 @@ public interface JvmService {
     void createDefaultTemplates(String jvmName, Group parentGroup);
 
     /**
-     * Check for setEnv Script
-     * @param jvmName
-     */
-    void checkForSetenvScript(String jvmName);
-
-    /**
      * Delete a JVM
      * @param name the name of the JVM to delete
      * @param userName

@@ -517,18 +517,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(Config.mockApplicationService).deployConf(anyString(), anyString(), anyString(), anyString(), any(ResourceGroup.class), any(User.class));
     }
 
-    @Test(expected = InternalErrorException.class)
-    public void testCheckSetenvBat() {
-        final String jvmName = "test-jvm-check-for-setenvbat";
-        when(Config.mockJvmPersistenceService.getResourceTemplate(jvmName, "setenv.bat")).thenReturn("ignore template content, just need to check no exception is thrown");
-        jvmService.checkForSetenvScript(jvmName);
-
-        verify(Config.mockJvmPersistenceService).getResourceTemplate(anyString(), anyString());
-
-        when(Config.mockJvmPersistenceService.getResourceTemplate(jvmName, "setenv.bat")).thenThrow(new NonRetrievableResourceTemplateContentException("JVM", "setenv.bat", new Throwable()));
-        jvmService.checkForSetenvScript(jvmName);
-    }
-
     @Test
     public void testGenerateAndDeployConfig() throws CommandFailureException, IOException {
 

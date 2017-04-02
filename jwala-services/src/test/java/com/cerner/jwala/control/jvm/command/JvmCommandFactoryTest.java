@@ -92,6 +92,7 @@ public class JvmCommandFactoryTest {
     public void testJvmThreadDump() {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+        when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
@@ -108,6 +109,7 @@ public class JvmCommandFactoryTest {
     public void testJvmHeapDump() {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+        when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
@@ -124,6 +126,7 @@ public class JvmCommandFactoryTest {
     public void testJvmDeployConfigArchive() {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+        when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 

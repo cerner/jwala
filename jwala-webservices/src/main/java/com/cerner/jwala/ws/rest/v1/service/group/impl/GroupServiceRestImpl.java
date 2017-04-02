@@ -492,11 +492,6 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                         "All JVMs in the group must be stopped before continuing. Operation stopped for JVMs " + starteJvms.toString());
             }
 
-            for (Jvm jvm : jvms) {
-                LOGGER.info("Checking if setenv.bat exists for the jvm {}", jvm.getJvmName());
-                jvmService.checkForSetenvScript(jvm.getJvmName());
-            }
-
             // generate and deploy the JVMs
             Map<String, Future<Response>> futuresMap = new HashMap<>();
             final Authentication auth = SecurityContextHolder.getContext().getAuthentication();

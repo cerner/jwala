@@ -179,7 +179,7 @@ public class JvmCommandFactory {
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
                 ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
         return new ExecCommand(getFullPathScript(jvm, scriptName),
-                ApplicationProperties.get(PropertyKeys.REMOTE_JAVA_HOME),
+                jvm.getJavaHome(),
                 ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR),
                 dumpFile, dumpLiveStr, jvmInstanceDir, jvm.getJvmName());
         //Windows " | grep PID | awk '{ print $3 }'`
@@ -198,8 +198,7 @@ public class JvmCommandFactory {
                 ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
 
         return new ExecCommand(getFullPathScript(jvm, scriptName),
-                ApplicationProperties.get(PropertyKeys.REMOTE_JAVA_HOME),
-                jvmInstanceDir, jvm.getJvmName());
+                jvm.getJavaHome(), jvmInstanceDir, jvm.getJvmName());
     }
 
     /**
@@ -219,7 +218,7 @@ public class JvmCommandFactory {
      */
     private ExecCommand getExecCommandForDeploy(Jvm jvm) {
         final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
-        final String remoteJavaHome = ApplicationProperties.get(PropertyKeys.REMOTE_JAVA_HOME);
+        final String remoteJavaHome = jvm.getJavaHome();
         final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR);
         return new ExecCommand(remoteScriptDir + "/" + jvm.getJvmName() + "/" + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME,
                 remoteScriptDir + "/" + jvm.getJvmName() + ".jar",

@@ -47,13 +47,11 @@ public class JvmControlServiceImpl implements JvmControlService {
     @Autowired
     private ShellCommandFactory shellCommandFactory;
 
-    @Value("${spring.messaging.topic.serverStates:/topic/server-states}")
-    protected String topicServerStates;
-
-    private final JvmPersistenceService jvmPersistenceService;
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmControlServiceImpl.class);
     private static final String FORCED_STOPPED = "FORCED STOPPED";
     private static final String JVM = "JVM ";
+
+    private final JvmPersistenceService jvmPersistenceService;
     private final HistoryFacadeService historyFacadeService;
     private final JvmStateService jvmStateService;
 
@@ -76,9 +74,11 @@ public class JvmControlServiceImpl implements JvmControlService {
         LOGGER.debug("Control JVM request operation = {}", controlOperation.toString());
         final Jvm jvm = jvmPersistenceService.getJvm(controlJvmRequest.getJvmId());
         try {
-            final String event = controlOperation.getOperationState() == null ? controlOperation.name() : controlOperation.getOperationState().toStateLabel();
+            final String historyMessage = controlJvmRequest.getMessage() == null ? controlOperation.name() :
+                    controlJvmRequest.getMessage();
 
-            historyFacadeService.write(getServerName(jvm), new ArrayList<>(jvm.getGroups()), event, EventType.USER_ACTION_INFO, aUser.getId());
+            historyFacadeService.write(getServerName(jvm), new ArrayList<>(jvm.getGroups()), historyMessage, EventType.USER_ACTION_INFO, aUser.getId());
+
             RemoteCommandReturnInfo remoteCommandReturnInfo = jvmCommandFactory.executeCommand(jvm, controlJvmRequest.getControlOperation());
             CommandOutput commandOutput = new CommandOutput(new ExecReturnCode(remoteCommandReturnInfo.retCode),
                     remoteCommandReturnInfo.standardOuput, remoteCommandReturnInfo.errorOupout);
@@ -247,12 +247,7 @@ public class JvmControlServiceImpl implements JvmControlService {
         final Jvm jvm = jvmPersistenceService.getJvm(jvmId);
         final int beginIndex = destPath.lastIndexOf("/");
         final String fileName = destPath.substring(beginIndex + 1, destPath.length());
-        // don't add any usage of the jwala user internal directory to the history
-        if (!ApplicationProperties.get("remote.commands.user-scripts").endsWith(fileName)) {
-            final String eventDescription = event + " " + fileName;
-            historyFacadeService.write(getServerName(jvm), new ArrayList<>(jvm.getGroups()), eventDescription,
-                    EventType.USER_ACTION_INFO, userId);
-        }
+
         final String name = jvm.getJvmName();
         final String hostName = jvm.getHostName();
         final String parentDir;
@@ -293,6 +288,15 @@ public class JvmControlServiceImpl implements JvmControlService {
             LOGGER.info(message);
             historyFacadeService.write(hostName, jvm.getGroups(), message, EventType.SYSTEM_INFO, userId);
             return new CommandOutput(new ExecReturnCode(0), message, "");
+        }
+
+        // don't add any usage of the jwala user internal directory to the history
+        if (!ApplicationProperties.get("remote.commands.user-scripts").endsWith(fileName)) {
+            final String eventDescription = event + " sending file " + fileName + " to remote path " + destPath + " on host " + jvm.getHostName();
+            historyFacadeService.write(getServerName(jvm),
+                    new ArrayList<>(jvm.getGroups()),
+                    eventDescription,
+                    EventType.USER_ACTION_INFO, userId);
         }
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = shellCommandFactory.executeRemoteCommand(jvm.getHostName(),

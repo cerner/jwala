@@ -31,9 +31,10 @@ public class HistoryFacadeServiceImpl implements HistoryFacadeService {
     }
 
     @Override
-    public void write(final String serverName, final Collection<Group> groups, final String event, final EventType eventType,
+    public void write(final String serverName, final Collection<Group> groups, final String historyMessage, final EventType eventType,
                       final String user) {
-        final List<JpaHistory> jpaHistoryList = historyService.createHistory(serverName, new ArrayList<>(groups), event, eventType, user);
+        final List<JpaHistory> jpaHistoryList =
+                historyService.createHistory(serverName, new ArrayList<>(groups), historyMessage, eventType, user);
         for (JpaHistory jpaHistory : jpaHistoryList) {
             messagingService.send(new Message<>(Message.Type.HISTORY, jpaHistory));
         }
