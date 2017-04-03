@@ -32,6 +32,7 @@ import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdate
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
@@ -90,6 +91,9 @@ public class JvmServiceImpl implements JvmService {
     @Autowired
     private JvmStateService jvmStateService;
 
+    @Autowired
+    private WebServerPersistenceService webServerPersistenceService;
+
     public JvmServiceImpl(final JvmPersistenceService jvmPersistenceService,
                           final GroupPersistenceService groupPersistenceService,
                           final ApplicationService applicationService,
@@ -120,6 +124,12 @@ public class JvmServiceImpl implements JvmService {
 
 
     protected Jvm createJvm(final CreateJvmRequest aCreateJvmRequest) {
+
+        if (null != webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName())) {
+            LOGGER.error("Webserver already exists with this name {}", aCreateJvmRequest.getJvmName());
+            throw new JvmServiceException("Webserver already exists with this name "+ aCreateJvmRequest.getJvmName());
+        }
+
         return jvmPersistenceService.createJvm(aCreateJvmRequest);
     }
 
@@ -143,7 +153,6 @@ public class JvmServiceImpl implements JvmService {
     public Jvm createJvm(CreateJvmAndAddToGroupsRequest createJvmAndAddToGroupsRequest, User user) {
         // create the JVM in the database
         final Jvm jvm = createAndAssignJvm(createJvmAndAddToGroupsRequest, user);
-
         // inherit the templates from the group
         if (null != jvm.getGroups() && !jvm.getGroups().isEmpty()) {
             final Group parentGroup = jvm.getGroups().iterator().next();
@@ -246,7 +255,10 @@ public class JvmServiceImpl implements JvmService {
     public Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword) {
 
         updateJvmRequest.validate();
-
+        if (null != webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName())) {
+            LOGGER.error("Webserver already exists with this name {}", updateJvmRequest.getNewJvmName());
+            throw new JvmServiceException("Webserver already exists with this name "+ updateJvmRequest.getNewJvmName());
+        }
         jvmPersistenceService.removeJvmFromGroups(updateJvmRequest.getId());
 
         addJvmToGroups(updateJvmRequest.getAssignmentCommands());
@@ -619,7 +631,6 @@ public class JvmServiceImpl implements JvmService {
         secureCopyFileToJvm(jvm, jvmJarFile, destination , user, alwaysOverwriteJvmConfigJar);
         LOGGER.info("Copy of config jar successful: {} in {}ms ", jvmConfigJar, System.currentTimeMillis() - startTime);
     }
-
     private void deployJvmConfigJar(Jvm jvm, User user, String jvmJar) throws CommandFailureException {
         final String parentDir = ApplicationProperties.get("remote.paths.instances");
         CommandOutput execData = jvmControlService.controlJvm(

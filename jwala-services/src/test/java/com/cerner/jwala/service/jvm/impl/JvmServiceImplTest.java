@@ -14,6 +14,7 @@ import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.user.User;
+import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecCommand;
@@ -30,6 +31,7 @@ import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResource
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.HistoryService;
 import com.cerner.jwala.service.MessagingService;
@@ -140,6 +142,28 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
+    @Test(expected = JvmServiceException.class)
+    public void testCreateValidateWebserverName() {
+        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
+
+        final CreateJvmRequest createJvmRequest = mock(CreateJvmRequest.class);
+        final CreateJvmAndAddToGroupsRequest createJvmAndAddToGroupsRequest = mock(CreateJvmAndAddToGroupsRequest.class);
+        final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
+        final WebServer webServer = new WebServer(new Identifier<WebServer>(99L), new HashSet<Group>(), "testWebserver");
+
+        when(Config.mockJvmPersistenceService.createJvm(any(CreateJvmRequest.class))).thenReturn(jvm);
+        when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
+        when(createJvmAndAddToGroupsRequest.getCreateCommand()).thenReturn(createJvmRequest);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(webServer);
+
+        jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
+
+        verify(createJvmAndAddToGroupsRequest, times(1)).validate();
+        verify(Config.mockJvmPersistenceService, times(1)).createJvm(createJvmRequest);
+
+        System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
+    }
+
     @Test
     public void testCreateValidateAdd() {
 
@@ -155,6 +179,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(command.getGroups()).thenReturn(groupsSet);
         when(Config.mockJvmPersistenceService.createJvm(createJvmRequest)).thenReturn(jvm);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
 
         jvmService.createJvm(command, Config.mockUser);
 
@@ -196,6 +221,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockGroupService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(appTemplateNames);
         when(Config.mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"deployPath\":\"c:/fake/app/path\", \"deployFileName\":\"app-context.xml\", \"entity\":{\"deployToJvms\":\"true\", \"target\":\"app-target\"}}");
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -228,6 +254,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockGroup.getName()).thenReturn("mock-group-name");
         when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
         when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(appTemplateNames);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -260,6 +287,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), anyBoolean(), eq(ResourceGeneratorType.TEMPLATE))).thenReturn("<server>xml</server>");
         when(Config.mockGroupPersistenceService.getGroupJvmResourceTemplateMetaData(anyString(), anyString())).thenReturn("{deployPath:c:/fake/path}");
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(null);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -308,6 +336,25 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
 
         when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
+
+        jvmService.updateJvm(updateJvmRequest, true);
+
+        verify(updateJvmRequest, times(1)).validate();
+        verify(Config.mockJvmPersistenceService, times(1)).updateJvm(updateJvmRequest, true);
+        verify(Config.mockJvmPersistenceService, times(1)).removeJvmFromGroups(Matchers.<Identifier<Jvm>>anyObject());
+        for (final AddJvmToGroupRequest addCommand : addCommands) {
+            verify(Config.mockGroupPersistenceService, times(1)).addJvmToGroup(matchCommand(addCommand));
+        }
+    }
+
+    @Test(expected = JvmServiceException.class)
+    public void testUpdateJvmShouldValidateWebserverName() {
+
+        final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
+        final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
+        final WebServer webServer = new WebServer(new Identifier<WebServer>(99L), new HashSet<Group>(), "testWebserver");
+        when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenReturn(webServer);
 
         jvmService.updateJvm(updateJvmRequest, true);
 
@@ -916,6 +963,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         static HistoryFacadeService mockHistoryFacadeService = mock(HistoryFacadeService.class);
 
+        static WebServerPersistenceService mockWebServerPersistenceService = mock(WebServerPersistenceService.class);
+
         @Bean
         public JvmPersistenceService getMockJvmPersistenceService() {
             return mockJvmPersistenceService;
@@ -1007,6 +1056,11 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
                     mockMessagingTemplate, mockGroupStateNotificationService, mockResourceService, mockClientFactoryHelper,
                     "/topic/server-states", mockJvmControlService, mockBinaryDistributionService, mockBinaryDistributionLockManager,
                     mockHistoryFacadeService, new FileUtility());
+        }
+
+        @Bean
+        public WebServerPersistenceService getWebServerPersistenceService() {
+            return mockWebServerPersistenceService;
         }
 
     }

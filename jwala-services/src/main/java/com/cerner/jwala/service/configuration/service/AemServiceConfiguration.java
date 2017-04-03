@@ -160,8 +160,7 @@ public class AemServiceConfiguration {
     public GroupService getGroupService(final HistoryFacadeService historyFacadeService) {
         return new GroupServiceImpl(aemPersistenceServiceConfiguration.getGroupPersistenceService(),
                                     aemPersistenceServiceConfiguration.getApplicationPersistenceService(),
-                resourceService
-        );
+                                    resourceService);
     }
 
     @Bean(name = "jvmService")
@@ -199,7 +198,8 @@ public class AemServiceConfiguration {
     public WebServerService getWebServerService(final ResourceService resourceService,
                                                 @Qualifier("webServerInMemoryStateManagerService")
                                                 final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
-                                                @Value("${paths.resource-templates:../data/templates}") final String templatePath) {
+                                                @Value("${paths.resource-templates:../data/templates}") final String templatePath,
+                                                final JvmPersistenceService jvmPersistenceService) {
         return new WebServerServiceImpl(
                 aemPersistenceServiceConfiguration.getWebServerPersistenceService(),
                 resourceService,
@@ -231,8 +231,7 @@ public class AemServiceConfiguration {
     }
 
     @Bean(name = "jvmControlService")
-    public JvmControlService getJvmControlService(
-                                                  final JvmStateService jvmStateService,
+    public JvmControlService getJvmControlService(final JvmStateService jvmStateService,
                                                   final HistoryFacadeService historyFacadeService) {
         return new JvmControlServiceImpl(
                 aemPersistenceServiceConfiguration.getJvmPersistenceService(),
@@ -412,7 +411,7 @@ public class AemServiceConfiguration {
     }
 
     @Bean
-    public ApplicationContextListener getApplicationContextListener(){
+    public ApplicationContextListener getApplicationContextListener() {
         return new ApplicationContextListener();
     }
 }

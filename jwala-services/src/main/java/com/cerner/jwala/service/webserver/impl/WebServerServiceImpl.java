@@ -14,6 +14,7 @@ import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -25,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,9 @@ public class WebServerServiceImpl implements WebServerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServerServiceImpl.class);
     private static final String INSTALL_SERVICE_WSBAT_TEMPLATE_TPL_PATH = "/install-service-http.bat.tpl";
     public static final String INSTALL_SERVICE_SCRIPT_NAME = "install-service-http.bat";
+
+    @Autowired
+    private JvmPersistenceService jvmPersistenceService;
 
     private final WebServerPersistenceService webServerPersistenceService;
 
@@ -75,7 +80,10 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer createWebServer(final CreateWebServerRequest createWebServerRequest,
                                      final User aCreatingUser) {
         createWebServerRequest.validate();
-
+        if (null != jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName())) {
+            LOGGER.error("Jvm already exists with this name {}", createWebServerRequest.getName());
+            throw new WebServerServiceException("Jvm already exists with this name "+ createWebServerRequest.getName());
+        }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
             groups.add(new Group(id, null));
@@ -133,7 +141,10 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand,
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
-
+        if (null != jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName())) {
+            LOGGER.error("Jvm already exists with this name {}", anUpdateWebServerCommand.getNewName());
+            throw new WebServerServiceException("Jvm already exists with this name "+ anUpdateWebServerCommand.getNewName());
+        }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));

@@ -9,6 +9,7 @@ import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
 import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
 import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.WebServerCrudServiceImpl;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.persistence.service.impl.WebServerPersistenceServiceImpl;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
@@ -72,6 +73,9 @@ public class WebServerServiceImplIntegrationTest {
 
     @Autowired
     private BinaryDistributionLockManager binaryDistributionLockManager;
+
+    @Autowired
+    private JvmPersistenceService jvmPersistenceService;
 
     @Before
     public void setup() {
