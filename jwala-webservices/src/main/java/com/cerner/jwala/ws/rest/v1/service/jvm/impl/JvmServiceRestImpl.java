@@ -86,8 +86,8 @@ public class JvmServiceRestImpl implements JvmServiceRest {
     }
 
     @Override
-    public Response deleteJvm(final Identifier<Jvm> id, boolean hardDelete, final AuthenticatedUser user) {
-        LOGGER.info("Delete JVM requested: {} by user {}", id, user.getUser().getId());
+    public Response deleteJvm(final Identifier<Jvm> id, final boolean hardDelete, final AuthenticatedUser user) {
+        LOGGER.info("Delete JVM requested: JVM id = {}, user = {} & hardDelete = {}", id, user.getUser().getId(), hardDelete);
         jvmService.deleteJvm(id, hardDelete, user.getUser());
         return Response.noContent().build();
     }
