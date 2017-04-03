@@ -183,18 +183,18 @@ public class WebServerServiceImpl implements WebServerService {
             if (isStarted(webServer)) {
                 final String msg = MessageFormat.format("Please stop web server {0} first before attempting to delete it",
                         webServer.getName());
-                LOGGER.debug(msg);
+                LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
+                                  // an exception
                 throw new WebServerServiceException(msg);
             }
 
-            // delete the service
             // delete the service
             final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
                     WebServerControlOperation.DELETE_SERVICE), user);
             if (!commandOutput.getReturnCode().wasSuccessful()) {
                 final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
                         webServer.getName(), commandOutput);
-                LOGGER.debug(msg);
+                LOGGER.error(msg);
                 throw new WebServerServiceException(msg);
             }
         }

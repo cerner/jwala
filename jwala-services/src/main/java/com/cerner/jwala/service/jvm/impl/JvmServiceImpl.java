@@ -279,7 +279,8 @@ public class JvmServiceImpl implements JvmService {
             if (!JvmState.JVM_STOPPED.equals(jvm.getState()) && !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
                 final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
                         jvm.getJvmName());
-                LOGGER.debug(msg);
+                LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
+                                  // an exception
                 throw new JvmServiceException(msg);
             }
 
@@ -289,7 +290,7 @@ public class JvmServiceImpl implements JvmService {
             if (!commandOutput.getReturnCode().wasSuccessful()) {
                 final String msg = MessageFormat.format("Failed to delete the JVM service {0}! CommandOutput = {1}",
                         jvm.getJvmName(), commandOutput);
-                LOGGER.debug(msg);
+                LOGGER.error(msg);
                 throw new JvmServiceException(msg);
             }
         }
