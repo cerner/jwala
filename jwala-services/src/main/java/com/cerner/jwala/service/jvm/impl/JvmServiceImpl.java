@@ -250,7 +250,7 @@ public class JvmServiceImpl implements JvmService {
         Jvm originalJvm = getJvm(updateJvmRequest.getId());
         if (!originalJvm.getJvmName().equalsIgnoreCase(updateJvmRequest.getNewJvmName()) &&
                 !originalJvm.getState().toStateLabel().equals(JvmState.JVM_NEW.toStateLabel())) {
-            throw new JvmServiceException("Jvm " + originalJvm.getJvmName() + " is in  " + originalJvm.getState().toStateLabel() + " state, can only rename new jvm's, delete then create new");
+            throw new JvmServiceException("JVM " + originalJvm.getJvmName() + " is in  " + originalJvm.getState().toStateLabel() + " state, can only rename NEW jvm's");
         }
 
         jvmPersistenceService.removeJvmFromGroups(updateJvmRequest.getId());
