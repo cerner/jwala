@@ -98,7 +98,7 @@ public class MediaServiceImpl implements MediaService {
     private void checkForExistingAssociationsBeforeRemove(String name) {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         for (Jvm jvm : jvmList) {
-            if (jvm.getJdkMedia().getName().equals(name)) {
+            if (jvm.getJdkMedia().getName().equalsIgnoreCase(name)) {
                 LOGGER.error("The media {} cannot be deleted because it is still configured with Jvm", name);
                 throw new MediaServiceException(MessageFormat
                         .format("The media {0} cannot be deleted because it is still configured with Jvm", name));
