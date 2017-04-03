@@ -308,9 +308,50 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
 
         when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("jvmName");
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+        when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
 
         jvmService.updateJvm(updateJvmRequest, true);
 
+        verify(updateJvmRequest, times(1)).validate();
+        verify(Config.mockJvmPersistenceService, times(1)).updateJvm(updateJvmRequest, true);
+        verify(Config.mockJvmPersistenceService, times(1)).removeJvmFromGroups(Matchers.<Identifier<Jvm>>anyObject());
+        for (final AddJvmToGroupRequest addCommand : addCommands) {
+            verify(Config.mockGroupPersistenceService, times(1)).addJvmToGroup(matchCommand(addCommand));
+        }
+    }
+
+    @Test(expected = JvmServiceException.class)
+    public void testUpdateJvmNameShouldFail(){
+        final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
+        final String oldjvmName = "old-jvm-name";
+        final String newjvmName = "new-jvm-name";
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn(oldjvmName);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+        when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
+        when(updateJvmRequest.getNewJvmName()).thenReturn(newjvmName);
+        jvmService.updateJvm(updateJvmRequest, true);
+    }
+
+    @Test
+    public void testUpdateJvmNameShouldWork(){
+        final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
+        final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
+        when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
+        final String oldjvmName = "old-jvm-name";
+        final String newjvmName = "new-jvm-name";
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn(oldjvmName);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+        when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+        when(updateJvmRequest.getNewJvmName()).thenReturn(newjvmName);
+        jvmService.updateJvm(updateJvmRequest, true);
         verify(updateJvmRequest, times(1)).validate();
         verify(Config.mockJvmPersistenceService, times(1)).updateJvm(updateJvmRequest, true);
         verify(Config.mockJvmPersistenceService, times(1)).removeJvmFromGroups(Matchers.<Identifier<Jvm>>anyObject());
