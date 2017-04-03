@@ -246,6 +246,7 @@ public class JpaJvmPersistenceServiceImpl implements JvmPersistenceService {
                                                  .setUserName(jvm.getUserName())
                                                  .setEncryptedPassword(jvm.getEncryptedPassword())
                                                  .setWebApps(webApps)
+                                                 .setJavaHome(jvm.getJavaHome())
                                                  .build();
             jvmsWithWebApps.add(jvmWithWebApps);
         }
