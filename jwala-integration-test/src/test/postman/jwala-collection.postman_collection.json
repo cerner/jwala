@@ -4859,7 +4859,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.paths.httpd.conf'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -4898,7 +4898,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir']}/httpd\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.paths.httpd.conf'}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
