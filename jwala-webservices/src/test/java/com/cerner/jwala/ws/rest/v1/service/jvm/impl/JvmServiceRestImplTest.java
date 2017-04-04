@@ -226,19 +226,14 @@ public class JvmServiceRestImplTest {
         updateJvmCommand.validate();
     }
 
-
     @Test
-    public void testRemoveJvm() {
-        when(jvmService.getJvm(jvm.getId())).thenReturn(jvm);
-        when(jvmService.getJvm(anyString())).thenReturn(jvm);
-        when(jvmControlService.controlJvm(any(ControlJvmRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "", ""));
-
-        Response response = jvmServiceRest.removeJvm(jvm.getId(), authenticatedUser);
-        verify(jvmService, atLeastOnce()).removeJvm(eq(jvm.getId()), any(User.class));
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        final ApplicationResponse applicationResponse = (ApplicationResponse) response.getEntity();
-        assertNull(applicationResponse);
+    public void testDeleteJvm() {
+        final Identifier<Jvm> id = new Identifier<>(1L);
+        final AuthenticatedUser mockAuthenticatedUser = mock(AuthenticatedUser.class);
+        final User user = new User("user");
+        when(mockAuthenticatedUser.getUser()).thenReturn(user);
+        jvmServiceRest.deleteJvm(id, false, mockAuthenticatedUser);
+        verify(jvmService).deleteJvm(id, false, user);
     }
 
     @Test
