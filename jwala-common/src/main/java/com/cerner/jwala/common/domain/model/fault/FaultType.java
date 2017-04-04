@@ -151,6 +151,9 @@ public enum FaultType implements MessageResponseStatus {
     JVM_JDK_NOT_SPECIFIED("AEM73", "NoJDKSpecifiedForJVM"),
 
     FAILED_TO_DELETE_MEDIA("AEM74", "FailedToDeleteMedia");
+    JVM_JDK_NOT_SPECIFIED("AEM73", "NoJDKSpecifiedForJVM"),
+
+    GROUP_NAME_TOO_LONG("AEM74","GroupNameTooLong");
 
     private final String faultCode;
     private final String faultMessage;

@@ -53,4 +53,22 @@ public class GroupNameRuleTest {
         }
     }
 
+
+
+    @Test
+    public void testLongGroupName(){
+        String veryLongString="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        GroupNameRule rule=new GroupNameRule(veryLongString);
+        try {
+            rule.validate();
+        }
+        catch(final BadRequestException bre){
+            assertTrue(true);
+        }
+
+    }
+
+
+
+
 }
