@@ -51,26 +51,28 @@ if $linux; then
     export JAR_FILE=`basename $1`
     export BACKUP_DATE=`date +%Y%m%d_%H%M%S`
     export JVM_INSTANCE=`basename $2`
-    cd $2/..
 
     # back up current jvm directory
-    echo "Renaming the current JVM to $2.$BACKUP_DATE"
     if [ -d "$2" ]; then
+        echo "Renaming the current JVM to $2.$BACKUP_DATE"
         mv $2 $2.$BACKUP_DATE
     fi
-    mkdir $2
-
+    if [ ! -e "$2" ]; then mkdir -p $2; fi;
+    echo cd $2/..
+    cd $2/..
     # extract the new configuration files
     echo "Extracting $3"
     if [ ! -e "$3" ]; then
       echo JVM version not installed: $3 does not exist on this host
       exit $JWALA_EXIT_CODE_FAILED
     fi
+	echo executing $3 xf $1
 	$3 xf $1
-    rm $1
+	echo deleting $1
+	rm $1
     #delete META-INF
     if [ -e "$2/../META-INF" ]; then
-      /usr/bin/sudo rm -r "$2/../META-INF"
+	    rm -r "$2/../META-INF"
     fi
     echo Deploy of $1 was successful
     exit $JWALA_EXIT_CODE_SUCCESS
