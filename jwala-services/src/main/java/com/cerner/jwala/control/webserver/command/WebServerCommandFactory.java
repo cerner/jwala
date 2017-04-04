@@ -5,6 +5,9 @@ package com.cerner.jwala.control.webserver.command;
  */
 
 
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
+import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
+import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
@@ -15,6 +18,8 @@ import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.exception.ApplicationServiceException;
+import com.cerner.jwala.service.exception.WebServerCommandFactoryException;
+import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import static com.cerner.jwala.control.AemControl.Properties.*;
@@ -41,6 +48,9 @@ public class WebServerCommandFactory {
 
     @Autowired
     private RemoteCommandExecutorService remoteCommandExecutorService;
+
+    @Autowired
+    private ResourceService resourceService;
 
     @Autowired
     private BinaryDistributionControlService binaryDistributionControlService;
@@ -96,15 +106,40 @@ public class WebServerCommandFactory {
                     new RemoteExecCommand(getConnection(webServer),
                             getShellCommand(installServiceWsScriptName,
                                     webServer,
-                                    ApplicationProperties.getRequired(PropertyKeys.REMOTE_JAWALA_DATA_DIR) + "/httpd", // TODO webserver-deploy get deploy directory destination from the meta data
+                                    getHttpdConfPath(webServer),
                                     ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_APACHE_HTTPD))));
         });
 
         commands.put(WebServerControlOperation.VIEW_HTTP_CONFIG_FILE.getExternalValue(), (WebServer webServer)
                 -> remoteCommandExecutorService.executeCommand(
                 new RemoteExecCommand(getConnection(webServer),
-                        new ExecCommand("cat", ApplicationProperties.getRequired(PropertyKeys.REMOTE_JAWALA_DATA_DIR) + "/http/httpd.conf")))); // TODO webserver-deploy get deploy directory destination from the meta data
+                        new ExecCommand("cat", getHttpdConfPath(webServer), "/httpd.conf"))));
 
+    }
+
+    private String getHttpdConfPath(WebServer webServer) {
+        String wsName = webServer.getName();
+        ResourceIdentifier httpdConfResourceIdentifier = new ResourceIdentifier.Builder()
+                .setResourceName("httpd.conf")
+                .setWebServerName(webServer.getName())
+                .build();
+        ResourceContent httpConfResourceContent = resourceService.getResourceContent(httpdConfResourceIdentifier);
+        if (null == httpConfResourceContent || null == httpConfResourceContent.getMetaData() || httpConfResourceContent.getMetaData().isEmpty()) {
+            String errMsg = MessageFormat.format("No httpd.conf meta data for web server {0}", wsName);
+            LOGGER.error(errMsg);
+            throw new WebServerCommandFactoryException(errMsg);
+        }
+
+        ResourceTemplateMetaData metaData = null;
+        try {
+            metaData = resourceService.getMetaData(httpConfResourceContent.getMetaData());
+        } catch (IOException e) {
+            String errMsg = MessageFormat.format("Failed to parse httpd.conf meta data for web server {0}", wsName);
+            LOGGER.error(errMsg, e);
+            throw new WebServerCommandFactoryException(errMsg);
+        }
+
+        return metaData.getDeployPath();
     }
 
     /**

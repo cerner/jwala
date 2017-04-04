@@ -3,6 +3,8 @@ package com.cerner.jwala.service.webserver.impl;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.path.Path;
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -134,6 +137,8 @@ public class WebServerServiceImpl implements WebServerService {
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
 
+        ResourceTemplateMetaData metaData = getWebServerHttpdConfMetaData(anUpdateWebServerCommand);
+
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));
@@ -146,13 +151,37 @@ public class WebServerServiceImpl implements WebServerService {
                 anUpdateWebServerCommand.getNewPort(),
                 anUpdateWebServerCommand.getNewHttpsPort(),
                 anUpdateWebServerCommand.getNewStatusPath(),
-                webServerPersistenceService.getWebServer(id).getHttpConfigFile(),
+                new Path(metaData.getDeployPath()),
                 anUpdateWebServerCommand.getNewSvrRoot(),
                 anUpdateWebServerCommand.getNewDocRoot(),
                 anUpdateWebServerCommand.getState(),
                 anUpdateWebServerCommand.getErrorStatus());
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
+    }
+
+    private ResourceTemplateMetaData getWebServerHttpdConfMetaData(UpdateWebServerRequest anUpdateWebServerCommand) {
+        String webServerName = getWebServer(anUpdateWebServerCommand.getId()).getName();
+        ResourceTemplateMetaData metaData;
+        ResourceIdentifier webServerResourceIdentifier = new ResourceIdentifier.Builder()
+                .setWebServerName(webServerName)
+                .setResourceName("httpd.conf").build();
+        final ResourceContent resourceContent = resourceService.getResourceContent(webServerResourceIdentifier);
+
+        if (null == resourceContent || null == resourceContent.getMetaData() || resourceContent.getMetaData().isEmpty()) {
+            String errMsg = MessageFormat.format("Failed to retrieve any meta data for web server {0}", webServerName);
+            LOGGER.error(errMsg);
+            throw new WebServerServiceException(errMsg);
+        }
+
+        try {
+            metaData = resourceService.getMetaData(resourceContent.getMetaData());
+        } catch (IOException ioe) {
+            String errMessage = MessageFormat.format("Unable to parse the meta data for httpd.conf for web server {0}", webServerName);
+            LOGGER.error(errMessage);
+            throw new WebServerServiceException(errMessage);
+        }
+        return metaData;
     }
 
     @Override
@@ -188,7 +217,7 @@ public class WebServerServiceImpl implements WebServerService {
             return resourceService.generateResourceFile(INSTALL_SERVICE_SCRIPT_NAME, FileUtils.readFileToString(new File(templatePath + INSTALL_SERVICE_WSBAT_TEMPLATE_TPL_PATH)),
                     resourceService.generateResourceGroup(), webServer, ResourceGeneratorType.TEMPLATE);
         } catch (final IOException ioe) {
-            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME+ "!", ioe);
+            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME + "!", ioe);
         }
     }
 

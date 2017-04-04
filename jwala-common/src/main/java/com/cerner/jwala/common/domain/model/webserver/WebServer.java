@@ -213,7 +213,6 @@ public class WebServer implements Serializable {
                 ", port=" + port +
                 ", httpsPort=" + httpsPort +
                 ", statusPath=" + statusPath +
-                ", httpConfigFile=" + httpConfigFile +
                 ", svrRoot=" + svrRoot +
                 ", docRoot=" + docRoot +
                 ", state=" + state +

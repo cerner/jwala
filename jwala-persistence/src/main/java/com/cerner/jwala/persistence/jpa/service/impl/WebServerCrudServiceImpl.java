@@ -74,7 +74,6 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
             jpaWebServer.setPort(webServer.getPort());
             jpaWebServer.setHttpsPort(webServer.getHttpsPort());
             jpaWebServer.setStatusPath(webServer.getStatusPath().getPath());
-            jpaWebServer.setHttpConfigFile(webServer.getHttpConfigFile().getPath());
             jpaWebServer.setSvrRoot(webServer.getSvrRoot().getPath());
             jpaWebServer.setDocRoot(webServer.getDocRoot().getPath());
             jpaWebServer.setCreateBy(createdBy);
