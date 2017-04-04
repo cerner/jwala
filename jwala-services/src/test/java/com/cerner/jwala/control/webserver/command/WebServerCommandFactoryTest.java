@@ -1,6 +1,7 @@
 package com.cerner.jwala.control.webserver.command;
 
 import com.cerner.jwala.common.domain.model.resource.ResourceContent;
+import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
@@ -13,7 +14,9 @@ import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.ResourceService;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.junit.Before;
 import org.junit.Test;
@@ -147,6 +150,8 @@ public class WebServerCommandFactoryTest {
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
 
+        when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("/fake/deploy/path");
+
         RemoteCommandReturnInfo startResult = webServerCommandFactory.executeCommand(mockWebServer, WebServerControlOperation.VIEW_HTTP_CONFIG_FILE);
 
         assertEquals(0, startResult.retCode);
@@ -246,6 +251,7 @@ public class WebServerCommandFactoryTest {
         private static final RemoteCommandExecutorService mockRemoteCommandExecutorService = mock(RemoteCommandExecutorService.class);
         private static final BinaryDistributionControlService mockBinaryDistributionControlService = mock(BinaryDistributionControlService.class);
         private static final ResourceService mockResourceService = mock(ResourceService.class);
+        private static final ResourceContentGeneratorService mockResourceContentGeneratorService = mock(ResourceContentGeneratorService.class);
 
         @Bean
         public SshConfiguration getSshConfig() {
@@ -270,6 +276,11 @@ public class WebServerCommandFactoryTest {
         @Bean
         public ResourceService getResourceService() {
             return mockResourceService;
+        }
+
+        @Bean
+        public ResourceContentGeneratorService getResourceContentGeneratorService() {
+            return mockResourceContentGeneratorService;
         }
     }
 }
