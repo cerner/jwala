@@ -90,20 +90,29 @@ public class MediaServiceImpl implements MediaService {
     @Transactional
     public void remove(final String name) {
         final JpaMedia jpaMedia = mediaDao.find(name);
-        checkForExistingAssociationsBeforeRemove(name);
+        boolean exists = checkForJvmAssociation(name);
+        if (exists == true) {
+            final String msg = MessageFormat.format("The media {0} cannot be deleted because it is associated with a JVM or JVMs", name);
+            LOGGER.error(msg);
+            throw new MediaServiceException(msg);
+        }
         mediaDao.remove(jpaMedia);
         repositoryService.delete(jpaMedia.getLocalPath().getFileName().toString());
     }
 
-    private void checkForExistingAssociationsBeforeRemove(String name) {
+    /**
+     * This method will check for the existing jvm assosiations for the media
+     *
+     * @param name media name
+     */
+    private boolean checkForJvmAssociation(String name) {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         for (Jvm jvm : jvmList) {
-            if (jvm.getJdkMedia().getName().equalsIgnoreCase(name)) {
-                LOGGER.error("The media {} cannot be deleted because it is still configured with Jvm", name);
-                throw new MediaServiceException(MessageFormat
-                        .format("The media {0} cannot be deleted because it is still configured with Jvm", name));
+            if (name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
+              return true;
             }
         }
+        return false;
     }
 
     @Override

@@ -102,6 +102,7 @@ var MediaConfig = React.createClass({
                 self.state.selectedMedia = null;
             });
         }).caught(function(response){
+            self.refs.confirmDeleteMediaDlg.close();
             $.errorAlert(JSON.parse(response.responseText).message);
         });
     },
