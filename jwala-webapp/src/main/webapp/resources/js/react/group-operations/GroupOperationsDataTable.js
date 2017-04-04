@@ -816,7 +816,7 @@ var GroupOperationsDataTable = React.createClass({
         let self = this;
         webServerService.deleteWebServer(data.id.id, true).then(function(e){
             // Remove deleted row
-            $("tr td:contains('" + data.name + "')").filter(function() {
+            $("td:contains('" + data.name + "')").filter(function() {
                 if ($(this).text() === data.name) {
                     $(this).parent().remove();
                 }
