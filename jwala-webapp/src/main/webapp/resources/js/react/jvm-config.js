@@ -559,7 +559,7 @@ var JvmConfigForm = React.createClass({
         });
     },
     getJdkVersions: function() {
-        var items=[<option key='no-jvm-version' value=''></option>];
+        var items=[<option key='no-jvm-version' value=''>---Select JDK---</option>];
         for (var i=0; i < this.state.jdkVersions.length; i++){
             var jdkVersionOption = this.state.jdkVersions[i];
             var selected = this.state.jdkMedia !== null && jdkVersionOption.id == this.state.jdkMedia.id;
