@@ -4,7 +4,6 @@ import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
-import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
@@ -12,7 +11,6 @@ import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecReturnCode;
-import com.cerner.jwala.common.exec.RemoteExecCommand;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
@@ -21,17 +19,16 @@ import com.cerner.jwala.control.webserver.command.WebServerCommandFactory;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.service.HistoryFacadeService;
-import com.cerner.jwala.service.MessagingService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.binarydistribution.DistributionService;
 import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionControlServiceImpl;
+import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -103,38 +100,30 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
     }
 
     @Test
-    @Ignore
-    // TODO: Fix this!
     public void testStart() throws CommandFailureException {
         final Identifier<WebServer> webServerIdentifier = new Identifier<>(12L);
         WebServer webserver = new WebServer(webServerIdentifier, new HashSet<Group>(), "testWebServer");
         when(Config.mockWebServerService.getWebServer(any(Identifier.class))).thenReturn(webserver);
-        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "SUCCEEDED", ""));
+        when(Config.mockWebServerCommandFactory.executeCommand(eq(webserver), eq(WebServerControlOperation.START))).thenReturn(new RemoteCommandReturnInfo(0, "SUCCESS", ""));
         ControlWebServerRequest controlWSRequest = new ControlWebServerRequest(webServerIdentifier, WebServerControlOperation.START);
-        webServerControlService.controlWebServer(controlWSRequest, user);
-        verify(Config.mockMessagingService).send(any(CurrentState.class));
+        CommandOutput result = webServerControlService.controlWebServer(controlWSRequest, user);
+        assertEquals(new ExecReturnCode(0), result.getReturnCode());
 
-        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(ExecReturnCode.JWALA_EXIT_PROCESS_KILLED, "", "PROCESS KILLED"));
+        when(Config.mockWebServerCommandFactory.executeCommand(eq(webserver), eq(WebServerControlOperation.STOP))).thenReturn(new RemoteCommandReturnInfo(ExecReturnCode.JWALA_EXIT_PROCESS_KILLED, "", "PROCESS KILLED"));
+        controlWSRequest = new ControlWebServerRequest(webServerIdentifier, WebServerControlOperation.STOP);
         CommandOutput returnOutput = webServerControlService.controlWebServer(controlWSRequest, user);
         assertEquals("FORCED STOPPED", returnOutput.getStandardOutput());
         verify(Config.mockWebServerService).updateState(any(Identifier.class), eq(WebServerReachableState.FORCED_STOPPED), eq(""));
-        verify(Config.mockMessagingService, times(2)).send(any(CurrentState.class));
-        reset(Config.mockMessagingService);
 
-        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(ExecReturnCode.JWALA_EXIT_CODE_ABNORMAL_SUCCESS, "", "ABNORMAL SUCCESS"));
-        webServerControlService.controlWebServer(controlWSRequest, user);
-        verify(Config.mockMessagingService, times(2)).send(any(CurrentState.class));
-        reset(Config.mockMessagingService);
+        when(Config.mockWebServerCommandFactory.executeCommand(eq(webserver), eq(WebServerControlOperation.START))).thenReturn(new RemoteCommandReturnInfo(ExecReturnCode.JWALA_EXIT_CODE_ABNORMAL_SUCCESS, "", "ABNORMAL SUCCESS"));
+        controlWSRequest = new ControlWebServerRequest(webServerIdentifier, WebServerControlOperation.START);
+        result = webServerControlService.controlWebServer(controlWSRequest, user);
+        verify(Config.mockHistoryFacadeService, times(1)).write(anyString(), anyList(), anyString(), eq(EventType.SYSTEM_ERROR), anyString());
+        assertEquals(new ExecReturnCode(0), result.getReturnCode());
 
-        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(1, "", "ABNORMAL SUCCESS"));
+        when(Config.mockWebServerCommandFactory.executeCommand(any(WebServer.class), any(WebServerControlOperation.class))).thenReturn(new RemoteCommandReturnInfo(1, "", "ABNORMAL SUCCESS"));
         webServerControlService.controlWebServer(controlWSRequest, user);
         verify(Config.mockHistoryFacadeService, times(2)).write(anyString(), anyList(), anyString(), eq(EventType.SYSTEM_ERROR), anyString());
-        verify(Config.mockMessagingService, times(2)).send(any(CurrentState.class));
-        reset(Config.mockMessagingService);
-
-        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Delete service succeeded", ""));
-        webServerControlService.controlWebServer(new ControlWebServerRequest(webServerIdentifier, WebServerControlOperation.DELETE_SERVICE), user);
-        verify(Config.mockMessagingService).send(any(CurrentState.class));
     }
 
     @Test
@@ -274,9 +263,6 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         static WebServerService mockWebServerService;
 
         @Mock
-        static MessagingService mockMessagingService;
-
-        @Mock
         static HistoryFacadeService mockHistoryFacadeService;
 
         @Mock
@@ -290,6 +276,9 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
 
         @Mock
         static BinaryDistributionControlServiceImpl binaryDistributionControlService;
+
+        @Mock
+        static ResourceService mockResourceService;
 
         public Config() {
             initMocks(this);
@@ -308,11 +297,6 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         @Bean
         public WebServerService getMcokWebServerService() {
             return mockWebServerService;
-        }
-
-        @Bean
-        public MessagingService getMockMessagingService() {
-            return mockMessagingService;
         }
 
         @Bean
@@ -344,9 +328,14 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         @Scope("prototype")
         public WebServerControlService getWebServerControlService() {
             reset(mockWebServerCommandFactory, mockDistributionService, mockWebServerService,
-                    mockMessagingService, mockHistoryFacadeService, mockRemoteCommandExecutorService,
+                    mockHistoryFacadeService, mockRemoteCommandExecutorService,
                     mockSshConfig, binaryDistributionControlService, mockAemSshConfig);
             return new WebServerControlServiceImpl();
+        }
+
+        @Bean
+        public ResourceService getResourceService() {
+            return mockResourceService;
         }
 
     }

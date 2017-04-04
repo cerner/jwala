@@ -1,5 +1,8 @@
 package com.cerner.jwala.control.webserver.command;
 
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
+import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
+import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
@@ -10,6 +13,7 @@ import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -43,7 +48,8 @@ public class WebServerCommandFactoryTest {
         reset(
                 Config.mockBinaryDistributionControlService,
                 Config.mockRemoteCommandExecutorService,
-                Config.mockSshConfig
+                Config.mockSshConfig,
+                Config.mockResourceService
         );
     }
 
@@ -102,7 +108,7 @@ public class WebServerCommandFactoryTest {
     }
 
     @Test
-    public void testExecuteInstallScript() {
+    public void testExecuteInstallScript() throws IOException {
         WebServer mockWebServer = mock(WebServer.class);
         when(mockWebServer.getName()).thenReturn("web-server-name");
         when(mockWebServer.getHost()).thenReturn("web-server-host");
@@ -114,18 +120,32 @@ public class WebServerCommandFactoryTest {
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Install command succeeded", ""));
 
+        ResourceContent mockResourceContent = mock(ResourceContent.class);
+        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
+
         RemoteCommandReturnInfo startResult = webServerCommandFactory.executeCommand(mockWebServer, WebServerControlOperation.INSTALL_SERVICE);
 
         assertEquals(0, startResult.retCode);
     }
 
     @Test
-    public void testExecuteViewHttpdConf() {
+    public void testExecuteViewHttpdConf() throws IOException {
         WebServer mockWebServer = mock(WebServer.class);
         when(mockWebServer.getName()).thenReturn("web-server-name");
         when(mockWebServer.getHost()).thenReturn("web-server-host");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "View HTTPD conf command succeeded", ""));
+
+        ResourceContent mockResourceContent = mock(ResourceContent.class);
+        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
 
         RemoteCommandReturnInfo startResult = webServerCommandFactory.executeCommand(mockWebServer, WebServerControlOperation.VIEW_HTTP_CONFIG_FILE);
 
@@ -145,7 +165,7 @@ public class WebServerCommandFactoryTest {
     }
 
     @Test
-    public void testExecuteInstallScriptForAlreadyExistingScript() {
+    public void testExecuteInstallScriptForAlreadyExistingScript() throws IOException {
         WebServer mockWebServer = mock(WebServer.class);
         when(mockWebServer.getName()).thenReturn("web-server-name");
         when(mockWebServer.getHost()).thenReturn("web-server-host");
@@ -153,6 +173,13 @@ public class WebServerCommandFactoryTest {
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists - just run the script", ""));
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(new RemoteCommandReturnInfo(0, "Install command succeeded", ""));
+
+        ResourceContent mockResourceContent = mock(ResourceContent.class);
+        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
 
         RemoteCommandReturnInfo startResult = webServerCommandFactory.executeCommand(mockWebServer, WebServerControlOperation.INSTALL_SERVICE);
 
@@ -218,6 +245,7 @@ public class WebServerCommandFactoryTest {
         private static final SshConfiguration mockSshConfig = mock(SshConfiguration.class);
         private static final RemoteCommandExecutorService mockRemoteCommandExecutorService = mock(RemoteCommandExecutorService.class);
         private static final BinaryDistributionControlService mockBinaryDistributionControlService = mock(BinaryDistributionControlService.class);
+        private static final ResourceService mockResourceService = mock(ResourceService.class);
 
         @Bean
         public SshConfiguration getSshConfig() {
@@ -237,6 +265,11 @@ public class WebServerCommandFactoryTest {
         @Bean
         public WebServerCommandFactory getWebServerCommandFactory() {
             return new WebServerCommandFactory();
+        }
+
+        @Bean
+        public ResourceService getResourceService() {
+            return mockResourceService;
         }
     }
 }
