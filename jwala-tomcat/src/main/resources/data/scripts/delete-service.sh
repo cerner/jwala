@@ -13,7 +13,11 @@ if [ "$1" = "" ]; then
 fi
 
 if $cygwin; then
-    sc delete $1
+    sc query $1
+    if [ $? -eq 0 ]; then
+        echo delete $1
+        sc delete $1
+    fi
 fi
 
 if $linux; then

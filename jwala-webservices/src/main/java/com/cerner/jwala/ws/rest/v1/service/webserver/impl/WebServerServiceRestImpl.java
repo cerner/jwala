@@ -146,28 +146,9 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
     }
 
     @Override
-    public Response removeWebServer(final Identifier<WebServer> aWsId, final AuthenticatedUser user, final boolean forceDelete) {
-        LOGGER.info("Delete WS requested: {} by user {} and forceDelete {}", aWsId, user.getUser().getId(), forceDelete);
-        final WebServer webServer = webServerService.getWebServer(aWsId);
-        if (!webServerService.isStarted(webServer)) {
-            LOGGER.info("Removing web server from the database and deleting the service for id {}", aWsId);
-            if (!webServer.getState().equals(WebServerReachableState.WS_NEW) && !forceDelete) {
-                try {
-                    deleteWebServerWindowsService(user,
-                            new ControlWebServerRequest(aWsId, WebServerControlOperation.DELETE_SERVICE), webServer.getName());
-                } catch (final RuntimeException e) {
-                    return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
-                            new FaultCodeException(FaultType.CONTROL_OPERATION_UNSUCCESSFUL, e.getMessage(), e));
-                }
-            }
-            webServerService.removeWebServer(aWsId);
-        } else {
-            LOGGER.error("The target web server {} must be stopped before attempting to delete it", webServer.getName());
-            return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
-                    new FaultCodeException(FaultType.CONTROL_OPERATION_UNSUCCESSFUL, "Web server " + webServer.getName() +
-                            " must be stopped before it can be deleted!", null));
-        }
-        return ResponseBuilder.ok("successful");
+    public Response deleteWebServer(final Identifier<WebServer> id, boolean hardDelete, final AuthenticatedUser authUser) {
+        webServerService.deleteWebServer(id, hardDelete, authUser.getUser());
+        return Response.noContent().build();
     }
 
     @Override

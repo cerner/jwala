@@ -11,6 +11,7 @@ var WebServerControlPanelWidget = React.createClass({
                              spanClassName="ui-icon ui-icon-drain-custom"
                              onClick={this.webServerDrain}
                              title="Drain"/>
+
                     <RButton ref="stopBtn"
                             className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
                             spanClassName="ui-icon ui-icon-stop"
@@ -30,6 +31,12 @@ var WebServerControlPanelWidget = React.createClass({
                              disabled = {!MainArea.isAdminRole}
                              disabledTitle="Resource generation is disabled for this version"
                              busyClassName="busy-button"/>
+
+                    <RButton ref="delBtn"
+                             className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                             spanClassName="ui-icon ui-icon-trash"
+                             onClick={this.webServerDelete}
+                             title="Delete Web Server"/>
 
                     <button ref="httpdConfBtn" className="button-link anchor-font-style">httpd.conf</button>
 
@@ -95,6 +102,10 @@ var WebServerControlPanelWidget = React.createClass({
     generateServiceAndHttpdConfErrorCallback: function(applicationResponseContent, errDetails) {
         this.doneCallback[this.props.data.name]();
         $.errorAlert(applicationResponseContent, "Deploy " + this.props.data.name +  "", false, errDetails);
+    },
+
+    webServerDelete: function() {
+        this.props.webServerDeleteCallback(this.refs.delBtn.getDOMNode(), this.props.data);
     },
 
     onClickStatusLink: function(e) {
