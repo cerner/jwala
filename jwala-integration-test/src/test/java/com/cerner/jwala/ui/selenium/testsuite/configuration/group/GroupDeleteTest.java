@@ -18,10 +18,10 @@ public class GroupDeleteTest extends JwalaTest {
     @Test
     public void testDeleteGroups() {
         deleteGroup(GROUP_NAME_1);
-        new WebDriverWait(driver, 5)
+        new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.numberOfElementsToBe(By.xpath("//button[text()='" + GROUP_NAME_1 + "']"), 0));
         deleteGroup(GROUP_NAME_2);
-        new WebDriverWait(driver, 5)
+        new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.numberOfElementsToBe(By.xpath("//button[text()='" + GROUP_NAME_2 + "']"), 0));
     }
 
