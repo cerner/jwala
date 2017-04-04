@@ -323,7 +323,7 @@ var UploadWarWidget = React.createClass({
                    <form ref="warUploadForm">
                        <label>*WAR File</label>
                        <label ref="fileInputLabel" htmlFor="fileInput" className="error"/>
-                       <input ref="fileInput" name="fileInput" type="file" required onChange={this.onChangeFileInput}/>
+                       <input ref="fileInput" name="fileInput" type="file" accept=".war" required onChange={this.onChangeFileInput}/>
                        <br/>
                        <input type="checkbox" value={this.state.assignToJvms} onChange={this.onChangeAssignToJvms}>
                            <span>Assign to JVMs</span>
