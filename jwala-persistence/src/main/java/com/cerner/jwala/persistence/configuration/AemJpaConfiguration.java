@@ -1,6 +1,8 @@
 package com.cerner.jwala.persistence.configuration;
 
 import com.cerner.jwala.common.exception.ApplicationException;
+import com.cerner.jwala.common.properties.ApplicationProperties;
+import static com.cerner.jwala.common.properties.PropertyKeys.JWALA_JTA_TRANSACTION_TIMEOUT;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jndi.JndiLocatorDelegate;
@@ -43,7 +45,7 @@ public class AemJpaConfiguration {
     @Bean
     public PlatformTransactionManager getPlatformTransactionManager(final EntityManagerFactory emf) {
         final JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setDefaultTimeout(30);
+        transactionManager.setDefaultTimeout(ApplicationProperties.getAsInteger(JWALA_JTA_TRANSACTION_TIMEOUT, 30));
         transactionManager.setEntityManagerFactory(emf);
         return transactionManager;
     }

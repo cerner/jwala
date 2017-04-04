@@ -8,6 +8,7 @@ import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
 import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
+import com.cerner.jwala.service.jvm.impl.JvmHttpRequestResult;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface JvmService {
 
     Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, boolean updateJvmPassword);
 
-    void removeJvm(final Identifier<Jvm> aJvmId, User user);
+    void deleteJvm(Identifier<Jvm> id, boolean hardDelete, User user);
 
     void deleteJvmService(ControlJvmRequest controlJvmRequest, Jvm jvm, User user);
 
@@ -54,7 +55,7 @@ public interface JvmService {
      *
      * @param jvm the JVM
      */
-    void pingAndUpdateJvmState(Jvm jvm);
+    JvmHttpRequestResult pingAndUpdateJvmState(Jvm jvm);
 
     /**
      * Deploy application context xml for JVM's

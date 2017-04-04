@@ -1,7 +1,7 @@
 package com.cerner.jwala.common.properties;
 
 /**
- * Created by Steven Ger on 12/21/16.
+ * Created by Steven Ger on 12/21/16
  */
 public enum PropertyKeys {
 
@@ -17,15 +17,20 @@ public enum PropertyKeys {
     REMOTE_PATHS_DEPLOY_DIR("remote.paths.deploy.dir"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
     REMOTE_JAVA_HOME("remote.jwala.java.home"),
-    REMOTE_JWALA_JAVA_ROOT_DIR_NAME("remote.jwala.java.root.dir.name"),
     JDK_BINARY_FILE_NAME("jwala.default.jdk.zip"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     REMOTE_PATHS_TOMCAT_CORE("remote.paths.tomcat.core"),
     LOCAL_JWALA_BINARY_DIR("jwala.binary.dir"),
     JMAP_DUMP_LIVE_ENABLED("jmap.dump.live.enabled"),
     TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
-    PATHS_RESOURCE_TEMPLATES("paths.resource-templates");
-
+    PATHS_RESOURCE_TEMPLATES("paths.resource-templates"),
+    JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION("jsch.channel.shell.read.input.sleep.duration"),
+    JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME("jsch.exec.read.remote.output.loop.sleep.time"),
+    JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT("jsch.shell.read.remote.output.timeout"),
+    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout"),
+    JWALA_HISTORY_RESULT_FETCH_COUNT("jwala.history.result.fetch.count"),
+    JWALA_HISTORY_MAX_REC_DEAFULT("jwala.history.max.rec.default"),
+    JWALA_JTA_TRANSACTION_TIMEOUT("jwala.jta.transaction.timeout");
 
     private String propertyName;
 

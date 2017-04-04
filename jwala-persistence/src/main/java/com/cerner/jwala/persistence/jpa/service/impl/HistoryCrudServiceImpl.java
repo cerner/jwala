@@ -1,6 +1,8 @@
 package com.cerner.jwala.persistence.jpa.service.impl;
 
 import com.cerner.jwala.common.domain.model.group.Group;
+import com.cerner.jwala.common.properties.ApplicationProperties;
+import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaHistory;
 import com.cerner.jwala.persistence.jpa.service.HistoryCrudService;
@@ -49,8 +51,10 @@ public class HistoryCrudServiceImpl extends AbstractCrudServiceImpl<JpaHistory> 
             q.setParameter(PARAM_SERVER_NAME, serverName);
         }
 
-        if (numOfRec != null) {
+        if (numOfRec != null && numOfRec > 0) {
             q.setMaxResults(numOfRec);
+        }else{
+            q.setMaxResults(ApplicationProperties.getAsInteger(PropertyKeys.JWALA_HISTORY_RESULT_FETCH_COUNT, 500));
         }
 
         return q.getResultList();

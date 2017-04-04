@@ -391,5 +391,65 @@ sonarqube {
 	    property 'sonar.projectName', 'tomcat operations center'
         property 'sonar.projectVersion', '1.0.0'
 	}
-	
+
+}
+
+
+// Fortify
+subprojects {
+    apply plugin: 'com.moowork.node'
+
+    task setupFortifyExtDirs(type: Copy) {
+        from configurations.compile
+        into "$buildDir/fortify/extdirs/"
+    }
+
+    task sourceAnalyzerCleanBuild(type: Exec, dependsOn: setupFortifyExtDirs) {
+        commandLine "sourceanalyzer",
+                "-64",
+                "-b", "'$project.name'",
+                "-clean"
+    }
+
+    task sourceAnalyzerCreateBuild(type: Exec, dependsOn: sourceAnalyzerCleanBuild) {
+        commandLine "sourceanalyzer",
+                "-64",
+                "-b", "$project.name",
+                "-source",
+                "$sourceCompatibility",
+                "-Xmx1g",
+                "-extdirs",
+                "$buildDir\\fortify\\extdirs",
+                "$rootDir\\$project.name\\src\\main"
+    }
+
+    task sourceAnalyzerMakeMobile(type: Exec, dependsOn: sourceAnalyzerCreateBuild) {
+        commandLine "sourceanalyzer",
+                "-64",
+                "-b", "$project.name",
+                "-make-mobile",
+                "-source",
+                "$sourceCompatibility",
+                "-Xmx1g",
+                "-extdirs",
+                "$buildDir\\fortify\\extdirs"
+    }
+
+    /**
+     * Note: This is the main task to run to generate Fortify files.
+     *       One would need to run this in a machine that has Fortify installed.
+     */
+    task sourceAnalyzerCreateMBS(type: Exec, dependsOn: sourceAnalyzerMakeMobile) {
+        commandLine "sourceanalyzer",
+                "-64",
+                "-b", "$project.name",
+                "-source",
+                "$sourceCompatibility",
+                "-Xmx1g",
+                "-extdirs",
+                "$buildDir\\fortify\\extdirs",
+                "-export-build-session",
+                "$buildDir\\fortify\\${project.name}.mbs"
+    }
+
 }
