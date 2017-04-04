@@ -21,11 +21,12 @@ public class WebServerNameRule extends ValidNameRule {
     }
 
     /**
-     * 1)Checks for null
-     2)Checks for an empty string +only spaces
-     3)checks for a string with last character space
-     4)checks for a string with first character space
-     5) checks that the string only contains alphanumeric+period+dash+underscore+space
+     * Checks for null
+     * Checks for an empty string +only spaces
+     * checks for a string with last character space
+     * checks for a string with first character space
+     * checks that the string only contains alphanumeric+period+dash+underscore+space
+     *
      * @return boolean
      */
     @Override
