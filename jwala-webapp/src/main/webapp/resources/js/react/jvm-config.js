@@ -156,6 +156,9 @@ var JvmConfig = React.createClass({
             }
             throw new Error("There are no groups defined in Jwala. Please define a group to be able to add JVMs.");
         }).then(function(response){
+            if (doneCallback) {
+                doneCallback();
+            }
             self.setState({"groupData": groupData, "jvmTableData": response.applicationResponseContent});
         }).caught(function(response){
             console.log(response);
