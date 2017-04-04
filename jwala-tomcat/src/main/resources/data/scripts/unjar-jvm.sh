@@ -21,17 +21,15 @@ if $cygwin; then
     export JAR_FILE=`/usr/bin/basename $1`
     export BACKUP_DATE=`/usr/bin/date +%Y%m%d_%H%M%S`
     export JVM_INSTANCE=`/usr/bin/basename $2`
-    cd $2/..
-
     # back up current jvm directory
-    /usr/bin/echo "Renaming the current JVM to $2.$BACKUP_DATE"
     if [ -d "$2" ]; then
+        /usr/bin/echo "Renaming the current JVM to $2.$BACKUP_DATE"
         /usr/bin/mv $2 $2.$BACKUP_DATE
     fi
     /usr/bin/mkdir $2
-
+    cd $2/..
     # extract the new configuration files
-    /usr/bin/echo "Extracting $3"
+    /usr/bin/echo "Extracting $1"
     if [ ! -e "$3.exe" ]; then
       /usr/bin/echo JVM version not installed: $3 does not exist on this host
       exit $JWALA_EXIT_CODE_FAILED
@@ -51,24 +49,20 @@ if $linux; then
     export JAR_FILE=`basename $1`
     export BACKUP_DATE=`date +%Y%m%d_%H%M%S`
     export JVM_INSTANCE=`basename $2`
-
     # back up current jvm directory
     if [ -d "$2" ]; then
         echo "Renaming the current JVM to $2.$BACKUP_DATE"
         mv $2 $2.$BACKUP_DATE
     fi
-    if [ ! -e "$2" ]; then mkdir -p $2; fi;
-    echo cd $2/..
+    mkdir -p $2
     cd $2/..
     # extract the new configuration files
-    echo "Extracting $3"
+    echo "Extracting $1"
     if [ ! -e "$3" ]; then
       echo JVM version not installed: $3 does not exist on this host
       exit $JWALA_EXIT_CODE_FAILED
     fi
-	echo executing $3 xf $1
 	$3 xf $1
-	echo deleting $1
 	rm $1
     #delete META-INF
     if [ -e "$2/../META-INF" ]; then
