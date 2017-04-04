@@ -34,7 +34,7 @@ var JvmConfig = React.createClass({
     },
     render: function() {
 
-        if (!this.state.groupData === null && !this.state.err) {
+        if (!this.state.groupData && !this.state.err) {
             return <div>Loading...</div>;
         } if (this.state.err) {
             return <div className="JvmConfig msg">{this.state.err.message}</div>;
@@ -154,9 +154,9 @@ var JvmConfig = React.createClass({
             if (groupData.length > 0) {
                 return ServiceFactory.getJvmService().getJvms();
             }
-            throw new Error("There are no groups defined in the Jwala. Please define a group to be able to add a JVM.");
+            throw new Error("There are no groups defined in Jwala. Please define a group to be able to add JVMs.");
         }).then(function(response){
-            self.setState({"jvmTableData": response.applicationResponseContent});
+            self.setState({"groupData": groupData, "jvmTableData": response.applicationResponseContent});
         }).caught(function(response){
             console.log(response);
             self.setState({err: response});
@@ -628,5 +628,11 @@ var JvmConfigDataTable = React.createClass({
             var jdkMediaName = sData && sData.name ? sData.name : "";
             return React.renderComponent(React.createElement("span", {}, jdkMediaName), nTd);
         }
+   },
+   componentDidMount: function() {
+       // Since JwalaDataTable draws the actual table in its componentDidUpdate lifecycle, we need to force an update
+       // after it renders to create the UI nodes. If JwalaDataTable is refactored in such a way that it draws
+       // the table in its componentDidMount life cycle then we won't need this.
+       this.forceUpdate();
    }
 });
