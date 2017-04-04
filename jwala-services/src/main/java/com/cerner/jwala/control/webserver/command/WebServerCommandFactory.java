@@ -96,14 +96,14 @@ public class WebServerCommandFactory {
                     new RemoteExecCommand(getConnection(webServer),
                             getShellCommand(installServiceWsScriptName,
                                     webServer,
-                                    ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_APACHE_HTTPD_CONF),
+                                    ApplicationProperties.getRequired(PropertyKeys.REMOTE_JAWALA_DATA_DIR) + "/httpd", // TODO webserver-deploy get deploy directory destination from the meta data
                                     ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_APACHE_HTTPD))));
         });
 
         commands.put(WebServerControlOperation.VIEW_HTTP_CONFIG_FILE.getExternalValue(), (WebServer webServer)
                 -> remoteCommandExecutorService.executeCommand(
                 new RemoteExecCommand(getConnection(webServer),
-                        new ExecCommand("cat", ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_APACHE_HTTPD_CONF) + "/httpd.conf"))));
+                        new ExecCommand("cat", ApplicationProperties.getRequired(PropertyKeys.REMOTE_JAWALA_DATA_DIR) + "/http/httpd.conf")))); // TODO webserver-deploy get deploy directory destination from the meta data
 
     }
 
