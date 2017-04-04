@@ -27,11 +27,21 @@ var JvmConfig = React.createClass({
             showDeleteConfirmDialog: false,
             selectedJvmForEditing: null,
             jvmTableData: [{"jvmName":"","id":{"id":0},"hostName":"b","groups":[]}],
-            selectedJvm: null
+            selectedJvm: null,
+            groupData: null,
+            err: null
         }
     },
     render: function() {
+
+        if (!this.state.groupData === null && !this.state.err) {
+            return <div>Loading...</div>;
+        } if (this.state.err) {
+            return <div className="JvmConfig msg">{this.state.err.message}</div>;
+        }
+
         var btnDivClassName = this.props.className + "-btn-div";
+
         return  <div className={this.props.className} className="dataTables_wrapper">
                     <table className="jvm-config-table-type-container">
                         <tr>
@@ -137,14 +147,20 @@ var JvmConfig = React.createClass({
         }
     },
     refreshData: function(states, doneCallback) {
-        var self = this;
-        this.props.service.getJvms(function(response){
-                                         states["jvmTableData"] = response.applicationResponseContent;
-                                         if (doneCallback !== undefined) {
-                                            doneCallback();
-                                         }
-                                         self.setState(states);
-                                     });
+        let self = this;
+        let groupData;
+        groupService.getGroups().then(function(response){
+            groupData = response.applicationResponseContent;
+            if (groupData.length > 0) {
+                return ServiceFactory.getJvmService().getJvms();
+            }
+            throw new Error("There are no groups defined in the Jwala. Please define a group to be able to add a JVM.");
+        }).then(function(response){
+            self.setState({"jvmTableData": response.applicationResponseContent});
+        }).caught(function(response){
+            console.log(response);
+            self.setState({err: response});
+        });
     },
     addBtnCallback: function() {
         this.setState({showModalFormAddDialog: true})
