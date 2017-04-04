@@ -12,31 +12,37 @@ var JvmControlPanelWidget = React.createClass({
 
         return <div className="jvm-control-panel-widget">
 
-                    <RButton ref="drainBtn"
-                             className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
-                             spanClassName="ui-icon ui-icon-drain-custom"
-                             onClick={this.jvmDrain}
-                             title="Drain"/>
+                   <RButton ref="drainBtn"
+                            className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            spanClassName="ui-icon ui-icon-drain-custom"
+                            onClick={this.jvmDrain}
+                            title="Drain"/>
 
-                    <RButton ref="stopBtn"
-                             className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
-                             spanClassName="ui-icon ui-icon-stop"
-                             onClick={this.stop}
-                             title="Stop"/>
+                   <RButton ref="stopBtn"
+                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            spanClassName="ui-icon ui-icon-stop"
+                            onClick={this.stop}
+                            title="Stop"/>
 
-                    <RButton ref="startBtn"
-                             className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
-                             spanClassName="ui-icon ui-icon-play"
-                             onClick={this.start}
-                             title="Start"/>
+                   <RButton ref="startBtn"
+                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            spanClassName="ui-icon ui-icon-play"
+                            onClick={this.start}
+                            title="Start"/>
 
-                    <RButton ref="generateConfigBtn"
-                             className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
-                             spanClassName="ui-icon ui-icon-gear-custom"
-                             onClick={this.generateConfig}
-                             title="Generate JVM resources files and deploy as a service"
-                             disabled = {!MainArea.isAdminRole}
-                             disabledTitle="Resource generation is disabled for this version"/>
+                   <RButton ref="generateConfigBtn"
+                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            spanClassName="ui-icon ui-icon-gear-custom"
+                            onClick={this.generateConfig}
+                            title="Generate JVM resources files and deploy as a service"
+                            disabled = {!MainArea.isAdminRole}
+                            disabledTitle="Resource generation is disabled for this version"/>
+
+                   <RButton ref="delBtn"
+                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            spanClassName="ui-icon ui-icon-trash"
+                            onClick={this.jvmDelete}
+                            title="Delete JVM"/>
 
                    <RButton ref="heapDumpBtn"
                             className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
@@ -76,6 +82,9 @@ var JvmControlPanelWidget = React.createClass({
     generateConfig: function(doneCallback) {
         this.doneCallback[this.props.data.name] = doneCallback;
         this.props.jvmGenerateConfigCallback(this.props.data, this.refs.generateConfigBtn.getDOMNode());
+    },
+    jvmDelete: function() {
+        this.props.jvmDeleteCallback(this.refs.delBtn.getDOMNode(), this.props.data);
     },
     doHeapDump: function() {
         this.props.jvmHeapDumpCallback(this.props.data.id, this.refs.heapDumpBtn.getDOMNode(), this.props.data.hostName);

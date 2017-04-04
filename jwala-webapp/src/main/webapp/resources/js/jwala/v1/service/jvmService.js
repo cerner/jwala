@@ -66,8 +66,9 @@
         return serviceFoundation.put("v1.0/jvms?updateJvmPassword=" + updateJvmPassword, "json", jvm, successCallback,
                                      errorCallback );
     },
-    deleteJvm: function(id, caughtCallback) {
-        return serviceFoundation.del("v1.0/jvms/" + id, "json", caughtCallback);
+    deleteJvm: function(id, hardDelete) {
+        hardDelete = hardDelete ? true : false;
+        return serviceFoundation.promisedDel("v1.0/jvms/" + id + "?hardDelete=" + hardDelete, "json");
     },
     getJvm : function(id, responseCallback) {
         return serviceFoundation.get("v1.0/jvms/" + id, "json", responseCallback);
