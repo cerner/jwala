@@ -19,7 +19,9 @@ import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.exception.WebServerCommandFactoryException;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.ResourceService;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,9 @@ public class WebServerCommandFactory {
 
     @Autowired
     private BinaryDistributionControlService binaryDistributionControlService;
+
+    @Autowired
+    private ResourceContentGeneratorService resourceContentGeneratorService;
 
     /**
      * @param webserver the web server target for the command
@@ -113,19 +118,19 @@ public class WebServerCommandFactory {
         commands.put(WebServerControlOperation.VIEW_HTTP_CONFIG_FILE.getExternalValue(), (WebServer webServer)
                 -> remoteCommandExecutorService.executeCommand(
                 new RemoteExecCommand(getConnection(webServer),
-                        new ExecCommand("cat", getHttpdConfPath(webServer), "/httpd.conf"))));
+                        new ExecCommand("cat", getHttpdConfPath(webServer)))));
 
     }
 
-    private String getHttpdConfPath(WebServer webServer) {
-        String wsName = webServer.getName();
-        ResourceIdentifier httpdConfResourceIdentifier = new ResourceIdentifier.Builder()
+    private String getHttpdConfPath(final WebServer webServer) {
+        final String wsName = webServer.getName();
+        final ResourceIdentifier httpdConfResourceIdentifier = new ResourceIdentifier.Builder()
                 .setResourceName("httpd.conf")
                 .setWebServerName(webServer.getName())
                 .build();
-        ResourceContent httpConfResourceContent = resourceService.getResourceContent(httpdConfResourceIdentifier);
+        final ResourceContent httpConfResourceContent = resourceService.getResourceContent(httpdConfResourceIdentifier);
         if (null == httpConfResourceContent || null == httpConfResourceContent.getMetaData() || httpConfResourceContent.getMetaData().isEmpty()) {
-            String errMsg = MessageFormat.format("No httpd.conf meta data for web server {0}", wsName);
+            final String errMsg = MessageFormat.format("No httpd.conf meta data for web server {0}", wsName);
             LOGGER.error(errMsg);
             throw new WebServerCommandFactoryException(errMsg);
         }
@@ -134,12 +139,15 @@ public class WebServerCommandFactory {
         try {
             metaData = resourceService.getMetaData(httpConfResourceContent.getMetaData());
         } catch (IOException e) {
-            String errMsg = MessageFormat.format("Failed to parse httpd.conf meta data for web server {0}", wsName);
+            final String errMsg = MessageFormat.format("Failed to parse httpd.conf meta data for web server {0}", wsName);
             LOGGER.error(errMsg, e);
             throw new WebServerCommandFactoryException(errMsg);
         }
 
-        return metaData.getDeployPath();
+        final String httpdPath = resourceContentGeneratorService.generateContent("httpd.conf", metaData.getDeployPath(), null, webServer, ResourceGeneratorType.METADATA);
+        final String httpdConfDeployName = resourceContentGeneratorService.generateContent("httpd.conf", metaData.getDeployFileName(), null, webServer, ResourceGeneratorType.METADATA);
+
+        return httpdPath + "/" + httpdConfDeployName;
     }
 
     /**

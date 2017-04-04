@@ -24,6 +24,7 @@ import com.cerner.jwala.service.VerificationBehaviorSupport;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.binarydistribution.DistributionService;
 import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionControlServiceImpl;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
@@ -280,6 +281,9 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         @Mock
         static ResourceService mockResourceService;
 
+        @Mock
+        static ResourceContentGeneratorService mockResourceContentGeneratorService;
+
         public Config() {
             initMocks(this);
         }
@@ -336,6 +340,11 @@ public class WebServerControlServiceImplVerifyTest extends VerificationBehaviorS
         @Bean
         public ResourceService getResourceService() {
             return mockResourceService;
+        }
+
+        @Bean
+        public ResourceContentGeneratorService getResourceContentGeneratorService() {
+            return mockResourceContentGeneratorService;
         }
 
     }
