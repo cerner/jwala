@@ -6,7 +6,7 @@ import com.cerner.jwala.common.exception.MessageResponseStatus;
 import com.cerner.jwala.common.rule.Rule;
 import com.cerner.jwala.common.rule.ValidNameRule;
 
-public class GroupNameRule extends ValidNameRule implements Rule {
+public class GroupNameRule extends ValidNameRule{
 
     public GroupNameRule(final String theName) {
         super(theName);
@@ -33,8 +33,8 @@ public class GroupNameRule extends ValidNameRule implements Rule {
             throw new BadRequestException(getMessageResponseStatus(),
                     getMessage());
         }
-        if(!isValidLength()){
-            throw new BadRequestException(getMessageResponseGroupLengthStatus(),getMessageGroupLength());
+        if (!isValidLength()) {
+            throw new BadRequestException(getMessageResponseGroupLengthStatus(), getMessageGroupLength());
         }
     }
 
@@ -49,8 +49,11 @@ public class GroupNameRule extends ValidNameRule implements Rule {
      * @return boolean
      */
     @Override
-    public boolean isValid() {return name != null && !"".equals(name.trim()) && !name.matches(".*[\\s]$") && !name.matches("^[\\s].*") && name.matches("[A-Za-z0-9._\\s-]+");
+    public boolean isValid() {
+        return name != null && !"".equals(name.trim()) && !name.matches(".*[\\s]$") && !name.matches("^[\\s].*") && name.matches("[A-Za-z0-9._\\s-]+");
     }
 
-    public boolean isValidLength(){return name.length()<256;}
+    public boolean isValidLength() {
+        return name.length() < 256;
+    }
 }

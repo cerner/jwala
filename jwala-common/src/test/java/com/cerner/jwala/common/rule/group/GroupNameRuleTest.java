@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.cerner.jwala.common.exception.MessageResponseStatus;
 import com.cerner.jwala.common.rule.group.GroupNameRule;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -53,22 +54,11 @@ public class GroupNameRuleTest {
         }
     }
 
-
-
-    @Test
+    @Test(expected=BadRequestException.class)
     public void testLongGroupName(){
         String veryLongString="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         GroupNameRule rule=new GroupNameRule(veryLongString);
-        try {
             rule.validate();
-        }
-        catch(final BadRequestException bre){
-            assertTrue(true);
-        }
-
     }
-
-
-
 
 }
