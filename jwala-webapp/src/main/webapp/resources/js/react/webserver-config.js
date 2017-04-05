@@ -257,7 +257,7 @@ var WebServerConfigForm = React.createClass({
         var host = "";
         var port = "";
         var httpsPort = "";
-        var statusPath = jwalaVars.loadBalancerStatusMount;
+        var statusPath = "";
         var groupIds = [];
 
         if (this.props.data !== undefined) {
