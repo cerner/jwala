@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implements JvmCrudService {
@@ -360,14 +359,7 @@ public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implemen
     public List<Jvm> getJvmsByGroupName(String groupName) {
         final Query q = entityManager.createNamedQuery(JpaJvm.QUERY_GET_JVMS_BY_GROUP_NAME);
         q.setParameter(JpaJvm.QUERY_PARAM_GROUP_NAME, groupName);
-        List<Jvm> listOfJvms=buildJvms(q.getResultList());
-        listOfJvms.sort(new Comparator<Jvm>() {
-            @Override
-            public int compare(Jvm jvm1, Jvm jvm2) {
-                return jvm1.getJvmName().compareTo(jvm2.getJvmName());
-            }
-        });
-        return listOfJvms;
+        return buildJvms(q.getResultList());
     }
 
     /**
