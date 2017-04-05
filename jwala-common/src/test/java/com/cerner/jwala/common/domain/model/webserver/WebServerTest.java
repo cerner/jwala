@@ -1,13 +1,10 @@
 package com.cerner.jwala.common.domain.model.webserver;
 
-import org.junit.Test;
-
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.uri.UriBuilder;
-import com.cerner.jwala.common.domain.model.webserver.WebServer;
-import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
+import org.junit.Test;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -29,8 +26,7 @@ public class WebServerTest {
     private final List<Group> groups = new ArrayList<>();
     private static final Path SVR_ROOT = new Path("./");
     private static final Path DOC_ROOT = new Path("htdocs");
-    private final WebServer ws = new WebServer(wsId, groups, NAME, HOST, port, httpsPort, STATUS_PATH, HTTP_CONFIG_FILE,
-                                        SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+    private final WebServer ws = new WebServer(wsId, groups, NAME, HOST, port, httpsPort, STATUS_PATH, WebServerReachableState.WS_UNREACHABLE);
 
     @Test
     public void testGetId() {
@@ -74,11 +70,7 @@ public class WebServerTest {
                                                   expectedUri.getPort(),
                                                   99,
                                                   STATUS_PATH,
-                                                  HTTP_CONFIG_FILE,
-                                                  SVR_ROOT,
-                                                  DOC_ROOT,
-                                                  WebServerReachableState.WS_UNREACHABLE,
-                                                  null);
+                                                  WebServerReachableState.WS_UNREACHABLE);
         final URI actualUri = webServer.getStatusUri();
         assertEquals(expectedUri,
                      actualUri);

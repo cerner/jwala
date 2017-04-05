@@ -61,8 +61,7 @@ public class JsonCreateWebServer {
                 null);
 
         return new CreateWebServerRequest(ids, webserverName, hostName, port, securePort, new Path(statusPath),
-                new Path(svrRoot), new Path(docRoot),
-                WebServerReachableState.WS_NEW, null);
+                WebServerReachableState.WS_NEW);
     }
 
     private Integer convertFrom(final String aValue,

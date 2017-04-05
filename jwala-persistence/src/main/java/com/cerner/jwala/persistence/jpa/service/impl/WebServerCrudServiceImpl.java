@@ -49,9 +49,6 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
             jpaWebServer.setPort(webServer.getPort());
             jpaWebServer.setHttpsPort(webServer.getHttpsPort());
             jpaWebServer.setStatusPath(webServer.getStatusPath().getPath());
-            jpaWebServer.setHttpConfigFile("");
-            jpaWebServer.setSvrRoot(webServer.getSvrRoot().getPath());
-            jpaWebServer.setDocRoot(webServer.getDocRoot().getPath());
             jpaWebServer.setCreateBy(createdBy);
             jpaWebServer.setState(webServer.getState());
 
@@ -74,8 +71,6 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
             jpaWebServer.setPort(webServer.getPort());
             jpaWebServer.setHttpsPort(webServer.getHttpsPort());
             jpaWebServer.setStatusPath(webServer.getStatusPath().getPath());
-            jpaWebServer.setSvrRoot(webServer.getSvrRoot().getPath());
-            jpaWebServer.setDocRoot(webServer.getDocRoot().getPath());
             jpaWebServer.setCreateBy(createdBy);
 
             return webServerFrom(update(jpaWebServer));
@@ -325,18 +320,9 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
     }
 
     @Override
-    public int updateErrorStatus(final Identifier<WebServer> id, final String errorStatus) {
-        final Query query = entityManager.createNamedQuery(JpaWebServer.QUERY_UPDATE_ERROR_STATUS_BY_ID);
-        query.setParameter(JpaWebServer.QUERY_PARAM_ERROR_STATUS, errorStatus);
-        query.setParameter(JpaWebServer.QUERY_PARAM_ID, id.getId());
-        return query.executeUpdate();
-    }
-
-    @Override
     public int updateState(final Identifier<WebServer> id, final WebServerReachableState state, final String errorStatus) {
         final Query query = entityManager.createNamedQuery(JpaWebServer.QUERY_UPDATE_STATE_AND_ERR_STS_BY_ID);
         query.setParameter(JpaWebServer.QUERY_PARAM_STATE, state);
-        query.setParameter(JpaWebServer.QUERY_PARAM_ERROR_STATUS, errorStatus);
         query.setParameter(JpaWebServer.QUERY_PARAM_ID, id.getId());
         return query.executeUpdate();
     }

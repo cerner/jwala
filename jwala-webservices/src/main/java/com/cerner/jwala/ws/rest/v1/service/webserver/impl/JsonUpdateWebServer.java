@@ -60,8 +60,7 @@ public class JsonUpdateWebServer {
     public UpdateWebServerRequest toUpdateWebServerRequest() {
         final Set<Identifier<Group>> groups = new IdentifierSetBuilder(groupIds).build();
         return new UpdateWebServerRequest(convertWebServerId(), groups, webServerName, hostName, convertPortNumber(),
-                convertHttpsPortNumber(), new Path(statusPath), new Path(httpConfigFile), new Path(svrRoot),
-                new Path(docRoot), WebServerReachableState.WS_UNREACHABLE, null);
+                convertHttpsPortNumber(), new Path(statusPath), WebServerReachableState.WS_UNREACHABLE);
     }
 
     protected Identifier<WebServer> convertWebServerId() {

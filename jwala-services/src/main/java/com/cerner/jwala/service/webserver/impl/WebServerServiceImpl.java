@@ -3,8 +3,6 @@ package com.cerner.jwala.service.webserver.impl;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
-import com.cerner.jwala.common.domain.model.path.Path;
-import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -33,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,11 +87,7 @@ public class WebServerServiceImpl implements WebServerService {
                 createWebServerRequest.getPort(),
                 createWebServerRequest.getHttpsPort(),
                 createWebServerRequest.getStatusPath(),
-                null,
-                createWebServerRequest.getSvrRoot(),
-                createWebServerRequest.getDocRoot(),
-                createWebServerRequest.getState(),
-                createWebServerRequest.getErrorStatus());
+                createWebServerRequest.getState());
 
         final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
         inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
@@ -137,8 +130,6 @@ public class WebServerServiceImpl implements WebServerService {
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
 
-        ResourceTemplateMetaData metaData = getWebServerHttpdConfMetaData(anUpdateWebServerCommand);
-
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));
@@ -151,37 +142,9 @@ public class WebServerServiceImpl implements WebServerService {
                 anUpdateWebServerCommand.getNewPort(),
                 anUpdateWebServerCommand.getNewHttpsPort(),
                 anUpdateWebServerCommand.getNewStatusPath(),
-                new Path(metaData.getDeployPath()),
-                anUpdateWebServerCommand.getNewSvrRoot(),
-                anUpdateWebServerCommand.getNewDocRoot(),
-                anUpdateWebServerCommand.getState(),
-                anUpdateWebServerCommand.getErrorStatus());
+                anUpdateWebServerCommand.getState());
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
-    }
-
-    private ResourceTemplateMetaData getWebServerHttpdConfMetaData(UpdateWebServerRequest anUpdateWebServerCommand) {
-        String webServerName = getWebServer(anUpdateWebServerCommand.getId()).getName();
-        ResourceTemplateMetaData metaData;
-        ResourceIdentifier webServerResourceIdentifier = new ResourceIdentifier.Builder()
-                .setWebServerName(webServerName)
-                .setResourceName("httpd.conf").build();
-        final ResourceContent resourceContent = resourceService.getResourceContent(webServerResourceIdentifier);
-
-        if (null == resourceContent || null == resourceContent.getMetaData() || resourceContent.getMetaData().isEmpty()) {
-            String errMsg = MessageFormat.format("Failed to retrieve any meta data for web server {0}", webServerName);
-            LOGGER.error(errMsg);
-            throw new WebServerServiceException(errMsg);
-        }
-
-        try {
-            metaData = resourceService.getMetaData(resourceContent.getMetaData());
-        } catch (IOException ioe) {
-            String errMessage = MessageFormat.format("Unable to parse the meta data for httpd.conf for web server {0}", webServerName);
-            LOGGER.error(errMessage);
-            throw new WebServerServiceException(errMessage);
-        }
-        return metaData;
     }
 
     @Override
@@ -195,12 +158,6 @@ public class WebServerServiceImpl implements WebServerService {
     public boolean isStarted(WebServer webServer) {
         final WebServerReachableState state = webServer.getState();
         return !WebServerReachableState.WS_UNREACHABLE.equals(state) && !WebServerReachableState.WS_NEW.equals(state);
-    }
-
-    @Override
-    @Transactional
-    public void updateErrorStatus(final Identifier<WebServer> id, final String errorStatus) {
-        webServerPersistenceService.updateErrorStatus(id, errorStatus);
     }
 
     @Override
