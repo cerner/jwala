@@ -93,7 +93,7 @@ public class JvmStateServiceImpl implements JvmStateService {
 
     @Override
     @Scheduled(fixedDelayString = "${ping.jvm.period.millis}")
-    public void verifyAndUpdateNotInMemOrStaleStates() {
+    public void verifyAndUpdateJvmStates() {
         final List<Jvm> jvms = jvmPersistenceService.getJvms();
         if (jvms == null) {
             LOGGER.warn("No JVMs found to ping.");

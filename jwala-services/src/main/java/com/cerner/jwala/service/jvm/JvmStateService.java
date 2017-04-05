@@ -14,7 +14,7 @@ public interface JvmStateService {
     /**
      * Check all JVM states individually then update the state persistence and in-memory context when there's a state change.
      */
-    void verifyAndUpdateNotInMemOrStaleStates();
+    void verifyAndUpdateJvmStates();
 
     /**
      * Set persistence context and in-memory state of a JVM whose state is not yet in the application context JVM state
