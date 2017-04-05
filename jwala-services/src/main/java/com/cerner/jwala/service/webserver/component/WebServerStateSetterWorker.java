@@ -102,15 +102,17 @@ public class WebServerStateSetterWorker {
             response = request.execute();
             LOGGER.debug("Web server {} status code = {}", webServer.getName(), response.getStatusCode());
 
-            if (response.getStatusCode() == HttpStatus.OK) {
+            if (HttpStatus.OK.equals(response.getStatusCode())) {
                 setState(webServer, WebServerReachableState.WS_REACHABLE, StringUtils.EMPTY);
             } else {
                 setState(webServer, WebServerReachableState.WS_UNREACHABLE,
                         MessageFormat.format(RESPONSE_NOT_OK_MSG, webServer.getStatusUri(), response.getStatusCode()));
             }
         } catch (final IOException e) {
-            LOGGER.error("Failed to ping {}!", webServer.getName());
-            setState(webServer, WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+            if (!WebServerReachableState.WS_UNREACHABLE.equals(webServer.getState())) {
+                LOGGER.warn("Failed to ping {}!", webServer.getName(), e);
+                setState(webServer, WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+            }
         } finally {
             if (response != null) {
                 response.close();
