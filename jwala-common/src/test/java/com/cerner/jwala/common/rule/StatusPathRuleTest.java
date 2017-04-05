@@ -17,7 +17,7 @@ public class StatusPathRuleTest {
 
     @Test
     public void testValidStatusPathValues() {
-        final String[] validValues = {"/abc", "/def", "/AReallyLongStatusPathGoesHere"};
+        final String[] validValues = {"/abc", "/def", "/AReallyLongStatusPathGoesHere", "https://somehost:443/apache_pb.png"};
 
         for (final String val : validValues) {
             final StatusPathRule rule = new StatusPathRule(new Path(val));
@@ -28,7 +28,8 @@ public class StatusPathRuleTest {
 
     @Test
     public void testInvalidHostNames() {
-        final String[] invalidValues = {"", "      ", "uri_with_underscore", "uri with spaces", "uriwith@#$%^&*"};
+        final String[] invalidValues = {"", "      ", "uri_with_underscore", "uri with spaces", "uriwith@#$%^&*",
+                                        "httpsx://somehost:443/apache_pb.png"};
 
         for (final String val : invalidValues) {
             final StatusPathRule rule = new StatusPathRule(new Path(val));

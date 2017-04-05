@@ -16,7 +16,8 @@ public enum ApplicationPropertySourceDefinition {
     OPS_GRP_CHILDREN_VIEW_OPEN("opsGrpChildrenViewOpen", "operations.group.children.view.open", "true", VariableStyle.STRING),
     OPS_JVM_MGR_BTN_ENABLED("opsJvmMgrBtnEnabled", "operations.jvm.mgr.btn.enabled", "true", VariableStyle.STRING),
     JWALA_ROLE_ADMIN("jwalaRoleAdmin", "jwala.role.admin", "Tomcat Admin", VariableStyle.STRING),
-    TOMCAT_MANAGER_PROTOCOL("tomcatManagerProtocol", "tomcat.manager.protocol", "http", VariableStyle.STRING);
+    TOMCAT_MANAGER_PROTOCOL("tomcatManagerProtocol", "tomcat.manager.protocol", "http", VariableStyle.STRING),
+    APACHE_IMAGE_LOGO_PATH("apacheImageLogoPath", "apache.image.logo.path", "/apache_pb.png", VariableStyle.STRING);
 
     private final String variableName;
     private final String propertyKey;
