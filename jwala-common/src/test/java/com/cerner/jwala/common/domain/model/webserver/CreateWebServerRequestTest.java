@@ -16,8 +16,6 @@ public class CreateWebServerRequestTest {
     private static final String HOST = "host";
     private static final String NAME = "name";
     private static final Path STATUS_PATH = new Path("/statusPath");
-    private static final Path SVR_ROOT = new Path("./");
-    private static final Path DOC_ROOT = new Path("htdocs");
     private static final Integer portNumber = 10000;
     private static final Integer httpsPort = 20000;
 

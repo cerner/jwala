@@ -111,8 +111,6 @@ var WebServerConfig = React.createClass({
                                                   this.refs.webServerAddForm.state.port,
                                                   this.refs.webServerAddForm.state.httpsPort,
                                                   this.refs.webServerAddForm.state.statusPath,
-                                                  this.refs.webServerAddForm.state.svrRoot,
-                                                  this.refs.webServerAddForm.state.docRoot,
                                                   function(){
                                                       self.state.selectedWebServer = null;
                                                       self.refreshData({showModalFormAddDialog:false});
@@ -241,8 +239,6 @@ var WebServerConfigForm = React.createClass({
         var port = "";
         var httpsPort = "";
         var statusPath = jwalaVars.loadBalancerStatusMount;
-        var svrRoot = "";
-        var docRoot = "";
         var groupIds = [];
 
         if (this.props.data !== undefined) {
@@ -252,8 +248,6 @@ var WebServerConfigForm = React.createClass({
             port = this.props.data.port;
             httpsPort = this.props.data.httpsPort;
             statusPath = this.props.data.statusPath.path;
-            svrRoot = this.props.data.svrRoot.path;
-            docRoot = this.props.data.docRoot.path;
             this.props.data.groups.forEach(function(group) {
                 groupIds.push(group.id);
             });
@@ -266,8 +260,6 @@ var WebServerConfigForm = React.createClass({
             port: port,
             httpsPort: httpsPort,
             statusPath: statusPath,
-            svrRoot: svrRoot,
-            docRoot: docRoot,
             groupIds: groupIds,
             groupMultiSelectData: [],
         }

@@ -30,25 +30,19 @@ public class JsonCreateWebServer {
     private final String hostName;
     private final String httpsPort;
     private final String statusPath;
-    private final String svrRoot;
-    private final String docRoot;
 
     public JsonCreateWebServer(final String theName,
                                final String theHostName,
                                final String thePortNumber,
                                final String theHttpsPort,
                                final Set<String> theGroupIds,
-                               final String theStatusPath,
-                               final String theSvrRoot,
-                               final String theDocRoot) {
+                               final String theStatusPath) {
         webserverName = theName;
         hostName = theHostName;
         portNumber = thePortNumber;
         httpsPort = theHttpsPort;
         groupIds = Collections.unmodifiableSet(new HashSet<>(theGroupIds));
         statusPath = theStatusPath;
-        svrRoot = theSvrRoot;
-        docRoot = theDocRoot;
     }
 
     public CreateWebServerRequest toCreateWebServerRequest() {
@@ -95,8 +89,6 @@ public class JsonCreateWebServer {
                 ", hostName='" + hostName + '\'' +
                 ", httpsPort='" + httpsPort + '\'' +
                 ", statusPath='" + statusPath + '\'' +
-                ", svrRoot='" + svrRoot + '\'' +
-                ", docRoot='" + docRoot + '\'' +
                 '}';
     }
 
@@ -116,9 +108,7 @@ public class JsonCreateWebServer {
                     node.get("portNumber").getValueAsText(),
                     node.get("httpsPort").getValueAsText(),
                        deserializeGroupIdentifiers(node),
-                    node.get("statusPath").getTextValue(),
-                    node.get("svrRoot").getTextValue(),
-                    node.get("docRoot").getTextValue());
+                    node.get("statusPath").getTextValue());
             return jcws;
         }
     }

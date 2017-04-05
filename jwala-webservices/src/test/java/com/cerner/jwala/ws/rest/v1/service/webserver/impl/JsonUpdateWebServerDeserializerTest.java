@@ -7,8 +7,6 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.ws.rest.v1.service.JsonDeserializationBehavior;
-import com.cerner.jwala.ws.rest.v1.service.webserver.impl.JsonUpdateWebServer;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +39,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String firstGroupId = "1";
         final String secondGroupId = "2";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = null;
-        final String svrRoot = null;
-        final String docRoot = null;
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -51,9 +46,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyValue("groupIds", array(object(keyTextValue("groupId",
                                                                                         firstGroupId)),
                                                                     object(keyTextValue("groupId",
@@ -68,7 +60,6 @@ public class JsonUpdateWebServerDeserializerTest {
                          portNumber,
                          httpsPort,
                          statusPath,
-                         httpConfigFile,
                          firstGroupId,
                          secondGroupId);
     }
@@ -83,9 +74,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String httpsPort = "8009";
         final String firstGroupId = "1";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = "d:/some-dir/httpd.conf";
-        final String svrRoot = "./";
-        final String docRoot = "htdocs";
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -93,9 +81,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyValue("groupIds", array(object(keyTextValue("groupId",
                                                                                         firstGroupId))))));
         final JsonUpdateWebServer update = readValue(json);
@@ -107,7 +92,6 @@ public class JsonUpdateWebServerDeserializerTest {
                          portNumber,
                          httpsPort,
                          statusPath,
-                         httpConfigFile,
                          firstGroupId);
     }
 
@@ -121,9 +105,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String httpsPort = "8009";
         final String firstGroupId = "1";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = "d:/some-dir/httpd.conf";
-        final String svrRoot = "./";
-        final String docRoot = "htdocs";
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -131,9 +112,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -145,7 +123,6 @@ public class JsonUpdateWebServerDeserializerTest {
                          portNumber,
                          httpsPort,
                          statusPath,
-                         httpConfigFile,
                          firstGroupId);
     }
 
@@ -167,9 +144,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String httpsPort = "2";
         final String firstGroupId = "1";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = "d:/some-dir/httpd.conf";
-        final String svrRoot = "./";
-        final String docRoot = "htdocs";
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -177,9 +151,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -196,9 +167,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String httpsPort = "this port number is not a number";
         final String firstGroupId = "1";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = "d:/some-dir/http.conf";
-        final String svrRoot = "./";
-        final String docRoot = "htdocs";
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -206,9 +174,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -225,9 +190,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String httpsPort = "89";
         final String firstGroupId = "this is not a valid identifier";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = "d:/some-dir/http.conf";
-        final String svrRoot = "./";
-        final String docRoot = "htdocs";
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -235,9 +197,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -254,9 +213,6 @@ public class JsonUpdateWebServerDeserializerTest {
         final String httpsPort = "90";
         final String firstGroupId = "1";
         final String statusPath = "/statusPath";
-        final String httpConfigFile = "d:/some-dir/http.conf";
-        final String svrRoot = "./";
-        final String docRoot = "htdocs";
 
         final String json = array(object(keyTextValue("webserverId", webServerId),
                                          keyTextValue("webserverName", webServerName),
@@ -264,9 +220,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("httpConfigFile", httpConfigFile),
-                                         keyTextValue("svrRoot", svrRoot),
-                                         keyTextValue("docRoot", docRoot),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -280,7 +233,6 @@ public class JsonUpdateWebServerDeserializerTest {
                                     final String aPortNumber,
                                     final String aHttpsPort,
                                     final String aStatusPath,
-                                    final String aHttpConfigFile,
                                     final String... groupIds) {
 
         final UpdateWebServerRequest updateCommand = anUpdate.toUpdateWebServerRequest();

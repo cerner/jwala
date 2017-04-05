@@ -70,9 +70,6 @@ public class WebServerServiceRestImplTest {
     private static final String name2 = "webserverName2";
     private static final String host = "localhost";
     private static final Path statusPath = new Path("/statusPath");
-    private static final Path httpConfigFile = new Path("d:/some-dir/httpd.conf");
-    private static final Path SVR_ROOT = new Path("./");
-    private static final Path DOC_ROOT = new Path("htdocs");
     private static final List<WebServer> webServerList = createWebServerList();
     private static final WebServer webServer = webServerList.get(0);
     private static final WebServer webServer2 = webServerList.get(1);
