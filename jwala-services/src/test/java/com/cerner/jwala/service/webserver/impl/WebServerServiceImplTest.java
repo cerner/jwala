@@ -111,8 +111,6 @@ public class WebServerServiceImplTest {
         when(mockWebServer.getPort()).thenReturn(51000);
         when(mockWebServer.getHttpsPort()).thenReturn(52000);
         when(mockWebServer.getStatusPath()).thenReturn(new Path("/statusPath"));
-        when(mockWebServer.getSvrRoot()).thenReturn(new Path("./"));
-        when(mockWebServer.getDocRoot()).thenReturn(new Path("htdocs"));
 
 
         when(mockWebServer2.getId()).thenReturn(new Identifier<WebServer>(2L));
@@ -122,8 +120,6 @@ public class WebServerServiceImplTest {
         when(mockWebServer2.getPort()).thenReturn(51000);
         when(mockWebServer2.getHttpsPort()).thenReturn(52000);
         when(mockWebServer2.getStatusPath()).thenReturn(new Path("/statusPath"));
-        when(mockWebServer2.getSvrRoot()).thenReturn(new Path("./"));
-        when(mockWebServer2.getDocRoot()).thenReturn(new Path("htdocs"));
 
         mockWebServersAll.add(mockWebServer);
         mockWebServersAll.add(mockWebServer2);
@@ -183,10 +179,7 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer.getPort(),
                                                                 mockWebServer.getHttpsPort(),
                                                                 mockWebServer.getStatusPath(),
-                                                                mockWebServer.getSvrRoot(),
-                                                                mockWebServer.getDocRoot(),
-                                                                mockWebServer.getState(),
-                                                                mockWebServer.getErrorStatus());
+                                                                mockWebServer.getState());
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
@@ -229,11 +222,7 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer2.getPort(),
                                                                 mockWebServer2.getHttpsPort(),
                                                                 mockWebServer2.getStatusPath(),
-                                                                new Path("/some/fake/httpd.conf/path"),
-                                                                mockWebServer2.getSvrRoot(),
-                                                                mockWebServer2.getDocRoot(),
-                                                                mockWebServer2.getState(),
-                                                                mockWebServer2.getErrorStatus());
+                                                                mockWebServer2.getState());
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
@@ -335,12 +324,6 @@ public class WebServerServiceImplTest {
     public void testIsStarted() {
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_REACHABLE);
         assertTrue(wsService.isStarted(mockWebServer));
-    }
-
-    @Test
-    public void testUpdateErrorStatus() {
-        wsService.updateErrorStatus(mockWebServer.getId(), "test update error status");
-        verify(webServerPersistenceService).updateErrorStatus(new Identifier<WebServer>(1L), "test update error status");
     }
 
     @Test

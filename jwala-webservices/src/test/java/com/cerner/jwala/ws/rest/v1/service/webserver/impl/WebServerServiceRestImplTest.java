@@ -122,9 +122,9 @@ public class WebServerServiceRestImplTest {
         singleGroupList.add(groupOne);
 
         final WebServer ws = new WebServer(Identifier.id(1L, WebServer.class), groupsList, name, host, 8080, 8009, statusPath,
-                httpConfigFile, SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                WebServerReachableState.WS_UNREACHABLE);
         final WebServer ws2 = new WebServer(Identifier.id(2L, WebServer.class), singleGroupList, name2, host, 8080, 8009, statusPath,
-                httpConfigFile, SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                WebServerReachableState.WS_UNREACHABLE);
         final List<WebServer> result = new ArrayList<>();
         result.add(ws);
         result.add(ws2);
@@ -323,8 +323,7 @@ public class WebServerServiceRestImplTest {
     public void testGetWebServersByGroup() {
         final List<WebServer> webServers = new ArrayList<>();
         webServers.add(new WebServer(null, new ArrayList<Group>(), "test", null, null, null, new Path("/statusPath"),
-                new Path("d:/some-dir/httpd.conf"), SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE,
-                null));
+                WebServerReachableState.WS_UNREACHABLE));
 
         final Identifier<Group> groupId = new Identifier<>("1");
 

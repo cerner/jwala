@@ -1,8 +1,5 @@
 package com.cerner.jwala.common.request.webserver;
 
-import java.io.Serializable;
-import java.util.Collection;
-
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
@@ -16,6 +13,9 @@ import com.cerner.jwala.common.rule.StatusPathRule;
 import com.cerner.jwala.common.rule.group.GroupIdsRule;
 import com.cerner.jwala.common.rule.webserver.WebServerNameRule;
 
+import java.io.Serializable;
+import java.util.Collection;
+
 public class CreateWebServerRequest implements Serializable, Request {
 
     private final Collection<Identifier<Group>> groupIds;
@@ -24,10 +24,7 @@ public class CreateWebServerRequest implements Serializable, Request {
     private final Integer port;
     private final Integer httpsPort;
     private final Path statusPath;
-    private final Path svrRoot;
-    private final Path docRoot;
     private final WebServerReachableState state;
-    private final String errorStatus;
 
     public CreateWebServerRequest(final Collection<Identifier<Group>> theGroupIds,
                                   final String theName,
@@ -35,19 +32,13 @@ public class CreateWebServerRequest implements Serializable, Request {
                                   final Integer thePort,
                                   final Integer theHttpsPort,
                                   final Path theStatusPath,
-                                  final Path theSvrRoot,
-                                  final Path theDocRoot,
-                                  final WebServerReachableState state,
-                                  final String errorStatus) {
+                                  final WebServerReachableState state) {
         host = theHost;
         port = thePort;
         httpsPort = theHttpsPort;
         name = theName;
         groupIds = theGroupIds;
-        docRoot = theDocRoot;
         this.state = state;
-        this.errorStatus = errorStatus;
-        svrRoot = theSvrRoot;
         statusPath = theStatusPath;
     }
 
@@ -75,20 +66,8 @@ public class CreateWebServerRequest implements Serializable, Request {
         return statusPath;
     }
 
-    public Path getSvrRoot() {
-        return svrRoot;
-    }
-
-    public Path getDocRoot() {
-        return docRoot;
-    }
-
     public WebServerReachableState getState() {
         return state;
-    }
-
-    public String getErrorStatus() {
-        return errorStatus;
     }
 
     @Override
@@ -131,10 +110,7 @@ public class CreateWebServerRequest implements Serializable, Request {
                 ", port=" + port +
                 ", httpsPort=" + httpsPort +
                 ", statusPath=" + statusPath +
-                ", svrRoot=" + svrRoot +
-                ", docRoot=" + docRoot +
                 ", state=" + state +
-                ", errorStatus='" + errorStatus + '\'' +
                 '}';
     }
 

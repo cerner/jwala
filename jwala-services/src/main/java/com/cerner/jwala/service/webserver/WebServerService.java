@@ -41,8 +41,6 @@ public interface WebServerService {
 
     boolean isStarted(WebServer webServer);
 
-    void updateErrorStatus(Identifier<WebServer> id, String errorStatus);
-
     void updateState(Identifier<WebServer> id, WebServerReachableState state, String errorStatus);
 
     Long getWebServerStartedCount(String groupName);
