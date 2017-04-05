@@ -51,7 +51,7 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
 
     @Override
     public void controlAllJvms(final ControlGroupJvmRequest controlGroupJvmRequest, final User user) {
-        Set<Jvm> jvms = new TreeSet<>(new JvmTreeSet());
+        Set<Jvm> jvms = new TreeSet<>(new JvmTreeSetComparator());
         for (Group group : groupService.getGroups()) {
             Set<Jvm> groupsJvms = group.getJvms();
             if (groupsJvms != null && !groupsJvms.isEmpty()) {
@@ -77,12 +77,12 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
     }
 
     public boolean checkSameState(final JvmControlOperation jvmControlOperation, final JvmState jvmState) {
-        return (jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState()) ||
-                (jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState()) ? true : false;
+        return jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState() ||
+                jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState();
     }
 }
 
-class JvmTreeSet implements Comparator<Jvm> {
+class JvmTreeSetComparator implements Comparator<Jvm> {
     @Override
     public int compare(Jvm jvm1, Jvm jvm2) {
         return jvm1.getJvmName().compareToIgnoreCase(jvm2.getJvmName());

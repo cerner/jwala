@@ -73,7 +73,7 @@ public class GroupWebServerControlServiceImpl implements GroupWebServerControlSe
     }
 
     public boolean checkSameState(final WebServerControlOperation webServerControlOperation, final String webServerStateLabel) {
-        return (webServerControlOperation.START.toString().equals(webServerControlOperation.name()) && webServerStateLabel.equalsIgnoreCase(WebServerReachableState.WS_REACHABLE.toStateLabel())) ||
-                (webServerControlOperation.STOP.toString().equals(webServerControlOperation.name()) && webServerStateLabel.equalsIgnoreCase(WebServerReachableState.WS_UNREACHABLE.toStateLabel())) ? true : false;
+        return webServerControlOperation.START.toString().equals(webServerControlOperation.name()) && webServerStateLabel.equalsIgnoreCase(WebServerReachableState.WS_REACHABLE.toStateLabel()) ||
+                webServerControlOperation.STOP.toString().equals(webServerControlOperation.name()) && webServerStateLabel.equalsIgnoreCase(WebServerReachableState.WS_UNREACHABLE.toStateLabel());
     }
 }
