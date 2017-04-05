@@ -239,7 +239,7 @@ var WebServerConfigForm = React.createClass({
         var host = "";
         var port = "";
         var httpsPort = "";
-        var statusPath = jwalaVars.loadBalancerStatusMount;
+        var statusPath = "";
         var svrRoot = "";
         var docRoot = "";
         var groupIds = [];
@@ -335,11 +335,9 @@ var WebServerConfigForm = React.createClass({
                             </tr>
                             <tr>
                                 <td>
-                                    <div className="webServerStatusUrl">
-                                        {window.location.protocol + "//" + this.state.host + ":" + (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + this.state.statusPath}
-                                    </div>
-                                    <input name="statusPath" type="text" valueLink={this.linkState("statusPath")}
-                                           maxLength="64" className="width-max"/>
+                                    <input name="statusPath" type="text" className="statusPath" valueLink={this.linkState("statusPath")}
+                                           maxLength="255" onFocus={this.onStatusPathFocus}/>
+                                    <IconBtn title="Generate Status Path" className="ui-icon-refresh" onClick={this.onClickGenerateStatusPath}/>
                                 </td>
                             </tr>
                             <tr>
@@ -371,6 +369,16 @@ var WebServerConfigForm = React.createClass({
                         </table>
                     </form>
                 </div>
+    },
+    onStatusPathFocus: function() {
+        if (!this.state.statusPath) {
+            this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
+            (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+        }
+    },
+    onClickGenerateStatusPath: function() {
+        this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
+                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
     },
     onSelectGroups: function(groupIds) {
         this.setState({groupIds:groupIds});

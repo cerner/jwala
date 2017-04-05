@@ -1,10 +1,15 @@
 package com.cerner.jwala.common.domain.model.path;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +21,7 @@ import java.util.regex.Pattern;
  */
 public class Path implements Serializable {
 
+    public static final String HTTP = "http";
     private static final Pattern ABSOLUTE_REG_EX = Pattern.compile("^(([a-zA-Z]:)|([\\/])).*");
     private static final Pattern FEATURE_REG_EX = Pattern.compile(";([^=;]*)?=?([0-9A-Za-z]*)?");
     
@@ -90,4 +96,39 @@ public class Path implements Serializable {
         }
         return defaultValue;
     }
+
+    public boolean isEmpty() {
+        return StringUtils.isEmpty(path);
+    }
+
+    public boolean startsWithHttp() {
+        return path.toLowerCase().startsWith(HTTP);
+    }
+
+    public boolean isValidUrl() {
+        try {
+            new URL(path);
+            return true;
+        } catch (final MalformedURLException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidUri(final String protocol, final String hostName, final int port) {
+        try {
+            new URI(protocol, null, hostName, port, path, StringUtils.EMPTY, StringUtils.EMPTY);
+            return true;
+        } catch (final URISyntaxException e) {
+            return false;
+        }
+    }
+
+    public URI toUri() {
+        try {
+            return new URI(path);
+        } catch (URISyntaxException e) {
+            throw new PathToUriException(path);
+        }
+    }
+
 }
