@@ -84,7 +84,7 @@ public class JvmStateServiceImplTest {
         jvmList.add(new Jvm(new Identifier<Jvm>(1L), "some-jvm", new HashSet<Group>()));
         when(mockJvmPersistenceService.getJvms()).thenReturn(jvmList);
         when(mockJvmStateResolverWorker.pingAndUpdateJvmState(eq(jvmList.get(0)), any(JvmStateService.class))).thenReturn(mock(Future.class));
-        jvmStateService.verifyAndUpdateNotInMemOrStaleStates();
+        jvmStateService.verifyAndUpdateJvmStates();
         verify(mockJvmStateResolverWorker).pingAndUpdateJvmState(eq(jvmList.get(0)), any(JvmStateService.class));
     }
 
