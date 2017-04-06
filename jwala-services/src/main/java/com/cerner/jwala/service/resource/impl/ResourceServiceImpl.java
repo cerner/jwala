@@ -902,7 +902,7 @@ public class ResourceServiceImpl implements ResourceService {
             }
             commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData.isOverwrite(), selectedValue);
             if (resourceTemplateMetaData.isUnpack()) {
-                doUnpack(entity, hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
+                doUnpack(hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
             }
         } catch (IOException e) {
             String message = "Failed to write file " + fileName + ". " + e.toString();
@@ -916,10 +916,8 @@ public class ResourceServiceImpl implements ResourceService {
         return commandOutput;
     }
 
-    private void doUnpack(final String entity, final String hostName, final String destPath) {
-        CommandOutput commandOutput;
+    private void doUnpack(final String hostName, final String destPath) {
         try {
-            String standardError;
             binaryDistributionService.distributeUnzip(hostName);
             final String zipDestinationOption = FilenameUtils.removeExtension(destPath);
             LOGGER.debug("checking if unpacked destination exists: {}", zipDestinationOption);

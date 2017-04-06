@@ -181,7 +181,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         "The target JVM must be stopped before attempting to update the resource files");
             }
             final String hostName = jvm.getHostName();
-            return resourceService.generateAndDeployFile(resourceIdentifier, appName, resourceTemplateName, hostName);
+            return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, hostName);
         } catch (ResourceFileGeneratorException e) {
             LOGGER.error("Fail to generate the resource file {}", resourceTemplateName, e);
             throw new DeployApplicationConfException(e);

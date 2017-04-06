@@ -28,7 +28,8 @@ public enum PropertyKeys {
     JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT("jsch.shell.read.remote.output.timeout"),
     JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout"),
     JWALA_HISTORY_RESULT_FETCH_COUNT("jwala.history.result.fetch.count"),
-    JWALA_HISTORY_MAX_REC_DEAFULT("jwala.history.max.rec.default");
+    JWALA_HISTORY_MAX_REC_DEAFULT("jwala.history.max.rec.default"),
+    JWALA_JTA_TRANSACTION_TIMEOUT("jwala.jta.transaction.timeout");
 
     private String propertyName;
 

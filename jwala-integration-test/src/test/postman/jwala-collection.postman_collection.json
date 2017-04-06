@@ -5742,8 +5742,19 @@
 				},
 				{
 					"name": "delete webserver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/{{WebserverId}}?forceDelete=false",
+						"url": "{{url}}/v1.0/webservers/{{WebserverId}}?hardDelete=true",
 						"method": "DELETE",
 						"header": [],
 						"body": {

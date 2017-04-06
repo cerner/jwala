@@ -148,7 +148,9 @@ public enum FaultType implements MessageResponseStatus {
 
     WEB_SERVER_CONF_TEMPLATE_NOT_FOUND("AEM72", "WebServerConfTemplateNotFound"),
 
-    JVM_JDK_NOT_SPECIFIED("AEM73", "NoJDKSpecifiedForJVM");
+    JVM_JDK_NOT_SPECIFIED("AEM73", "NoJDKSpecifiedForJVM"),
+
+    FAILED_TO_DELETE_MEDIA("AEM74", "FailedToDeleteMedia");
 
     private final String faultCode;
     private final String faultMessage;
