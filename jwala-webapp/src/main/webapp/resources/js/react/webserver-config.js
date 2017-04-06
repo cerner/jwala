@@ -162,17 +162,16 @@ var WebServerConfig = React.createClass({
         }).caught(
             function(e) {
                 self.setState({showDeleteConfirmDialog: false})
-                if (e.responseText !== undefined && e.status !== 200) {
-                    var jsonResponseText = JSON.parse(e.responseText);
-                    if (jsonResponseText.applicationResponseContent) {
-                        self.refs.forceDeleteConfirmDlg.setState({content: jsonResponseText.applicationResponseContent + ", are you sure you want to continue delete without remove windows services?"})
-                        self.setState({showDeleteConfirmDialogContinue: true})
-                    } else {
-                        $.errorAlert(jsonResponseText.message, "Error");
+                let msg;
+                if (e.responseText) {
+                    msg = JSON.parse(e.responseText).message;
+                    if (msg && msg.indexOf("already been deployed") > -1) {
+                        msg += ". Please go to operations page to delete the web server.";
                     }
-                } else if (e.status !== 200) {
-                  $.errorAlert(JSON.stringify(e), "Error");
+                } else {
+                    msg = JSON.stringify(e);
                 }
+                $.errorAlert(msg, "Error");
             }
         )
     },
