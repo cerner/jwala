@@ -7,6 +7,7 @@ import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.state.OperationalState;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
+import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
 import com.cerner.jwala.persistence.jpa.service.JvmCrudService;
 import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
 import com.cerner.jwala.service.MessagingService;
@@ -34,6 +35,9 @@ public class GroupStateNotificationServiceImplTest {
     private GroupStateNotificationServiceImpl groupStateNotificationServiceImpl;
 
     @Mock
+    private GroupCrudService mockGroupCrudService;
+
+    @Mock
     private JvmCrudService mockJvmCrudService;
 
     @Mock
@@ -45,8 +49,8 @@ public class GroupStateNotificationServiceImplTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        groupStateNotificationServiceImpl = new GroupStateNotificationServiceImpl(mockJvmCrudService, mockWebServerCrudService,
-                new TesterMessagingService());
+        groupStateNotificationServiceImpl = new GroupStateNotificationServiceImpl(mockGroupCrudService, mockJvmCrudService,
+                mockWebServerCrudService, new TesterMessagingService());
     }
 
     @Test

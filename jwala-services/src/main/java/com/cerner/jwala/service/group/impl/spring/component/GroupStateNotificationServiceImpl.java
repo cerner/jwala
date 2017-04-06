@@ -10,6 +10,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
+import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
 import com.cerner.jwala.persistence.jpa.service.JvmCrudService;
 import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
 import com.cerner.jwala.service.MessagingService;
@@ -18,11 +19,12 @@ import com.cerner.jwala.service.group.GroupStateNotificationService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link GroupStateNotificationService} implementation.
@@ -34,17 +36,25 @@ public class GroupStateNotificationServiceImpl implements GroupStateNotification
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupStateNotificationServiceImpl.class);
 
-    private final JvmCrudService jvmCrudService;
-    private final WebServerCrudService webServerCrudService;
-    private final MessagingService messagingService;
-    private final Object lockObject = new Object();
+    private final GroupCrudService groupCrudService;
 
-    @Autowired
-    public GroupStateNotificationServiceImpl(final JvmCrudService jvmCrudService, final WebServerCrudService webServerCrudService,
-                                             final MessagingService messagingService) {
+    private final JvmCrudService jvmCrudService;
+
+    private final WebServerCrudService webServerCrudService;
+
+    private final MessagingService messagingService;
+
+    private Object lockObject = new Object();
+
+    private Map<String, CurrentState<Group, OperationalState>> groupStateMap = new HashMap<>();
+
+    public GroupStateNotificationServiceImpl(final GroupCrudService groupCrudService, JvmCrudService jvmCrudService,
+                                             final WebServerCrudService webServerCrudService, final MessagingService messagingService) {
+        this.groupCrudService = groupCrudService;
         this.jvmCrudService = jvmCrudService;
         this.webServerCrudService = webServerCrudService;
         this.messagingService = messagingService;
+        fetchStates(groupCrudService.getGroups(), false);
     }
 
     @Override
@@ -66,22 +76,45 @@ public class GroupStateNotificationServiceImpl implements GroupStateNotification
                 LOGGER.error(errMsg);
                 throw new GroupStateNotificationServiceException(errMsg);
             }
-            for (final JpaGroup group: groups) {
-                final Long jvmStartedCount = jvmCrudService.getJvmStartedCount(group.getName());
-                final Long jvmStoppedCount = jvmCrudService.getJvmStoppedCount(group.getName());
-                final Long jvmForciblyStoppedCount = jvmCrudService.getJvmForciblyStoppedCount(group.getName());
-                final Long jvmCount = jvmCrudService.getJvmCount(group.getName());
-                final Long webServerStartedCount = webServerCrudService.getWebServerStartedCount(group.getName());
-                final Long webServerStoppedCount = webServerCrudService.getWebServerStoppedCount(group.getName());
-                final Long webServerCount = webServerCrudService.getWebServerCount(group.getName());
-                final CurrentState<Group, OperationalState> groupState = new CurrentState<>(new Identifier<Group>(group.getId()),
-                        null, DateTime.now(), StateType.GROUP, webServerCount, webServerStartedCount,
-                        webServerStoppedCount, jvmCount, jvmStartedCount, jvmStoppedCount, jvmForciblyStoppedCount);
-                messagingService.send(groupState);
-                LOGGER.debug("Group '{}' state = {}", group.getName(), groupState);
-            }
+            fetchStates(groups, true);
         }
         LOGGER.debug("Thread locked on {} and {} released!", id, aClass);
+    }
+
+    /**
+     * Fetch the jvm and web server states for a list of groups and save them in a map
+     * @param groups the groups whose jvm and web server states are to be retrieved
+     * @param send if true, the map is sent to a topic so a client process it
+     */
+    private void fetchStates(final List<JpaGroup> groups, boolean send) {
+        for (final JpaGroup group: groups) {
+            final Long jvmStartedCount = jvmCrudService.getJvmStartedCount(group.getName());
+            final Long jvmStoppedCount = jvmCrudService.getJvmStoppedCount(group.getName());
+            final Long jvmForciblyStoppedCount = jvmCrudService.getJvmForciblyStoppedCount(group.getName());
+            final Long jvmCount = jvmCrudService.getJvmCount(group.getName());
+            final Long webServerStartedCount = webServerCrudService.getWebServerStartedCount(group.getName());
+            final Long webServerStoppedCount = webServerCrudService.getWebServerStoppedCount(group.getName());
+            final Long webServerCount = webServerCrudService.getWebServerCount(group.getName());
+            final CurrentState<Group, OperationalState> groupState = new CurrentState<>(new Identifier<>(group.getId()),
+                    null, DateTime.now(), StateType.GROUP, webServerCount, webServerStartedCount,
+                    webServerStoppedCount, jvmCount, jvmStartedCount, jvmStoppedCount, jvmForciblyStoppedCount);
+
+            if (send) {
+                messagingService.send(groupState);
+            }
+
+            groupStateMap.put(group.getName(), groupState);
+        }
+    }
+
+    @Override
+    public CurrentState<Group, OperationalState> getGroupState(final String groupName) {
+        return groupStateMap.get(groupName);
+    }
+
+    @Override
+    public Map<String, CurrentState<Group, OperationalState>> getGroupStates() {
+        return groupStateMap;
     }
 
 }
