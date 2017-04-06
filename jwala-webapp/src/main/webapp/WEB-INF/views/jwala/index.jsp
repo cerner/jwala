@@ -18,6 +18,7 @@
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/generic-components/rdatatable.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/generic-components/rmenu.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/generic-components/rtoolbar.css">
+<link rel="stylesheet" type="text/css" href="public-resources/css/react/generic-components/icon-btn.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/resources-config.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/warning-alert.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/error-msg-list.css">
