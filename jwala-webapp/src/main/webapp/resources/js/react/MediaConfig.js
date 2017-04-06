@@ -96,13 +96,13 @@ var MediaConfig = React.createClass({
     },
     confirmDeleteCallback: function() {
         var self = this;
+        self.refs.confirmDeleteMediaDlg.close();
         ServiceFactory.getMediaService().deleteMedia(this.state.selectedMedia["str-name"]).then(function(response){
-            self.refs.confirmDeleteMediaDlg.close();
             self.loadTableData(function(){
                 self.state.selectedMedia = null;
             });
         }).caught(function(response){
-            $.errorAlert(response);
+            $.errorAlert(JSON.parse(response.responseText).message);
         });
     },
     mediaNameRenderCallback: function(name, media) {
