@@ -51,8 +51,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
 
     private void createTestJvmsAndWebServers(HashSet<Group> groupHashSet) {
         webServer = new WebServer(new Identifier<WebServer>(1L), groupHashSet, "Apache2.4", "localhost", 80, 443,
-                new Path("/statusPath"), new Path("D:/jwala/app/data/httpd//httpd.conf"),
-                new Path("./"), new Path("htdocs"), WebServerReachableState.WS_UNREACHABLE, "");
+                new Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE);
         jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, parentGroup, 11010, 11011, 11012, -1, 11013,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null)
 
@@ -68,8 +67,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
 
     private void createTestJvmsAndWebServers(HashSet<Group> groupHashSet, Group group) {
         webServer = new WebServer(new Identifier<WebServer>(1L), "localhost", "Apache2.4", 80, 443,
-                new Path("/statusPath"), new Path("D:/jwala/app/data/httpd//httpd.conf"),
-                new Path("./"), new Path("htdocs"), WebServerReachableState.WS_UNREACHABLE, "", group);
+                new Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE, group);
         jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, group, 11010, 11011, 11012, -1, 11013,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null)
 
@@ -106,14 +104,6 @@ class TestResourceFileGenerator extends GroovyTestCase {
         def expectedText = new File("./src/test/resources/install-service-http-EXPECTED.bat").text
         assertEquals(removeCarriageReturnsAndNewLines(expectedText), removeCarriageReturnsAndNewLines(generatedText));
     }
-//TODO: Fix this test case
-    /*void testGenerateServerXMLConfigFile() {
-        File httpdTemplate = new File("./src/test/resources/ServerXMLTemplate.tpl");
-        resourceGroup = new ResourceGroup(new ArrayList<Group>(groupHashSet));
-        def generatedText = ResourceFileGenerator.generateResourceConfig(httpdTemplate.text, resourceGroup, jvm);
-        def expectedText = new File("./src/test/resources/ServerXMLTemplate-EXPECTED.xml").text
-        assertEquals(removeCarriageReturnsAndNewLines(expectedText), removeCarriageReturnsAndNewLines(generatedText));
-    }*/
 
     void testGenerateSetenvBatConfigFile() {
         File httpdTemplate = new File("./src/test/resources/SetenvBatTemplate.tpl");

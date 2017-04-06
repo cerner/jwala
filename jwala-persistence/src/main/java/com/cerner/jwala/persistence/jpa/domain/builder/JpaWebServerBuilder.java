@@ -40,11 +40,7 @@ public class JpaWebServerBuilder {
                 webServer.getPort(),
                 webServer.getHttpsPort(),
                 new Path(webServer.getStatusPath()),
-                new Path(webServer.getHttpConfigFile()),
-                new Path(webServer.getSvrRoot()),
-                new Path(webServer.getDocRoot()),
-                webServer.getState(),
-                webServer.getErrorStatus());
+                webServer.getState());
     }
 
 }

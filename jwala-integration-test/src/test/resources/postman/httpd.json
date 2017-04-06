@@ -1,7 +1,7 @@
 {
         "templateName":"httpdconf.tpl",
         "contentType":"text/plain",
-        "deployPath":"${vars.'remote.paths.httpd.conf'}",
+        "deployPath":"${vars['remote.jwala.data.dir']}/httpd",
         "deployFileName":"httpd.conf",
         "entity":{
                 "type":"GROUPED_WEBSERVERS",

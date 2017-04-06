@@ -1,10 +1,5 @@
 package com.cerner.jwala.common.request.webserver;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
@@ -12,25 +7,29 @@ import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.request.Request;
-import com.cerner.jwala.common.rule.*;
+import com.cerner.jwala.common.rule.HostNameRule;
+import com.cerner.jwala.common.rule.MultipleRules;
+import com.cerner.jwala.common.rule.PortNumberRule;
+import com.cerner.jwala.common.rule.StatusPathRule;
 import com.cerner.jwala.common.rule.group.GroupIdsRule;
 import com.cerner.jwala.common.rule.webserver.WebServerIdRule;
 import com.cerner.jwala.common.rule.webserver.WebServerNameRule;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
 public class UpdateWebServerRequest implements Serializable, Request {
 
     private final Identifier<WebServer> id;
-    private final Collection<Identifier<Group>> newGroupIds; //TODO (Corey) Peter Agrees: Change this to a Set all the way down the line...
+    private final Collection<Identifier<Group>> newGroupIds;
     private final String newHost;
     private final String newName;
     private final Integer newPort;
     private final Integer newHttpsPort;
     private final Path newStatusPath;
-    private final Path newSvrRoot;
-    private final Path newDocRoot;
-    private final Path newHttpConfigFile;
     private final WebServerReachableState state;
-    private final String errorStatus;
 
     public UpdateWebServerRequest(final Identifier<WebServer> theId,
                                   final Collection<Identifier<Group>> theNewGroupIds,
@@ -39,11 +38,7 @@ public class UpdateWebServerRequest implements Serializable, Request {
                                   final Integer theNewPort,
                                   final Integer theNewHttpsPort,
                                   final Path theNewStatusPath,
-                                  final Path theNewHttpConfigFile,
-                                  final Path theSvrRoot,
-                                  final Path theDocRoot,
-                                  final WebServerReachableState state,
-                                  final String errorStatus) {
+                                  final WebServerReachableState state) {
         id = theId;
         newHost = theNewHost;
         newPort = theNewPort;
@@ -51,11 +46,7 @@ public class UpdateWebServerRequest implements Serializable, Request {
         newName = theNewName;
         newGroupIds = Collections.unmodifiableCollection(new HashSet<>(theNewGroupIds));
         newStatusPath = theNewStatusPath;
-        newHttpConfigFile = theNewHttpConfigFile;
-        newSvrRoot = theSvrRoot;
-        newDocRoot = theDocRoot;
         this.state = state;
-        this.errorStatus = errorStatus;
     }
 
     public Identifier<WebServer> getId() {
@@ -86,24 +77,8 @@ public class UpdateWebServerRequest implements Serializable, Request {
         return newStatusPath;
     }
 
-    public Path getNewHttpConfigFile() {
-        return newHttpConfigFile;
-    }
-
-    public Path getNewSvrRoot() {
-        return newSvrRoot;
-    }
-
-    public Path getNewDocRoot() {
-        return newDocRoot;
-    }
-
     public WebServerReachableState getState() {
         return state;
-    }
-
-    public String getErrorStatus() {
-        return errorStatus;
     }
 
     @Override
@@ -150,11 +125,7 @@ public class UpdateWebServerRequest implements Serializable, Request {
                 ", newPort=" + newPort +
                 ", newHttpsPort=" + newHttpsPort +
                 ", newStatusPath=" + newStatusPath +
-                ", newSvrRoot=" + newSvrRoot +
-                ", newDocRoot=" + newDocRoot +
-                ", newHttpConfigFile=" + newHttpConfigFile +
                 ", state=" + state +
-                ", errorStatus='" + errorStatus + '\'' +
                 '}';
     }
 

@@ -47,8 +47,6 @@ public interface WebServerPersistenceService {
 
     int updateState(Identifier<WebServer> id, WebServerReachableState state);
 
-    int updateErrorStatus(Identifier<WebServer> id, String errorSatus);
-
     int updateState(Identifier<WebServer> id, WebServerReachableState state, String errorStatus);
 
     Long getWebServerStartedCount(String groupName);
