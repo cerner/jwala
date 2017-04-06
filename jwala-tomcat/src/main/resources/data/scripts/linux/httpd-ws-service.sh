@@ -28,8 +28,8 @@ apache_home=@APACHE_HOME@
 httpd_conf=@HTTPD_CONF@
 httpd=${HTTPD-$apache_home/bin/httpd}
 prog=httpd
-pidfile=${PIDFILE-$apache_home/logs/httpd.pid}
-lockfile=${LOCKFILE-$apache_home/logs/httpd.lck}
+pidfile=${PIDFILE-$apache_home/logs/httpd-@WSNAME@.pid}
+lockfile=${LOCKFILE-$apache_home/logs/httpd-@WSNAME@.lck}
 RETVAL=0
 STOP_TIMEOUT=${STOP_TIMEOUT-10}
 

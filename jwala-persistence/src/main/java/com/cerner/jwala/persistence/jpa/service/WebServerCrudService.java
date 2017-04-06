@@ -15,21 +15,21 @@ import java.util.List;
 
 public interface WebServerCrudService extends CrudService<JpaWebServer> {
 
-	WebServer createWebServer(WebServer webServer, String createdBy);
+    WebServer createWebServer(WebServer webServer, String createdBy);
 
-	WebServer updateWebServer(WebServer webServer, String createdBy);
+    WebServer updateWebServer(WebServer webServer, String createdBy);
 
-	WebServer getWebServer(final Identifier<WebServer> aWebServerId) throws NotFoundException;
+    WebServer getWebServer(final Identifier<WebServer> aWebServerId) throws NotFoundException;
 
-	List<WebServer> getWebServers();
+    List<WebServer> getWebServers();
 
-	void removeWebServer(final Identifier<WebServer> aWebServerId);
+    void removeWebServer(final Identifier<WebServer> aWebServerId);
 
-	List<WebServer> findWebServersBelongingTo(Identifier<Group> aGroupId);
+    List<WebServer> findWebServersBelongingTo(Identifier<Group> aGroupId);
 
     List<Application> findApplications(final String aWebServerName);
 
-	void removeWebServersBelongingTo(final Identifier<Group> aGroupId);
+    void removeWebServersBelongingTo(final Identifier<Group> aGroupId);
 
     WebServer findWebServerByName(final String aWebServerName);
 
@@ -39,49 +39,49 @@ public interface WebServerCrudService extends CrudService<JpaWebServer> {
 
     String getResourceTemplate(final String webServerName, final String resourceTemplateName);
 
-	JpaWebServerConfigTemplate uploadWebserverConfigTemplate(UploadWebServerTemplateRequest uploadWebServerTemplateRequest);
+    JpaWebServerConfigTemplate uploadWebserverConfigTemplate(UploadWebServerTemplateRequest uploadWebServerTemplateRequest);
 
     void updateResourceTemplate(final String wsName, final String resourceTemplateName, final String template);
 
-	int updateState(Identifier<WebServer> id, WebServerReachableState state);
+    int updateState(Identifier<WebServer> id, WebServerReachableState state);
 
-	int updateErrorStatus(Identifier<WebServer> id, String errorStatus);
+    int updateState(Identifier<WebServer> id, WebServerReachableState state, String errorStatus);
 
-	int updateState(Identifier<WebServer> id, WebServerReachableState state, String errorStatus);
+    Long getWebServerStartedCount(String groupName);
 
-	Long getWebServerStartedCount(String groupName);
+    Long getWebServerCount(String groupName);
 
-	Long getWebServerCount(String groupName);
+    JpaWebServer getWebServerAndItsGroups(Long id);
 
-	JpaWebServer getWebServerAndItsGroups(Long id);
+    Long getWebServerStoppedCount(String groupName);
 
-	Long getWebServerStoppedCount(String groupName);
+    int removeTemplate(String name);
 
-	int removeTemplate(String name);
+    @Deprecated
+    int removeTemplate(String webServerName, String templateName);
 
-	@Deprecated
-	int removeTemplate(String webServerName, String templateName);
+    List<WebServer> getWebServersByGroupName(String groupName);
 
-	List<WebServer> getWebServersByGroupName(String groupName);
+    String getResourceTemplateMetaData(String webServerName, String resourceTemplateName);
 
-	String getResourceTemplateMetaData(String webServerName, String resourceTemplateName);
-
-	/**
-	 * Gets JpaWebServer if webserver exists under a group.
-	 * @param groupName name of the group under which webserver should exists
-	 * @param webServerName name of the webserver to search
+    /**
+     * Gets JpaWebServer if webserver exists under a group.
+     *
+     * @param groupName     name of the group under which webserver should exists
+     * @param webServerName name of the webserver to search
      * @return JpaWebServer object if it exists, else returns null
      */
-	JpaWebServer findWebServer(String groupName, String webServerName);
+    JpaWebServer findWebServer(String groupName, String webServerName);
 
-	/**
-	 * Checks if the resource file is present for a webserver
-	 * @param groupName name of the group in which the webserver exists
-	 * @param webServerName name of the webserver we are searching under
-	 * @param fileName name of the resource file to be searched
+    /**
+     * Checks if the resource file is present for a webserver
+     *
+     * @param groupName     name of the group in which the webserver exists
+     * @param webServerName name of the webserver we are searching under
+     * @param fileName      name of the resource file to be searched
      * @return return true if the resource exists, else returns false
      */
-	boolean checkWebServerResourceFileName(String groupName, String webServerName, String fileName);
+    boolean checkWebServerResourceFileName(String groupName, String webServerName, String fileName);
 
     void updateResourceMetaData(String webServerName, String resourceName, String metaData);
 }

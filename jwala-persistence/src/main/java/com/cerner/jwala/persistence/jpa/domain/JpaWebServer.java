@@ -1,9 +1,8 @@
 package com.cerner.jwala.persistence.jpa.domain;
 
-import javax.persistence.*;
-
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +16,8 @@ import java.util.List;
                         "WHERE g.id IN (SELECT a.group FROM JpaApplication a " +
                         "WHERE a.group IN (:groups))"),
         @NamedQuery(name = JpaWebServer.QUERY_UPDATE_STATE_BY_ID, query = "UPDATE JpaWebServer w SET w.state = :state, w.lastUpdateDate = CURRENT_TIMESTAMP WHERE w.id = :id"),
-        @NamedQuery(name = JpaWebServer.QUERY_UPDATE_ERROR_STATUS_BY_ID, query = "UPDATE JpaWebServer w SET w.errorStatus = :errorStatus, w.lastUpdateDate = CURRENT_TIMESTAMP WHERE w.id = :id"),
-        @NamedQuery(name = JpaWebServer.QUERY_UPDATE_STATE_AND_ERR_STS_BY_ID, query = "UPDATE JpaWebServer w SET w.state = :state, w.errorStatus = :errorStatus, w.lastUpdateDate = CURRENT_TIMESTAMP WHERE w.id = :id"),
+        @NamedQuery(name = JpaWebServer.QUERY_UPDATE_ERROR_STATUS_BY_ID, query = "UPDATE JpaWebServer w SET w.lastUpdateDate = CURRENT_TIMESTAMP WHERE w.id = :id"),
+        @NamedQuery(name = JpaWebServer.QUERY_UPDATE_STATE_AND_ERR_STS_BY_ID, query = "UPDATE JpaWebServer w SET w.state = :state, w.lastUpdateDate = CURRENT_TIMESTAMP WHERE w.id = :id"),
         @NamedQuery(name = JpaWebServer.QUERY_GET_WS_COUNT_BY_STATE_AND_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaWebServer w WHERE w.state = :state AND w.groups.name = :groupName"),
         @NamedQuery(name = JpaWebServer.QUERY_GET_WS_COUNT_BY_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaWebServer w WHERE w.groups.name = :groupName"),
         @NamedQuery(name = JpaWebServer.QUERY_GET_WS_AND_ITS_GROUPS,
@@ -48,7 +47,6 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
 
     public static final String QUERY_PARAM_ID = "id";
     public static final String QUERY_PARAM_STATE = "state";
-    public static final String QUERY_PARAM_ERROR_STATUS = "errorStatus";
     public static final String QUERY_PARAM_GROUP_NAME = "groupName";
 
     @Id
@@ -66,20 +64,8 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
     @Column(nullable = false)
     private String statusPath;
 
-    @Column(nullable = false)
-    private String httpConfigFile;
-
-    @Column(nullable = false)
-    private String svrRoot;
-
-    @Column(nullable = false)
-    private String docRoot;
-
     @Enumerated(EnumType.STRING)
     private WebServerReachableState state;
-
-    @Column(name = "ERR_STS", length = 2147483647)
-    private String errorStatus = "";
 
     @ManyToMany(mappedBy = "webServers", fetch = FetchType.EAGER)
     private List<JpaGroup> groups = new ArrayList<>();
@@ -136,40 +122,12 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
         this.statusPath = statusPath;
     }
 
-    public String getHttpConfigFile() {
-        return httpConfigFile;
-    }
-
-    public void setHttpConfigFile(String httpConfigFile) {
-        this.httpConfigFile = httpConfigFile;
-    }
-
-    public String getSvrRoot() {
-        return svrRoot;
-    }
-
-    public void setSvrRoot(String svrRoot) {
-        this.svrRoot = svrRoot;
-    }
-
-    public String getDocRoot() {
-        return docRoot;
-    }
-
-    public void setDocRoot(String docRoot) {
-        this.docRoot = docRoot;
-    }
-
     public WebServerReachableState getState() {
         return state;
     }
 
     public void setState(WebServerReachableState state) {
         this.state = state;
-    }
-
-    public String getErrorStatus() {
-        return errorStatus;
     }
 
     @Override
@@ -208,9 +166,6 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
                 ", port=" + port +
                 ", httpsPort=" + httpsPort +
                 ", statusPath='" + statusPath + '\'' +
-                ", httpConfigFile='" + httpConfigFile + '\'' +
-                ", svrRoot='" + svrRoot + '\'' +
-                ", docRoot='" + docRoot + '\'' +
                 '}';
     }
 

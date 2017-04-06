@@ -93,11 +93,7 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                new Path("filesystempath"),
-                new Path("svrRoot"),
-                new Path("docRoot"),
                 WebServerReachableState.WS_REACHABLE,
-                "errorStatus",
                 myGroup);
         webServers.add(webServer);
     }
@@ -110,11 +106,7 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                new Path("filesystempath"),
-                new Path("svrRoot"),
-                new Path("docRoot"),
                 WebServerReachableState.WS_REACHABLE,
-                "errorStatus",
                 myGroup);
         return webServer;
     }
@@ -187,11 +179,7 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                new Path("filesystempath"),
-                new Path("svrRoot"),
-                new Path("docRoot"),
                 WebServerReachableState.WS_REACHABLE,
-                "errorStatus",
                 myGroup);
         WebServer webServer2 = new WebServer(id(1L, WebServer.class),
                 "localhost2",
@@ -199,11 +187,7 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                new Path("filesystempath"),
-                new Path("svrRoot"),
-                new Path("docRoot"),
                 WebServerReachableState.WS_REACHABLE,
-                "errorStatus",
                 myGroup);
         webservers.add(webServer);
         webservers.add(webServer2);

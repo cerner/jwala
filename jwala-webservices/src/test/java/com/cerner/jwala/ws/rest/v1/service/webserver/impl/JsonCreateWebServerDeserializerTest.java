@@ -4,8 +4,6 @@ import com.cerner.jwala.common.domain.model.id.IdentifierSetBuilder;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.ws.rest.v1.service.JsonDeserializationBehavior;
-import com.cerner.jwala.ws.rest.v1.service.webserver.impl.JsonCreateWebServer;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +24,6 @@ public class JsonCreateWebServerDeserializerTest {
     private static final String groupIdOne = "1";
     private static final String groupIdTwo = "2";
     private static final String statusPath = "/statusPath";
-    private static final String httpConfigFile = "d:/some-dir/httpd.conf";
-    private static final String SVR_ROOT = "./";
-    private static final String DOC_ROOT = "htdocs";
 
     private ObjectMapper mapper;
 
@@ -46,9 +41,6 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("portNumber", portNumber),
                                    keyTextValue("httpsPort", httpsPort),
                                    keyTextValue("statusPath", statusPath),
-                                   keyTextValue("httpConfigFile", httpConfigFile),
-                                   keyTextValue("svrRoot", SVR_ROOT),
-                                   keyTextValue("docRoot", DOC_ROOT),
                                    keyValue("groupIds",
                                             array(object(keyTextValue("groupId", groupIdOne)),
                                                   object(keyTextValue("groupId", groupIdTwo))))));
@@ -63,9 +55,6 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("portNumber", portNumber),
                                    keyTextValue("httpsPort", httpsPort),
                                    keyTextValue("statusPath", statusPath),
-                                   keyTextValue("httpConfigFile", httpConfigFile),
-                                   keyTextValue("svrRoot", SVR_ROOT),
-                                   keyTextValue("docRoot", DOC_ROOT),
                                    keyValue("groupIds", array(object(keyTextValue("groupId", groupIdOne))))));
         final JsonCreateWebServer create = readValue(json);
         verifyAssertions(create, webserverName, hostName, groupIdOne);
@@ -77,10 +66,7 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("hostName", hostName),
                                    keyTextValue("portNumber", portNumber),
                                    keyTextValue("httpsPort", httpsPort),
-                                   keyTextValue("statusPath", statusPath),
-                                   keyTextValue("httpConfigFile", httpConfigFile),
-                                   keyTextValue("svrRoot", SVR_ROOT),
-                                   keyTextValue("docRoot", DOC_ROOT)));
+                                   keyTextValue("statusPath", statusPath)));
         final JsonCreateWebServer create = readValue(json);
         verifyAssertions(create, webserverName, hostName);
     }
@@ -91,10 +77,7 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("hostName", hostName),
                                    keyTextValue("portNumber", "abcd"),
                                    keyTextValue("httpsPort", "312"),
-                                   keyTextValue("statusPath", statusPath),
-                                   keyTextValue("httpConfigFile", httpConfigFile),
-                                   keyTextValue("svrRoot", SVR_ROOT),
-                                   keyTextValue("docRoot", DOC_ROOT)));
+                                   keyTextValue("statusPath", statusPath)));
         final JsonCreateWebServer create = readValue(json);
         create.toCreateWebServerRequest();
     }
@@ -105,10 +88,7 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("hostName", hostName),
                                    keyTextValue("portNumber", "321"),
                                    keyTextValue("httpsPort", "sxxs"),
-                                   keyTextValue("statusPath", statusPath),
-                                   keyTextValue("httpConfigFile", httpConfigFile),
-                                   keyTextValue("svrRoot", SVR_ROOT),
-                                   keyTextValue("docRoot", DOC_ROOT)));
+                                   keyTextValue("statusPath", statusPath)));
         final JsonCreateWebServer create = readValue(json);
         create.toCreateWebServerRequest();
     }

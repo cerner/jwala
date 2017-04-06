@@ -11,8 +11,8 @@ CYGWIN*) cygwin=true;;
 Linux*) linux=true;;
 esac
 
-if [ "$1" = "" ]; then
-    echo $0 not invoked with service name
+if [ "$1" = "" -o "$2" == "" -o "$3" == "" ]; then
+    echo $0 not invoked with service name or the httpd.conf path or the apache httpd path
     exit $JWALA_EXIT_CODE_NO_OP;
 fi
 
@@ -26,7 +26,7 @@ if $cygwin; then
   fi
 
   #pwd -P is a clever unix trick to get the absolute path to this dir
-  `pwd -P`/.jwala/$1/install-service-http.bat
+  `pwd -P`/.jwala/$1/install-service-http.bat $2
 
   for (( c=1; c<=5; c++ ))
   do
@@ -45,7 +45,7 @@ fi
 if $linux; then
   # Need to pass $3 for apache home ex: /opt/ctp/apache-httpd-2.4.20, remote.paths.apache.httpd from vars.properties
   	pushd $(dirname $0)
-  sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}\\/httpd.conf/g" linux/httpd-ws-service.sh> $1
+  sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
   /bin/chmod 755 $1
   /usr/bin/sudo cp $1 /etc/init.d
   /usr/bin/sudo /sbin/chkconfig --add $1
