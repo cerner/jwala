@@ -22,10 +22,7 @@ import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResource
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.exception.GroupServiceException;
-import com.cerner.jwala.service.group.GroupControlService;
-import com.cerner.jwala.service.group.GroupJvmControlService;
-import com.cerner.jwala.service.group.GroupService;
-import com.cerner.jwala.service.group.GroupWebServerControlService;
+import com.cerner.jwala.service.group.*;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
@@ -60,8 +57,13 @@ import java.util.concurrent.*;
 public class GroupServiceRestImpl implements GroupServiceRest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupServiceRestImpl.class);
+
     @Autowired
     private JvmServiceRest jvmServiceRest;
+
+    @Autowired
+    private GroupStateNotificationService groupStateNotificationService;
+
     private final GroupService groupService;
     private final ResourceService resourceService;
     private final ExecutorService executorService;
@@ -992,4 +994,15 @@ public class GroupServiceRestImpl implements GroupServiceRest {
     public Response getAllHosts() {
         return ResponseBuilder.ok(groupService.getAllHosts());
     }
+
+    @Override
+    public Response getGroupState(final String groupName) {
+        return ResponseBuilder.ok(groupStateNotificationService.getGroupState(groupName));
+    }
+
+    @Override
+    public Response getGroupStates() {
+        return ResponseBuilder.ok(groupStateNotificationService.getGroupStates());
+    }
+
 }
