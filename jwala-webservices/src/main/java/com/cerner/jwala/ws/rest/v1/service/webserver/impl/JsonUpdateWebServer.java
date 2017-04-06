@@ -30,9 +30,6 @@ public class JsonUpdateWebServer {
     private final String httpsPort;
     private final String hostName;
     private final String statusPath;
-    private final String httpConfigFile;
-    private final String svrRoot;
-    private final String docRoot;
 
     public JsonUpdateWebServer(final String aWebServerId,
                                final String aWebServerName,
@@ -40,10 +37,7 @@ public class JsonUpdateWebServer {
                                final String aPortNumber,
                                final String aHttpsPort,
                                final Set<String> someGroupIds,
-                               final String aStatusPath,
-                               final String aHttpConfigFile,
-                               final String aSvrRoot,
-                               final String aDocRoot) {
+                               final String aStatusPath) {
 
         webServerName = aWebServerName;
         hostName = aHostName;
@@ -52,16 +46,12 @@ public class JsonUpdateWebServer {
         webServerId = aWebServerId;
         groupIds = someGroupIds;
         statusPath = aStatusPath;
-        httpConfigFile = aHttpConfigFile;
-        svrRoot = aSvrRoot;
-        docRoot = aDocRoot;
     }
 
     public UpdateWebServerRequest toUpdateWebServerRequest() {
         final Set<Identifier<Group>> groups = new IdentifierSetBuilder(groupIds).build();
         return new UpdateWebServerRequest(convertWebServerId(), groups, webServerName, hostName, convertPortNumber(),
-                convertHttpsPortNumber(), new Path(statusPath), new Path(httpConfigFile), new Path(svrRoot),
-                new Path(docRoot), WebServerReachableState.WS_UNREACHABLE, null);
+                convertHttpsPortNumber(), new Path(statusPath), WebServerReachableState.WS_UNREACHABLE);
     }
 
     protected Identifier<WebServer> convertWebServerId() {
@@ -101,9 +91,6 @@ public class JsonUpdateWebServer {
                 ", httpsPort='" + httpsPort + '\'' +
                 ", hostName='" + hostName + '\'' +
                 ", statusPath='" + statusPath + '\'' +
-                ", httpConfigFile='" + httpConfigFile + '\'' +
-                ", svrRoot='" + svrRoot + '\'' +
-                ", docRoot='" + docRoot + '\'' +
                 '}';
     }
 
@@ -125,10 +112,7 @@ public class JsonUpdateWebServer {
                                            node.get("portNumber").getValueAsText(),
                                            node.get("httpsPort").getValueAsText(),
                                            groupIds,
-                                           node.get("statusPath").getTextValue(),
-                                           "",  /* TODO: Remove when we're sure we don't need this */
-                                           "",  /* TODO: Remove when we're sure we don't need this */
-                                           ""); /* TODO: Remove when we're sure we don't need this */
+                                           node.get("statusPath").getTextValue());
         }
     }
 }

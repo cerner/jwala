@@ -16,8 +16,6 @@ public class CreateWebServerRequestTest {
     private static final String HOST = "host";
     private static final String NAME = "name";
     private static final Path STATUS_PATH = new Path("/statusPath");
-    private static final Path SVR_ROOT = new Path("./");
-    private static final Path DOC_ROOT = new Path("htdocs");
     private static final Integer portNumber = 10000;
     private static final Integer httpsPort = 20000;
 
@@ -27,10 +25,10 @@ public class CreateWebServerRequestTest {
 
     private final CreateWebServerRequest webServer =
             new CreateWebServerRequest(groupIds, NAME, HOST, portNumber, httpsPort, STATUS_PATH,
-                    SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                    WebServerReachableState.WS_UNREACHABLE);
     private final CreateWebServerRequest webServerTen =
             new CreateWebServerRequest(groupIdsFour, "otherName", HOST, portNumber, httpsPort,
-                    STATUS_PATH, SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                    STATUS_PATH, WebServerReachableState.WS_UNREACHABLE);
 
     @Test
     public void testGetGroups() {
@@ -71,7 +69,7 @@ public class CreateWebServerRequestTest {
     public void testInvalidPath() {
         final CreateWebServerRequest invalidPath =
                 new CreateWebServerRequest(groupIdsFour, "otherName", HOST, 0, 0, new Path("abc"),
-                        SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                        WebServerReachableState.WS_UNREACHABLE);
         invalidPath.validate();
     }
 
@@ -79,7 +77,7 @@ public class CreateWebServerRequestTest {
     public void testInvalidFileSystemPath() {
         final CreateWebServerRequest invalidPath =
                 new CreateWebServerRequest(groupIdsFour, "otherName", HOST, 0, 0, new Path("/abc"),
-                        SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                        WebServerReachableState.WS_UNREACHABLE);
         invalidPath.validate();
     }
 }

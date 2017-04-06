@@ -4,7 +4,6 @@ import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
-import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.NotFoundException;
@@ -106,11 +105,7 @@ public class WebServerPersistenceServiceImpl implements WebServerPersistenceServ
                     webServer.getPort(),
                     webServer.getHttpsPort(),
                     webServer.getStatusPath(),
-                    new Path(absoluteDeployPath),
-                    webServer.getSvrRoot(),
-                    webServer.getDocRoot(),
-                    webServer.getState(),
-                    webServer.getErrorStatus());
+                    webServer.getState());
             updateWebServer(updateWebServer, userId);
         }
 
@@ -131,11 +126,6 @@ public class WebServerPersistenceServiceImpl implements WebServerPersistenceServ
     @Override
     public int updateState(final Identifier<WebServer> id, final WebServerReachableState state) {
         return webServerCrudService.updateState(id, state);
-    }
-
-    @Override
-    public int updateErrorStatus(final Identifier<WebServer> id, final String errorStatus) {
-        return webServerCrudService.updateErrorStatus(id, errorStatus);
     }
 
     @Override

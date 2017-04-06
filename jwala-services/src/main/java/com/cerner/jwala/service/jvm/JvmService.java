@@ -113,4 +113,10 @@ public interface JvmService {
      */
     void deleteJvm(String name, String userName);
 
+    /**
+     * Return the JVMs belonging to a group
+     * @param name the name of the group of the JVMs
+     * @return a collection of JVMs belonging to the group
+     */
+    List<Jvm> getJvmsByGroupName(String name);
 }
