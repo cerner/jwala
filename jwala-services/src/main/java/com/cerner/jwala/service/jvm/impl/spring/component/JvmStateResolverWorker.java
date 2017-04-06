@@ -56,16 +56,9 @@ public class JvmStateResolverWorker {
 
         try {
             response = clientFactoryHelper.requestGet(jvm.getStatusUri());
-            LOGGER.debug(">>> Response = {} from JVM {}", response.getStatusCode(), jvm.getId().getId());
-
-            if (!JvmState.JVM_STARTED.equals(jvm.getState()) && !HttpStatus.OK.equals(response.getStatusCode())) {
-                LOGGER.warn("Request {} sent expecting a response code of {} but got {} instead",
-                        jvm.getStatusUri(), HttpStatus.OK.value(), response.getRawStatusCode());
-            }
-
+            LOGGER.debug("Response = {} from JVM {}", response.getStatusCode(), jvm.getJvmName());
             jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STARTED, StringUtils.EMPTY);
             currentState = new CurrentState<>(jvm.getId(), JvmState.JVM_STARTED, DateTime.now(), StateType.JVM);
-
         } catch (final IOException ioe) {
             LOGGER.warn("{} {} {}", jvm.getJvmName(), ioe.getMessage(), "Setting JVM state to STOPPED.", ioe);
             jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
