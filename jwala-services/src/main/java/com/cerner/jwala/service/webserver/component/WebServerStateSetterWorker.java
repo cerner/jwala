@@ -91,7 +91,6 @@ public class WebServerStateSetterWorker {
                 return;
             }
             webServersToPing.add(webServer.getId());
-            LOGGER.debug(">>> Added web server {} to a set of web servers that will be pinged", webServer.getName());
         }
 
         LOGGER.debug("Requesting {} for web server {}", webServer.getStatusUri(), webServer.getName());
@@ -118,7 +117,6 @@ public class WebServerStateSetterWorker {
                 response.close();
             }
             webServersToPing.remove(webServer.getId());
-            LOGGER.debug(">>> Removed web server {} to a set of web servers that will be pinged", webServer.getName());
         }
 
     }
@@ -130,7 +128,6 @@ public class WebServerStateSetterWorker {
      */
     private boolean webServerCanBePinged(final WebServer webServer) {
         if (WebServerReachableState.WS_NEW.equals(webServer.getState())) {
-            LOGGER.debug("Cannot ping web server {} with a status of \"NEW\"", webServer.getName());
             return false;
         }
 
