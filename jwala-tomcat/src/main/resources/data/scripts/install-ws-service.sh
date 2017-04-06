@@ -45,7 +45,7 @@ fi
 if $linux; then
   # Need to pass $3 for apache home ex: /opt/ctp/apache-httpd-2.4.20, remote.paths.apache.httpd from vars.properties
   	pushd $(dirname $0)
-  sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}\\/httpd.conf/g" linux/httpd-ws-service.sh> $1
+  sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
   /bin/chmod 755 $1
   /usr/bin/sudo cp $1 /etc/init.d
   /usr/bin/sudo /sbin/chkconfig --add $1
