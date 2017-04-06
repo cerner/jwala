@@ -28,10 +28,19 @@ var WebServerConfig = React.createClass({
             showDeleteConfirmDialogContinue: false,
             selectedWebServerForEditing: null,
             webServerTableData: [],
-            selectedWebServer: null
+            selectedWebServer: null,
+            groupData: null,
+            err: null
         }
     },
     render: function() {
+
+        if (!this.state.groupData && !this.state.err) {
+            return <div>Loading...</div>;
+        } if (this.state.err) {
+            return <div className="WebServerConfig msg">{this.state.err.message}</div>;
+        }
+
         var btnDivClassName = this.props.className + "-btn-div";
         return  <div className={"dataTables_wrapper " + this.props.className}>
                     <table className="webserver-config-table-type-container">
@@ -137,14 +146,23 @@ var WebServerConfig = React.createClass({
         }
     },
     refreshData: function(states, doneCallback) {
-        var self = this;
-        this.props.service.getWebServers(function(response){
-                                             states["webServerTableData"] = response.applicationResponseContent;
-                                             if (doneCallback !== undefined) {
-                                                 doneCallback();
-                                             }
-                                             self.setState(states);
-                                        });
+        let self = this;
+        let groupData;
+        groupService.getGroups().then(function(response){
+            groupData = response.applicationResponseContent;
+            if (groupData.length > 0) {
+                return ServiceFactory.getWebServerService().getWebServers();
+            }
+            throw new Error("There are no groups defined in Jwala. Please define a group to be able to add web servers.");
+        }).then(function(response){
+            if (doneCallback) {
+                doneCallback();
+            }
+            self.setState({"groupData": groupData, "webServerTableData": response.applicationResponseContent});
+        }).caught(function(response){
+            console.log(response);
+            self.setState({err: response});
+        });
     },
     addBtnCallback: function() {
         this.setState({showModalFormAddDialog: true})
@@ -443,7 +461,6 @@ var WebServerDataTable = React.createClass({
         return <JwalaDataTable ref="dataTableWrapper"
                                tableId="webserver-config-datatable"
                                tableDef={tableDef}
-                               colHeaders={["JVM Name", "Host Name"]}
                                data={this.props.data}
                                selectItemCallback={this.props.selectItemCallback}
                                editCallback={this.props.editCallback}
@@ -457,5 +474,8 @@ var WebServerDataTable = React.createClass({
                 $(this.getDOMNode()).click(oData, self.props.editCallback);
             });
         };
+    },
+    componentDidMount: function() {
+        this.forceUpdate();
     }
 });

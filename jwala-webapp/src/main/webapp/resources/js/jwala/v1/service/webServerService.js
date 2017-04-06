@@ -53,7 +53,11 @@ var webServerService = {
 		return serviceFoundation.get("v1.0/webservers/" + id, "json", responseCallback);
 	},
 	getWebServers : function(responseCallback) {
-		return serviceFoundation.get("v1.0/webservers?all", "json", responseCallback);
+	    let restCall = "v1.0/webservers?all";
+	    if (responseCallback) {
+		    return serviceFoundation.get(restCall, "json", responseCallback);
+		}
+		return serviceFoundation.promisedGet(restCall, "json");
 	},
 
     /**

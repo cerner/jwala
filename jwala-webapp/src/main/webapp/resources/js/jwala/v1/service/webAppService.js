@@ -52,7 +52,11 @@ var webAppService = {
         return serviceFoundation.promisedGet("v1.0/applications/application;name=" + name, "json");
     },
 	getWebApps : function(responseCallback) {
-		return serviceFoundation.get("v1.0/applications?all", "json", responseCallback);
+	    let restCall = "v1.0/applications?all";
+        if (responseCallback) {
+            return serviceFoundation.get(restCall, "json", responseCallback);
+        }
+        return serviceFoundation.promisedGet(restCall, "json");
 	},
 	getWebAppsByGroup : function(groupId, responseCallback, loadingVisible) {
         return serviceFoundation.get("v1.0/applications?group.id=" + groupId, "json", responseCallback, loadingVisible);
