@@ -242,6 +242,11 @@ public class JvmServiceImpl implements JvmService {
     }
 
     @Override
+    public List<Jvm> getJvmsByGroupName(String name) {
+        return jvmPersistenceService.getJvmsByGroupName(name);
+    }
+
+    @Override
     @Transactional
     public Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword) {
 
