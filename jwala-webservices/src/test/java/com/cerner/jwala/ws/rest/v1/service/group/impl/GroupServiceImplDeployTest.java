@@ -26,10 +26,7 @@ import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlServ
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionLockManagerImpl;
-import com.cerner.jwala.service.group.GroupControlService;
-import com.cerner.jwala.service.group.GroupJvmControlService;
-import com.cerner.jwala.service.group.GroupService;
-import com.cerner.jwala.service.group.GroupWebServerControlService;
+import com.cerner.jwala.service.group.*;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -481,6 +478,7 @@ public class GroupServiceImplDeployTest {
         static final HistoryFacadeService mockHistoryService = mock(HistoryFacadeService.class);
         static final BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
         private static final BinaryDistributionControlService binaryDistributionControlService = mock(BinaryDistributionControlService.class);
+        private static final GroupStateNotificationService mockGroupStateNotificationService = mock(GroupStateNotificationService.class);
 
         @Bean
         public BinaryDistributionControlService getBinaryDistributionControlService(){
@@ -539,6 +537,11 @@ public class GroupServiceImplDeployTest {
         @Bean
         public static JvmService getJvmService() {
             return JVM_SERVICE;
+        }
+
+        @Bean
+        public static GroupStateNotificationService getMockGroupStateNotificationService() {
+            return mockGroupStateNotificationService;
         }
     }
 }
