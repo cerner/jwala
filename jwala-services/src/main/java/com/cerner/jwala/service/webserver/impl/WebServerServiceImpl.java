@@ -96,11 +96,7 @@ public class WebServerServiceImpl implements WebServerService {
                 createWebServerRequest.getPort(),
                 createWebServerRequest.getHttpsPort(),
                 createWebServerRequest.getStatusPath(),
-                null,
-                createWebServerRequest.getSvrRoot(),
-                createWebServerRequest.getDocRoot(),
-                createWebServerRequest.getState(),
-                createWebServerRequest.getErrorStatus());
+                createWebServerRequest.getState());
 
         final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
         inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
@@ -155,11 +151,7 @@ public class WebServerServiceImpl implements WebServerService {
                 anUpdateWebServerCommand.getNewPort(),
                 anUpdateWebServerCommand.getNewHttpsPort(),
                 anUpdateWebServerCommand.getNewStatusPath(),
-                webServerPersistenceService.getWebServer(id).getHttpConfigFile(),
-                anUpdateWebServerCommand.getNewSvrRoot(),
-                anUpdateWebServerCommand.getNewDocRoot(),
-                anUpdateWebServerCommand.getState(),
-                anUpdateWebServerCommand.getErrorStatus());
+                anUpdateWebServerCommand.getState());
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
     }
@@ -210,12 +202,6 @@ public class WebServerServiceImpl implements WebServerService {
     }
 
     @Override
-    @Transactional
-    public void updateErrorStatus(final Identifier<WebServer> id, final String errorStatus) {
-        webServerPersistenceService.updateErrorStatus(id, errorStatus);
-    }
-
-    @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateState(final Identifier<WebServer> id, final WebServerReachableState state, final String errorStatus) {
         webServerPersistenceService.updateState(id, state, errorStatus);
@@ -229,7 +215,7 @@ public class WebServerServiceImpl implements WebServerService {
             return resourceService.generateResourceFile(INSTALL_SERVICE_SCRIPT_NAME, FileUtils.readFileToString(new File(templatePath + INSTALL_SERVICE_WSBAT_TEMPLATE_TPL_PATH)),
                     resourceService.generateResourceGroup(), webServer, ResourceGeneratorType.TEMPLATE);
         } catch (final IOException ioe) {
-            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME+ "!", ioe);
+            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME + "!", ioe);
         }
     }
 

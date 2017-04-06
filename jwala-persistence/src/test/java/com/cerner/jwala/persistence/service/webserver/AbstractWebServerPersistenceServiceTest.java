@@ -48,11 +48,7 @@ public abstract class AbstractWebServerPersistenceServiceTest {
                 80,
                 443,
                 new Path("./apache_pb.png"),
-                null,
-                new Path("./"),
-                new Path("htdocs"),
-                WebServerReachableState.WS_NEW,
-                "");
+                WebServerReachableState.WS_NEW);
         WebServer result = webServerPersistenceService.createWebServer(webServer, "test-user");
 
         assertNotNull(result);
@@ -74,11 +70,7 @@ public abstract class AbstractWebServerPersistenceServiceTest {
                 oldWebServer.getPort(),
                 oldWebServer.getHttpsPort(),
                 oldWebServer.getStatusPath(),
-                new Path("./httpd/conf/path"),
-                oldWebServer.getSvrRoot(),
-                oldWebServer.getDocRoot(),
-                oldWebServer.getState(),
-                oldWebServer.getErrorStatus());
+                oldWebServer.getState());
         WebServer result = webServerPersistenceService.updateWebServer(updatedWebServer, "test-user");
         assertEquals(updatedWebServer, result);
         assertEquals(1, webServerPersistenceService.getWebServers().size());
@@ -161,14 +153,6 @@ public abstract class AbstractWebServerPersistenceServiceTest {
         WebServer webServer = webServerPersistenceService.findWebServerByName("test-ws");
         final String testErrorStatus = "TEST ERROR";
         int result = webServerPersistenceService.updateState(webServer.getId(), WebServerReachableState.WS_UNREACHABLE, testErrorStatus);
-        assertEquals(1, result);
-    }
-
-    @Test
-    public void testUpdateErrorStatus() {
-        testCreateWebServer();
-        WebServer webServer = webServerPersistenceService.findWebServerByName("test-ws");
-        int result = webServerPersistenceService.updateErrorStatus(webServer.getId(), "NEW ERROR STATUS");
         assertEquals(1, result);
     }
 
