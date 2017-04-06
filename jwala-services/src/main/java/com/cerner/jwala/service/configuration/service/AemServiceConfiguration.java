@@ -198,8 +198,7 @@ public class AemServiceConfiguration {
     public WebServerService getWebServerService(final ResourceService resourceService,
                                                 @Qualifier("webServerInMemoryStateManagerService")
                                                 final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
-                                                @Value("${paths.resource-templates:../data/templates}") final String templatePath,
-                                                final JvmPersistenceService jvmPersistenceService) {
+                                                @Value("${paths.resource-templates:../data/templates}") final String templatePath) {
         return new WebServerServiceImpl(
                 aemPersistenceServiceConfiguration.getWebServerPersistenceService(),
                 resourceService,
