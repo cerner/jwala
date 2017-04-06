@@ -118,6 +118,10 @@ public class WebServer implements Serializable {
     }
 
     public URI getStatusUri() {
+        if (getStatusPath().startsWithHttp()) {
+            return getStatusPath().toUri();
+        }
+
         final UriBuilder builder = new UriBuilder().setHost(getHost())
                 .setPort(getPort())
                 .setHttpsPort(getHttpsPort())
