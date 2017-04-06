@@ -12,7 +12,7 @@ public class LogoutTest extends JwalaTest {
 
     @Test
     public void testLogout() {
-        driver.findElement(By.xpath("//a[text()='Logout']")).click();
+        waitClick(By.xpath("//a[text()='Logout']"));
         new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@value='Log In']")));
     }
 

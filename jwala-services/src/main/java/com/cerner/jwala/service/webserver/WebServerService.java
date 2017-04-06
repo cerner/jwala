@@ -25,7 +25,7 @@ public interface WebServerService {
 
     WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand, final User anUpdatingUser);
 
-    void removeWebServer(final Identifier<WebServer> aWebServerId);
+    void deleteWebServer(Identifier<WebServer> id, boolean hardDelete, User user);
 
     String generateInstallServiceScript(WebServer webServer);
 

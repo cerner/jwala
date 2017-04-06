@@ -25,7 +25,7 @@ public interface JvmService {
 
     Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, boolean updateJvmPassword);
 
-    void removeJvm(final Identifier<Jvm> aJvmId, User user);
+    void deleteJvm(Identifier<Jvm> id, boolean hardDelete, User user);
 
     void deleteJvmService(ControlJvmRequest controlJvmRequest, Jvm jvm, User user);
 

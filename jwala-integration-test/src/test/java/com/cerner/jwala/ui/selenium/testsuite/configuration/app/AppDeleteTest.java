@@ -17,9 +17,9 @@ public class AppDeleteTest extends JwalaTest {
     public void testDeleteApp() throws InterruptedException {
         clickTab("Configuration");
         clickTab("Web Apps");
-        driver.findElement(By.xpath("//tr[td[button[text()='" + APP_NAME + "']]]")).click();
-        driver.findElement(By.xpath("//button[span[text()='Delete']]")).click();
-        driver.findElement(By.xpath("//button[span[text()='Yes']]")).click();
+        waitClick(By.xpath("//tr[td[button[text()='" + APP_NAME + "']]]"));
+        waitClick(By.xpath("//button[span[text()='Delete']]"));
+        waitClick(By.xpath("//button[span[text()='Yes']]"));
         new WebDriverWait(driver, 5)
                 .until(ExpectedConditions.numberOfElementsToBe(By.xpath("//button[text()='" + APP_NAME + "']"), 0));
     }

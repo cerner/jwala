@@ -43,7 +43,7 @@ public class JpaGroupBuilder {
                     group.getName(),
                     getJvms(),
                     getWebServers(),
-                    getHistory(),
+                    null,
                     getApplications());
         }
         return new Group(
@@ -51,7 +51,7 @@ public class JpaGroupBuilder {
                 group.getName(),
                 getJvms(),
                 null,
-                getHistory(),
+                null,
                 getApplications());
     }
 

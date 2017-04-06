@@ -12,7 +12,7 @@ public class JvmNameRuleTest {
 
     @Test
     public void testValidNames() {
-        final String[] validNames = {"abc", "def", "a really long name"};
+        final String[] validNames = {"abc", "def", "_-", "123j ."};
 
         for (final String name : validNames) {
             final JvmNameRule rule = new JvmNameRule(name);
@@ -23,7 +23,7 @@ public class JvmNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null};
+        final String[] invalidNames = {"", "    ", null,"***$JVM","JVM123$","\\jvm","/jvm","jvm  ","  jvm"};
 
         for (final String name : invalidNames) {
             final JvmNameRule rule = new JvmNameRule(name);

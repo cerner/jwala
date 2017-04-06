@@ -231,14 +231,6 @@ public class WebServerServiceImplTest {
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
     }
 
-    @Test
-    public void testDeleteWebServers() {
-        when(Config.mockWebServerPersistenceService.getWebServers()).thenReturn(mockWebServersAll);
-        wsService.removeWebServer(Config.mockWebServer.getId());
-        verify(Config.mockWebServerPersistenceService, atLeastOnce()).removeWebServer(Config.mockWebServer.getId());
-        assertNull(Config.mockInMemService.get(Config.mockWebServer.getId()));
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void testUpdateWebServers() {

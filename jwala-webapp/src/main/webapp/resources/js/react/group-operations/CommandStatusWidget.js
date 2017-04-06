@@ -7,7 +7,7 @@ var CommandStatusWidget = React.createClass({
     },
     render: function() {
         var self = this;
-
+        this.props.numofRec=0;
         var openCloseBtnClassName = "ui-icon-triangle-1-e";
         var content = null;
         if (this.state.isOpen) {
@@ -38,6 +38,7 @@ var CommandStatusWidget = React.createClass({
     },
     onCloseFullPreviewWindowHandler: function() {
         this.refs.processingIcon.getDOMNode().style.visibility = "hidden";
+        this.props.numofRec=0;
         this.setState({fullPreviewMode: false});
     },
     componentDidMount: function() {
@@ -57,7 +58,7 @@ var CommandStatusWidget = React.createClass({
     },
     readHistory: function(readSuccessfulCallback) {
         var self = this;
-        historyService.read(this.props.groupName, this.props.serverName)
+        historyService.read(this.props.groupName, this.props.serverName, this.props.numofRec)
             .then(function(data) {
                       var statusArray = [];
                       for (var i = data.length - 1; i >= 0; i--) {
@@ -82,6 +83,8 @@ var CommandStatusWidget = React.createClass({
         this.setState({isOpen: !this.state.isOpen});
     },
     clickOpenInNewWindowHandler: function() {
+        //TODO: parameterise and paginate
+        this.props.numofRec=jwalaVars["historyReadMaxRecCount"];
         var self = this;
         this.readHistory(function(){
             self.refs.processingIcon.getDOMNode().style.visibility = "visible";
@@ -112,14 +115,14 @@ var CommandStatusWidget = React.createClass({
 
         if (errMsg[1] && errMsg[1].trim() !== "") {
             this.state.statusRows.push(<tr className={fontClassName}>
-                                           <td>{moment(status.asOf).format("MM/DD/YYYY hh:mm:ss")}</td>
+                                           <td>{moment(status.asOf).format("MM/DD/YYYY HH:mm:ss")}</td>
                                            <td className="command-status-td">{status.from}</td>
                                            <td>{status.userId}</td>
                                            <td className="command-status-td" style={{textDecoration: "underline", cursor: "pointer"}} onClick={this.showDetails.bind(this, errMsg[1])}>{errMsg[0]}</td>
                                        </tr>);
         } else {
             this.state.statusRows.push(<tr className={fontClassName}>
-                                           <td>{moment(status.asOf).format("MM/DD/YYYY hh:mm:ss")}</td>
+                                           <td>{moment(status.asOf).format("MM/DD/YYYY HH:mm:ss")}</td>
                                            <td className="command-status-td">{status.from}</td>
                                            <td>{status.userId}</td>
                                            <td>{errMsg[0]}</td>
@@ -145,7 +148,7 @@ var JQueryDataTableComponent = React.createClass({
 
                 // TODO: Refactor - specific code should not be defined here
                 if (colKey === "asOf") {
-                    colArray.push(<td>{moment(this.props.data[rowKey][colKey]).format("MM/DD/YYYY hh:mm:ss")}</td>);
+                    colArray.push(<td>{moment(this.props.data[rowKey][colKey]).format("MM/DD/YYYY HH:mm:ss")}</td>);
                 } else {
                     colArray.push(<td>{this.props.data[rowKey][colKey]}</td>);
                 }
@@ -160,7 +163,7 @@ var JQueryDataTableComponent = React.createClass({
         var colDefs = [{sWidth: "350px", aTargets: [0]}, {sWidth: "150px", aTargets: [2]}];
 
         // TODO: aaSorting should not be hard coded
-        $(this.refs.dataTable.getDOMNode()).dataTable({bJQueryUI: true, iDisplayLength: -1, aLengthMenu: [[25, 50, 100, 200, -1],
+        $(this.refs.dataTable.getDOMNode()).dataTable({bJQueryUI: true, iDisplayLength: 100, aLengthMenu: [[25, 50, 100, 200, -1],
                                                        [25, 50, 100, 200, "All"]], aaSorting: [[2, "asc"]], aoColumnDefs: colDefs});
     }
 });
