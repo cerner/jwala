@@ -907,7 +907,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
         when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
         jvmService.deleteJvm(id, true, user);
-        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmControlService, never()).controlJvm(any(ControlJvmRequest.class), eq(user));
         verify(Config.mockJvmPersistenceService).removeJvm(id);
     }
 

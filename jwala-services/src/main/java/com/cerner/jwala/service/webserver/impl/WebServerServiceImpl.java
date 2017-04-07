@@ -180,14 +180,15 @@ public class WebServerServiceImpl implements WebServerService {
                 throw new WebServerServiceException(msg);
             }
 
-            // delete the service
-            final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
-                    WebServerControlOperation.DELETE_SERVICE), user);
-            if (!commandOutput.getReturnCode().wasSuccessful()) {
-                final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
-                        webServer.getName(), commandOutput);
-                LOGGER.error(msg);
-                throw new WebServerServiceException(msg);
+            if (!WebServerReachableState.WS_NEW.equals(webServer.getState())) {
+                final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
+                        WebServerControlOperation.DELETE_SERVICE), user);
+                if (!commandOutput.getReturnCode().wasSuccessful()) {
+                    final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
+                            webServer.getName(), commandOutput);
+                    LOGGER.error(msg);
+                    throw new WebServerServiceException(msg);
+                }
             }
         }
 
@@ -198,7 +199,8 @@ public class WebServerServiceImpl implements WebServerService {
     @Override
     public boolean isStarted(WebServer webServer) {
         final WebServerReachableState state = webServer.getState();
-        return !WebServerReachableState.WS_UNREACHABLE.equals(state) && !WebServerReachableState.WS_NEW.equals(state);
+        return !WebServerReachableState.WS_UNREACHABLE.equals(state) && !WebServerReachableState.FORCED_STOPPED.equals(state)
+                && !WebServerReachableState.WS_NEW.equals(state);
     }
 
     @Override
