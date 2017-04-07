@@ -1,21 +1,24 @@
-package com.cerner.jwala.common.rule.webserver;
-
-import org.junit.Test;
+package com.cerner.jwala.common;
 
 import com.cerner.jwala.common.exception.BadRequestException;
-import com.cerner.jwala.common.rule.webserver.WebServerNameRule;
+import com.cerner.jwala.common.rule.SpecialCharactersRule;
+import com.cerner.jwala.common.rule.group.GroupNameRule;
+import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class WebServerNameRuleTest {
+/**
+ * Created by SB053052 on 4/7/2017.
+ */
+public class SpecialCharactersRuleTest {
 
     @Test
     public void testValidNames() {
-        final String[] validNames = {"abc", "def", "a really long name","ws123","ws_123."};
+        final String[] validNames = {"abc", "def", "123", "group123", "group_123."};
 
         for (final String name : validNames) {
-            final WebServerNameRule rule = new WebServerNameRule(name);
+            final SpecialCharactersRule rule = new SpecialCharactersRule(name);
             assertTrue(rule.isValid());
             rule.validate();
         }
@@ -23,10 +26,10 @@ public class WebServerNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null};
+        final String[] invalidNames = {"$group*", "\\group", "/group", "  myGroup", "myGroup ", " myGroup   ", "ws:"};
 
         for (final String name : invalidNames) {
-            final WebServerNameRule rule = new WebServerNameRule(name);
+            final SpecialCharactersRule rule = new SpecialCharactersRule(name);
             assertFalse(rule.isValid());
             try {
                 rule.validate();
@@ -35,4 +38,5 @@ public class WebServerNameRuleTest {
             }
         }
     }
+
 }
