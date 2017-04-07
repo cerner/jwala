@@ -91,7 +91,6 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
         remoteCreateDirectory(hostname, jwalaRemoteHome);
         remoteSecureCopyFile(hostname, zipFileName, jwalaRemoteHome);
         remoteUnzipBinary(hostname, jwalaRemoteHome + "/" + getFileName(zipFileName), jwalaRemoteHome + "/", exclude);
-        //remoteDeleteBinary(hostname, jwalaRemoteHome + "/" + getFileName(zipFileName));
     }
 
     private String getFileName(String fullPath){
