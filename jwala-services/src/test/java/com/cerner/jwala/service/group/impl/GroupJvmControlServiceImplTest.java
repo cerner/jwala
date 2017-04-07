@@ -53,7 +53,7 @@ public class GroupJvmControlServiceImplTest {
     }
 
     @Test
-    public void testcheckSameState(){
+    public void testCheckSameState(){
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STARTED));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZING));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZED));
