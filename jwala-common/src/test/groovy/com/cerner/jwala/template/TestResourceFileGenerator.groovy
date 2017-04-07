@@ -24,7 +24,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
     Jvm jvm
     Application app
     ResourceGroup resourceGroup;
-    Group parentGroup;
+    Group group;
 
     void setUp() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources");
@@ -36,24 +36,24 @@ class TestResourceFileGenerator extends GroovyTestCase {
         groupHashSet = new LinkedHashSet<Group>();
 
         createTestJvmsAndWebServers(groupHashSet)
-        parentGroup = new Group(new Identifier<Group>(1111L), "groupName", jvms, webServers, new HashSet<History>(), apps)
-        groupHashSet.add(parentGroup);
-        app = new Application(new Identifier<Application>(111L), "hello-world-1", "d:/jwala/app/archive", "/hello-world-1", parentGroup, true, true, false, "testWar.war")
+        group = new Group(new Identifier<Group>(1111L), "groupName", jvms, webServers, new HashSet<History>(), apps)
+        groupHashSet.add(group);
+        app = new Application(new Identifier<Application>(111L), "hello-world-1", "d:/jwala/app/archive", "/hello-world-1", group, true, true, false, "testWar.war")
         app.setParentJvm(jvm);
 
         apps.add(app)
-        apps.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", parentGroup, true, true, false, "testWar.war"))
-        apps.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", parentGroup, true, true, false, "testWar.war"))
+        apps.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", group, true, true, false, "testWar.war"))
+        apps.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", group, true, true, false, "testWar.war"))
 
         // do it again to associate the group with the jvms and web servers
-        createTestJvmsAndWebServers(groupHashSet, parentGroup)
+        createTestJvmsAndWebServers(groupHashSet, group)
     }
 
     private void createTestJvmsAndWebServers(HashSet<Group> groupHashSet) {
         webServer = new WebServer(new Identifier<WebServer>(1L), groupHashSet, "Apache2.4", "localhost", 80, 443,
                 new Path("/statusPath"), new Path("D:/jwala/app/data/httpd//httpd.conf"),
                 new Path("./"), new Path("htdocs"), WebServerReachableState.WS_UNREACHABLE, "");
-        jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, parentGroup, 11010, 11011, 11012, -1, 11013,
+        jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, 11010, 11011, 11012, -1, 11013,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null)
 
         webServers = new HashSet<>()
@@ -61,7 +61,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
 
         jvms = new HashSet<>()
         jvms.add(jvm)
-        jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", groupHashSet, parentGroup, 11020, 11021, 11022, -1, 11023,
+        jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", groupHashSet, 11020, 11021, 11022, -1, 11023,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null))
 
     }
@@ -69,8 +69,8 @@ class TestResourceFileGenerator extends GroovyTestCase {
     private void createTestJvmsAndWebServers(HashSet<Group> groupHashSet, Group group) {
         webServer = new WebServer(new Identifier<WebServer>(1L), "localhost", "Apache2.4", 80, 443,
                 new Path("/statusPath"), new Path("D:/jwala/app/data/httpd//httpd.conf"),
-                new Path("./"), new Path("htdocs"), WebServerReachableState.WS_UNREACHABLE, "", group);
-        jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, group, 11010, 11011, 11012, -1, 11013,
+                new Path("./"), new Path("htdocs"), WebServerReachableState.WS_UNREACHABLE, "");
+        jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, 11010, 11011, 11012, -1, 11013,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null)
 
         webServers = new HashSet<>()
@@ -78,7 +78,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
 
         jvms = new HashSet<>()
         jvms.add(jvm)
-        jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", groupHashSet, parentGroup, 11020, 11021, 11022, -1, 11023,
+        jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", groupHashSet, 11020, 11021, 11022, -1, 11023,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null))
 
     }

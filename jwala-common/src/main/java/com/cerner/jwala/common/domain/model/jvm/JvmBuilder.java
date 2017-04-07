@@ -125,7 +125,7 @@ public class JvmBuilder {
     }
 
     public Jvm build() {
-        return new Jvm(id, name, hostName, groups, null, httpPort, httpsPort, redirectPort, shutdownPort, ajpPort, statusPath,
+        return new Jvm(id, name, hostName, groups, httpPort, httpsPort, redirectPort, shutdownPort, ajpPort, statusPath,
                        systemProperties, state, errorStatus, lastUpdatedDate, userName, encryptedPassword, jdkMedia,
                        tomcatMedia, javaHome, webApps);
     }

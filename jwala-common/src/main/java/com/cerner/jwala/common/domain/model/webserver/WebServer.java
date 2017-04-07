@@ -25,7 +25,6 @@ public class WebServer implements Serializable {
     private final Path docRoot;
     private final WebServerReachableState state;
     private final String errorStatus;
-    private final Group parentGroup;
 
     /**
      * Constructor for a bare minimum web server with group details.
@@ -51,7 +50,6 @@ public class WebServer implements Serializable {
         docRoot = null;
         state = WebServerReachableState.WS_UNEXPECTED_STATE;
         errorStatus = null;
-        parentGroup = null;
     }
 
     public WebServer(final Identifier<WebServer> theId,
@@ -80,7 +78,6 @@ public class WebServer implements Serializable {
         docRoot = theDocRoot;
         this.state = state;
         this.errorStatus = errorStatus;
-        this.parentGroup = null;
     }
 
     public WebServer(final Identifier<WebServer> id,
@@ -93,8 +90,7 @@ public class WebServer implements Serializable {
                      final Path svrRoot,
                      final Path docRoot,
                      final WebServerReachableState state,
-                     final String errorStatus,
-                     final Group parentGroup) {
+                     final String errorStatus) {
         this.id = id;
         this.host = host;
         this.name = name;
@@ -106,7 +102,6 @@ public class WebServer implements Serializable {
         this.docRoot = docRoot;
         this.state = state;
         this.errorStatus = errorStatus;
-        this.parentGroup = parentGroup;
     }
 
     public Identifier<WebServer> getId() {
@@ -179,10 +174,6 @@ public class WebServer implements Serializable {
         return errorStatus;
     }
 
-    public Group getParentGroup() {
-        return parentGroup;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -218,7 +209,6 @@ public class WebServer implements Serializable {
                 ", docRoot=" + docRoot +
                 ", state=" + state +
                 ", errorStatus='" + errorStatus + '\'' +
-                ", parentGroup=" + parentGroup +
                 '}';
     }
 }
