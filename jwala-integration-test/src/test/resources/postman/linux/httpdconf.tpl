@@ -34,6 +34,9 @@
 # same ServerRoot for multiple httpd daemons, you will need to change at
 # least PidFile.
 #
+# Allow multiple httpd instances to run on the same host
+PidFile /opt/ctp/apache-httpd-2.4.20/logs/httpd-${webServer.name}.pid
+#
 #ServerRoot ./
 ServerRoot /opt/ctp/apache-httpd-2.4.20/
 
