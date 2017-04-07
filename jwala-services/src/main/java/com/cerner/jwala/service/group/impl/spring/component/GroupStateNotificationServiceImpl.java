@@ -104,6 +104,14 @@ public class GroupStateNotificationServiceImpl implements GroupStateNotification
             }
 
             groupStateMap.put(group.getName(), groupState);
+
+            try {
+                Thread.sleep(100);
+            } catch (final InterruptedException e) {
+                LOGGER.error("Sleep interrupted while fetching state information for group {}", group.getName(), e);              
+            }
+
+            groupStateMap.put(group.getName(), groupState);
         }
     }
 
