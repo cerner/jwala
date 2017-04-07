@@ -31,7 +31,9 @@ public class WebServerNameRule extends ValidNameRule {
      */
     @Override
     public boolean isValid() {
-        return name != null && !"".equals(name.trim()) && !name.matches(".*[\\s]$")&& !name.matches("^[\\s].*") && name.matches("[A-Za-z0-9._\\s-]+");
+        return name != null && !"".equals(name.trim()) &&
+                !name.matches(".*[\\s]$") && !name.matches("^[\\s].*") &&
+                name.matches("[A-Za-z0-9._\\s-]+");
     }
 
 }
