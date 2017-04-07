@@ -36,8 +36,6 @@ public class JvmCreateTest extends JwalaTest {
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
         driver.switchTo().activeElement().sendKeys(JVM_NAME + "-host");
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
-        driver.switchTo().activeElement().sendKeys("/manager");
-        driver.switchTo().activeElement().sendKeys(Keys.TAB);
         driver.switchTo().activeElement().sendKeys("321");
         driver.switchTo().activeElement().sendKeys(Keys.TAB); // populates the other port text boxes
         Thread.sleep(500); // wait a little for the app to populate the other ports
@@ -45,9 +43,6 @@ public class JvmCreateTest extends JwalaTest {
         // check https port
         assertEquals("322", driver.switchTo().activeElement().getAttribute("value"));
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
-
-        final String statusPath = driver.findElement(By.xpath("//div[@class='jvmStatusUrl']")).getText();
-        assertEquals("https://" + JVM_NAME + "-host:322/manager", statusPath);
 
         // redirect port
         assertEquals("323", driver.switchTo().activeElement().getAttribute("value"));
@@ -59,6 +54,9 @@ public class JvmCreateTest extends JwalaTest {
 
         // ajp port
         assertEquals("325", driver.switchTo().activeElement().getAttribute("value"));
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
+
+        assertEquals("https://" + JVM_NAME + "-host:322/tomcat-power.gif", driver.switchTo().activeElement().getAttribute("value"));
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
 
         driver.switchTo().activeElement().sendKeys("zUser");
