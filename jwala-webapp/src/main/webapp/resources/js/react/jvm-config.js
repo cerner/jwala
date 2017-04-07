@@ -233,7 +233,7 @@ var JvmConfigForm = React.createClass({
         var id = "";
         var name = "";
         var host = "";
-        var statusPath = "/manager"; // TODO: Define in a properties file
+        var statusPath = ""
         var groupIds = [];
         var jdkVersions = [];
         var tomcatVersions = [];
@@ -321,22 +321,6 @@ var JvmConfigForm = React.createClass({
                                            required maxLength="255" className="width-max"/></td>
                             </tr>
                             <tr>
-                                <td>*Status Path</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label htmlFor="statusPath" className="error"></label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="jvmStatusUrl">
-                                        {window.location.protocol + "//" + this.state.host + ":" + (window.location.protocol === "https:" ? this.state.httpsPort : this.state.httpPort) + this.state.statusPath}
-                                    </div>
-                                    <input name="statusPath" type="text" valueLink={this.linkState("statusPath")} required maxLength="64" className="width-max"/>
-                                </td>
-                            </tr>
-                            <tr>
                                 <td>*HTTP Port</td>
                             </tr>
                             <tr>
@@ -393,7 +377,21 @@ var JvmConfigForm = React.createClass({
                             <tr>
                                 <td><input name="ajpPort" type="text" valueLink={this.linkState("ajpPort")} required maxLength="5"/></td>
                             </tr>
-
+                            <tr>
+                                <td>*Status Path</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label htmlFor="statusPath" className="error"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input name="statusPath" type="text" className="jvmStatusPath" valueLink={this.linkState("statusPath")}
+                                    maxLength="255" onFocus={this.onStatusPathFocus}/>
+                                    <IconBtn title="Generate Status Path" className="ui-icon-refresh" onClick={this.onClickGenerateStatusPath}/>
+                                </td>
+                            </tr>
                             <tr>
                             	<td>Username</td>
                             </tr>
@@ -477,6 +475,16 @@ var JvmConfigForm = React.createClass({
                         </table>
                     </form>
                </div>
+    },
+    onStatusPathFocus: function() {
+            if (!this.state.statusPath) {
+                this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
+                (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.tomcatImageLogoPath});
+            }
+    },
+    onClickGenerateStatusPath: function() {
+        this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
+                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.tomcatImageLogoPath});
     },
     onPasswordTextFocus: function() {
         if (this.props.data) {
