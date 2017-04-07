@@ -22,10 +22,13 @@ if $linux; then
         echo unzip -q -o "${COMPRESSED_FILE}" -d "${DESTINATION_DIR}" ${EXCLUDE_PARAM}
         unzip -q -o "${COMPRESSED_FILE}" -d "${DESTINATION_DIR}" ${EXCLUDE_PARAM}
     fi
-
+    echo rm ${COMPRESSED_FILE}
+    rm ${COMPRESSED_FILE}
 fi
 
 if $cygwin; then
     echo "${BASEDIR}/unzip.exe" -q -o "${COMPRESSED_FILE}" -d "${DESTINATION_DIR}" ${EXCLUDE_PARAM}
     "${BASEDIR}/unzip.exe" -q -o "${COMPRESSED_FILE}" -d "${DESTINATION_DIR}" ${EXCLUDE_PARAM}
+    echo rm ${COMPRESSED_FILE}
+    rm ${COMPRESSED_FILE}
 fi
