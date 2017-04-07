@@ -60,11 +60,31 @@ public class GroupJvmControlServiceImplTest {
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_START));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STARTING));
         assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STOPPED));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZING));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZED));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STARTING));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STOP));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STOPPING));
-        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_DESTROYED));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_DESTROYING));
+        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_DESTROYED));
+        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_UNEXPECTED_STATE));
+        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_FAILED));
+        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.FORCED_STOPPED));
+        assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_UNKNOWN));
+
         assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STARTED));
         assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STOPPED));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_INITIALIZING));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_INITIALIZED));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STARTING));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STOP));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STOPPING));
+        assertFalse(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_DESTROYING));
+        assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_DESTROYED));
+        assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_UNEXPECTED_STATE));
+        assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_FAILED));
+        assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.FORCED_STOPPED));
+        assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_UNKNOWN));
     }
 }
 
