@@ -88,7 +88,6 @@ public class JvmServiceRestImplTest {
                 name,
                 hostName,
                 groups,
-                null,
                 Integer.valueOf(httpPort),
                 Integer.valueOf(httpsPort),
                 Integer.valueOf(redirectPort),

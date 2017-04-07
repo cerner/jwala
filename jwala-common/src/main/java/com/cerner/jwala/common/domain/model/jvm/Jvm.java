@@ -22,7 +22,6 @@ public class Jvm implements Serializable {
     private String jvmName;
     private String hostName;
     private Set<Group> groups;
-    private Group parentGroup;
 
     // JVM ports
     private Integer httpPort;
@@ -70,7 +69,6 @@ public class Jvm implements Serializable {
                        this.jvmName,
                        this.hostName,
                        this.groups,
-                       this.parentGroup,
                        this.httpPort,
                        this.httpsPort,
                        this.redirectPort,
@@ -93,7 +91,6 @@ public class Jvm implements Serializable {
                String jvmName,
                String hostName,
                Set<Group> groups,
-               Group parentGroup,
                Integer httpPort,
                Integer httpsPort,
                Integer redirectPort,
@@ -114,7 +111,6 @@ public class Jvm implements Serializable {
         this.jvmName = jvmName;
         this.hostName = hostName;
         this.groups = groups;
-        this.parentGroup = parentGroup;
         this.httpPort = httpPort;
         this.httpsPort = httpsPort;
         this.redirectPort = redirectPort;
@@ -213,14 +209,6 @@ public class Jvm implements Serializable {
         return errorStatus;
     }
 
-    public Group getParentGroup() {
-        return parentGroup;
-    }
-
-    public void setParentGroup(Group parentGroup) {
-        this.parentGroup = parentGroup;
-    }
-
     public String getJavaHome() {
         return javaHome;
     }
@@ -250,7 +238,6 @@ public class Jvm implements Serializable {
                 .append(jvmName, jvm.jvmName)
                 .append(hostName, jvm.hostName)
                 .append(groups, jvm.groups)
-                .append(parentGroup, jvm.parentGroup)
                 .append(httpPort, jvm.httpPort)
                 .append(httpsPort, jvm.httpsPort)
                 .append(redirectPort, jvm.redirectPort)
@@ -298,7 +285,6 @@ public class Jvm implements Serializable {
                 ", jvmName='" + jvmName + '\'' +
                 ", hostName='" + hostName + '\'' +
                 ", groups=" + groups +
-                ", parentGroup=" + parentGroup +
                 ", httpPort=" + httpPort +
                 ", httpsPort=" + httpsPort +
                 ", redirectPort=" + redirectPort +

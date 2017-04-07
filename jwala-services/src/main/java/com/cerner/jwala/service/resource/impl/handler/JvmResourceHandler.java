@@ -52,12 +52,10 @@ public class JvmResourceHandler extends ResourceHandler {
         CreateResourceResponseWrapper createResourceResponseWrapper = null;
         if (canHandle(resourceIdentifier)) {
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(resourceIdentifier.jvmName);
-            final Group parentGroup = groupPersistenceService.getGroup(resourceIdentifier.groupName);
-            final Jvm jvmWithParentGroup = new Jvm(jvm.getId(),
+            final Jvm jvmWithGroups = new Jvm(jvm.getId(),
                     jvm.getJvmName(),
                     jvm.getHostName(),
                     jvm.getGroups(),
-                    parentGroup,
                     jvm.getHttpPort(),
                     jvm.getHttpsPort(),
                     jvm.getRedirectPort(),
@@ -75,7 +73,7 @@ public class JvmResourceHandler extends ResourceHandler {
                     jvm.getJavaHome(),
                     jvm.getWebApps());
 
-            final UploadJvmConfigTemplateRequest uploadJvmTemplateRequest = new UploadJvmConfigTemplateRequest(jvmWithParentGroup, metaData.getTemplateName(),
+            final UploadJvmConfigTemplateRequest uploadJvmTemplateRequest = new UploadJvmConfigTemplateRequest(jvmWithGroups, metaData.getTemplateName(),
                     templateContent, metaData.getJsonData());
             uploadJvmTemplateRequest.setConfFileName(metaData.getDeployFileName());
             createResourceResponseWrapper = new CreateResourceResponseWrapper(jvmPersistenceService.uploadJvmConfigTemplate(uploadJvmTemplateRequest));

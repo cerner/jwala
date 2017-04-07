@@ -21,7 +21,6 @@ public class WebServer implements Serializable {
     private final Integer httpsPort;
     private final Path statusPath;
     private final WebServerReachableState state;
-    private final Group parentGroup;
 
     /**
      * Constructor for a bare minimum web server with group details.
@@ -43,7 +42,6 @@ public class WebServer implements Serializable {
             groups.put(grp.getId(), grp);
         }
         state = WebServerReachableState.WS_UNEXPECTED_STATE;
-        parentGroup = null;
     }
 
     public WebServer(final Identifier<WebServer> theId,
@@ -64,7 +62,6 @@ public class WebServer implements Serializable {
             groups.put(grp.getId(), grp);
         }
         this.state = state;
-        this.parentGroup = null;
     }
 
     public WebServer(final Identifier<WebServer> id,
@@ -74,7 +71,6 @@ public class WebServer implements Serializable {
                      final Integer httpsPort,
                      final Path statusPath,
                      final WebServerReachableState state,
-                     final Group parentGroup) {
         this.id = id;
         this.host = host;
         this.name = name;
@@ -82,7 +78,6 @@ public class WebServer implements Serializable {
         this.httpsPort = httpsPort;
         this.statusPath = statusPath;
         this.state = state;
-        this.parentGroup = parentGroup;
     }
 
     public Identifier<WebServer> getId() {
@@ -144,10 +139,6 @@ public class WebServer implements Serializable {
             return "";
     }
 
-    public Group getParentGroup() {
-        return parentGroup;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -179,7 +170,6 @@ public class WebServer implements Serializable {
                 ", httpsPort=" + httpsPort +
                 ", statusPath=" + statusPath +
                 ", state=" + state +
-                ", parentGroup=" + parentGroup +
                 '}';
     }
 }
