@@ -70,7 +70,7 @@ public class WebServer implements Serializable {
                      final Integer port,
                      final Integer httpsPort,
                      final Path statusPath,
-                     final WebServerReachableState state){
+                     final WebServerReachableState state) {
         this.id = id;
         this.host = host;
         this.name = name;
