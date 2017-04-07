@@ -281,7 +281,8 @@ public class JvmServiceImpl implements JvmService {
         if (hardDelete) {
             LOGGER.info("Deleting JVM service {}", jvm.getJvmName());
 
-            if (!JvmState.JVM_STOPPED.equals(jvm.getState()) && !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
+            if (!JvmState.JVM_NEW.equals(jvm.getState()) && !JvmState.JVM_STOPPED.equals(jvm.getState()) &&
+                    !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
                 final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
                         jvm.getJvmName());
                 LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
