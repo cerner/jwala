@@ -418,12 +418,10 @@ public class ResourceServiceImpl implements ResourceService {
                                                             final String templateContent,
                                                             final String jvmName) {
         final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
-        final Group parentGroup = groupPersistenceService.getGroup(metaData.getEntity().getGroup());
         final Jvm jvmWithParentGroup = new Jvm(jvm.getId(),
                 jvm.getJvmName(),
                 jvm.getHostName(),
                 jvm.getGroups(),
-                parentGroup,
                 jvm.getHttpPort(),
                 jvm.getHttpsPort(),
                 jvm.getRedirectPort(),
