@@ -17,6 +17,7 @@ import com.cerner.jwala.service.state.InMemoryStateManagerService;
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.LockCallback;
 import de.jkeylockmanager.manager.implementation.lockstripe.StripedKeyLockManager;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -93,9 +94,9 @@ public class JvmStateServiceImpl implements JvmStateService {
 
     @Override
     @Scheduled(fixedDelayString = "${ping.jvm.period.millis}")
-    public void verifyAndUpdateNotInMemOrStaleStates() {
+    public void verifyAndUpdateJvmStates() {
         final List<Jvm> jvms = jvmPersistenceService.getJvms();
-        if (jvms == null) {
+        if (CollectionUtils.isEmpty(jvms)) {
             LOGGER.warn("No JVMs found to ping.");
             return;
         }

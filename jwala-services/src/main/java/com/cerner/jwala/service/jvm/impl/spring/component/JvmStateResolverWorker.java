@@ -56,20 +56,11 @@ public class JvmStateResolverWorker {
 
         try {
             response = clientFactoryHelper.requestGet(jvm.getStatusUri());
-            LOGGER.debug(">>> Response = {} from JVM {}", response.getStatusCode(), jvm.getId().getId());
-
+            LOGGER.debug("Response = {} from JVM {}", response.getStatusCode(), jvm.getJvmName());
             jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STARTED, StringUtils.EMPTY);
             currentState = new CurrentState<>(jvm.getId(), JvmState.JVM_STARTED, DateTime.now(), StateType.JVM);
-
-            if (response.getStatusCode() != HttpStatus.OK) {
-                final String msg = MessageFormat.format("Request {0} sent expecting a response code of {1} but got {2} instead",
-                        jvm.getStatusUri(), HttpStatus.OK.value(), response.getRawStatusCode());
-                historyFacadeService.write(jvm.getJvmName(), jvm.getGroups(), msg, EventType.SYSTEM_ERROR, "");
-            }
-
         } catch (final IOException ioe) {
             LOGGER.warn("{} {} {}", jvm.getJvmName(), ioe.getMessage(), "Setting JVM state to STOPPED.", ioe);
-            historyFacadeService.write(jvm.getJvmName(), jvm.getGroups(), ioe.getMessage(), EventType.SYSTEM_INFO, "");
             jvmStateService.updateNotInMemOrStaleState(jvm, JvmState.JVM_STOPPED, StringUtils.EMPTY);
             currentState = new CurrentState<>(jvm.getId(), JvmState.JVM_STOPPED, DateTime.now(), StateType.JVM);
         } catch (final RuntimeException rte) {
