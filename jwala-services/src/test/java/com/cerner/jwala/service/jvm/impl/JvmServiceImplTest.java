@@ -55,6 +55,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,7 @@ import static org.mockito.Mockito.anyCollection;
 import static org.mockito.Mockito.anyObject;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {JvmServiceImplTest.Config.class})
@@ -98,20 +100,15 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImplTest.class);
 
-    @BeforeClass
-    public static void init() {
-        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH,
-                JvmServiceImplTest.class.getClassLoader().getResource("vars.properties").getPath()
-                        .replace("/vars.properties", ""));
-    }
+    final Identifier<Jvm> id = new Identifier<>(1L);
+    final User user = new User("user");
 
-    @AfterClass
-    public static void destroy() {
-        System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
-    }
+    @Mock
+    private Jvm mockJvm;
 
     @Before
     public void setup() throws IOException {
+        initMocks(this);
         FileUtils.forceMkdir(new File(ApplicationProperties.get("paths.generated.resource.dir") + "/" + JUNIT_JVM));
 
         reset(Config.mockJvmPersistenceService, Config.mockGroupService, Config.mockApplicationService,
@@ -308,6 +305,11 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
 
         when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("jvmName");
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+        when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
 
         jvmService.updateJvm(updateJvmRequest, true);
 
@@ -319,29 +321,40 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         }
     }
 
-    @Test
-    public void testRemoveJvm() {
-
-        final Identifier<Jvm> id = new Identifier<>(-123456L);
-        Jvm mockJvm = mockJvmWithId(id);
+    @Test(expected = JvmServiceException.class)
+    public void testUpdateJvmNameShouldFail(){
+        final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
+        final String oldjvmName = "old-jvm-name";
+        final String newjvmName = "new-jvm-name";
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn(oldjvmName);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
-
-        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
-
-        jvmService.removeJvm(id, Config.mockUser);
-
-        verify(Config.mockJvmPersistenceService, times(1)).removeJvm(eq(id));
+        when(updateJvmRequest.getNewJvmName()).thenReturn(newjvmName);
+        jvmService.updateJvm(updateJvmRequest, true);
     }
 
-    @Test(expected = InternalErrorException.class)
-    public void testRemoveJvmInStartedState() {
-        final Identifier<Jvm> id = new Identifier<>(-123456L);
-        Jvm mockJvm = mockJvmWithId(id);
+    @Test
+    public void testUpdateJvmNameShouldWork(){
+        final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
+        final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
+        when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
+        final String oldjvmName = "old-jvm-name";
+        final String newjvmName = "new-jvm-name";
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn(oldjvmName);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(mockJvm);
-        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
-
-        jvmService.removeJvm(id, Config.mockUser);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+        when(updateJvmRequest.getNewJvmName()).thenReturn(newjvmName);
+        jvmService.updateJvm(updateJvmRequest, true);
+        verify(updateJvmRequest, times(1)).validate();
+        verify(Config.mockJvmPersistenceService, times(1)).updateJvm(updateJvmRequest, true);
+        verify(Config.mockJvmPersistenceService, times(1)).removeJvmFromGroups(Matchers.<Identifier<Jvm>>anyObject());
+        for (final AddJvmToGroupRequest addCommand : addCommands) {
+            verify(Config.mockGroupPersistenceService, times(1)).addJvmToGroup(matchCommand(addCommand));
+        }
     }
 
     @Test
@@ -744,28 +757,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testDeleteJvm() {
-        Jvm mockJvm = mock(Jvm.class);
-        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
-        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
-        when(mockJvm.getJvmName()).thenReturn("test-delete-jvm");
-
-        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
-
-        try {
-            jvmService.deleteJvm("test-delete-jvm", "test-user-deletes-jvm");
-            fail("Expecting a JvmServiceException");
-        } catch (JvmServiceException jse){
-            assertEquals("The target JVM must be stopped before attempting to delete it", jse.getMessage());
-        }
-
-        when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
-        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
-        jvmService.deleteJvm("test-delete-jvm", "test-user-deletes-jvm");
-        verify(Config.mockJvmPersistenceService).removeJvm(any(Identifier.class));
-    }
-
-    @Test
     public void testGenerateAndDeployFile() throws CommandFailureException, IOException {
         CommandOutput mockExecData = mock(CommandOutput.class);
         final Jvm mockJvm = mockJvmWithId(new Identifier<Jvm>(111L));
@@ -873,6 +864,69 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         ((JvmServiceImpl) jvmService).generateJvmConfigJar(jvm);
         verify(Config.mockJvmPersistenceService).findJvmByExactName(anyString());
+    }
+
+    @Test
+    public void testDeleteNewJvms() {
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        jvmService.deleteJvm(id, false, user);
+        verify(Config.mockJvmControlService, never()).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService).removeJvm(id);
+    }
+
+    @Test
+    public void testDeleteStoppedJvms() {
+        final CommandOutput mockCommandOutput = mock(CommandOutput.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
+        jvmService.deleteJvm(id, true, user);
+        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService).removeJvm(id);
+    }
+
+    @Test
+    public void testDeleteForcedStoppedJvms() {
+        final CommandOutput mockCommandOutput = mock(CommandOutput.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
+        jvmService.deleteJvm(id, true, user);
+        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService).removeJvm(id);
+    }
+
+    @Test
+    public void testFailedDeleteServiceOfStoppedJvms() {
+        final CommandOutput mockCommandOutput = mock(CommandOutput.class);
+        when(mockJvm.getJvmName()).thenReturn("testJvm");
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(ExecReturnCode.JWALA_EXIT_NO_SUCH_SERVICE));
+        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
+        try {
+            jvmService.deleteJvm(id, true, user);
+        } catch (final JvmServiceException e) {
+            assertTrue(e.getMessage().indexOf("Failed to delete the JVM service testJvm!") == 0);
+        }
+        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService, never()).removeJvm(id);
+    }
+
+    @Test
+    public void testDeleteNonStoppedAndNotNewJvms() {
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        try {
+            jvmService.deleteJvm(id, true, user);
+            fail("Expecting to get a JvmServiceException!");
+        } catch (final JvmServiceException e) {
+            assertEquals("Please stop JVM null first before attempting to delete it", e.getMessage());
+        }
+        verify(Config.mockJvmPersistenceService, never()).removeJvm(id);
     }
 
     @Configuration

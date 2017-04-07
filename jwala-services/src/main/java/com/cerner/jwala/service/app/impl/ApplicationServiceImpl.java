@@ -181,7 +181,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         "The target JVM must be stopped before attempting to update the resource files");
             }
             final String hostName = jvm.getHostName();
-            return resourceService.generateAndDeployFile(resourceIdentifier, appName, resourceTemplateName, hostName);
+            return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, hostName);
         } catch (ResourceFileGeneratorException e) {
             LOGGER.error("Fail to generate the resource file {}", resourceTemplateName, e);
             throw new DeployApplicationConfException(e);
@@ -242,11 +242,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Transactional
     public void deployApplicationResourcesToGroupHosts(String groupName, Application app, ResourceGroup resourceGroup) {
         List<String> appResourcesNames = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName);
-        Group group = groupPersistenceService.getGroup(app.getGroup().getId());
-        final Set<Jvm> jvms = group.getJvms();
+        final List<Jvm> jvms = jvmPersistenceService.getJvmsByGroupName(groupName);
         if (null != appResourcesNames && !appResourcesNames.isEmpty()) {
             for (String resourceTemplateName : appResourcesNames) {
                 String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, resourceTemplateName);
@@ -259,7 +257,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                             final String host = jvm.getHostName().toLowerCase(Locale.US);
                             if (!hostNames.contains(host)) {
                                 hostNames.add(host);
-                                executeDeployGroupAppTemplate(group.getName(), resourceTemplateName, app, jvm.getHostName());
+                                executeDeployGroupAppTemplate(groupName, resourceTemplateName, app, jvm.getHostName());
                             }
                         }
 
@@ -460,7 +458,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     protected void checkForRunningJvms(final Group group, final List<String> hostNames, final User user) {
         final Set<Jvm> runningJvmList = new HashSet<>();
         final List<String> runningJvmNameList = new ArrayList<>();
-        for (final Jvm jvm : group.getJvms()) {
+        List<Jvm> jvmsInGroup = jvmPersistenceService.getJvmsByGroupName(group.getName());
+        for (final Jvm jvm : jvmsInGroup) {
             if (hostNames.contains(jvm.getHostName().toLowerCase(Locale.US)) && jvm.getState().isStartedState()) {
                 runningJvmList.add(jvm);
                 runningJvmNameList.add(jvm.getJvmName());

@@ -8,8 +8,6 @@ import com.cerner.jwala.ws.rest.v1.service.webserver.impl.JsonControlWebServer;
 import com.cerner.jwala.ws.rest.v1.service.webserver.impl.JsonCreateWebServer;
 import com.cerner.jwala.ws.rest.v1.service.webserver.impl.JsonUpdateWebServer;
 
-import org.springframework.beans.factory.InitializingBean;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,8 +35,8 @@ public interface WebServerServiceRest {
 
     @DELETE
     @Path("/{webserverId}")
-    Response removeWebServer(@PathParam("webserverId") final Identifier<WebServer> aWebServerId, @BeanParam final AuthenticatedUser user,
-                             @QueryParam("forceDelete") final boolean forceDelete);
+    Response deleteWebServer(@PathParam("webserverId") final Identifier<WebServer> id, @QueryParam("hardDelete") boolean hardDelete,
+                             @BeanParam final AuthenticatedUser user);
 
     @POST
     @Path("/{webServerId}/commands")

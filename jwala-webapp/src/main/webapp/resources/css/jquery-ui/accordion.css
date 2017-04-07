@@ -4,6 +4,7 @@
 
 .ui-accordion .ui-accordion-content {
   padding: 0em 0em;
+  overflow: hidden;
 }
 
 .ui-corner-all, .ui-corner-top, .ui-corner-right {

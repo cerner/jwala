@@ -402,12 +402,11 @@ public class GroupServiceImpl implements GroupService {
         return new ArrayList<>(allHosts);
     }
 
-    @Transactional
     @Override
     @SuppressWarnings("unchecked")
     public Group generateAndDeployGroupJvmFile(final String groupName, final String fileName, final User user) {
         final Group group = groupPersistenceService.getGroup(groupName);
-        final Set<Jvm> jvms = group.getJvms();
+        final List<Jvm> jvms = jvmService.getJvmsByGroupName(group.getName());
 
         // Check if any JVMs are running before generating the file
         final List<String> startedJvmNameList = new ArrayList<>();

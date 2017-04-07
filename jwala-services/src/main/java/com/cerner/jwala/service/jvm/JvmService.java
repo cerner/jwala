@@ -25,7 +25,7 @@ public interface JvmService {
 
     Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, boolean updateJvmPassword);
 
-    void removeJvm(final Identifier<Jvm> aJvmId, User user);
+    void deleteJvm(Identifier<Jvm> id, boolean hardDelete, User user);
 
     void deleteJvmService(ControlJvmRequest controlJvmRequest, Jvm jvm, User user);
 
@@ -113,4 +113,10 @@ public interface JvmService {
      */
     void deleteJvm(String name, String userName);
 
+    /**
+     * Return the JVMs belonging to a group
+     * @param name the name of the group of the JVMs
+     * @return a collection of JVMs belonging to the group
+     */
+    List<Jvm> getJvmsByGroupName(String name);
 }

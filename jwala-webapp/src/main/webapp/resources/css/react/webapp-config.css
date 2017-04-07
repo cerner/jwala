@@ -45,3 +45,10 @@
     position: relative;
     top: 4px;
 }
+
+.WebAppConfig.msg {
+    font-size: 20px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 500px;
+}

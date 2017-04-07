@@ -25,7 +25,7 @@ public interface WebServerService {
 
     WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand, final User anUpdatingUser);
 
-    void removeWebServer(final Identifier<WebServer> aWebServerId);
+    void deleteWebServer(Identifier<WebServer> id, boolean hardDelete, User user);
 
     String generateInstallServiceScript(WebServer webServer);
 
@@ -40,8 +40,6 @@ public interface WebServerService {
     String previewResourceTemplate(String fileName, String webServerName, String groupName, String template);
 
     boolean isStarted(WebServer webServer);
-
-    void updateErrorStatus(Identifier<WebServer> id, String errorStatus);
 
     void updateState(Identifier<WebServer> id, WebServerReachableState state, String errorStatus);
 

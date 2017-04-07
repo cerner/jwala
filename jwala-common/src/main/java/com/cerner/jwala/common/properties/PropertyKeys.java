@@ -8,7 +8,6 @@ public enum PropertyKeys {
     REMOTE_JAWALA_DATA_DIR("remote.jwala.data.dir"),
     APACHE_HTTPD_FILE_NAME("jwala.apache.httpd.zip.name"),
     REMOTE_PATHS_APACHE_HTTPD("remote.paths.apache.httpd"),
-    REMOTE_PATHS_APACHE_HTTPD_CONF("remote.paths.httpd.conf"),
     REMOTE_PATHS_HTTPD_ROOT_DIR_NAME("remote.paths.httpd.root.dir.name"),
     SCRIPTS_PATH("commands.scripts-path"),
     REMOTE_TOMCAT_DIR_NAME("remote.tomcat.dir.name"),
@@ -27,7 +26,10 @@ public enum PropertyKeys {
     JSCH_CHANNEL_SHELL_READ_INPUT_SLEEP_DURATION("jsch.channel.shell.read.input.sleep.duration"),
     JSCH_EXEC_READ_REMOTE_OUTPUT_LOOP_SLEEP_TIME("jsch.exec.read.remote.output.loop.sleep.time"),
     JSCH_SHELL_READ_REMOTE_OUTPUT_TIMEOUT("jsch.shell.read.remote.output.timeout"),
-    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout");
+    JSCH_EXEC_READ_REMOTE_OUTPUT_TIMEOUT("jsch.exec.read.remote.output.timeout"),
+    JWALA_HISTORY_RESULT_FETCH_COUNT("jwala.history.result.fetch.count"),
+    JWALA_HISTORY_MAX_REC_DEAFULT("jwala.history.max.rec.default"),
+    JWALA_JTA_TRANSACTION_TIMEOUT("jwala.jta.transaction.timeout");
 
     private String propertyName;
 

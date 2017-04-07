@@ -1,9 +1,16 @@
 /** @jsx React.DOM */
 var WebAppConfig = React.createClass({
     getInitialState: function() {
-        return {selectedWebApp: null};
+        return {selectedWebApp: null, groupData: null, err: null};
     },
     render: function() {
+
+        if (!this.state.groupData && !this.state.err) {
+            return <div>Loading...</div>;
+        } if (this.state.err) {
+            return <div className="WebAppConfig msg">{this.state.err.message}</div>;
+        }
+
         return <div className="WebAppConfig">
                    <div className="btnContainer">
                        <GenericButton label="Delete" accessKey="d" callback={this.delBtnCallback}/>
@@ -19,6 +26,7 @@ var WebAppConfig = React.createClass({
                                                 {title: "Web Archive", key: "warName"},
                                                 {key: "actionIcons", renderCallback: this.renderActionIcons, sortable: false},
                                                 {title: "Group", key:"group.name"}]}
+                               data={this.state.webAppData}
                                selectItemCallback={this.selectItemCallback}
                                deselectAllRowsCallback={this.deselectAllRowsCallback}/>
 
@@ -55,13 +63,23 @@ var WebAppConfig = React.createClass({
         this.loadTableData();
     },
     loadTableData: function(afterLoadCallback) {
-        var self = this;
-        this.props.service.getWebApps(function(response){
-                                          self.refs.dataTable.refresh(response.applicationResponseContent);
-                                          if ($.isFunction(afterLoadCallback)) {
-                                            afterLoadCallback();
-                                          }
-                                      });
+        let self = this;
+        let groupData;
+        groupService.getGroups().then(function(response){
+            groupData = response.applicationResponseContent;
+            if (groupData.length > 0) {
+                return ServiceFactory.getWebAppService().getWebApps();
+            }
+            throw new Error("There are no groups defined in Jwala. Please define a group to be able to add web applications.");
+        }).then(function(response){
+            if ($.isFunction(afterLoadCallback)) {
+                afterLoadCallback();
+            }
+            self.setState({"groupData": groupData, "webAppData": response.applicationResponseContent});
+        }).caught(function(response){
+            console.log(response);
+            self.setState({err: response});
+        });
     },
     renderWebAppNameCallback: function(name) {
         var self = this;
@@ -323,7 +341,7 @@ var UploadWarWidget = React.createClass({
                    <form ref="warUploadForm">
                        <label>*WAR File</label>
                        <label ref="fileInputLabel" htmlFor="fileInput" className="error"/>
-                       <input ref="fileInput" name="fileInput" type="file" required onChange={this.onChangeFileInput}/>
+                       <input ref="fileInput" name="fileInput" type="file" accept=".war" required onChange={this.onChangeFileInput}/>
                        <br/>
                        <input type="checkbox" value={this.state.assignToJvms} onChange={this.onChangeAssignToJvms}>
                            <span>Assign to JVMs</span>

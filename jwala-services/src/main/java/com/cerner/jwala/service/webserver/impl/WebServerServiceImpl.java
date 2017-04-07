@@ -8,8 +8,11 @@ import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
+import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.InternalErrorException;
+import com.cerner.jwala.common.exec.CommandOutput;
+import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -19,18 +22,21 @@ import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
+import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,6 +55,9 @@ public class WebServerServiceImpl implements WebServerService {
     private final String templatePath;
 
     private final BinaryDistributionLockManager binaryDistributionLockManager;
+
+    @Autowired
+    private WebServerControlService webServerControlService;
 
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
@@ -87,11 +96,7 @@ public class WebServerServiceImpl implements WebServerService {
                 createWebServerRequest.getPort(),
                 createWebServerRequest.getHttpsPort(),
                 createWebServerRequest.getStatusPath(),
-                null,
-                createWebServerRequest.getSvrRoot(),
-                createWebServerRequest.getDocRoot(),
-                createWebServerRequest.getState(),
-                createWebServerRequest.getErrorStatus());
+                createWebServerRequest.getState());
 
         final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
         inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
@@ -146,32 +151,54 @@ public class WebServerServiceImpl implements WebServerService {
                 anUpdateWebServerCommand.getNewPort(),
                 anUpdateWebServerCommand.getNewHttpsPort(),
                 anUpdateWebServerCommand.getNewStatusPath(),
-                webServerPersistenceService.getWebServer(id).getHttpConfigFile(),
-                anUpdateWebServerCommand.getNewSvrRoot(),
-                anUpdateWebServerCommand.getNewDocRoot(),
-                anUpdateWebServerCommand.getState(),
-                anUpdateWebServerCommand.getErrorStatus());
+                anUpdateWebServerCommand.getState());
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
     }
 
     @Override
     @Transactional
-    public void removeWebServer(final Identifier<WebServer> aWebServerId) {
-        webServerPersistenceService.removeWebServer(aWebServerId);
-        inMemoryStateManagerService.remove(aWebServerId);
+    public void deleteWebServer(final Identifier<WebServer> id, final boolean hardDelete, final User user) {
+        LOGGER.info("Deleting web server with id = {} and hardDelete = {}", id, hardDelete);
+        final WebServer webServer = webServerPersistenceService.getWebServer(id);
+
+        if (!hardDelete && !WebServerReachableState.WS_NEW.equals(webServer.getState())) {
+            final String msg = MessageFormat.format("Cannot delete web server {0} since it has already been deployed",
+                    webServer.getName());
+            LOGGER.error(msg);
+            throw new WebServerServiceException(msg);
+        }
+
+        if (hardDelete) {
+            LOGGER.info("Deleting web server service {}", webServer.getName());
+
+            if (isStarted(webServer)) {
+                final String msg = MessageFormat.format("Please stop web server {0} first before attempting to delete it",
+                        webServer.getName());
+                LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
+                                  // an exception
+                throw new WebServerServiceException(msg);
+            }
+
+            // delete the service
+            final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
+                    WebServerControlOperation.DELETE_SERVICE), user);
+            if (!commandOutput.getReturnCode().wasSuccessful()) {
+                final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
+                        webServer.getName(), commandOutput);
+                LOGGER.error(msg);
+                throw new WebServerServiceException(msg);
+            }
+        }
+
+        webServerPersistenceService.removeWebServer(id);
+        inMemoryStateManagerService.remove(id);
     }
 
     @Override
     public boolean isStarted(WebServer webServer) {
         final WebServerReachableState state = webServer.getState();
         return !WebServerReachableState.WS_UNREACHABLE.equals(state) && !WebServerReachableState.WS_NEW.equals(state);
-    }
-
-    @Override
-    @Transactional
-    public void updateErrorStatus(final Identifier<WebServer> id, final String errorStatus) {
-        webServerPersistenceService.updateErrorStatus(id, errorStatus);
     }
 
     @Override
@@ -188,7 +215,7 @@ public class WebServerServiceImpl implements WebServerService {
             return resourceService.generateResourceFile(INSTALL_SERVICE_SCRIPT_NAME, FileUtils.readFileToString(new File(templatePath + INSTALL_SERVICE_WSBAT_TEMPLATE_TPL_PATH)),
                     resourceService.generateResourceGroup(), webServer, ResourceGeneratorType.TEMPLATE);
         } catch (final IOException ioe) {
-            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME+ "!", ioe);
+            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME + "!", ioe);
         }
     }
 

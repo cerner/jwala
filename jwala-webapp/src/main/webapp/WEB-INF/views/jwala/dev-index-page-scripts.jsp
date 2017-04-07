@@ -46,6 +46,7 @@
 
 <!-- React UI -->
 <script type="text/jsx" src="public-resources/js/react/generic-components/RToolbar.js"></script>
+<script type="text/jsx" src="public-resources/js/react/generic-components/IconBtn.js"></script>
 <script type="text/jsx" src="public-resources/js/react/generic-components/RTabs.js"></script>
 <script type="text/jsx" src="public-resources/js/react/XmlPreview.js"></script>
 <script type="text/jsx" src="public-resources/js/react/MetaDataPreview.js"></script>

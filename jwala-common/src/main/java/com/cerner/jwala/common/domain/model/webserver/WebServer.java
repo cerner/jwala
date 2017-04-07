@@ -20,11 +20,7 @@ public class WebServer implements Serializable {
     private final Integer port;
     private final Integer httpsPort;
     private final Path statusPath;
-    private final Path httpConfigFile;
-    private final Path svrRoot;
-    private final Path docRoot;
     private final WebServerReachableState state;
-    private final String errorStatus;
     private final Group parentGroup;
 
     /**
@@ -43,14 +39,10 @@ public class WebServer implements Serializable {
         name = theName;
         httpsPort = null;
         statusPath = null;
-        httpConfigFile = null;
         for (final Group grp : theGroups) {
             groups.put(grp.getId(), grp);
         }
-        svrRoot = null;
-        docRoot = null;
         state = WebServerReachableState.WS_UNEXPECTED_STATE;
-        errorStatus = null;
         parentGroup = null;
     }
 
@@ -61,25 +53,17 @@ public class WebServer implements Serializable {
                      final Integer thePort,
                      final Integer theHttpsPort,
                      final Path theStatusPath,
-                     final Path theHttpConfigFile,
-                     final Path theSvrRoot,
-                     final Path theDocRoot,
-                     final WebServerReachableState state,
-                     final String errorStatus) {
+                     final WebServerReachableState state) {
         id = theId;
         host = theHost;
         port = thePort;
         name = theName;
         httpsPort = theHttpsPort;
         statusPath = theStatusPath;
-        httpConfigFile = theHttpConfigFile;
         for (final Group grp : theGroups) {
             groups.put(grp.getId(), grp);
         }
-        svrRoot = theSvrRoot;
-        docRoot = theDocRoot;
         this.state = state;
-        this.errorStatus = errorStatus;
         this.parentGroup = null;
     }
 
@@ -89,11 +73,7 @@ public class WebServer implements Serializable {
                      final Integer port,
                      final Integer httpsPort,
                      final Path statusPath,
-                     final Path httpConfigFile,
-                     final Path svrRoot,
-                     final Path docRoot,
                      final WebServerReachableState state,
-                     final String errorStatus,
                      final Group parentGroup) {
         this.id = id;
         this.host = host;
@@ -101,11 +81,7 @@ public class WebServer implements Serializable {
         this.port = port;
         this.httpsPort = httpsPort;
         this.statusPath = statusPath;
-        this.httpConfigFile = httpConfigFile;
-        this.svrRoot = svrRoot;
-        this.docRoot = docRoot;
         this.state = state;
-        this.errorStatus = errorStatus;
         this.parentGroup = parentGroup;
     }
 
@@ -141,24 +117,16 @@ public class WebServer implements Serializable {
         return statusPath;
     }
 
-    public Path getHttpConfigFile() {
-        return httpConfigFile;
-    }
-
     public URI getStatusUri() {
+        if (getStatusPath().startsWithHttp()) {
+            return getStatusPath().toUri();
+        }
+
         final UriBuilder builder = new UriBuilder().setHost(getHost())
                 .setPort(getPort())
                 .setHttpsPort(getHttpsPort())
                 .setPath(getStatusPath());
         return builder.buildUnchecked();
-    }
-
-    public Path getSvrRoot() {
-        return svrRoot;
-    }
-
-    public Path getDocRoot() {
-        return docRoot;
     }
 
     public WebServerReachableState getState() {
@@ -174,9 +142,6 @@ public class WebServer implements Serializable {
             return state.toStateLabel();
         else
             return "";
-    }
-    public String getErrorStatus() {
-        return errorStatus;
     }
 
     public Group getParentGroup() {
@@ -213,11 +178,7 @@ public class WebServer implements Serializable {
                 ", port=" + port +
                 ", httpsPort=" + httpsPort +
                 ", statusPath=" + statusPath +
-                ", httpConfigFile=" + httpConfigFile +
-                ", svrRoot=" + svrRoot +
-                ", docRoot=" + docRoot +
                 ", state=" + state +
-                ", errorStatus='" + errorStatus + '\'' +
                 ", parentGroup=" + parentGroup +
                 '}';
     }

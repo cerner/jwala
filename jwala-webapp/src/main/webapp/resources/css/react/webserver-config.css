@@ -2,7 +2,13 @@
     width:1074px;
 }
 
-.webServerStatusUrl {
-    color: gray;
-    padding: 0 0 3px 0;
+input.statusPath {
+    width: 250px;
+}
+
+.WebServerConfig.msg {
+    font-size: 20px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 500px;
 }

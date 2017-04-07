@@ -1,9 +1,11 @@
 package com.cerner.jwala.service.media.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.jpa.type.MediaType;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
@@ -25,7 +27,7 @@ import java.util.Set;
 
 /**
  * Implements {@link MediaService}
- * <p/>
+ * <p>
  * Created by Jedd Cuison on 12/7/2016
  */
 @Service
@@ -35,6 +37,9 @@ public class MediaServiceImpl implements MediaService {
 
     @Autowired
     private MediaDao mediaDao;
+
+    @Autowired
+    private JvmPersistenceService jvmPersistenceService;
 
     @Autowired
     private FileUtility fileUtility;
@@ -85,8 +90,24 @@ public class MediaServiceImpl implements MediaService {
     @Transactional
     public void remove(final String name) {
         final JpaMedia jpaMedia = mediaDao.find(name);
-        repositoryService.delete(jpaMedia.getLocalPath().getFileName().toString());
+        checkForJvmAssociation(name);
         mediaDao.remove(jpaMedia);
+        repositoryService.delete(jpaMedia.getLocalPath().getFileName().toString());
+    }
+
+    /**
+     * This method will check for the existing jvm associations for the media
+     * @param name media name
+     */
+    private void checkForJvmAssociation(String name) {
+        List<Jvm> jvmList = jvmPersistenceService.getJvms();
+        for (Jvm jvm : jvmList) {
+            if (name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
+                final String msg = MessageFormat.format("The media {0} cannot be deleted because it is associated with a JVM or JVMs", name);
+                LOGGER.error(msg);
+                throw new MediaServiceException(msg);
+            }
+        }
     }
 
     @Override

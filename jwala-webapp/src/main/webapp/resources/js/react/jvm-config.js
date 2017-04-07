@@ -27,11 +27,21 @@ var JvmConfig = React.createClass({
             showDeleteConfirmDialog: false,
             selectedJvmForEditing: null,
             jvmTableData: [{"jvmName":"","id":{"id":0},"hostName":"b","groups":[]}],
-            selectedJvm: null
+            selectedJvm: null,
+            groupData: null,
+            err: null
         }
     },
     render: function() {
+
+        if (!this.state.groupData && !this.state.err) {
+            return <div>Loading...</div>;
+        } if (this.state.err) {
+            return <div className="JvmConfig msg">{this.state.err.message}</div>;
+        }
+
         var btnDivClassName = this.props.className + "-btn-div";
+
         return  <div className={this.props.className} className="dataTables_wrapper">
                     <table className="jvm-config-table-type-container">
                         <tr>
@@ -137,14 +147,23 @@ var JvmConfig = React.createClass({
         }
     },
     refreshData: function(states, doneCallback) {
-        var self = this;
-        this.props.service.getJvms(function(response){
-                                         states["jvmTableData"] = response.applicationResponseContent;
-                                         if (doneCallback !== undefined) {
-                                            doneCallback();
-                                         }
-                                         self.setState(states);
-                                     });
+        let self = this;
+        let groupData;
+        groupService.getGroups().then(function(response){
+            groupData = response.applicationResponseContent;
+            if (groupData.length > 0) {
+                return ServiceFactory.getJvmService().getJvms();
+            }
+            throw new Error("There are no groups defined in Jwala. Please define a group to be able to add JVMs.");
+        }).then(function(response){
+            if (doneCallback) {
+                doneCallback();
+            }
+            self.setState({"groupData": groupData, "jvmTableData": response.applicationResponseContent});
+        }).caught(function(response){
+            console.log(response);
+            self.setState({err: response});
+        });
     },
     addBtnCallback: function() {
         this.setState({showModalFormAddDialog: true})
@@ -156,10 +175,23 @@ var JvmConfig = React.createClass({
     },
     confirmDeleteCallback: function() {
         var self = this;
-        this.props.service.deleteJvm(this.state.selectedJvm.id.id,
-                                       this.refreshData.bind(this,
-                                                             {showDeleteConfirmDialog: false},
-                                                             function(){self.state.selectedJvm = null}));
+        this.props.service.deleteJvm(this.state.selectedJvm.id.id, false).then(function(e) {
+            self.refreshData({showDeleteConfirmDialog: false}, function(){self.state.selectedJvm = null});
+        }).caught(
+            function(e){
+                self.setState({showDeleteConfirmDialog: false})
+                let msg;
+                if (e.responseText) {
+                    msg = JSON.parse(e.responseText).message;
+                    if (msg && msg.indexOf("already been deployed") > -1) {
+                        msg += ". Please go to operations page to delete the JVM.";
+                    }
+                } else {
+                    msg = JSON.stringify(e);
+                }
+                $.errorAlert(msg, "Error");
+            }
+        )
     },
     cancelDeleteCallback: function() {
         this.cancelFlag.set();
@@ -546,7 +578,7 @@ var JvmConfigForm = React.createClass({
         });
     },
     getJdkVersions: function() {
-        var items=[<option key='no-jvm-version' value=''></option>];
+        var items=[<option key='no-jvm-version' value=''>---Select JDK---</option>];
         for (var i=0; i < this.state.jdkVersions.length; i++){
             var jdkVersionOption = this.state.jdkVersions[i];
             var selected = this.state.jdkMedia !== null && jdkVersionOption.id == this.state.jdkMedia.id;
@@ -612,5 +644,11 @@ var JvmConfigDataTable = React.createClass({
             var jdkMediaName = sData && sData.name ? sData.name : "";
             return React.renderComponent(React.createElement("span", {}, jdkMediaName), nTd);
         }
+   },
+   componentDidMount: function() {
+       // Since JwalaDataTable draws the actual table in its componentDidUpdate lifecycle, we need to force an update
+       // after it renders to create the UI nodes. If JwalaDataTable is refactored in such a way that it draws
+       // the table in its componentDidMount life cycle then we won't need this.
+       this.forceUpdate();
    }
 });

@@ -1,10 +1,16 @@
 package com.cerner.jwala.service.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.domain.model.group.Group;
+import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.jpa.type.MediaType;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
+import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.media.impl.MediaServiceImpl;
 import com.cerner.jwala.service.repository.RepositoryService;
 import org.junit.Before;
@@ -99,6 +105,44 @@ public class MediaServiceImplTest {
         verify(Config.MOCK_MEDIA_DAO).remove(any(JpaMedia.class));
     }
 
+    @Test(expected = MediaServiceException.class)
+    public void testRemoveCheckDependency() {
+        final Group mockGroup = mock(Group.class);
+
+        Set<Group> groupSet = new HashSet<>();
+        groupSet.add(mockGroup);
+        Media media = new Media(1,"jdk", null, null, null, null);
+        List<Jvm> jvmList = new ArrayList<Jvm>();
+        final Jvm jvm = new Jvm(new Identifier<Jvm>(99L),
+                                "testJvm",
+                                "testHostName",
+                                groupSet,
+                                null,
+                                8001,
+                                8002,
+                                8003,
+                                8004,
+                                -1,
+                                null,
+                                "testSystemProperties",
+                                null,
+                                "testerrorstatus",
+                                null,
+                                "testUserName",
+                                "testEncryptedPassword",
+                                media,
+                                null,
+                                "testJavaHome",
+                                null);
+        jvmList.add(jvm);
+        when(Config.MOCK_JVM_PERSISTENCE_SERVICE.getJvms()).thenReturn(jvmList);
+        when(Config.MOCK_MEDIA_DAO.find(eq("tomcat"))).thenReturn(mockMedia);
+        when(mockMedia.getLocalPath()).thenReturn(Paths.get("/apache/tomcat.zip"));
+        mediaService.remove("jdk");
+        verify(Config.MOCK_MEDIA_REPOSITORY_SERVICE).delete(eq("tomcat.zip"));
+        verify(Config.MOCK_MEDIA_DAO).remove(any(JpaMedia.class));
+    }
+
     @Test
     public void testFindAll() {
         final List<JpaMedia> mediaList = new ArrayList<>();
@@ -119,6 +163,7 @@ public class MediaServiceImplTest {
         private static final MediaDao MOCK_MEDIA_DAO = mock(MediaDao.class);
         private static final RepositoryService MOCK_MEDIA_REPOSITORY_SERVICE = mock(RepositoryService.class);
         private static final FileUtility MOCK_FILE_UTILITY = mock(FileUtility.class);
+        private static final JvmPersistenceService MOCK_JVM_PERSISTENCE_SERVICE = mock(JvmPersistenceService.class);
 
         @Bean
         public MediaDao getMediaDao() {
@@ -138,6 +183,11 @@ public class MediaServiceImplTest {
         @Bean
         public MediaService getMediaService() {
             return new MediaServiceImpl();
+        }
+
+        @Bean
+        public JvmPersistenceService getJvmPersistenceService() {
+            return MOCK_JVM_PERSISTENCE_SERVICE;
         }
 
     }

@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -59,7 +58,6 @@ public class WebServerStateSetterWorker {
 
     private final Set<Identifier<WebServer>> webServersToPing = new CopyOnWriteArraySet<>();
 
-    @Autowired
     public WebServerStateSetterWorker(@Qualifier("webServerInMemoryStateManagerService")
                                       final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
                                       final WebServerService webServerService, final MessagingService messagingService,
@@ -81,8 +79,18 @@ public class WebServerStateSetterWorker {
     @Async("webServerTaskExecutor")
     public void pingWebServer(final WebServer webServer) {
 
-        if (isInWebServerToPingSet(webServer) && !webServerCanBePinged(webServer)) {
+        if (!webServerCanBePinged(webServer)) {
             return;
+        }
+
+        synchronized (webServersToPing) {
+            if (webServersToPing.contains(webServer.getId())) {
+                LOGGER.debug("List of web servers currently being pinged: {}", webServersToPing);
+                LOGGER.debug("Cannot ping web server {} since it is currently being pinged", webServer.getName(),
+                             webServer);
+                return;
+            }
+            webServersToPing.add(webServer.getId());
         }
 
         LOGGER.debug("Requesting {} for web server {}", webServer.getStatusUri(), webServer.getName());
@@ -93,42 +101,24 @@ public class WebServerStateSetterWorker {
             response = request.execute();
             LOGGER.debug("Web server {} status code = {}", webServer.getName(), response.getStatusCode());
 
-            if (response.getStatusCode() == HttpStatus.OK) {
+            if (HttpStatus.OK.equals(response.getStatusCode())) {
                 setState(webServer, WebServerReachableState.WS_REACHABLE, StringUtils.EMPTY);
             } else {
                 setState(webServer, WebServerReachableState.WS_UNREACHABLE,
-                         MessageFormat.format(RESPONSE_NOT_OK_MSG, webServer.getStatusUri(), response.getStatusCode()));
+                        MessageFormat.format(RESPONSE_NOT_OK_MSG, webServer.getStatusUri(), response.getStatusCode()));
             }
         } catch (final IOException e) {
-            LOGGER.error("Failed to ping {}!", webServer.getName());
-            setState(webServer, WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+            if (!WebServerReachableState.WS_UNREACHABLE.equals(webServer.getState())) {
+                LOGGER.warn("Failed to ping {}!", webServer.getName(), e);
+                setState(webServer, WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+            }
         } finally {
             if (response != null) {
                 response.close();
             }
             webServersToPing.remove(webServer.getId());
-            LOGGER.debug(">>> Removed web server {} to a set of web servers that will be pinged", webServer.getName());
         }
 
-    }
-
-    /**
-     * Checks if the web server is in webServerToPingSet, if it's not in the set it will be added to the set.
-     * This method is thread safe.
-     * @param webServer the web server
-     * @return true if the web server is in webServerToPingSet
-     */
-    private boolean isInWebServerToPingSet(final WebServer webServer) {
-        synchronized (webServersToPing) {
-            if (webServersToPing.contains(webServer.getId())) {
-                LOGGER.debug("List of web servers currently being pinged: {}", webServersToPing);
-                LOGGER.debug("Cannot ping web server {} since it is currently being pinged", webServer.getName(), webServer);
-                return false;
-            }
-            webServersToPing.add(webServer.getId());
-            LOGGER.debug(">>> Added web server {} to a set of web servers that will be pinged", webServer.getName());
-            return true;
-        }
     }
 
     /**
@@ -137,13 +127,12 @@ public class WebServerStateSetterWorker {
      * @return true if it can be pinged
      */
     private boolean webServerCanBePinged(final WebServer webServer) {
-        if (isWebServerBusy(webServer)) {
-            LOGGER.debug("Cannot ping web server {} since it is busy. Details: {}", webServer.getName(), webServer);
+        if (WebServerReachableState.WS_NEW.equals(webServer.getState())) {
             return false;
         }
 
-        if (inMemoryStateManagerService.get(webServer.getId()) == WebServerReachableState.WS_NEW) {
-            LOGGER.debug("Cannot ping web server {} with a status of \"NEW\"", webServer.getName(), webServer);
+        if (isWebServerBusy(webServer)) {
+            LOGGER.debug("Cannot ping web server {} since it is busy. Details: {}", webServer.getName(), webServer);
             return false;
         }
         return true;

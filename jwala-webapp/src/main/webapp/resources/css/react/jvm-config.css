@@ -12,3 +12,9 @@
     width: 325px;
 }
 
+.JvmConfig.msg {
+    font-size: 20px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 500px;
+}

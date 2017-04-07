@@ -26,7 +26,7 @@ var webServerService = {
         return "[" + JSON.stringify(json) + "]";
     },
 	insertNewWebServer : function(webserverName, groupIds, hostName, portNumber, httpsPort, statusPath,
-	                        svrRoot, docRoot, successCallback, errorCallback) {
+	                        successCallback, errorCallback) {
 		return serviceFoundation.post("v1.0/webservers",
 		                              "json",
 		                              JSON.stringify([{ webserverName: webserverName,
@@ -34,9 +34,7 @@ var webServerService = {
 		                                                hostName:hostName,
 		                                                portNumber:portNumber,
 		                                                httpsPort:httpsPort,
-                                                        statusPath:statusPath,
-                                                        svrRoot:svrRoot,
-                                                        docRoot:docRoot}]),
+                                                        statusPath:statusPath}]),
 		                                                successCallback,
 		                                                errorCallback);
 	},
@@ -47,15 +45,19 @@ var webServerService = {
 				                     successCallback,
 				                     errorCallback);
 	},
-    deleteWebServer : function(id, forceDelete) {
-    	    var qryParam = forceDelete ? "?forceDelete=true" : "?forceDelete=false";
-            return serviceFoundation.promisedDel("v1.0/webservers/" + id + qryParam, "json");
+    deleteWebServer : function(id, hardDelete) {
+    	    hardDelete = hardDelete ? true : false;
+            return serviceFoundation.promisedDel("v1.0/webservers/" + id + "?hardDelete=" + hardDelete, "json");
     },
 	getWebServer : function(id, responseCallback) {
 		return serviceFoundation.get("v1.0/webservers/" + id, "json", responseCallback);
 	},
 	getWebServers : function(responseCallback) {
-		return serviceFoundation.get("v1.0/webservers?all", "json", responseCallback);
+	    let restCall = "v1.0/webservers?all";
+	    if (responseCallback) {
+		    return serviceFoundation.get(restCall, "json", responseCallback);
+		}
+		return serviceFoundation.promisedGet(restCall, "json");
 	},
 
     /**
