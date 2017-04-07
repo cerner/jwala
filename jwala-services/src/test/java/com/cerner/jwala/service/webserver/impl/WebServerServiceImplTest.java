@@ -408,6 +408,15 @@ public class WebServerServiceImplTest {
     }
 
     @Test
+    public void testDeleteNewWebServerWithHardOption() {
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+        when(Config.mockWebServerPersistenceService.getWebServer(id)).thenReturn(mockWebServer);
+        wsService.deleteWebServer(id, true, user);
+        verify(Config.mockWebServerControlService, never()).controlWebServer(any(ControlWebServerRequest.class), eq(user));
+        verify(Config.mockWebServerPersistenceService).removeWebServer(id);
+    }
+
+    @Test
     public void testDeleteStoppedWebServer() {
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_UNREACHABLE);
