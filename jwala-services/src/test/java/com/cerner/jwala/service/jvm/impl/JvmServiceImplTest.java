@@ -867,7 +867,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testDeleteNewJvms() {
+    public void testDeleteNewJvm() {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
         jvmService.deleteJvm(id, false, user);
@@ -876,7 +876,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testDeleteStoppedJvms() {
+    public void testDeleteStoppedJvm() {
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
@@ -888,7 +888,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testDeleteForcedStoppedJvms() {
+    public void testDeleteForcedStoppedJvm() {
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
@@ -912,7 +912,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testFailedDeleteServiceOfStoppedJvms() {
+    public void testFailedDeleteServiceOfStoppedJvm() {
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getJvmName()).thenReturn("testJvm");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
@@ -929,7 +929,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testDeleteNonStoppedAndNotNewJvms() {
+    public void testDeleteNonStoppedAndNotNewJvm() {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
         try {
