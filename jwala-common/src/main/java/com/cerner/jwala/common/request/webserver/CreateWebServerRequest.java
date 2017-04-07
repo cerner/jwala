@@ -6,10 +6,7 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.request.Request;
-import com.cerner.jwala.common.rule.HostNameRule;
-import com.cerner.jwala.common.rule.MultipleRules;
-import com.cerner.jwala.common.rule.PortNumberRule;
-import com.cerner.jwala.common.rule.StatusPathRule;
+import com.cerner.jwala.common.rule.*;
 import com.cerner.jwala.common.rule.group.GroupIdsRule;
 import com.cerner.jwala.common.rule.webserver.WebServerNameRule;
 
@@ -77,7 +74,8 @@ public class CreateWebServerRequest implements Serializable, Request {
                 new PortNumberRule(port, FaultType.INVALID_WEBSERVER_PORT),
                 new PortNumberRule(httpsPort, FaultType.INVALID_WEBSERVER_HTTPS_PORT, true),
                 new GroupIdsRule(groupIds),
-                new StatusPathRule(statusPath)).validate();
+                new StatusPathRule(statusPath),
+                new SpecialCharactersRule(name)).validate();
     }
 
 

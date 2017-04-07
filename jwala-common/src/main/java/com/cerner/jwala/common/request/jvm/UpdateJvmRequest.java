@@ -141,7 +141,8 @@ public class UpdateJvmRequest implements Serializable, Request {
                           new PortNumberRule(newHttpsPort, FaultType.INVALID_JVM_HTTPS_PORT, true),
                           new PortNumberRule(newRedirectPort, FaultType.INVALID_JVM_REDIRECT_PORT),
                           new ShutdownPortNumberRule(newShutdownPort, FaultType.INVALID_JVM_SHUTDOWN_PORT),
-                          new PortNumberRule(newAjpPort, FaultType.INVALID_JVM_AJP_PORT)).validate();
+                          new PortNumberRule(newAjpPort, FaultType.INVALID_JVM_AJP_PORT),
+                          new SpecialCharactersRule(newJvmName)).validate();
     }
 
     @Override

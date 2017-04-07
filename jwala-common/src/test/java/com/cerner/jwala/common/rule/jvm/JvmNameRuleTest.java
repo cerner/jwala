@@ -23,7 +23,7 @@ public class JvmNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null,"***$JVM","JVM123$","\\jvm","/jvm","jvm  ","  jvm"};
+        final String[] invalidNames = {"", "    ", null};
 
         for (final String name : invalidNames) {
             final JvmNameRule rule = new JvmNameRule(name);

@@ -41,7 +41,7 @@ public class GroupNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null,"$group*","\\group","/group","  myGroup","myGroup "," myGroup   "};
+        final String[] invalidNames = {"", "    ", null};
 
         for (final String name : invalidNames) {
             final GroupNameRule rule = new GroupNameRule(name);
