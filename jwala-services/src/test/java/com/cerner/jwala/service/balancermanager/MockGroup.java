@@ -75,7 +75,7 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                WebServerReachableState.WS_REACHABLE,
+                WebServerReachableState.WS_REACHABLE);
         webServers.add(webServer);
     }
 
@@ -86,7 +86,7 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                WebServerReachableState.WS_REACHABLE,
+                WebServerReachableState.WS_REACHABLE);
         return webServer;
     }
 
@@ -157,14 +157,14 @@ public class MockGroup {
                 80,
                 443,
                 new Path("path"),
-                WebServerReachableState.WS_REACHABLE,
+                WebServerReachableState.WS_REACHABLE);
         WebServer webServer2 = new WebServer(id(1L, WebServer.class),
                 "localhost2",
                 "myWebServerName2",
                 80,
                 443,
                 new Path("path"),
-                WebServerReachableState.WS_REACHABLE,
+                WebServerReachableState.WS_REACHABLE);
         webservers.add(webServer);
         webservers.add(webServer2);
         return webservers;
