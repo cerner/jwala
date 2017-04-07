@@ -42,7 +42,9 @@ var JvmControlPanelWidget = React.createClass({
                             className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
                             spanClassName="ui-icon ui-icon-trash"
                             onClick={this.jvmDelete}
-                            title="Delete JVM"/>
+                            title="Delete JVM"
+                            disabled = {!MainArea.isAdminRole}
+                            disabledTitle="Only users with admin role can access this feature"/>
 
                    <RButton ref="heapDumpBtn"
                             className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
