@@ -36,7 +36,9 @@ var WebServerControlPanelWidget = React.createClass({
                              className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
                              spanClassName="ui-icon ui-icon-trash"
                              onClick={this.webServerDelete}
-                             title="Delete Web Server"/>
+                             title="Delete Web Server"
+                             disabled = {!MainArea.isAdminRole}
+                             disabledTitle="Only users with admin role can access this feature"/>
 
                     <button ref="httpdConfBtn" className="button-link anchor-font-style">httpd.conf</button>
 

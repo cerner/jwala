@@ -263,4 +263,22 @@ public interface GroupServiceRest {
     @GET
     @Path("/hosts")
     Response getAllHosts();
+
+    /**
+     * Returns the state of a group
+     * @param groupName the name of the group
+     * @return state info of a group
+     */
+    @GET
+    @Path("/{groupName}/state")
+    Response getGroupState(@PathParam("groupName") String groupName);
+
+    /**
+     * Gets the state info of all groups
+     * @return state info of all groups
+     */
+    @GET
+    @Path("/state")
+    Response getGroupStates();
+
 }

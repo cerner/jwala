@@ -816,7 +816,7 @@ var GroupOperationsDataTable = React.createClass({
         let self = this;
         webServerService.deleteWebServer(data.id.id, true).then(function(e){
             // Remove deleted row
-            $("td:contains('" + data.name + "')").filter(function() {
+             $("[id*='ws-child-table']").find("td:contains('" + data.name + "')").filter(function() {
                 if ($(this).text() === data.name) {
                     $(this).parent().remove();
                 }
@@ -844,7 +844,7 @@ var GroupOperationsDataTable = React.createClass({
         let self = this;
         jvmService.deleteJvm(data.id.id, true).then(function(e){
             // Remove deleted row
-            $("tr td:contains('" + data.jvmName + "')").filter(function() {
+            $("[id*='jvm-child-table']").find("td:contains('" + data.jvmName + "')").filter(function() {
                 if ($(this).text() === data.jvmName) {
                     $(this).parent().remove();
                 }

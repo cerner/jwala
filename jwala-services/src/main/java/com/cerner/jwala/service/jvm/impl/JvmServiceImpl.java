@@ -281,7 +281,8 @@ public class JvmServiceImpl implements JvmService {
         if (hardDelete) {
             LOGGER.info("Deleting JVM service {}", jvm.getJvmName());
 
-            if (!JvmState.JVM_STOPPED.equals(jvm.getState()) && !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
+            if (!JvmState.JVM_NEW.equals(jvm.getState()) && !JvmState.JVM_STOPPED.equals(jvm.getState()) &&
+                    !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
                 final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
                         jvm.getJvmName());
                 LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
@@ -289,15 +290,17 @@ public class JvmServiceImpl implements JvmService {
                 throw new JvmServiceException(msg);
             }
 
-            // delete the service
-            final CommandOutput commandOutput = jvmControlService.controlJvm(new ControlJvmRequest(jvm.getId(),
-                    JvmControlOperation.DELETE_SERVICE), user);
-            if (!commandOutput.getReturnCode().wasSuccessful()) {
-                final String msg = MessageFormat.format("Failed to delete the JVM service {0}! CommandOutput = {1}",
-                        jvm.getJvmName(), commandOutput);
-                LOGGER.error(msg);
-                throw new JvmServiceException(msg);
+            if (!JvmState.JVM_NEW.equals(jvm.getState())) {
+                final CommandOutput commandOutput = jvmControlService.controlJvm(new ControlJvmRequest(jvm.getId(),
+                        JvmControlOperation.DELETE_SERVICE), user);
+                if (!commandOutput.getReturnCode().wasSuccessful()) {
+                    final String msg = MessageFormat.format("Failed to delete the JVM service {0}! CommandOutput = {1}",
+                            jvm.getJvmName(), commandOutput);
+                    LOGGER.error(msg);
+                    throw new JvmServiceException(msg);
+                }
             }
+
         }
 
         jvmPersistenceService.removeJvm(id);
