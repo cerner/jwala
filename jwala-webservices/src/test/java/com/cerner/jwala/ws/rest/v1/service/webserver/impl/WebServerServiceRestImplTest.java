@@ -70,9 +70,6 @@ public class WebServerServiceRestImplTest {
     private static final String name2 = "webserverName2";
     private static final String host = "localhost";
     private static final Path statusPath = new Path("/statusPath");
-    private static final Path httpConfigFile = new Path("d:/some-dir/httpd.conf");
-    private static final Path SVR_ROOT = new Path("./");
-    private static final Path DOC_ROOT = new Path("htdocs");
     private static final List<WebServer> webServerList = createWebServerList();
     private static final WebServer webServer = webServerList.get(0);
     private static final WebServer webServer2 = webServerList.get(1);
@@ -122,9 +119,9 @@ public class WebServerServiceRestImplTest {
         singleGroupList.add(groupOne);
 
         final WebServer ws = new WebServer(Identifier.id(1L, WebServer.class), groupsList, name, host, 8080, 8009, statusPath,
-                httpConfigFile, SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                WebServerReachableState.WS_UNREACHABLE);
         final WebServer ws2 = new WebServer(Identifier.id(2L, WebServer.class), singleGroupList, name2, host, 8080, 8009, statusPath,
-                httpConfigFile, SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE, null);
+                WebServerReachableState.WS_UNREACHABLE);
         final List<WebServer> result = new ArrayList<>();
         result.add(ws);
         result.add(ws2);
@@ -300,8 +297,7 @@ public class WebServerServiceRestImplTest {
     public void testGetWebServersByGroup() {
         final List<WebServer> webServers = new ArrayList<>();
         webServers.add(new WebServer(null, new ArrayList<Group>(), "test", null, null, null, new Path("/statusPath"),
-                new Path("d:/some-dir/httpd.conf"), SVR_ROOT, DOC_ROOT, WebServerReachableState.WS_UNREACHABLE,
-                null));
+                WebServerReachableState.WS_UNREACHABLE));
 
         final Identifier<Group> groupId = new Identifier<>("1");
 

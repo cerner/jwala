@@ -16,6 +16,8 @@ import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.*;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
+import com.cerner.jwala.common.rule.MultipleRules;
+import com.cerner.jwala.common.rule.NameLengthRule;
 import com.cerner.jwala.common.rule.group.GroupNameRule;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
@@ -101,8 +103,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public List<Group> findGroups(final String aGroupNameFragment) {
-
-        new GroupNameRule(aGroupNameFragment).validate();
+        new MultipleRules(new GroupNameRule(aGroupNameFragment), new NameLengthRule(aGroupNameFragment)).validate();
         return groupPersistenceService.findGroups(aGroupNameFragment);
     }
 
@@ -402,12 +403,11 @@ public class GroupServiceImpl implements GroupService {
         return new ArrayList<>(allHosts);
     }
 
-    @Transactional
     @Override
     @SuppressWarnings("unchecked")
     public Group generateAndDeployGroupJvmFile(final String groupName, final String fileName, final User user) {
         final Group group = groupPersistenceService.getGroup(groupName);
-        final Set<Jvm> jvms = group.getJvms();
+        final List<Jvm> jvms = jvmService.getJvmsByGroupName(group.getName());
 
         // Check if any JVMs are running before generating the file
         final List<String> startedJvmNameList = new ArrayList<>();

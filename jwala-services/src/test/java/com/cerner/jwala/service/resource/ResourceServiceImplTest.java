@@ -6,7 +6,6 @@ import com.cerner.jwala.common.domain.model.group.History;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
-import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.resource.*;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
@@ -141,7 +140,6 @@ public class ResourceServiceImplTest {
         when(mockJvm.getHttpPort()).thenReturn(9100);
         when(mockJvm.getHttpsPort()).thenReturn(9101);
         when(mockJvm.getJvmName()).thenReturn("some jvm");
-        when(mockJvm.getParentGroup()).thenReturn(mockGroup);
         when(mockJvm.getRedirectPort()).thenReturn(9102);
         when(mockJvm.getShutdownPort()).thenReturn(-1);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
@@ -297,12 +295,11 @@ public class ResourceServiceImplTest {
             applications.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", group, true, true, false, "testWar.war"));
             applications.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", group, true, true, false, "testWar.war"));
             WebServer webServer = new WebServer(new Identifier<WebServer>(1L), groups, "Apache2.4", "localhost", 80, 443,
-                    new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), new Path("D:/jwala/app/data/httpd//httpd.conf"),
-                    new com.cerner.jwala.common.domain.model.path.Path("./"), new com.cerner.jwala.common.domain.model.path.Path("htdocs"), WebServerReachableState.WS_UNREACHABLE, "");
+                    new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE);
             webServers.add(webServer);
-            jvms.add(new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", new HashSet<>(groups), group, 11010, 11011, 11012, -1, 11013,
+            jvms.add(new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", new HashSet<>(groups), 11010, 11011, 11012, -1, 11013,
                     new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null));
-            jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", new HashSet<>(groups), group, 11020, 11021, 11022, -1, 11023,
+            jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", new HashSet<>(groups), 11020, 11021, 11022, -1, 11023,
                     new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null));
 
             when(Config.mockGroupPesistenceService.getGroups()).thenReturn(groups);
@@ -828,9 +825,7 @@ public class ResourceServiceImplTest {
                 .build();
 
         Jvm mockJvm = mock(Jvm.class);
-        Group mockGroup = mock(Group.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-resource-validation");
-        when(mockJvm.getParentGroup()).thenReturn(mockGroup);
 
         ConfigTemplate mockConfigTemplate = mock(ConfigTemplate.class);
         when(mockConfigTemplate.getMetaData()).thenReturn("{\"deployFileName\":\"\test-deploy-name.xml\", \"deployPath\":\"./fake/test/path\"}");
@@ -857,9 +852,7 @@ public class ResourceServiceImplTest {
                 .build();
 
         Jvm mockJvm = mock(Jvm.class);
-        Group mockGroup = mock(Group.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-resource-validation");
-        when(mockJvm.getParentGroup()).thenReturn(mockGroup);
 
         ConfigTemplate mockConfigTemplate = mock(ConfigTemplate.class);
         when(mockConfigTemplate.getMetaData()).thenReturn("{\"deployFileName\":\"${fail.fail}-test-deploy-name.xml\", \"deployPath\":\"./fake/test/path\"}");

@@ -17,7 +17,6 @@ class ResourceFileGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFileGenerator.class);
 
     static <T> String generateResourceConfig(String fileName, String templateText, ResourceGroup resourceGroup, T selectedValue) {
-        Group group = null
         WebServer webServer = null
         Jvm jvm = null
         Application webApp = null
@@ -30,16 +29,13 @@ class ResourceFileGenerator {
 
         if (selectedValue instanceof WebServer) {
             webServer = selectedValue as WebServer
-            group = webServer.getParentGroup()
             entityInfo = "WebServer: " + webServer.getName()
         } else if (selectedValue instanceof Jvm) {
             jvm = selectedValue as Jvm
-            group = jvm.getParentGroup()
             entityInfo = "Jvm: " + jvm.getJvmName()
         } else if (selectedValue instanceof Application) {
             webApp = selectedValue as Application
             jvm = webApp.getParentJvm()
-            group = webApp.getGroup()
             entityInfo = "WebApp:" + webApp.getName()
         }
         groups.each {
@@ -73,7 +69,6 @@ class ResourceFileGenerator {
                        webApps   : webApps,
                        webApp    : webApp,
                        groups    : groups,
-                       group     : group,
                        vars      : map];
         map.each { k, v -> println "${k}:${v}" }
         def properties = ExternalProperties.properties

@@ -5,6 +5,7 @@ import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.path.Path;
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -117,9 +118,6 @@ public class WebServerServiceImplTest {
         when(mockWebServer.getPort()).thenReturn(51000);
         when(mockWebServer.getHttpsPort()).thenReturn(52000);
         when(mockWebServer.getStatusPath()).thenReturn(new Path("/statusPath"));
-        when(mockWebServer.getHttpConfigFile()).thenReturn(new Path("d:/some-dir/httpd.conf"));
-        when(mockWebServer.getSvrRoot()).thenReturn(new Path("./"));
-        when(mockWebServer.getDocRoot()).thenReturn(new Path("htdocs"));
 
 
         when(mockWebServer2.getId()).thenReturn(new Identifier<WebServer>(2L));
@@ -129,9 +127,6 @@ public class WebServerServiceImplTest {
         when(mockWebServer2.getPort()).thenReturn(51000);
         when(mockWebServer2.getHttpsPort()).thenReturn(52000);
         when(mockWebServer2.getStatusPath()).thenReturn(new Path("/statusPath"));
-        when(mockWebServer2.getHttpConfigFile()).thenReturn(new Path("d:/some-dir/httpd.conf"));
-        when(mockWebServer2.getSvrRoot()).thenReturn(new Path("./"));
-        when(mockWebServer2.getDocRoot()).thenReturn(new Path("htdocs"));
 
         mockWebServersAll.add(mockWebServer);
         mockWebServersAll.add(mockWebServer2);
@@ -190,10 +185,7 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer.getPort(),
                                                                 mockWebServer.getHttpsPort(),
                                                                 mockWebServer.getStatusPath(),
-                                                                mockWebServer.getSvrRoot(),
-                                                                mockWebServer.getDocRoot(),
-                                                                mockWebServer.getState(),
-                                                                mockWebServer.getErrorStatus());
+                                                                mockWebServer.getState());
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
@@ -208,9 +200,17 @@ public class WebServerServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testUpdateWebServers() {
+    public void testUpdateWebServers() throws IOException {
         when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
         when(Config.mockWebServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
+
+        ResourceContent mockResourceContent = mock(ResourceContent.class);
+        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
+
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
                                                                 groupIds2,
@@ -219,11 +219,7 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer2.getPort(),
                                                                 mockWebServer2.getHttpsPort(),
                                                                 mockWebServer2.getStatusPath(),
-                                                                mockWebServer2.getHttpConfigFile(),
-                                                                mockWebServer2.getSvrRoot(),
-                                                                mockWebServer2.getDocRoot(),
-                                                                mockWebServer2.getState(),
-                                                                mockWebServer2.getErrorStatus());
+                                                                mockWebServer2.getState());
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
@@ -231,7 +227,6 @@ public class WebServerServiceImplTest {
         assertEquals("the-ws-name-2", webServer.getName());
         assertEquals(group2.getName(), webServer.getGroups().iterator().next().getName());
         assertEquals("the-ws-hostname", webServer.getHost());
-        assertEquals("d:/some-dir/httpd.conf", webServer.getHttpConfigFile().getUriPath());
     }
 
     private final String readReferenceFile(String file) throws IOException {
@@ -334,12 +329,6 @@ public class WebServerServiceImplTest {
     }
 
     @Test
-    public void testUpdateErrorStatus() {
-        wsService.updateErrorStatus(mockWebServer.getId(), "test update error status");
-        verify(Config.mockWebServerPersistenceService).updateErrorStatus(new Identifier<WebServer>(1L), "test update error status");
-    }
-
-    @Test
     public void testUpdateState() {
         wsService.updateState(mockWebServer.getId(), WebServerReachableState.WS_REACHABLE, "");
         verify(Config.mockWebServerPersistenceService).updateState(new Identifier<WebServer>(1L), WebServerReachableState.WS_REACHABLE, "");
@@ -414,6 +403,15 @@ public class WebServerServiceImplTest {
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.getWebServer(id)).thenReturn(mockWebServer);
         wsService.deleteWebServer(id, false, user);
+        verify(Config.mockWebServerControlService, never()).controlWebServer(any(ControlWebServerRequest.class), eq(user));
+        verify(Config.mockWebServerPersistenceService).removeWebServer(id);
+    }
+
+    @Test
+    public void testDeleteNewWebServerWithHardOption() {
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+        when(Config.mockWebServerPersistenceService.getWebServer(id)).thenReturn(mockWebServer);
+        wsService.deleteWebServer(id, true, user);
         verify(Config.mockWebServerControlService, never()).controlWebServer(any(ControlWebServerRequest.class), eq(user));
         verify(Config.mockWebServerPersistenceService).removeWebServer(id);
     }

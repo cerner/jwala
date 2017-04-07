@@ -3,6 +3,7 @@ package com.cerner.jwala.common.request.app;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.request.Request;
 import com.cerner.jwala.common.rule.MultipleRules;
+import com.cerner.jwala.common.rule.SpecialCharactersRule;
 import com.cerner.jwala.common.rule.ValidTemplateNameRule;
 import com.cerner.jwala.common.rule.app.ApplicationIdRule;
 import com.cerner.jwala.common.rule.jvm.JvmNameRule;
@@ -46,7 +47,8 @@ public class UploadAppTemplateRequest implements Serializable, Request {
         new MultipleRules(
                 new ValidTemplateNameRule(this.fileName),
                 new ApplicationIdRule(this.application.getId()),
-                new JvmNameRule(this.jvmName)
+                new JvmNameRule(this.jvmName),
+                new SpecialCharactersRule(this.jvmName)
         ).validate();
     }
 

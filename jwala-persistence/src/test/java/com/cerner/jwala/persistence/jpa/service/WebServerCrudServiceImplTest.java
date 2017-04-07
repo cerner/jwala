@@ -97,11 +97,7 @@ public class WebServerCrudServiceImplTest {
                 8080,
                 443,
                 new Path("any"),
-                new Path("any"),
-                new Path("any"),
-                new Path("any"),
-                WebServerReachableState.WS_UNREACHABLE,
-                null);
+                WebServerReachableState.WS_UNREACHABLE);
         final WebServer createdWebServer = webServerCrudService.createWebServer(newWebServer, "me");
         assertTrue(createdWebServer.getId() != null);
         assertTrue(createdWebServer.getId().getId() != null);
@@ -114,11 +110,7 @@ public class WebServerCrudServiceImplTest {
                 808,
                 44,
                 new Path("anyx"),
-                new Path("anyx"),
-                new Path("anyx"),
-                new Path("anyx"),
-                WebServerReachableState.WS_UNREACHABLE,
-                null);
+                WebServerReachableState.WS_UNREACHABLE);
         final WebServer updatedWebServer = webServerCrudService.updateWebServer(editedWebServer, "me");
         assertEquals(editedWebServer.getId().getId(), updatedWebServer.getId().getId());
 
@@ -145,10 +137,7 @@ public class WebServerCrudServiceImplTest {
         group = groupCrudService.create(group);
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("zWebServer");
-        webServer.setDocRoot("zRoot");
-        webServer.setHttpConfigFile("zConfigFile");
         webServer.setStatusPath("zStatusPath");
-        webServer.setSvrRoot("zSvrRoot");
         webServer.getGroups().add(group);
         group.getWebServers().add(webServerCrudService.create(webServer));
         groupCrudService.update(group);
@@ -171,8 +160,7 @@ public class WebServerCrudServiceImplTest {
         assertTrue(webServersBelongingTo.size() == 0);
 
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), new Path("./httpdConfPath"), new Path("./svrRootPath"),
-                new Path("./docRoot"), WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         List<JpaWebServer> wsList = new ArrayList<>();
         wsList.add(webServerCrudService.findById(webServer.getId().getId()));
@@ -184,8 +172,7 @@ public class WebServerCrudServiceImplTest {
     @Test(expected = EntityExistsException.class)
     public void testCreateWebServerThrowsException() {
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer", "testHost",
-                101, 102, new Path("./statusPath"), new Path("./httpdConfPath"), new Path("./svrRootPath"), new Path("./docRoot"),
-                WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+                101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
         webServerCrudService.createWebServer(webServer, "testUser");
         // causes problems
         webServerCrudService.createWebServer(webServer, "testUser");
@@ -194,8 +181,7 @@ public class WebServerCrudServiceImplTest {
     @Test
     public void testFindApplications() {
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer", "testHost",
-                101, 102, new Path("./statusPath"), new Path("./httpdConfPath"), new Path("./svrRootPath"),
-                new Path("./docRoot"), WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+                101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         List<Application> applications = webServerCrudService.findApplications("testWebServer");
         assertTrue(applications.size() == 0);
@@ -231,8 +217,7 @@ public class WebServerCrudServiceImplTest {
     @Test
     public void testFindJvms() {
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), new Path("./httpdConfPath"), new Path("./svrRootPath"),
-                new Path("./docRoot"), WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
         webServerCrudService.createWebServer(webServer, "testUser");
         List<Jvm> jvms = webServerCrudService.findJvms("testWebServer");
         assertTrue(jvms.size() == 0);
@@ -256,8 +241,7 @@ public class WebServerCrudServiceImplTest {
         String templateContent = scanner.hasNext() ? scanner.next() : "";
 
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), new Path("./httpdConfPath"), new Path("./svrRootPath"),
-                new Path("./docRoot"), WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         UploadWebServerTemplateRequest uploadWsTemplateRequest = new UploadWebServerTemplateRequest(webServer,
                 "HttpdSslConfTemplate.tpl", HTTPD_CONF_META_DATA, templateContent) {
@@ -294,8 +278,7 @@ public class WebServerCrudServiceImplTest {
         String templateContent = scanner.hasNext() ? scanner.next() : "";
 
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), new Path("./httpdConfPath"), new Path("./svrRootPath"),
-                new Path("./docRoot"), WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         UploadWebServerTemplateRequest uploadWsTemplateRequest = new UploadWebServerTemplateRequest(webServer,
                 "HttpdSslConfTemplate.tpl", StringUtils.EMPTY, templateContent) {
@@ -345,10 +328,7 @@ public class WebServerCrudServiceImplTest {
 
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("aWebServer");
-        webServer.setDocRoot("aRoot");
-        webServer.setHttpConfigFile("aConfigFile");
         webServer.setStatusPath("aStatusPath");
-        webServer.setSvrRoot("aSvrRoot");
         webServer.getGroups().add(group);
         group.getWebServers().add(webServerCrudService.create(webServer));
         groupCrudService.update(group);
@@ -367,36 +347,17 @@ public class WebServerCrudServiceImplTest {
     public void testUpdateState() {
         final JpaWebServer jpaWebServerParam = new JpaWebServer();
         jpaWebServerParam.setName("WebServer");
-        jpaWebServerParam.setDocRoot("/htdocs");
-        jpaWebServerParam.setHttpConfigFile("conf");
         jpaWebServerParam.setStatusPath("/jwala.png");
-        jpaWebServerParam.setSvrRoot("root");
         final JpaWebServer jpaWebServer = webServerCrudService.create(jpaWebServerParam);
         assertEquals(1, webServerCrudService.updateState(new Identifier<WebServer>(jpaWebServer.getId()),
                 WebServerReachableState.WS_UNREACHABLE));
     }
 
     @Test
-    public void testUpdateErrorStatus() {
-        final JpaWebServer jpaWebServerParam = new JpaWebServer();
-        jpaWebServerParam.setName("WebServer");
-        jpaWebServerParam.setDocRoot("/htdocs");
-        jpaWebServerParam.setHttpConfigFile("conf");
-        jpaWebServerParam.setStatusPath("/jwala.png");
-        jpaWebServerParam.setSvrRoot("root");
-        final JpaWebServer jpaWebServer = webServerCrudService.create(jpaWebServerParam);
-        assertEquals(1, webServerCrudService.updateErrorStatus(new Identifier<WebServer>(jpaWebServer.getId()),
-                "error!"));
-    }
-
-    @Test
     public void testUpdateStateAndErrSts() {
         final JpaWebServer jpaWebServerParam = new JpaWebServer();
         jpaWebServerParam.setName("WebServer");
-        jpaWebServerParam.setDocRoot("/htdocs");
-        jpaWebServerParam.setHttpConfigFile("conf");
         jpaWebServerParam.setStatusPath("/jwala.png");
-        jpaWebServerParam.setSvrRoot("root");
         final JpaWebServer jpaWebServer = webServerCrudService.create(jpaWebServerParam);
         assertEquals(1, webServerCrudService.updateState(new Identifier<WebServer>(jpaWebServer.getId()),
                 WebServerReachableState.WS_UNREACHABLE, "error!"));
@@ -422,10 +383,7 @@ public class WebServerCrudServiceImplTest {
 
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("aWebServer");
-        webServer.setDocRoot("aRoot");
-        webServer.setHttpConfigFile("aConfigFile");
         webServer.setStatusPath("aStatusPath");
-        webServer.setSvrRoot("aSvrRoot");
         webServer.getGroups().add(group);
 
         final JpaWebServer jpaWebServer = webServerCrudService.create(webServer);
@@ -449,10 +407,7 @@ public class WebServerCrudServiceImplTest {
 
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("aWebServer");
-        webServer.setDocRoot("aRoot");
-        webServer.setHttpConfigFile("aConfigFile");
         webServer.setStatusPath("aStatusPath");
-        webServer.setSvrRoot("aSvrRoot");
         webServer.getGroups().add(group1);
         webServer.getGroups().add(group2);
 
@@ -495,10 +450,7 @@ public class WebServerCrudServiceImplTest {
 
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("aWebServer");
-        webServer.setDocRoot("aRoot");
-        webServer.setHttpConfigFile("aConfigFile");
         webServer.setStatusPath("aStatusPath");
-        webServer.setSvrRoot("aSvrRoot");
         webServer.getGroups().add(group);
 
         webServerCrudService.create(webServer);
@@ -518,10 +470,7 @@ public class WebServerCrudServiceImplTest {
 
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("aWebServer");
-        webServer.setDocRoot("aRoot");
-        webServer.setHttpConfigFile("aConfigFile");
         webServer.setStatusPath("aStatusPath");
-        webServer.setSvrRoot("aSvrRoot");
         webServer.getGroups().add(group);
 
         final JpaWebServer jpaWebServer = webServerCrudService.create(webServer);
@@ -548,10 +497,7 @@ public class WebServerCrudServiceImplTest {
 
         final JpaWebServer webServer = new JpaWebServer();
         webServer.setName("aWebServer");
-        webServer.setDocRoot("aRoot");
-        webServer.setHttpConfigFile("aConfigFile");
         webServer.setStatusPath("aStatusPath");
-        webServer.setSvrRoot("aSvrRoot");
         webServer.getGroups().add(group);
 
         webServerCrudService.create(webServer);

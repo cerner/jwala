@@ -88,10 +88,7 @@ public class ResourceDaoImplTest {
         jpaWebServer.setGroups(jpaGroupList);
         jpaWebServer.setHost("someHost");
         jpaWebServer.setPort(0);
-        jpaWebServer.setDocRoot("someDocRoot");
-        jpaWebServer.setHttpConfigFile("someHttpConfigFile");
         jpaWebServer.setStatusPath("someStatusPath");
-        jpaWebServer.setSvrRoot("someSvrRoot");
 
         jpaWebServer = webServerCrudService.create(jpaWebServer);
 

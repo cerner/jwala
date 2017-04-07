@@ -96,11 +96,7 @@ public class WebServerServiceImpl implements WebServerService {
                 createWebServerRequest.getPort(),
                 createWebServerRequest.getHttpsPort(),
                 createWebServerRequest.getStatusPath(),
-                null,
-                createWebServerRequest.getSvrRoot(),
-                createWebServerRequest.getDocRoot(),
-                createWebServerRequest.getState(),
-                createWebServerRequest.getErrorStatus());
+                createWebServerRequest.getState());
 
         final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
         inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
@@ -155,11 +151,7 @@ public class WebServerServiceImpl implements WebServerService {
                 anUpdateWebServerCommand.getNewPort(),
                 anUpdateWebServerCommand.getNewHttpsPort(),
                 anUpdateWebServerCommand.getNewStatusPath(),
-                webServerPersistenceService.getWebServer(id).getHttpConfigFile(),
-                anUpdateWebServerCommand.getNewSvrRoot(),
-                anUpdateWebServerCommand.getNewDocRoot(),
-                anUpdateWebServerCommand.getState(),
-                anUpdateWebServerCommand.getErrorStatus());
+                anUpdateWebServerCommand.getState());
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
     }
@@ -188,14 +180,15 @@ public class WebServerServiceImpl implements WebServerService {
                 throw new WebServerServiceException(msg);
             }
 
-            // delete the service
-            final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
-                    WebServerControlOperation.DELETE_SERVICE), user);
-            if (!commandOutput.getReturnCode().wasSuccessful()) {
-                final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
-                        webServer.getName(), commandOutput);
-                LOGGER.error(msg);
-                throw new WebServerServiceException(msg);
+            if (!WebServerReachableState.WS_NEW.equals(webServer.getState())) {
+                final CommandOutput commandOutput = webServerControlService.controlWebServer(new ControlWebServerRequest(webServer.getId(),
+                        WebServerControlOperation.DELETE_SERVICE), user);
+                if (!commandOutput.getReturnCode().wasSuccessful()) {
+                    final String msg = MessageFormat.format("Failed to delete the web server service {0}! CommandOutput = {1}",
+                            webServer.getName(), commandOutput);
+                    LOGGER.error(msg);
+                    throw new WebServerServiceException(msg);
+                }
             }
         }
 
@@ -206,13 +199,8 @@ public class WebServerServiceImpl implements WebServerService {
     @Override
     public boolean isStarted(WebServer webServer) {
         final WebServerReachableState state = webServer.getState();
-        return !WebServerReachableState.WS_UNREACHABLE.equals(state) && !WebServerReachableState.WS_NEW.equals(state);
-    }
-
-    @Override
-    @Transactional
-    public void updateErrorStatus(final Identifier<WebServer> id, final String errorStatus) {
-        webServerPersistenceService.updateErrorStatus(id, errorStatus);
+        return !WebServerReachableState.WS_UNREACHABLE.equals(state) && !WebServerReachableState.FORCED_STOPPED.equals(state)
+                && !WebServerReachableState.WS_NEW.equals(state);
     }
 
     @Override
@@ -229,7 +217,7 @@ public class WebServerServiceImpl implements WebServerService {
             return resourceService.generateResourceFile(INSTALL_SERVICE_SCRIPT_NAME, FileUtils.readFileToString(new File(templatePath + INSTALL_SERVICE_WSBAT_TEMPLATE_TPL_PATH)),
                     resourceService.generateResourceGroup(), webServer, ResourceGeneratorType.TEMPLATE);
         } catch (final IOException ioe) {
-            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME+ "!", ioe);
+            throw new WebServerServiceException("Error generating " + INSTALL_SERVICE_SCRIPT_NAME + "!", ioe);
         }
     }
 

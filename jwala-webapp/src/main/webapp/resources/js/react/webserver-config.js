@@ -28,10 +28,19 @@ var WebServerConfig = React.createClass({
             showDeleteConfirmDialogContinue: false,
             selectedWebServerForEditing: null,
             webServerTableData: [],
-            selectedWebServer: null
+            selectedWebServer: null,
+            groupData: null,
+            err: null
         }
     },
     render: function() {
+
+        if (!this.state.groupData && !this.state.err) {
+            return <div>Loading...</div>;
+        } if (this.state.err) {
+            return <div className="WebServerConfig msg">{this.state.err.message}</div>;
+        }
+
         var btnDivClassName = this.props.className + "-btn-div";
         return  <div className={"dataTables_wrapper " + this.props.className}>
                     <table className="webserver-config-table-type-container">
@@ -111,8 +120,6 @@ var WebServerConfig = React.createClass({
                                                   this.refs.webServerAddForm.state.port,
                                                   this.refs.webServerAddForm.state.httpsPort,
                                                   this.refs.webServerAddForm.state.statusPath,
-                                                  this.refs.webServerAddForm.state.svrRoot,
-                                                  this.refs.webServerAddForm.state.docRoot,
                                                   function(){
                                                       self.state.selectedWebServer = null;
                                                       self.refreshData({showModalFormAddDialog:false});
@@ -139,14 +146,25 @@ var WebServerConfig = React.createClass({
         }
     },
     refreshData: function(states, doneCallback) {
-        var self = this;
-        this.props.service.getWebServers(function(response){
-                                             states["webServerTableData"] = response.applicationResponseContent;
-                                             if (doneCallback !== undefined) {
-                                                 doneCallback();
-                                             }
-                                             self.setState(states);
-                                        });
+        let self = this;
+        let groupData;
+        groupService.getGroups().then(function(response){
+            groupData = response.applicationResponseContent;
+            if (groupData.length > 0) {
+                return ServiceFactory.getWebServerService().getWebServers();
+            }
+            throw new Error("There are no groups defined in Jwala. Please define a group to be able to add web servers.");
+        }).then(function(response){
+            if (doneCallback) {
+                doneCallback();
+            }
+            states["groupData"] = groupData;
+            states["webServerTableData"] = response.applicationResponseContent;
+            self.setState(states);
+        }).caught(function(response){
+            console.log(response);
+            self.setState({err: response});
+        });
     },
     addBtnCallback: function() {
         this.setState({showModalFormAddDialog: true})
@@ -240,8 +258,6 @@ var WebServerConfigForm = React.createClass({
         var port = "";
         var httpsPort = "";
         var statusPath = jwalaVars.loadBalancerStatusMount;
-        var svrRoot = "";
-        var docRoot = "";
         var groupIds = [];
 
         if (this.props.data !== undefined) {
@@ -251,8 +267,6 @@ var WebServerConfigForm = React.createClass({
             port = this.props.data.port;
             httpsPort = this.props.data.httpsPort;
             statusPath = this.props.data.statusPath.path;
-            svrRoot = this.props.data.svrRoot.path;
-            docRoot = this.props.data.docRoot.path;
             this.props.data.groups.forEach(function(group) {
                 groupIds.push(group.id);
             });
@@ -265,8 +279,6 @@ var WebServerConfigForm = React.createClass({
             port: port,
             httpsPort: httpsPort,
             statusPath: statusPath,
-            svrRoot: svrRoot,
-            docRoot: docRoot,
             groupIds: groupIds,
             groupMultiSelectData: [],
         }
@@ -335,11 +347,9 @@ var WebServerConfigForm = React.createClass({
                             </tr>
                             <tr>
                                 <td>
-                                    <div className="webServerStatusUrl">
-                                        {window.location.protocol + "//" + this.state.host + ":" + (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + this.state.statusPath}
-                                    </div>
-                                    <input name="statusPath" type="text" valueLink={this.linkState("statusPath")}
-                                           maxLength="64" className="width-max"/>
+                                    <input name="statusPath" type="text" className="statusPath" valueLink={this.linkState("statusPath")}
+                                           maxLength="255" onFocus={this.onStatusPathFocus}/>
+                                    <IconBtn title="Generate Status Path" className="ui-icon-refresh" onClick={this.onClickGenerateStatusPath}/>
                                 </td>
                             </tr>
                             <tr>
@@ -371,6 +381,16 @@ var WebServerConfigForm = React.createClass({
                         </table>
                     </form>
                 </div>
+    },
+    onStatusPathFocus: function() {
+        if (!this.state.statusPath) {
+            this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
+            (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+        }
+    },
+    onClickGenerateStatusPath: function() {
+        this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
+                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
     },
     onSelectGroups: function(groupIds) {
         this.setState({groupIds:groupIds});
@@ -451,7 +471,6 @@ var WebServerDataTable = React.createClass({
         return <JwalaDataTable ref="dataTableWrapper"
                                tableId="webserver-config-datatable"
                                tableDef={tableDef}
-                               colHeaders={["JVM Name", "Host Name"]}
                                data={this.props.data}
                                selectItemCallback={this.props.selectItemCallback}
                                editCallback={this.props.editCallback}
@@ -465,5 +484,8 @@ var WebServerDataTable = React.createClass({
                 $(this.getDOMNode()).click(oData, self.props.editCallback);
             });
         };
+    },
+    componentDidMount: function() {
+        this.forceUpdate();
     }
 });

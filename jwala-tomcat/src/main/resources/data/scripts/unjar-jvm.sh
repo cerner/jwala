@@ -26,7 +26,7 @@ if $cygwin; then
         /usr/bin/echo "Renaming the current JVM to $2.$BACKUP_DATE"
         /usr/bin/mv $2 $2.$BACKUP_DATE
     fi
-    /usr/bin/mkdir $2
+    /usr/bin/mkdir -p $2
     cd $2/..
     # extract the new configuration files
     /usr/bin/echo "Extracting $1"

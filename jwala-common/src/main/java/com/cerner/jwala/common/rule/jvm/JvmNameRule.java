@@ -20,17 +20,4 @@ public class JvmNameRule extends ValidNameRule {
         return "Invalid Jvm Name : \"" + name + "\"";
     }
 
-    /**
-     * Checks for null
-     * Checks for an empty string +only spaces
-     * Checks for a string with last character space
-     * Checks for a string with first character space
-     * Checks that the string only contains alphanumeric+period+dash+underscore+space
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean isValid() {
-        return name != null && !"".equals(name.trim()) && !name.matches(".*[\\s]$")&& !name.matches("^[\\s].*") && name.matches("[A-Za-z0-9._\\s-]+");
-    }
 }
