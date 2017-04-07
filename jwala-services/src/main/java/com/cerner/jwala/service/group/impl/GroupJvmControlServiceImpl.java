@@ -2,6 +2,8 @@ package com.cerner.jwala.service.group.impl;
 
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
+import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.properties.ApplicationProperties;
@@ -10,10 +12,13 @@ import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
 import com.cerner.jwala.service.group.GroupJvmControlService;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.jvm.JvmControlService;
+import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +28,7 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
     private final GroupService groupService;
     private final JvmControlService jvmControlService;
     private final ExecutorService executorService;
+    private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GroupJvmControlServiceImpl.class);
 
     public GroupJvmControlServiceImpl(final GroupService theGroupService, final JvmControlService theJvmControlService) {
         groupService = theGroupService;
@@ -53,19 +59,26 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
                 jvms.addAll(groupsJvms);
             }
         }
-
+        LOGGER.info("jvm size to perform ControlJvms: " + jvms.size());
         controlJvms(controlGroupJvmRequest, user, jvms);
     }
 
     private void controlJvms(final ControlGroupJvmRequest controlGroupJvmRequest, final User user, Set<Jvm> jvms) {
         for (final Jvm jvm : jvms) {
-            executorService.submit(new Callable<CommandOutput>() {
-                @Override
-                public CommandOutput call() throws Exception {
-                    ControlJvmRequest controlJvmRequest = new ControlJvmRequest(jvm.getId(), controlGroupJvmRequest.getControlOperation());
-                    return jvmControlService.controlJvm(controlJvmRequest, user);
-                }
-            });
+            if (!checkSameState(controlGroupJvmRequest.getControlOperation(), jvm.getState())) {
+                executorService.submit(new Callable<CommandOutput>() {
+                    @Override
+                    public CommandOutput call() throws Exception {
+                        ControlJvmRequest controlJvmRequest = new ControlJvmRequest(jvm.getId(), controlGroupJvmRequest.getControlOperation());
+                        return jvmControlService.controlJvm(controlJvmRequest, user);
+                    }
+                });
+            }
         }
+    }
+
+    public boolean checkSameState(final JvmControlOperation jvmControlOperation, final JvmState jvmState) {
+        return jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState() ||
+                jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState();
     }
 }
