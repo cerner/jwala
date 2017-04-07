@@ -18,21 +18,6 @@ public class MockGroup {
 
     private Identifier<Group> groupId = new Identifier<>((long) 1);
     private String groupName = "mygroupName";
-    private Group parentGroup;
-
-    public Group getGroup() {
-        getJvms();
-        getApplications();
-        getWebServers();
-        parentGroup = new Group(groupId,
-                groupName,
-                jvms,
-                webServers,
-                null,
-                applications);
-        this.groups.add(parentGroup);
-        return parentGroup;
-    }
 
     public List<Jvm> getJvms() {
         List<Jvm> jvms = new LinkedList<>();
@@ -40,7 +25,6 @@ public class MockGroup {
                 "jvmname",
                 "somehost0057",
                 groups,
-                parentGroup,
                 9100,
                 9101,
                 9102,
@@ -66,7 +50,6 @@ public class MockGroup {
                 jvmName,
                 "somehost0057",
                 groups,
-                parentGroup,
                 9100,
                 9101,
                 9102,
@@ -86,7 +69,6 @@ public class MockGroup {
     }
 
     public void getWebServers() {
-        Group myGroup = new Group(groupId, groupName);
         WebServer webServer = new WebServer(id(1L, WebServer.class),
                 "localhost",
                 "myWebServerName",
@@ -94,12 +76,10 @@ public class MockGroup {
                 443,
                 new Path("path"),
                 WebServerReachableState.WS_REACHABLE,
-                myGroup);
         webServers.add(webServer);
     }
 
     public WebServer getWebServer(final String webServerName) {
-        Group myGroup = new Group(groupId, groupName);
         WebServer webServer = new WebServer(id(1L, WebServer.class),
                 "localhost",
                 "myWebSererName",
@@ -107,7 +87,6 @@ public class MockGroup {
                 443,
                 new Path("path"),
                 WebServerReachableState.WS_REACHABLE,
-                myGroup);
         return webServer;
     }
 
@@ -171,7 +150,6 @@ public class MockGroup {
     }
 
     public List<WebServer> findWebServers() {
-        Group myGroup = new Group(groupId, groupName);
         List<WebServer> webservers = new LinkedList<>();
         WebServer webServer = new WebServer(id(1L, WebServer.class),
                 "localhost",
@@ -180,7 +158,6 @@ public class MockGroup {
                 443,
                 new Path("path"),
                 WebServerReachableState.WS_REACHABLE,
-                myGroup);
         WebServer webServer2 = new WebServer(id(1L, WebServer.class),
                 "localhost2",
                 "myWebServerName2",
@@ -188,7 +165,6 @@ public class MockGroup {
                 443,
                 new Path("path"),
                 WebServerReachableState.WS_REACHABLE,
-                myGroup);
         webservers.add(webServer);
         webservers.add(webServer2);
         return webservers;
