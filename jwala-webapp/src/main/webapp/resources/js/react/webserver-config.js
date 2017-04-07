@@ -158,7 +158,9 @@ var WebServerConfig = React.createClass({
             if (doneCallback) {
                 doneCallback();
             }
-            self.setState({"groupData": groupData, "webServerTableData": response.applicationResponseContent});
+            states["groupData"] = groupData;
+            states["webServerTableData"] = response.applicationResponseContent;
+            self.setState(states);
         }).caught(function(response){
             console.log(response);
             self.setState({err: response});
