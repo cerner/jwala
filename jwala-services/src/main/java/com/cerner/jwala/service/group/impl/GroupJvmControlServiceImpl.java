@@ -78,7 +78,7 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
     }
 
     public boolean checkSameState(final JvmControlOperation jvmControlOperation, final JvmState jvmState) {
-        return (jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState()) ||
-                (jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState()) ? true : false;
+        return jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState() ||
+                jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState();
     }
 }

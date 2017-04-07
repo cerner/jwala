@@ -55,6 +55,10 @@ public class GroupJvmControlServiceImplTest {
     @Test
     public void testCheckSameState(){
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STARTED));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZING));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZED));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_START));
+        assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_STARTING));
         assertTrue(cut.checkSameState(JvmControlOperation.STOP, JvmState.JVM_STOPPED));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZING));
         assertTrue(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_INITIALIZED));
@@ -83,3 +87,4 @@ public class GroupJvmControlServiceImplTest {
         assertFalse(cut.checkSameState(JvmControlOperation.START, JvmState.JVM_UNKNOWN));
     }
 }
+
