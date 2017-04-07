@@ -12,6 +12,10 @@
     width: 325px;
 }
 
+input.jvmStatusPath {
+    width: 305px;
+}
+
 .JvmConfig.msg {
     font-size: 20px;
     text-align: center;
