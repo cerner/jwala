@@ -900,6 +900,18 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
+    public void testDeleteNewJvmWithHardDeleteOption() {
+        final CommandOutput mockCommandOutput = mock(CommandOutput.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
+        jvmService.deleteJvm(id, true, user);
+        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService).removeJvm(id);
+    }
+
+    @Test
     public void testFailedDeleteServiceOfStoppedJvms() {
         final CommandOutput mockCommandOutput = mock(CommandOutput.class);
         when(mockJvm.getJvmName()).thenReturn("testJvm");
