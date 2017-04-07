@@ -5,6 +5,8 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.Request;
 import com.cerner.jwala.common.rule.MultipleRules;
+import com.cerner.jwala.common.rule.NameLengthRule;
+import com.cerner.jwala.common.rule.SpecialCharactersRule;
 import com.cerner.jwala.common.rule.group.GroupIdRule;
 import com.cerner.jwala.common.rule.group.GroupNameRule;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -34,7 +36,7 @@ public class UpdateGroupRequest implements Serializable, Request {
     @Override
     public void validate() throws BadRequestException {
         new MultipleRules(new GroupIdRule(id),
-                                new GroupNameRule(newName)).validate();
+                new GroupNameRule(newName), new NameLengthRule(newName), new SpecialCharactersRule(newName)).validate();
     }
 
     @Override

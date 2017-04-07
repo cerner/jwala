@@ -85,6 +85,7 @@ public class UpdateWebServerRequest implements Serializable, Request {
     public void validate() {
         final MultipleRules mr =
                 new MultipleRules(new WebServerNameRule(newName),
+                        new SpecialCharactersRule(newName),
                         new HostNameRule(newHost),
                         new PortNumberRule(newPort, FaultType.INVALID_WEBSERVER_PORT),
                         new PortNumberRule(newHttpsPort, FaultType.INVALID_WEBSERVER_PORT, true),
