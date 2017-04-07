@@ -140,7 +140,6 @@ public class ResourceServiceImplTest {
         when(mockJvm.getHttpPort()).thenReturn(9100);
         when(mockJvm.getHttpsPort()).thenReturn(9101);
         when(mockJvm.getJvmName()).thenReturn("some jvm");
-        when(mockJvm.getParentGroup()).thenReturn(mockGroup);
         when(mockJvm.getRedirectPort()).thenReturn(9102);
         when(mockJvm.getShutdownPort()).thenReturn(-1);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
@@ -298,9 +297,9 @@ public class ResourceServiceImplTest {
             WebServer webServer = new WebServer(new Identifier<WebServer>(1L), groups, "Apache2.4", "localhost", 80, 443,
                     new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE);
             webServers.add(webServer);
-            jvms.add(new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", new HashSet<>(groups), group, 11010, 11011, 11012, -1, 11013,
+            jvms.add(new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", new HashSet<>(groups), 11010, 11011, 11012, -1, 11013,
                     new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null));
-            jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", new HashSet<>(groups), group, 11020, 11021, 11022, -1, 11023,
+            jvms.add(new Jvm(new Identifier<Jvm>(22L), "tc2", "someHostGenerateMe", new HashSet<>(groups), 11020, 11021, 11022, -1, 11023,
                     new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null));
 
             when(Config.mockGroupPesistenceService.getGroups()).thenReturn(groups);
@@ -826,9 +825,7 @@ public class ResourceServiceImplTest {
                 .build();
 
         Jvm mockJvm = mock(Jvm.class);
-        Group mockGroup = mock(Group.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-resource-validation");
-        when(mockJvm.getParentGroup()).thenReturn(mockGroup);
 
         ConfigTemplate mockConfigTemplate = mock(ConfigTemplate.class);
         when(mockConfigTemplate.getMetaData()).thenReturn("{\"deployFileName\":\"\test-deploy-name.xml\", \"deployPath\":\"./fake/test/path\"}");
@@ -855,9 +852,7 @@ public class ResourceServiceImplTest {
                 .build();
 
         Jvm mockJvm = mock(Jvm.class);
-        Group mockGroup = mock(Group.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-resource-validation");
-        when(mockJvm.getParentGroup()).thenReturn(mockGroup);
 
         ConfigTemplate mockConfigTemplate = mock(ConfigTemplate.class);
         when(mockConfigTemplate.getMetaData()).thenReturn("{\"deployFileName\":\"${fail.fail}-test-deploy-name.xml\", \"deployPath\":\"./fake/test/path\"}");

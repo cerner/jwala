@@ -3,6 +3,8 @@ package com.cerner.jwala.service.group.impl;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
+import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
+import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.webserver.ControlGroupWebServerRequest;
@@ -10,7 +12,6 @@ import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.group.GroupWebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerControlService;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
@@ -59,14 +60,20 @@ public class GroupWebServerControlServiceImpl implements GroupWebServerControlSe
 
     private void controlWebServers(final ControlGroupWebServerRequest controlGroupWebServerRequest, final User user, Set<WebServer> webServers) {
         for (final WebServer webServer : webServers) {
-            executorService.submit(new Callable<CommandOutput>() {
-                @Override
-                public CommandOutput call() throws Exception {
-                    final ControlWebServerRequest controlWebServerRequest = new ControlWebServerRequest(webServer.getId(), controlGroupWebServerRequest.getControlOperation());
-                    return webServerControlService.controlWebServer(controlWebServerRequest, user);
-                }
-            });
+            if (!checkSameState(controlGroupWebServerRequest.getControlOperation(), webServer.getStateLabel().toString())) {
+                executorService.submit(new Callable<CommandOutput>() {
+                    @Override
+                    public CommandOutput call() throws Exception {
+                        final ControlWebServerRequest controlWebServerRequest = new ControlWebServerRequest(webServer.getId(), controlGroupWebServerRequest.getControlOperation());
+                        return webServerControlService.controlWebServer(controlWebServerRequest, user);
+                    }
+                });
+            }
         }
     }
 
+    public boolean checkSameState(final WebServerControlOperation webServerControlOperation, final String webServerStateLabel) {
+        return webServerControlOperation.START.toString().equals(webServerControlOperation.name()) && webServerStateLabel.equalsIgnoreCase(WebServerReachableState.WS_REACHABLE.toStateLabel()) ||
+                webServerControlOperation.STOP.toString().equals(webServerControlOperation.name()) && webServerStateLabel.equalsIgnoreCase(WebServerReachableState.WS_UNREACHABLE.toStateLabel());
+    }
 }

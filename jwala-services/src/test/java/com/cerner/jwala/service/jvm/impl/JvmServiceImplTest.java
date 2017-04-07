@@ -481,7 +481,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     @Test
     public void testPreviewTemplate() {
         final String jvmName = "jvm-1Test";
-        Jvm testJvm = new Jvm(new Identifier<Jvm>(111L), jvmName, "testHost", new HashSet<Group>(), mock(Group.class), 9101, 9102, 9103, -1, 9104, new Path("./"), "", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null);
+        Jvm testJvm = new Jvm(new Identifier<Jvm>(111L), jvmName, "testHost", new HashSet<Group>(), 9101, 9102, 9103, -1, 9104, new Path("./"), "", JvmState.JVM_STOPPED, "", null, null, null, null, null, null, null);
         List<Jvm> jvmList = new ArrayList<>();
         jvmList.add(testJvm);
         when(Config.mockJvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(testJvm);

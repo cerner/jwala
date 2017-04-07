@@ -117,7 +117,6 @@ public class MediaServiceImplTest {
                                 "testJvm",
                                 "testHostName",
                                 groupSet,
-                                null,
                                 8001,
                                 8002,
                                 8003,

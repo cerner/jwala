@@ -72,4 +72,32 @@ public class Media implements Serializable {
     public void setMediaDir(String mediaDir) {
         this.mediaDir = mediaDir;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Media media = (Media) o;
+
+        if (id != null ? !id.equals(media.id) : media.id != null) return false;
+        if (name != null ? !name.equals(media.name) : media.name != null) return false;
+        if (path != null ? !path.equals(media.path) : media.path != null) return false;
+        if (type != null ? !type.equals(media.type) : media.type != null) return false;
+        if (remoteHostPath != null ? !remoteHostPath.equals(media.remoteHostPath) : media.remoteHostPath != null)
+            return false;
+        return mediaDir != null ? mediaDir.equals(media.mediaDir) : media.mediaDir == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (remoteHostPath != null ? remoteHostPath.hashCode() : 0);
+        result = 31 * result + (mediaDir != null ? mediaDir.hashCode() : 0);
+        return result;
+    }
 }
