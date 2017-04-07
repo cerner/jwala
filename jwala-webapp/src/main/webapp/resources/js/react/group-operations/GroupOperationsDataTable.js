@@ -844,7 +844,7 @@ var GroupOperationsDataTable = React.createClass({
         let self = this;
         jvmService.deleteJvm(data.id.id, true).then(function(e){
             // Remove deleted row
-            $("tr td:contains('" + data.jvmName + "')").filter(function() {
+            $("td:contains('" + data.jvmName + "')").filter(function() {
                 if ($(this).text() === data.jvmName) {
                     $(this).parent().remove();
                 }
