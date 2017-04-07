@@ -159,7 +159,9 @@ var JvmConfig = React.createClass({
             if (doneCallback) {
                 doneCallback();
             }
-            self.setState({"groupData": groupData, "jvmTableData": response.applicationResponseContent});
+            states["groupData"] = groupData;
+            states["jvmTableData"] = response.applicationResponseContent;
+            self.setState(states);
         }).caught(function(response){
             console.log(response);
             self.setState({err: response});
