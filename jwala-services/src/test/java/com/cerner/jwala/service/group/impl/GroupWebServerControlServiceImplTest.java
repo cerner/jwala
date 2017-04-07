@@ -76,5 +76,11 @@ public class GroupWebServerControlServiceImplTest {
         assertTrue(cut.checkSameState(WebServerControlOperation.STOP, WebServerReachableState.WS_UNREACHABLE.toStateLabel()));
         assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_UNREACHABLE.toStateLabel()));
         assertFalse(cut.checkSameState(WebServerControlOperation.STOP, WebServerReachableState.WS_REACHABLE.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_NEW.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_UNEXPECTED_STATE.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_START_SENT.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_STOP_SENT.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.WS_FAILED.toStateLabel()));
+        assertFalse(cut.checkSameState(WebServerControlOperation.START, WebServerReachableState.FORCED_STOPPED.toStateLabel()));
     }
 }

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
@@ -51,7 +52,7 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
 
     @Override
     public void controlAllJvms(final ControlGroupJvmRequest controlGroupJvmRequest, final User user) {
-        Set<Jvm> jvms = new TreeSet<>(new JvmTreeSet());
+        Set<Jvm> jvms = new HashSet<>();
         for (Group group : groupService.getGroups()) {
             Set<Jvm> groupsJvms = group.getJvms();
             if (groupsJvms != null && !groupsJvms.isEmpty()) {
@@ -79,12 +80,5 @@ public class GroupJvmControlServiceImpl implements GroupJvmControlService {
     public boolean checkSameState(final JvmControlOperation jvmControlOperation, final JvmState jvmState) {
         return (jvmControlOperation.START.toString().equals(jvmControlOperation.name()) && jvmState.isStartedState()) ||
                 (jvmControlOperation.STOP.toString().equals(jvmControlOperation.name()) && !jvmState.isStartedState()) ? true : false;
-    }
-}
-
-class JvmTreeSet implements Comparator<Jvm> {
-    @Override
-    public int compare(Jvm jvm1, Jvm jvm2) {
-        return jvm1.getJvmName().compareToIgnoreCase(jvm2.getJvmName());
     }
 }
