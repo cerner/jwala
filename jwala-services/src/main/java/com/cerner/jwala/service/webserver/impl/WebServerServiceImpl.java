@@ -17,6 +17,7 @@ import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -58,6 +60,9 @@ public class WebServerServiceImpl implements WebServerService {
 
     @Autowired
     private WebServerControlService webServerControlService;
+
+    @Autowired
+    private JvmPersistenceService jvmPersistenceService;
 
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
@@ -84,6 +89,15 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer createWebServer(final CreateWebServerRequest createWebServerRequest,
                                      final User aCreatingUser) {
         createWebServerRequest.validate();
+        try {
+            if (null != jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName())) {
+                String message = MessageFormat.format("Jvm already exists with this name {0}", createWebServerRequest.getName());
+                LOGGER.error(message);
+                throw new WebServerServiceException(message);
+            }
+        } catch (NoResultException pe) {
+            LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
+        }
 
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
@@ -138,6 +152,15 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand,
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
+        try {
+            if (null != jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName())) {
+                String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
+                LOGGER.error(message);
+                throw new WebServerServiceException(message);
+            }
+        } catch (NoResultException pe) {
+            LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
+        }
 
         WebServer originalWebServer = getWebServer(anUpdateWebServerCommand.getId());
         if (!anUpdateWebServerCommand.getNewName().equalsIgnoreCase(originalWebServer.getName()) && !WebServerReachableState.WS_NEW.equals(originalWebServer.getState())) {
