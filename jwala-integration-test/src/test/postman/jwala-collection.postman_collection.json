@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "f6e173b5-efb6-a3f7-80f4-b57ea2427efd",
+		"_postman_id": "2263ef78-e58c-0993-7ad5-db44dad60483",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -473,7 +473,7 @@
 					"response": []
 				},
 				{
-					"name": "create duplicate group error",
+					"name": "error: create duplicate group error",
 					"event": [
 						{
 							"listen": "test",
@@ -538,7 +538,7 @@
 					"response": []
 				},
 				{
-					"name": "create duplicate jvm error",
+					"name": "error: create duplicate jvm error",
 					"event": [
 						{
 							"listen": "test",
@@ -603,7 +603,7 @@
 					"response": []
 				},
 				{
-					"name": "create webserver duplicate exception",
+					"name": "error: create webserver duplicate exception",
 					"event": [
 						{
 							"listen": "test",
@@ -716,7 +716,7 @@
 					"response": []
 				},
 				{
-					"name": "create webapp duplicate exception",
+					"name": "error: create webapp duplicate exception",
 					"event": [
 						{
 							"listen": "test",
@@ -907,7 +907,7 @@
 					"response": []
 				},
 				{
-					"name": "upload hello xml number of files mismatch error",
+					"name": "error: upload hello xml number of files mismatch error",
 					"event": [
 						{
 							"listen": "test",
@@ -1045,7 +1045,7 @@
 					"response": []
 				},
 				{
-					"name": "delete group throw dependency error",
+					"name": "error: delete group throw dependency error",
 					"event": [
 						{
 							"listen": "test",
@@ -1072,7 +1072,7 @@
 					"response": []
 				},
 				{
-					"name": "create resource invalid attachments error",
+					"name": "error: create resource invalid attachments error",
 					"event": [
 						{
 							"listen": "test",
@@ -1111,7 +1111,7 @@
 					"response": []
 				},
 				{
-					"name": "create webapp duplicate exception",
+					"name": "error: create webapp duplicate exception",
 					"event": [
 						{
 							"listen": "test",
@@ -1142,7 +1142,7 @@
 					"response": []
 				},
 				{
-					"name": "Error creating resource template pop up",
+					"name": "error: Error creating resource template pop up",
 					"event": [
 						{
 							"listen": "test",
@@ -1438,7 +1438,7 @@
 					"response": []
 				},
 				{
-					"name": "deploy Conf error",
+					"name": "error: deploy Conf error",
 					"request": {
 						"url": "{{url}}/v1.0/applications/test/conf",
 						"method": "PUT",
@@ -1716,7 +1716,7 @@
 					"response": []
 				},
 				{
-					"name": "update webserver throws Entity exist exception",
+					"name": "error: update webserver throws Entity exist exception",
 					"event": [
 						{
 							"listen": "test",
@@ -1984,7 +1984,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "create media error",
+					"name": "error: create media error",
 					"event": [
 						{
 							"listen": "test",
@@ -2618,7 +2618,7 @@
 					"response": []
 				},
 				{
-					"name": "drain webserver error",
+					"name": "error: drain webserver error",
 					"event": [
 						{
 							"listen": "test",
@@ -2668,7 +2668,7 @@
 					"response": []
 				},
 				{
-					"name": "drain group error",
+					"name": "error: drain group error",
 					"event": [
 						{
 							"listen": "test",
@@ -2794,7 +2794,7 @@
 					"response": []
 				},
 				{
-					"name": "generate and deploy group app file to all hosts error ",
+					"name": "error: generate and deploy group app file to all hosts error ",
 					"event": [
 						{
 							"listen": "test",
@@ -2819,7 +2819,7 @@
 					"response": []
 				},
 				{
-					"name": "generate and deploy group webservers file error",
+					"name": "error: generate and deploy group webservers file error",
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupName}}/webservers/conf/httpd.conf",
 						"method": "PUT",
@@ -3288,7 +3288,7 @@
 					"response": []
 				},
 				{
-					"name": "get group jvm resource template error",
+					"name": "error: get group jvm resource template error",
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/resources/template/resourceTemplate",
 						"method": "GET",
@@ -4067,7 +4067,7 @@
 					"response": []
 				},
 				{
-					"name": "get resource content error",
+					"name": "error: get resource content error",
 					"event": [
 						{
 							"listen": "test",
@@ -4162,7 +4162,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "update group error",
+					"name": "error: update group error",
 					"event": [
 						{
 							"listen": "test",
@@ -4324,31 +4324,6 @@
 					"response": []
 				},
 				{
-					"name": "generate webapp",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/applications/{{WebappName}}/conf",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "update group app resource template",
 					"event": [
 						{
@@ -4374,7 +4349,7 @@
 					"response": []
 				},
 				{
-					"name": "update group app resource template error",
+					"name": "error: update group app resource template error",
 					"event": [
 						{
 							"listen": "test",
@@ -4462,7 +4437,7 @@
 					"response": []
 				},
 				{
-					"name": "update jvm error",
+					"name": "error: update jvm error",
 					"event": [
 						{
 							"listen": "test",
@@ -4518,7 +4493,7 @@
 					"response": []
 				},
 				{
-					"name": "update jvm resource template error",
+					"name": "error: update jvm resource template error",
 					"event": [
 						{
 							"listen": "test",
@@ -4599,7 +4574,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "generate group webservers when web server is started exception",
+					"name": "error: generate group webservers when web server is started exception",
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupId}}/webservers/conf/deploy",
 						"method": "POST",
@@ -4613,9 +4588,9 @@
 					"response": []
 				},
 				{
-					"name": "generate and deploy webserver when started exception",
+					"name": "error: generate and deploy webserver when started exception",
 					"request": {
-						"url": "{{url}}/v1.0/webservers/{{HealthCheckWebServer}}/conf/deploy",
+						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/deploy",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -4788,7 +4763,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "error deploying in jvm template file",
+					"name": "error: error deploying in jvm template file",
 					"event": [
 						{
 							"listen": "test",
@@ -4813,7 +4788,7 @@
 					"response": []
 				},
 				{
-					"name": "error generating jvm metadata",
+					"name": "error: error generating jvm metadata",
 					"event": [
 						{
 							"listen": "test",
@@ -5138,7 +5113,7 @@
 					"response": []
 				},
 				{
-					"name": "update webapp with existing name exception",
+					"name": "error: update webapp with existing name exception",
 					"event": [
 						{
 							"listen": "test",
@@ -5350,6 +5325,31 @@
 					"response": []
 				},
 				{
+					"name": "error: delete jvm throw  already been deployed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmId}}?hardDelete=false",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "delete jvm",
 					"event": [
 						{
@@ -5357,13 +5357,13 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
 								]
 							}
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmId}}",
+						"url": "{{url}}/v1.0/jvms/{{JvmId}}?hardDelete=true",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -5484,7 +5484,7 @@
 					"response": []
 				},
 				{
-					"name": "delete jvm error throws the jvm should stop before deleting copy",
+					"name": "error: delete jvm error throws the jvm should stop before deleting copy",
 					"event": [
 						{
 							"listen": "test",
@@ -5509,7 +5509,7 @@
 					"response": []
 				},
 				{
-					"name": "delete jvm error throws the jvm should stop before deleting for v2",
+					"name": "error: delete jvm error throws the jvm should stop before deleting for v2",
 					"event": [
 						{
 							"listen": "test",
