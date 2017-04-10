@@ -520,7 +520,7 @@ DocumentRoot htdocs
 # ErrorLog "logs/error.log"
 # Use log file rotation:
 
-  ErrorLog "|${vars['remote.paths.apache.httpd']}/bin/rotatelogs -n 10 -l ${vars['remote.paths.apache.httpd']}/logs/error-log 10M"
+  ErrorLog "|${vars['remote.paths.apache.httpd']}/bin/rotatelogs -n 10 -l ${vars['remote.paths.apache.httpd']}/logs/error-log-${webServer.name} 10M"
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -551,7 +551,7 @@ LogLevel warn
     #
     # CustomLog "logs/access.log" common
     # Use log file rotation:
-      CustomLog "|${vars['remote.paths.apache.httpd']}/bin/rotatelogs -n 10 -l ${vars['remote.paths.apache.httpd']}/logs/access-log 10M" common
+      CustomLog "|${vars['remote.paths.apache.httpd']}/bin/rotatelogs -n 10 -l ${vars['remote.paths.apache.httpd']}/logs/access-log-${webServer.name} 10M" common
 
     #
     # If you prefer a logfile with access, agent, and referer information
