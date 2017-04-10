@@ -139,6 +139,13 @@ public class WebServerServiceImpl implements WebServerService {
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
 
+        WebServer originalWebServer = getWebServer(anUpdateWebServerCommand.getId());
+        if (!anUpdateWebServerCommand.getNewName().equalsIgnoreCase(originalWebServer.getName()) && !WebServerReachableState.WS_NEW.equals(originalWebServer.getState())) {
+            throw new WebServerServiceException(MessageFormat.format("Web Server {0} is in {1} state, can only rename new web servers",
+                    originalWebServer.getName(), originalWebServer.getState().toStateLabel()));
+        }
+
+
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));
