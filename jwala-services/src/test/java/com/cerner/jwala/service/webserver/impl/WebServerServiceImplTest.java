@@ -9,6 +9,7 @@ import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
@@ -36,6 +37,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -135,7 +137,7 @@ public class WebServerServiceImplTest {
         mockWebServers12.add(mockWebServer2);
 
         reset(Config.mockBinaryDistributionLockManager, Config.mockResourceService, Config.mockWebServerControlService,
-              Config.mockWebServerPersistenceService);
+              Config.mockWebServerPersistenceService, Config.mockMessageTemplate);
     }
 
     @SuppressWarnings("unchecked")
@@ -332,6 +334,7 @@ public class WebServerServiceImplTest {
     public void testUpdateState() {
         wsService.updateState(mockWebServer.getId(), WebServerReachableState.WS_REACHABLE, "");
         verify(Config.mockWebServerPersistenceService).updateState(new Identifier<WebServer>(1L), WebServerReachableState.WS_REACHABLE, "");
+        verify(Config.mockMessageTemplate, times(1)).convertAndSend(anyString(), any(CurrentState.class));
         assertEquals(WebServerReachableState.WS_REACHABLE, Config.inMemService.get(mockWebServer.getId()));
     }
 
@@ -471,6 +474,8 @@ public class WebServerServiceImplTest {
 
         private static BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
 
+        private static SimpMessagingTemplate mockMessageTemplate = mock(SimpMessagingTemplate.class);
+
         @Bean
         public static WebServerPersistenceService getMockWebServerPersistenceService() {
             return mockWebServerPersistenceService;
@@ -492,9 +497,11 @@ public class WebServerServiceImplTest {
         }
 
         @Bean
+        public SimpMessagingTemplate getMockMessageTemplate() { return mockMessageTemplate; }
+        @Bean
         public WebServerService getWebSereWebServerService() {
             return new WebServerServiceImpl(mockWebServerPersistenceService, mockResourceService, inMemService, "/any",
-                    mockBinaryDistributionLockManager);
+                    mockBinaryDistributionLockManager, "test/topics", mockMessageTemplate);
         }
 
     }
