@@ -6,8 +6,6 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
-import com.cerner.jwala.common.domain.model.state.CurrentState;
-import com.cerner.jwala.common.domain.model.state.StateType;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
@@ -29,12 +27,10 @@ import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,10 +56,6 @@ public class WebServerServiceImpl implements WebServerService {
 
     private final BinaryDistributionLockManager binaryDistributionLockManager;
 
-    private String topicServerStates;
-
-    private final SimpMessagingTemplate messagingTemplate;
-
     @Autowired
     private WebServerControlService webServerControlService;
 
@@ -72,16 +64,12 @@ public class WebServerServiceImpl implements WebServerService {
                                 @Qualifier("webServerInMemoryStateManagerService")
                                 final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
                                 final String templatePath,
-                                final BinaryDistributionLockManager binaryDistributionLockManager,
-                                final String topicServerStates,
-                                final SimpMessagingTemplate messagingTemplate) {
+                                final BinaryDistributionLockManager binaryDistributionLockManager) {
         this.webServerPersistenceService = webServerPersistenceService;
         this.inMemoryStateManagerService = inMemoryStateManagerService;
         this.templatePath = templatePath;
         this.resourceService = resourceService;
         this.binaryDistributionLockManager = binaryDistributionLockManager;
-        this.topicServerStates = topicServerStates;
-        this.messagingTemplate = messagingTemplate;
         initInMemoryStateService();
     }
 
@@ -227,7 +215,6 @@ public class WebServerServiceImpl implements WebServerService {
     public void updateState(final Identifier<WebServer> id, final WebServerReachableState state, final String errorStatus) {
         webServerPersistenceService.updateState(id, state, errorStatus);
         inMemoryStateManagerService.put(id, state);
-        messagingTemplate.convertAndSend(topicServerStates, new CurrentState<>(id, state, DateTime.now(), StateType.WEB_SERVER));
     }
 
     @Override

@@ -206,9 +206,7 @@ public class AemServiceConfiguration {
                 resourceService,
                 inMemoryStateManagerService,
                 templatePath,
-                binaryDistributionLockManager,
-                topicServerStates,
-                messagingTemplate);
+                binaryDistributionLockManager);
     }
 
     @Bean
