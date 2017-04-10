@@ -24,12 +24,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.mockito.Mockito.mock;
 
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
         WebServerServiceImplIntegrationTest.CommonConfiguration.class,
@@ -45,6 +48,7 @@ public class WebServerServiceImplIntegrationTest {
     @Configuration
     static class CommonConfiguration {
 
+        static final SimpMessagingTemplate mockMessageTemplate = mock(SimpMessagingTemplate.class);
         @Bean
         public WebServerPersistenceService getWebServerPersistenceService() {
             return new WebServerPersistenceServiceImpl(getGroupCrudService(), getWebServerCrudService());
@@ -60,6 +64,9 @@ public class WebServerServiceImplIntegrationTest {
             return new GroupCrudServiceImpl();
         }
 
+        @Bean
+        public SimpMessagingTemplate getMessageTemplate() { return mockMessageTemplate; }
+
     }
 
     @Autowired
@@ -73,9 +80,12 @@ public class WebServerServiceImplIntegrationTest {
     @Autowired
     private BinaryDistributionLockManager binaryDistributionLockManager;
 
+    @Autowired
+    private SimpMessagingTemplate mockMessageTemplate;
+
     @Before
     public void setup() {
-        webServerService = new WebServerServiceImpl(webServerPersistenceService, resourceService, inMemService, "d:/jwala/app/data/types", binaryDistributionLockManager);
+        webServerService = new WebServerServiceImpl(webServerPersistenceService, resourceService, inMemService, "d:/jwala/app/data/types", binaryDistributionLockManager, "test/states", mockMessageTemplate);
     }
 
     @Test(expected = NotFoundException.class)
