@@ -25,8 +25,8 @@ import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
-import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionLockManagerImpl;
 import com.cerner.jwala.service.group.*;
+import com.cerner.jwala.service.impl.spring.component.SimpMessagingServiceImpl;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -479,6 +479,13 @@ public class GroupServiceImplDeployTest {
         static final BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
         private static final BinaryDistributionControlService binaryDistributionControlService = mock(BinaryDistributionControlService.class);
         private static final GroupStateNotificationService mockGroupStateNotificationService = mock(GroupStateNotificationService.class);
+        private static final SimpMessagingServiceImpl mockSimpleMessagingService = mock(SimpMessagingServiceImpl.class);
+
+
+        @Bean
+        public SimpMessagingServiceImpl getMockSimpleMessagingService() {
+            return mockSimpleMessagingService;
+        }
 
         @Bean
         public BinaryDistributionControlService getBinaryDistributionControlService(){
@@ -499,9 +506,7 @@ public class GroupServiceImplDeployTest {
 
         @Bean
         WebServerServiceRest getWebServerServiceRest() {
-            WebServerServiceRestImpl webServerServiceRest = new WebServerServiceRestImpl(mockWebServerService, mockWebServerControlService, mock(WebServerCommandService.class), mockResourceService, mockGroupService, binaryDistributionService, mockHistoryService);
-            webServerServiceRest.setLockManager(new BinaryDistributionLockManagerImpl());
-            return webServerServiceRest;
+            return new WebServerServiceRestImpl(mockWebServerService, mockWebServerControlService, mock(WebServerCommandService.class), mockResourceService, mockGroupService, binaryDistributionService, mockHistoryService);
         }
 
         @Bean
