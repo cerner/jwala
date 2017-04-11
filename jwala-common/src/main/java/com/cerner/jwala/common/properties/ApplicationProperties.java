@@ -44,12 +44,12 @@ public class ApplicationProperties {
         getInstance().init();
     }
 
-    public static String getRequired(PropertyKeys propertyNames) {
-        if (propertyNames == null) {
+    public static String getRequired(PropertyKeys propertyKey) {
+        if (propertyKey == null) {
             throw new ApplicationException("Attempted to call " + ApplicationProperties.class.getName() + ".get(property) with a null property key");
         }
 
-        return getRequired(propertyNames.getPropertyName());
+        return getRequired(propertyKey.getPropertyName());
     }
 
     public static String getRequired(String key) {
@@ -63,12 +63,12 @@ public class ApplicationProperties {
         return propVal;
     }
 
-    public static String get(PropertyKeys propertyNames) {
-        if (propertyNames == null) {
+    public static String get(PropertyKeys propertyKey) {
+        if (propertyKey == null) {
             throw new ApplicationException("Attempted to call " + ApplicationProperties.class.getName() + ".get(property) with a null property key");
         }
 
-        return get(propertyNames.getPropertyName());
+        return get(propertyKey.getPropertyName());
     }
 
     public static String get(String key) {
@@ -108,26 +108,6 @@ public class ApplicationProperties {
         return getProperties().size();
     }
 
-    private void init() {
-
-        String propertiesRootPath = System.getProperty(PROPERTIES_ROOT_PATH);
-        if (propertiesRootPath == null) {
-            propertiesRootPath = this.getClass().getClassLoader().getResource(PROPERTIES_FILE_NAME).getPath();
-            propertiesRootPath = propertiesRootPath.substring(0, propertiesRootPath.lastIndexOf('/'));
-            LOGGER.error("Properties root path not set! Loading default resource root path: {}", propertiesRootPath);
-        }
-
-        String propertiesFile = propertiesRootPath + "/" + PROPERTIES_FILE_NAME;
-        Properties tempProperties = new Properties();
-        try {
-            tempProperties.load(new FileReader(new File(propertiesFile)));
-        } catch (IOException e) {
-            throw new ApplicationException("Failed to load properties file " + propertiesFile, e);
-        }
-        properties = tempProperties;
-        LOGGER.info("Properties loaded from path " + propertiesFile);
-    }
-
     public static String get(String key, String defaultValue) {
         return getProperties().getProperty(key, defaultValue);
     }
@@ -152,4 +132,25 @@ public class ApplicationProperties {
             throw new ApplicationException(errorMsg, ex);
         }
     }
+
+    private void init() {
+
+        String propertiesRootPath = System.getProperty(PROPERTIES_ROOT_PATH);
+        if (propertiesRootPath == null) {
+            propertiesRootPath = this.getClass().getClassLoader().getResource(PROPERTIES_FILE_NAME).getPath();
+            propertiesRootPath = propertiesRootPath.substring(0, propertiesRootPath.lastIndexOf('/'));
+            LOGGER.error("Properties root path not set! Loading default resource root path: {}", propertiesRootPath);
+        }
+
+        String propertiesFile = propertiesRootPath + "/" + PROPERTIES_FILE_NAME;
+        Properties tempProperties = new Properties();
+        try {
+            tempProperties.load(new FileReader(new File(propertiesFile)));
+        } catch (IOException e) {
+            throw new ApplicationException("Failed to load properties file " + propertiesFile, e);
+        }
+        properties = tempProperties;
+        LOGGER.info("Properties loaded from path " + propertiesFile);
+    }
+
 }

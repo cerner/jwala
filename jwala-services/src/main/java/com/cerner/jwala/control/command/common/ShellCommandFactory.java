@@ -9,7 +9,7 @@ import com.cerner.jwala.commandprocessor.impl.jsch.JschScpCommandProcessorImpl;
 import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exec.*;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.exception.ApplicationServiceException;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class ShellCommandFactory {
     private HashMap<String, RemoteShellCommand> commands;
 
     @Autowired
-    private AemSshConfig aemSshConfig;
+    private SshConfig sshConfig;
 
     @Autowired
     protected RemoteCommandExecutorService remoteCommandExecutorService;
@@ -69,7 +69,7 @@ public class ShellCommandFactory {
     }
 
     private RemoteSystemConnection getConnection(String host) {
-        return new RemoteSystemConnection(aemSshConfig.getSshConfiguration().getUserName(), aemSshConfig.getSshConfiguration().getEncryptedPassword(), host, aemSshConfig.getSshConfiguration().getPort());
+        return new RemoteSystemConnection(sshConfig.getSshConfiguration().getUserName(), sshConfig.getSshConfiguration().getEncryptedPassword(), host, sshConfig.getSshConfiguration().getPort());
     }
 
     private String[] concatArray(String command, String... parameters){
@@ -81,7 +81,7 @@ public class ShellCommandFactory {
         //TODO Refactor jscp
         try {
             RemoteExecCommand command = new RemoteExecCommand(getConnection(hostname),  new ExecCommand(Command.SCP.get(), source, destination));
-            final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(aemSshConfig.getJschBuilder().build(), command);
+            final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(sshConfig.getJschBuilder().build(), command);
             jschScpCommandProcessor.processCommand();
             return  new RemoteCommandReturnInfo(jschScpCommandProcessor.getExecutionReturnCode().getReturnCode(),
                     jschScpCommandProcessor.getCommandOutputStr(), jschScpCommandProcessor.getErrorOutputStr());

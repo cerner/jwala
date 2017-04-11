@@ -7,6 +7,7 @@ import javax.persistence.EntityExistsException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import com.cerner.jwala.common.request.jvm.ControlJvmRequestFactory;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,10 +97,14 @@ public class JvmServiceRestImpl implements JvmServiceRest {
     public Response controlJvm(final Identifier<Jvm> aJvmId, final JsonControlJvm aJvmToControl, Boolean wait,
                                Long waitTimeout, final AuthenticatedUser aUser) {
         LOGGER.debug("Control JVM requested: {} {} by user {} with wait = {} and timeout = {}s", aJvmId, aJvmToControl,
-                aUser.getUser().getId(), wait, waitTimeout);
+                     aUser.getUser().getId(), wait, waitTimeout);
 
         final CommandOutput commandOutput;
-        final ControlJvmRequest controlJvmRequest = new ControlJvmRequest(aJvmId, aJvmToControl.toControlOperation());
+        final ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(aJvmToControl.toControlOperation(),
+                                                                                    jvmService.getJvm(aJvmId));
+
+        LOGGER.error("########## controlJvmRequest=" + controlJvmRequest);
+
         if (Boolean.TRUE.equals(wait)) {
             waitTimeout = waitTimeout == null ? DEFAULT_WAIT_TIMEOUT : waitTimeout * 1000; // waitTimeout is in seconds, need to convert to ms
             try {
@@ -107,7 +112,7 @@ public class JvmServiceRestImpl implements JvmServiceRest {
             } catch (final InterruptedException | JvmControlServiceException e) {
                 LOGGER.error("Control a JVM synchronously has failed!", e);
                 return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
-                        new FaultCodeException(FaultType.SERVICE_EXCEPTION, e.getMessage()));
+                                             new FaultCodeException(FaultType.SERVICE_EXCEPTION, e.getMessage()));
             }
         } else {
             commandOutput = jvmControlService.controlJvm(controlJvmRequest, aUser.getUser());
