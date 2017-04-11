@@ -5,6 +5,7 @@ import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.ConfigTemplate;
@@ -154,19 +155,46 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
     }
 
     @Override
-    public String updateResourceMetaData(ResourceIdentifier resourceIdentifier, String resourceName, String metaData) {
+    public String updateResourceMetaData(final ResourceIdentifier resourceIdentifier, final String resourceName, final String metaData) {
         if (canHandle(resourceIdentifier)) {
             final String updatedMetaData = groupPersistenceService.updateGroupAppResourceMetaData(resourceIdentifier.groupName, resourceIdentifier.webAppName, resourceName, metaData);
-            Set<Jvm> jvmSet = groupPersistenceService.getGroup(resourceIdentifier.groupName).getJvms();
-            for (Jvm jvm : jvmSet) {
-                List<String> resourceNames = applicationPersistenceService.getResourceTemplateNames(resourceIdentifier.webAppName, jvm.getJvmName());
-                if (resourceNames.contains(resourceName)) {
-                    applicationPersistenceService.updateResourceMetaData(resourceIdentifier.webAppName, resourceName, metaData, jvm.getJvmName(), resourceIdentifier.groupName);
-                }
-            }
+            updateApplicationUnpackWar(resourceIdentifier.webAppName, resourceName, metaData);
+            updateMetaDataForChildJVMResources(resourceIdentifier, resourceName, metaData);
             return updatedMetaData;
         } else {
             return successor.updateResourceMetaData(resourceIdentifier, resourceName, metaData);
+        }
+    }
+
+    private void updateApplicationUnpackWar(final String webAppName, final String resourceName, final String jsonMetaData) {
+        Application application = applicationPersistenceService.getApplication(webAppName);
+        ResourceTemplateMetaData warMetaData = null;
+        final String appName = application.getName();
+        try {
+            warMetaData = new ObjectMapper().readValue(jsonMetaData, ResourceTemplateMetaData.class);
+            applicationPersistenceService.updateApplication(new UpdateApplicationRequest(
+                    application.getId(),
+                    application.getGroup().getId(),
+                    application.getWebAppContext(),
+                    appName,
+                    application.isSecure(),
+                    application.isLoadBalanceAcrossServers(),
+                    warMetaData.isUnpack()
+            ));
+        } catch (IOException e) {
+            final String errorMsg = MessageFormat.format("Failed to parse meta data for war {0} in application {1} during an update of the meta data", resourceName, appName);
+            LOGGER.error(errorMsg,e);
+            throw new GroupLevelAppResourceHandlerException(errorMsg);
+        }
+    }
+
+    private void updateMetaDataForChildJVMResources(final ResourceIdentifier resourceIdentifier, final String resourceName, final String metaData) {
+        Set<Jvm> jvmSet = groupPersistenceService.getGroup(resourceIdentifier.groupName).getJvms();
+        for (Jvm jvm : jvmSet) {
+            List<String> resourceNames = applicationPersistenceService.getResourceTemplateNames(resourceIdentifier.webAppName, jvm.getJvmName());
+            if (resourceNames.contains(resourceName)) {
+                applicationPersistenceService.updateResourceMetaData(resourceIdentifier.webAppName, resourceName, metaData, jvm.getJvmName(), resourceIdentifier.groupName);
+            }
         }
     }
 
