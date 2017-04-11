@@ -12,25 +12,33 @@ import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.ResourceDao;
+import com.cerner.jwala.service.exception.GroupLevelAppResourceHandlerException;
 import com.cerner.jwala.service.exception.ResourceServiceException;
 import com.cerner.jwala.service.resource.ResourceHandler;
 import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.mime.MediaType;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 /**
  * Handler for a group level application resource identified by a "resource identifier" {@link ResourceIdentifier}
- *
+ * <p>
  * Created by Jedd Cuison on 7/21/2016
  */
 public class GroupLevelAppResourceHandler extends ResourceHandler {
 
     private static final String WAR_FILE_EXTENSION = ".war";
     private static final String MSG_CAN_ONLY_HAVE_ONE_WAR = "A web application can only have 1 war file. To change it, delete the war file first before uploading a new one.";
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(GroupLevelAppResourceHandler.class);
 
     private final GroupPersistenceService groupPersistenceService;
     private final JvmPersistenceService jvmPersistenceService;
@@ -63,49 +71,74 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
     @Override
     public CreateResourceResponseWrapper
     createResource(final ResourceIdentifier resourceIdentifier,
-                                                        final ResourceTemplateMetaData metaData,
-                                                        final String templateContent) {
+                   final ResourceTemplateMetaData metaData,
+                   final String templateContent) {
+        ResourceTemplateMetaData metaDataCopy = metaData;
         CreateResourceResponseWrapper createResourceResponseWrapper = null;
         if (canHandle(resourceIdentifier)) {
             final String groupName = resourceIdentifier.groupName;
             final Group group = groupPersistenceService.getGroup(groupName);
             final ConfigTemplate createdConfigTemplate;
 
-            if (metaData.getContentType().equals(MediaType.APPLICATION_ZIP) &&
+            if (metaDataCopy.getContentType().equals(MediaType.APPLICATION_ZIP) &&
                     templateContent.toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
                 final Application app = applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
                 if (StringUtils.isEmpty(app.getWarName())) {
-                    applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaData.getTemplateName(), templateContent);
+                    metaDataCopy = updateApplicationWarInfo(resourceIdentifier, templateContent, metaDataCopy, app);
                 } else {
                     throw new ResourceServiceException(MSG_CAN_ONLY_HAVE_ONE_WAR);
                 }
             }
 
             createdConfigTemplate = groupPersistenceService.populateGroupAppTemplate(groupName, resourceIdentifier.webAppName,
-                    metaData.getDeployFileName(), metaData.getJsonData(), templateContent);
+                    metaDataCopy.getDeployFileName(), metaDataCopy.getJsonData(), templateContent);
 
-            // Can't we just get the application using the group name and target app name instead of getting all the applications
-            // then iterating it to compare with the target app name ???
-            // If we can do that then TODO: Refactor this to return only one application and remove the iteration!
-            final List<Application> applications = applicationPersistenceService.findApplicationsBelongingTo(groupName);
-
-            for (final Application application : applications) {
-                if (metaData.getEntity().getDeployToJvms() && application.getName().equals(resourceIdentifier.webAppName)) {
-                    for (final Jvm jvm : group.getJvms()) {
-                        UploadAppTemplateRequest uploadAppTemplateRequest = new UploadAppTemplateRequest(application, metaData.getTemplateName(),
-                                metaData.getDeployFileName(), jvm.getJvmName(), metaData.getJsonData(), templateContent
-                        );
-                        JpaJvm jpaJvm = jvmPersistenceService.getJpaJvm(jvm.getId(), false);
-                        applicationPersistenceService.uploadAppTemplate(uploadAppTemplateRequest, jpaJvm);
-                    }
-                }
-            }
+            createJvmTemplateFromAppResource(resourceIdentifier, templateContent, metaDataCopy, groupName, group);
 
             createResourceResponseWrapper = new CreateResourceResponseWrapper(createdConfigTemplate);
         } else if (successor != null) {
-            createResourceResponseWrapper = successor.createResource(resourceIdentifier, metaData, templateContent);
+            createResourceResponseWrapper = successor.createResource(resourceIdentifier, metaDataCopy, templateContent);
         }
         return createResourceResponseWrapper;
+    }
+
+    private ResourceTemplateMetaData updateApplicationWarInfo(ResourceIdentifier resourceIdentifier, String templateContent, ResourceTemplateMetaData metaDataCopy, Application app) {
+        applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getTemplateName(), templateContent);
+        boolean isUnpackWar = app.isUnpackWar();
+        metaDataCopy = new ResourceTemplateMetaData(metaDataCopy.getTemplateName(), metaDataCopy.getContentType(), metaDataCopy.getDeployFileName(), metaDataCopy.getDeployPath(), metaDataCopy.getEntity(), isUnpackWar, metaDataCopy.isOverwrite());
+
+        try {
+            final ObjectMapper objectMapper = new ObjectMapper();
+//            final HashMap<String, Object> jsonMap = objectMapper.readValue(metaDataCopy.toString(), HashMap.class);
+//            final String jsonData = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
+            String jsonData = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(metaDataCopy);
+            metaDataCopy.setJsonData(jsonData);
+        } catch (IOException e) {
+            final String errMsg = MessageFormat.format("Unable to convert meta data to a string for app {0} creating resource {1}", resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), e);
+            LOGGER.error(errMsg);
+            throw new GroupLevelAppResourceHandlerException(errMsg);
+        }
+
+        return metaDataCopy;
+    }
+
+    private void createJvmTemplateFromAppResource(ResourceIdentifier resourceIdentifier, String templateContent, ResourceTemplateMetaData metaDataCopy, String groupName, Group group) {
+        // Can't we just get the application using the group name and target app name instead of getting all the applications
+        // then iterating it to compare with the target app name ???
+        // If we can do that then TODO: Refactor this to return only one application and remove the iteration!
+        final List<Application> applications = applicationPersistenceService.findApplicationsBelongingTo(groupName);
+
+        for (final Application application : applications) {
+            if (metaDataCopy.getEntity().getDeployToJvms() && application.getName().equals(resourceIdentifier.webAppName)) {
+                for (final Jvm jvm : group.getJvms()) {
+                    UploadAppTemplateRequest uploadAppTemplateRequest = new UploadAppTemplateRequest(application, metaDataCopy.getTemplateName(),
+                            metaDataCopy.getDeployFileName(), jvm.getJvmName(), metaDataCopy.getJsonData(), templateContent
+                    );
+                    JpaJvm jpaJvm = jvmPersistenceService.getJpaJvm(jvm.getId(), false);
+                    applicationPersistenceService.uploadAppTemplate(uploadAppTemplateRequest, jpaJvm);
+                }
+            }
+        }
     }
 
     @Override
@@ -116,10 +149,10 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
     @Override
     protected boolean canHandle(final ResourceIdentifier resourceIdentifier) {
         return StringUtils.isNotEmpty(resourceIdentifier.resourceName) &&
-               StringUtils.isNotEmpty(resourceIdentifier.webAppName) &&
-               StringUtils.isNotEmpty(resourceIdentifier.groupName) &&
-               StringUtils.isEmpty(resourceIdentifier.webServerName) &&
-               StringUtils.isEmpty(resourceIdentifier.jvmName);
+                StringUtils.isNotEmpty(resourceIdentifier.webAppName) &&
+                StringUtils.isNotEmpty(resourceIdentifier.groupName) &&
+                StringUtils.isEmpty(resourceIdentifier.webServerName) &&
+                StringUtils.isEmpty(resourceIdentifier.jvmName);
     }
 
     @Override
@@ -129,7 +162,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
             Set<Jvm> jvmSet = groupPersistenceService.getGroup(resourceIdentifier.groupName).getJvms();
             for (Jvm jvm : jvmSet) {
                 List<String> resourceNames = applicationPersistenceService.getResourceTemplateNames(resourceIdentifier.webAppName, jvm.getJvmName());
-                if (resourceNames.contains(resourceName)){
+                if (resourceNames.contains(resourceName)) {
                     applicationPersistenceService.updateResourceMetaData(resourceIdentifier.webAppName, resourceName, metaData, jvm.getJvmName(), resourceIdentifier.groupName);
                 }
             }
@@ -141,7 +174,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
 
     @Override
     public Object getSelectedValue(ResourceIdentifier resourceIdentifier) {
-        if (canHandle(resourceIdentifier)){
+        if (canHandle(resourceIdentifier)) {
             return applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
         } else {
             return successor.getSelectedValue(resourceIdentifier);
