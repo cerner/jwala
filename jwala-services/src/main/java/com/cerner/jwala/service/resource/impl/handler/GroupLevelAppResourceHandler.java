@@ -84,7 +84,8 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
                     templateContent.toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
                 final Application app = applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
                 if (StringUtils.isEmpty(app.getWarName())) {
-                    metaDataCopy = updateApplicationWarInfo(resourceIdentifier, templateContent, metaDataCopy, app);
+                    applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getTemplateName(), templateContent);
+                    metaDataCopy = updateApplicationWarMetaData(resourceIdentifier, metaDataCopy, app);
                 } else {
                     throw new ResourceServiceException(MSG_CAN_ONLY_HAVE_ONE_WAR);
                 }
@@ -102,15 +103,12 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
         return createResourceResponseWrapper;
     }
 
-    private ResourceTemplateMetaData updateApplicationWarInfo(ResourceIdentifier resourceIdentifier, String templateContent, ResourceTemplateMetaData metaDataCopy, Application app) {
-        applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getTemplateName(), templateContent);
+    private ResourceTemplateMetaData updateApplicationWarMetaData(ResourceIdentifier resourceIdentifier, ResourceTemplateMetaData metaDataCopy, Application app) {
         boolean isUnpackWar = app.isUnpackWar();
         metaDataCopy = new ResourceTemplateMetaData(metaDataCopy.getTemplateName(), metaDataCopy.getContentType(), metaDataCopy.getDeployFileName(), metaDataCopy.getDeployPath(), metaDataCopy.getEntity(), isUnpackWar, metaDataCopy.isOverwrite());
 
         try {
             final ObjectMapper objectMapper = new ObjectMapper();
-//            final HashMap<String, Object> jsonMap = objectMapper.readValue(metaDataCopy.toString(), HashMap.class);
-//            final String jsonData = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap);
             String jsonData = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(metaDataCopy);
             metaDataCopy.setJsonData(jsonData);
         } catch (IOException e) {
