@@ -103,8 +103,6 @@ public class JvmServiceRestImpl implements JvmServiceRest {
         final ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(aJvmToControl.toControlOperation(),
                                                                                     jvmService.getJvm(aJvmId));
 
-        LOGGER.error("########## controlJvmRequest=" + controlJvmRequest);
-
         if (Boolean.TRUE.equals(wait)) {
             waitTimeout = waitTimeout == null ? DEFAULT_WAIT_TIMEOUT : waitTimeout * 1000; // waitTimeout is in seconds, need to convert to ms
             try {
