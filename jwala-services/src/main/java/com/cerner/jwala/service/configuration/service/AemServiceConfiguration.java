@@ -97,23 +97,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync
 @EnableScheduling
 @ComponentScan({"com.cerner.jwala.service.webserver.component",
-                "com.cerner.jwala.service.state",
-                "com.cerner.jwala.service.spring.component",
-                "com.cerner.jwala.commandprocessor.jsch.impl.spring.component",
-                "com.cerner.jwala.service.group.impl.spring.component",
-                "com.cerner.jwala.service.jvm.impl.spring.component",
-                "com.cerner.jwala.service.impl.spring.component",
-                "com.cerner.jwala.service.resource.impl",
-                "com.cerner.jwala.common",
-                "com.cerner.jwala.service.impl",
-                "com.cerner.jwala.service.media.impl",
-                "com.cerner.jwala.common.jsch.impl",
-                "com.cerner.jwala.service.jvm.impl",
-                "com.cerner.jwala.service.jvm.operation.impl",
-                "com.cerner.jwala.control.jvm.command",
-                "com.cerner.jwala.control.webserver.command",
-                "com.cerner.jwala.commandprocessor.impl.jsch",
-                "com.cerner.jwala.control.command.common"})
+        "com.cerner.jwala.service.state",
+        "com.cerner.jwala.service.spring.component",
+        "com.cerner.jwala.commandprocessor.jsch.impl.spring.component",
+        "com.cerner.jwala.service.group.impl.spring.component",
+        "com.cerner.jwala.service.jvm.impl.spring.component",
+        "com.cerner.jwala.service.impl.spring.component",
+        "com.cerner.jwala.service.resource.impl",
+        "com.cerner.jwala.common",
+        "com.cerner.jwala.service.impl",
+        "com.cerner.jwala.service.media.impl",
+        "com.cerner.jwala.common.jsch.impl",
+        "com.cerner.jwala.service.jvm.impl",
+        "com.cerner.jwala.service.jvm.operation.impl",
+        "com.cerner.jwala.control.jvm.command",
+        "com.cerner.jwala.control.webserver.command",
+        "com.cerner.jwala.commandprocessor.impl.jsch",
+        "com.cerner.jwala.control.command.common"})
 public class AemServiceConfiguration {
 
     @Autowired
@@ -159,7 +159,7 @@ public class AemServiceConfiguration {
     @Bean
     public GroupService getGroupService(final HistoryFacadeService historyFacadeService) {
         return new GroupServiceImpl(aemPersistenceServiceConfiguration.getGroupPersistenceService(),
-                                    aemPersistenceServiceConfiguration.getApplicationPersistenceService(),
+                aemPersistenceServiceConfiguration.getApplicationPersistenceService(),
                 resourceService
         );
     }
@@ -191,15 +191,16 @@ public class AemServiceConfiguration {
                                                             final ClientFactoryHelper clientFactoryHelper,
                                                             final HistoryFacadeService historyFacadeService) {
         return new BalancerManagerServiceImpl(groupService, applicationService, webServerService, jvmService, clientFactoryHelper,
-                                              new BalancerManagerHtmlParser(), new BalancerManagerXmlParser(jvmService),
-                                              new BalancerManagerHttpClient(), historyFacadeService);
+                new BalancerManagerHtmlParser(), new BalancerManagerXmlParser(jvmService),
+                new BalancerManagerHttpClient(), historyFacadeService);
     }
 
     @Bean(name = "webServerService")
     public WebServerService getWebServerService(final ResourceService resourceService,
                                                 @Qualifier("webServerInMemoryStateManagerService")
                                                 final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
-                                                @Value("${paths.resource-templates:../data/templates}") final String templatePath) {
+                                                @Value("${paths.resource-templates:../data/templates}") final String templatePath,
+                                                @Value("${spring.messaging.topic.serverStates:/topic/server-states}") final String topicServerStates) {
         return new WebServerServiceImpl(
                 aemPersistenceServiceConfiguration.getWebServerPersistenceService(),
                 resourceService,
@@ -232,8 +233,8 @@ public class AemServiceConfiguration {
 
     @Bean(name = "jvmControlService")
     public JvmControlService getJvmControlService(
-                                                  final JvmStateService jvmStateService,
-                                                  final HistoryFacadeService historyFacadeService) {
+            final JvmStateService jvmStateService,
+            final HistoryFacadeService historyFacadeService) {
         return new JvmControlServiceImpl(
                 aemPersistenceServiceConfiguration.getJvmPersistenceService(),
                 jvmStateService,
@@ -412,7 +413,7 @@ public class AemServiceConfiguration {
     }
 
     @Bean
-    public ApplicationContextListener getApplicationContextListener(){
+    public ApplicationContextListener getApplicationContextListener() {
         return new ApplicationContextListener();
     }
 }
