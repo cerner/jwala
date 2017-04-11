@@ -16,7 +16,7 @@ import java.util.List;
         @NamedQuery(name = JpaJvm.QUERY_GET_JVM_COUNT_BY_STATE_AND_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaJvm j WHERE j.state = :state AND j.groups.name = :groupName"),
         @NamedQuery(name = JpaJvm.QUERY_GET_JVM_COUNT_BY_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaJvm j WHERE j.groups.name = :groupName"),
         @NamedQuery(name = JpaJvm.QUERY_GET_JVMS_BY_GROUP_NAME, query = "SELECT j FROM JpaJvm j WHERE j.groups.name = :groupName ORDER by j.name"),
-        @NamedQuery(name = JpaJvm.QUERY_GET_JVM_ID, query = "SELECT j.id FROM JpaJvm j WHERE j.name = :name")
+        @NamedQuery(name = JpaJvm.QUERY_GET_JVM_ID, query = "SELECT j.id FROM JpaJvm j WHERE lower(j.name) = :name")
 })
 public class JpaJvm extends AbstractEntity<JpaJvm> {
 

@@ -155,7 +155,7 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
     @Override
     public List<Application> findApplications(final String aWebServerName) {
         Query q = entityManager.createNamedQuery(JpaWebServer.FIND_WEB_SERVER_BY_QUERY);
-        q.setParameter(JpaApplication.WEB_SERVER_NAME_PARAM, aWebServerName);
+        q.setParameter(JpaApplication.WEB_SERVER_NAME_PARAM, aWebServerName.toLowerCase());
         final JpaWebServer webServer = (JpaWebServer) q.getSingleResult();
 
         q = entityManager.createNamedQuery(JpaApplication.QUERY_BY_WEB_SERVER_NAME);
@@ -171,7 +171,7 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
     @Override
     public WebServer findWebServerByName(final String aWebServerName) {
         final Query q = entityManager.createNamedQuery(JpaWebServer.FIND_WEB_SERVER_BY_QUERY);
-        q.setParameter(JpaWebServer.WEB_SERVER_PARAM_NAME, aWebServerName);
+        q.setParameter(JpaWebServer.WEB_SERVER_PARAM_NAME, aWebServerName.toLowerCase());
 
         return webServerFrom((JpaWebServer) q.getSingleResult());
     }
@@ -179,7 +179,7 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
     @Override
     public List<Jvm> findJvms(final String aWebServerName) {
         Query q = entityManager.createNamedQuery(JpaWebServer.FIND_WEB_SERVER_BY_QUERY);
-        q.setParameter(JpaApplication.WEB_SERVER_NAME_PARAM, aWebServerName);
+        q.setParameter(JpaApplication.WEB_SERVER_NAME_PARAM, aWebServerName.toLowerCase());
         final JpaWebServer webServer = (JpaWebServer) q.getSingleResult();
         q = entityManager.createNamedQuery(JpaWebServer.FIND_JVMS_QUERY);
         q.setParameter("groups", webServer.getGroups());
