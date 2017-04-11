@@ -8,6 +8,7 @@ import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
+import com.cerner.jwala.common.domain.model.webserver.WebServerState;
 import com.cerner.jwala.common.exception.FaultCodeException;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
@@ -20,6 +21,7 @@ import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.service.HistoryFacadeService;
+import com.cerner.jwala.service.MessagingService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.group.GroupService;
@@ -34,6 +36,7 @@ import com.cerner.jwala.ws.rest.v1.response.ResponseBuilder;
 import com.cerner.jwala.ws.rest.v1.service.webserver.WebServerServiceRest;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +62,11 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
     private static final Long DEFAULT_WAIT_TIMEOUT = 30000L;
 
     @Autowired
-    BinaryDistributionLockManager binaryDistributionLockManager;
+    private BinaryDistributionLockManager binaryDistributionLockManager;
+
+    @Autowired
+    private MessagingService simpleMessagingService;
+
     private final WebServerService webServerService;
     private final WebServerControlService webServerControlService;
     private final WebServerCommandService webServerCommandService;
@@ -232,6 +239,9 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
             installWebServerService(aUser, new ControlWebServerRequest(webServer.getId(), WebServerControlOperation.INSTALL_SERVICE), webServer);
 
             webServerService.updateState(webServer.getId(), WebServerReachableState.WS_UNREACHABLE, StringUtils.EMPTY);
+
+            simpleMessagingService.send(new WebServerState(webServer.getId(), WebServerReachableState.WS_UNREACHABLE, DateTime.now()));
+
             didSucceed = true;
         } catch (CommandFailureException e) {
             LOGGER.error("Failed for {}", aWebServerName, e);
@@ -444,9 +454,5 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
             return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR, new FaultCodeException(
                     FaultType.INVALID_TEMPLATE, rte.getMessage()));
         }
-    }
-
-    public void setLockManager(BinaryDistributionLockManager binaryDistributionLockManager) {
-        this.binaryDistributionLockManager = binaryDistributionLockManager;
     }
 }
