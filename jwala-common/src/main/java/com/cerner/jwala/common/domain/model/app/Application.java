@@ -26,7 +26,6 @@ public class Application implements Serializable {
 
     private boolean loadBalanceAcrossServers;
 
-    @Deprecated
     private boolean unpackWar;
 
     private String warName;

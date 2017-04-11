@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Resource template meta data.
@@ -14,7 +15,8 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 public class ResourceTemplateMetaData {
     private final String templateName;
 
-    @JsonDeserialize(using = MediaTypeToStrDeserializer.class)
+    @JsonDeserialize(using = StrToMediaTypeDeserializer.class)
+    @JsonSerialize(using = MediatTypeToStrSerializer.class)
     private final MediaType contentType;
 
     private final String deployFileName;
