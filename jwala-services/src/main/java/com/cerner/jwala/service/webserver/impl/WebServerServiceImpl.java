@@ -90,7 +90,7 @@ public class WebServerServiceImpl implements WebServerService {
                                      final User aCreatingUser) {
         createWebServerRequest.validate();
         try {
-            if (null != jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName())) {
+            if (null != jvmPersistenceService.getJvmId(createWebServerRequest.getName().toLowerCase())) {
                 String message = MessageFormat.format("Jvm already exists with this name {0}", createWebServerRequest.getName());
                 LOGGER.error(message);
                 throw new WebServerServiceException(message);
@@ -153,7 +153,7 @@ public class WebServerServiceImpl implements WebServerService {
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
         try {
-            if (null != jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName())) {
+            if (null != jvmPersistenceService.getJvmId(anUpdateWebServerCommand.getNewName().toLowerCase())) {
                 String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
                 LOGGER.error(message);
                 throw new WebServerServiceException(message);

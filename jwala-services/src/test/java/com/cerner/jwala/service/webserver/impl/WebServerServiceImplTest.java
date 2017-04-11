@@ -73,7 +73,6 @@ public class WebServerServiceImplTest {
     @Mock
     private WebServer mockWebServer2;
 
-
     private ArrayList<WebServer> mockWebServersAll = new ArrayList<>();
     private ArrayList<WebServer> mockWebServers11 = new ArrayList<>();
     private ArrayList<WebServer> mockWebServers12 = new ArrayList<>();
@@ -180,7 +179,7 @@ public class WebServerServiceImplTest {
 
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
-        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(null);
+        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(null);
         CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
                                                                 mockWebServer.getName(),
                                                                 mockWebServer.getHost(),
@@ -206,7 +205,7 @@ public class WebServerServiceImplTest {
 
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
-        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(Config.mockJvm);
+        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(1l);
         CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
                 mockWebServer.getName(),
                 mockWebServer.getHost(),
@@ -238,7 +237,7 @@ public class WebServerServiceImplTest {
         when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
-
+        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(null);
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
                 groupIds2,
@@ -269,7 +268,7 @@ public class WebServerServiceImplTest {
         when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
-        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(Config.mockJvm);
+        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(1l);
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
                 groupIds2,
