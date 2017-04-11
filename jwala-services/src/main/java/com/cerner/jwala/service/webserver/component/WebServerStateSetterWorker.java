@@ -60,7 +60,8 @@ public class WebServerStateSetterWorker {
 
     public WebServerStateSetterWorker(@Qualifier("webServerInMemoryStateManagerService")
                                       final InMemoryStateManagerService<Identifier<WebServer>, WebServerReachableState> inMemoryStateManagerService,
-                                      final WebServerService webServerService, final MessagingService messagingService,
+                                      final WebServerService webServerService,
+                                      final MessagingService messagingService,
                                       final GroupStateNotificationService groupStateNotificationService,
                                       @Qualifier("httpRequestFactory")
                                       final HttpComponentsClientHttpRequestFactory httpRequestFactory) {
