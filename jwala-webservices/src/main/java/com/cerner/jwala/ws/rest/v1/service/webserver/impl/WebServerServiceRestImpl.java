@@ -21,10 +21,10 @@ import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.service.HistoryFacadeService;
+import com.cerner.jwala.service.MessagingService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.group.GroupService;
-import com.cerner.jwala.service.impl.spring.component.SimpMessagingServiceImpl;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.webserver.WebServerCommandService;
 import com.cerner.jwala.service.webserver.WebServerControlService;
@@ -62,10 +62,10 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
     private static final Long DEFAULT_WAIT_TIMEOUT = 30000L;
 
     @Autowired
-    BinaryDistributionLockManager binaryDistributionLockManager;
+    private BinaryDistributionLockManager binaryDistributionLockManager;
 
     @Autowired
-    SimpMessagingServiceImpl simpleMessagingService;
+    private MessagingService simpleMessagingService;
 
     private final WebServerService webServerService;
     private final WebServerControlService webServerControlService;
