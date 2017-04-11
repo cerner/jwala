@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -37,7 +38,7 @@ import com.jcraft.jsch.Session;
 /**
  * Implements {@link JschService}
  * <p>
- * Created by JC043760 on 12/26/2016
+ * Created by Jedd Cuison on 12/26/2016
  */
 @Service
 public class JschServiceImpl implements JschService {
@@ -70,7 +71,7 @@ public class JschServiceImpl implements JschService {
             final InputStream in = channel.getInputStream();
             final OutputStream out = channel.getOutputStream();
 
-            LOGGER.debug("Executing command \"{}\"...", command);
+            LOGGER.debug("Executing command \"{}\"", command);
             out.write(command.getBytes(StandardCharsets.UTF_8));
             out.write(CRLF.getBytes(StandardCharsets.UTF_8));
             out.write("echo 'EXIT_CODE='$?***".getBytes(StandardCharsets.UTF_8));
@@ -125,7 +126,7 @@ public class JschServiceImpl implements JschService {
             LOGGER.debug("session connected");
             channel = (ChannelExec) session.openChannel(ChannelType.EXEC.getChannelType());
 
-            LOGGER.debug("Executing command \"{}\"...", command);
+            LOGGER.debug("Executing command \"{}\"", command);
             channel.setCommand(command.getBytes(StandardCharsets.UTF_8));
 
             LOGGER.debug("channel {} connecting...", channel.getId());
@@ -134,6 +135,12 @@ public class JschServiceImpl implements JschService {
 
             return getExecRemoteCommandReturnInfo(channel, timeout);
         } catch (final Exception e) {
+            if (e.getCause() instanceof ConnectException) {
+                throw new JschServiceException(
+                        MessageFormat.format("SSH connection to {0}:{1} for user {2} failed. Check your host, port, user and password.",
+                                remoteSystemConnection.getHost(), remoteSystemConnection.getPort(), remoteSystemConnection.getUser()), e);
+            }
+
             final String errMsg = MessageFormat.format("Failed to run the following command: {0}", command);
             LOGGER.error(errMsg, e);
             throw new JschServiceException(errMsg, e);
