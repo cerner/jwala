@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "2263ef78-e58c-0993-7ad5-db44dad60483",
+		"_postman_id": "1db9b1e5-9960-5842-21e4-fdafbd8de47d",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -5200,6 +5200,28 @@
 			"description": "",
 			"item": [
 				{
+					"name": "error: delete jvm from configuration tab",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/2?hardDelete=false",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "delete external properties",
 					"event": [
 						{
@@ -5581,6 +5603,60 @@
 			"name": "t) miscellaneous",
 			"description": "",
 			"item": [
+				{
+					"name": "create jvm copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"Postman-test-jvm-delete\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":1,\"tomcatVersion\":\"\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete jvm v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/services/v2.0/jvms/Postman-test-jvm-delete",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
 				{
 					"name": "jwala page constants",
 					"event": [
