@@ -330,13 +330,6 @@ public class ApplicationCrudServiceImpl extends AbstractCrudServiceImpl<JpaAppli
     }
 
     @Override
-    public int removeTemplate(final String name) {
-        final Query q = entityManager.createNamedQuery(JpaApplicationConfigTemplate.QUERY_DELETE_APP_TEMPLATE);
-        q.setParameter(JpaApplicationConfigTemplate.QUERY_PARAM_TEMPLATE_NAME, name);
-        return q.executeUpdate();
-    }
-
-    @Override
     public Application findApplication(final String groupName, final String appName) {
         Application application = null;
         final Query q = entityManager.createNamedQuery(JpaApplication.QUERY_FIND_BY_GROUP_AND_APP_NAME);

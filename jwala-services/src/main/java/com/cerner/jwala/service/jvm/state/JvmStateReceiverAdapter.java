@@ -7,7 +7,6 @@ import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import org.apache.catalina.LifecycleState;
 import org.apache.commons.lang3.StringUtils;
-import javax.persistence.NoResultException;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
@@ -15,6 +14,7 @@ import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,22 +108,6 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
                     "with that name!!!  ", id, e);
         }
         return null;
-    }
-
-    /**
-     * Get the JVM id
-     * @param name the JVM name
-     * @return the id
-     */
-    private Long getJvmId(final String name) {
-        LOGGER.debug("Retrieving JVM id with name = {}...", name);
-        try {
-            return jvmPersistenceService.getJvmId(name);
-        } catch (final RuntimeException e) { // Since the adapter is a critical component used to display the JVM state
-            // let's make sure to catch all possible runtime exceptions and log them
-            LOGGER.error("Failed to retrieve the JVM id with the name {}! Cannot update the JVM state.", name, e);
-            return null;
-        }
     }
 
     @Override
