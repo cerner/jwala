@@ -12,14 +12,14 @@ import java.io.IOException;
  *
  * Created by Jedd Cuison on 10/6/2016
  */
-public class MediaTypeToStrDeserializer extends StdDeserializer<MediaType> {
+public class StrToMediaTypeDeserializer extends StdDeserializer<MediaType> {
 
     // This constructor is required because we extended StdDeserializer
-    public MediaTypeToStrDeserializer() {
+    public StrToMediaTypeDeserializer() {
         this(null);
     }
 
-    protected MediaTypeToStrDeserializer(Class<?> vc) {
+    protected StrToMediaTypeDeserializer(Class<?> vc) {
         super(vc);
     }
 
