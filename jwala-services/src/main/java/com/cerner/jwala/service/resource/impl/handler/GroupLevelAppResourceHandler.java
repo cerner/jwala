@@ -113,7 +113,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
             String jsonData = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(metaDataCopy);
             metaDataCopy.setJsonData(jsonData);
         } catch (IOException e) {
-            final String errMsg = MessageFormat.format("Unable to convert meta data to a string for app {0} creating resource {1}", resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), e);
+            final String errMsg = MessageFormat.format("Failed to update the war meta data for app {0} on {1} resource creation", resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), e);
             LOGGER.error(errMsg);
             throw new GroupLevelAppResourceHandlerException(errMsg);
         }

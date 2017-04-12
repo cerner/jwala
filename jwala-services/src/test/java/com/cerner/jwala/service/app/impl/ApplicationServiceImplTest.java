@@ -222,7 +222,7 @@ public class ApplicationServiceImplTest {
         Application created = applicationService.updateApplication(cac, new User("user"));
 
         assertTrue(created == Config.mockApplication2);
-        verify(Config.mockGroupPersistenceService, times(1)).updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString());
+        verify(Config.mockGroupPersistenceService).updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString());
     }
 
 
