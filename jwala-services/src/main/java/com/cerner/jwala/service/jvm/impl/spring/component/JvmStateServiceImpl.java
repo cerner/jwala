@@ -102,7 +102,7 @@ public class JvmStateServiceImpl implements JvmStateService {
         }
 
         for (final Jvm jvm : jvms) {
-            if (stateNotInMemory(jvm) || isValidState(jvm) && isStale(jvm) && isFutureNilOrDone(jvm)) {
+            if (stateNotInMemory(jvm) || isValidState(jvm) && isFutureNilOrDone(jvm) && isStale(jvm)) {
                 LOGGER.debug("Pinging JVM {} ...", jvm.getJvmName());
                 PING_FUTURE_MAP.put(jvm.getId(), jvmStateResolverWorker.pingAndUpdateJvmState(jvm, this));
                 LOGGER.debug("Pinged JVM {}", jvm.getJvmName());
