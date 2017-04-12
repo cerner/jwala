@@ -32,6 +32,7 @@ import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdate
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
@@ -58,6 +59,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +92,9 @@ public class JvmServiceImpl implements JvmService {
     @Autowired
     private JvmStateService jvmStateService;
 
+    @Autowired
+    private WebServerPersistenceService webServerPersistenceService;
+
     public JvmServiceImpl(final JvmPersistenceService jvmPersistenceService,
                           final GroupPersistenceService groupPersistenceService,
                           final ApplicationService applicationService,
@@ -120,7 +125,27 @@ public class JvmServiceImpl implements JvmService {
 
 
     protected Jvm createJvm(final CreateJvmRequest aCreateJvmRequest) {
+        validateCreateJvm(aCreateJvmRequest);
         return jvmPersistenceService.createJvm(aCreateJvmRequest);
+    }
+
+    private void validateCreateJvm(CreateJvmRequest aCreateJvmRequest) {
+        try {
+            webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName());
+            String message = MessageFormat.format("Webserver already exists with this name {0}", aCreateJvmRequest.getJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
+        }
+        try {
+            jvmPersistenceService.findJvmByExactName(aCreateJvmRequest.getJvmName());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", aCreateJvmRequest.getJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No Jvm name conflict, ignore no result exception for creating jvm", pe);
+        }
     }
 
     protected Jvm createAndAssignJvm(final CreateJvmAndAddToGroupsRequest aCreateAndAssignRequest,
@@ -251,6 +276,7 @@ public class JvmServiceImpl implements JvmService {
     public Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword) {
 
         updateJvmRequest.validate();
+        validateUpdateJvm(updateJvmRequest);
 
         Jvm originalJvm = getJvm(updateJvmRequest.getId());
         if (!originalJvm.getJvmName().equalsIgnoreCase(updateJvmRequest.getNewJvmName()) &&
@@ -263,6 +289,25 @@ public class JvmServiceImpl implements JvmService {
         addJvmToGroups(updateJvmRequest.getAssignmentCommands());
 
         return jvmPersistenceService.updateJvm(updateJvmRequest, updateJvmPassword);
+    }
+
+    private void validateUpdateJvm(UpdateJvmRequest updateJvmRequest) {
+        try {
+            webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName());
+            String message = MessageFormat.format("Webserver already exists with this name {0}", updateJvmRequest.getNewJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
+        }
+        try {
+            jvmPersistenceService.findJvmByExactName(updateJvmRequest.getNewJvmName());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", updateJvmRequest.getNewJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No Jvm name conflict, ignore no result exception for creating jvm", pe);
+        }
     }
 
     @Override
@@ -286,7 +331,7 @@ public class JvmServiceImpl implements JvmService {
                 final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
                         jvm.getJvmName());
                 LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
-                                  // an exception
+                // an exception
                 throw new JvmServiceException(msg);
             }
 
