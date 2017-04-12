@@ -24,9 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -257,4 +255,8 @@ public class JpaJvmPersistenceServiceImpl implements JvmPersistenceService {
     public boolean checkJvmResourceFileName(final String groupName, final String jvmName, final String fileName) {
         return jvmCrudService.checkJvmResourceFileName(groupName, jvmName, fileName);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6ea3c164bfcb925e1049567d2330593dd0c0078c
 }

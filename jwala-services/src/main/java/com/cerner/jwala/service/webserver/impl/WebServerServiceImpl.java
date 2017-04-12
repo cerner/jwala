@@ -192,7 +192,7 @@ public class WebServerServiceImpl implements WebServerService {
         }
         try {
             webServerPersistenceService.findWebServerByName(anUpdateWebServerCommand.getNewName().toLowerCase());
-            String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
+            String message = MessageFormat.format("WebServer already exists with this name {0}", anUpdateWebServerCommand.getNewName());
             LOGGER.error(message);
             throw new WebServerServiceException(message);
         } catch (NoResultException pe) {

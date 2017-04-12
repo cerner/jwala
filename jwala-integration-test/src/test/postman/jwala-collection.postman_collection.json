@@ -2,7 +2,11 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
+<<<<<<< HEAD
 		"_postman_id": "1db9b1e5-9960-5842-21e4-fdafbd8de47d",
+=======
+		"_postman_id": "2263ef78-e58c-0993-7ad5-db44dad60483",
+>>>>>>> 6ea3c164bfcb925e1049567d2330593dd0c0078c
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
