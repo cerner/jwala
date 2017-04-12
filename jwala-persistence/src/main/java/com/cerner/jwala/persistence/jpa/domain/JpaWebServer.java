@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "webserver", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 @NamedQueries({
         @NamedQuery(name = JpaWebServer.FIND_WEB_SERVER_BY_QUERY,
-                query = "SELECT ws FROM JpaWebServer ws WHERE lower(ws.name) = :wsName"),
+                query = "SELECT ws FROM JpaWebServer ws WHERE lower(ws.name) = lower(:wsName)"),
         @NamedQuery(name = JpaWebServer.FIND_JVMS_QUERY,
                 query = "SELECT DISTINCT jvm FROM JpaJvm jvm JOIN jvm.groups g " +
                         "WHERE g.id IN (SELECT a.group FROM JpaApplication a " +

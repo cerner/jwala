@@ -131,7 +131,7 @@ public class JvmServiceImpl implements JvmService {
 
     private void validateCreateJvm(CreateJvmRequest aCreateJvmRequest) {
         try {
-            webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName().toLowerCase());
+            webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName());
             String message = MessageFormat.format("Webserver already exists with this name {0}", aCreateJvmRequest.getJvmName());
             LOGGER.error(message);
             throw new JvmServiceException(message);
@@ -139,7 +139,7 @@ public class JvmServiceImpl implements JvmService {
             LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
         }
         try {
-            jvmPersistenceService.findJvmByExactName(aCreateJvmRequest.getJvmName().toLowerCase());
+            jvmPersistenceService.findJvmByExactName(aCreateJvmRequest.getJvmName());
             String message = MessageFormat.format("Jvm already exists with this name {0}", aCreateJvmRequest.getJvmName());
             LOGGER.error(message);
             throw new JvmServiceException(message);
@@ -293,7 +293,7 @@ public class JvmServiceImpl implements JvmService {
 
     private void validateUpdateJvm(UpdateJvmRequest updateJvmRequest) {
         try {
-            webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName().toLowerCase());
+            webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName());
             String message = MessageFormat.format("Webserver already exists with this name {0}", updateJvmRequest.getNewJvmName());
             LOGGER.error(message);
             throw new JvmServiceException(message);
@@ -301,7 +301,7 @@ public class JvmServiceImpl implements JvmService {
             LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
         }
         try {
-            jvmPersistenceService.findJvmByExactName(updateJvmRequest.getNewJvmName().toLowerCase());
+            jvmPersistenceService.findJvmByExactName(updateJvmRequest.getNewJvmName());
             String message = MessageFormat.format("Jvm already exists with this name {0}", updateJvmRequest.getNewJvmName());
             LOGGER.error(message);
             throw new JvmServiceException(message);

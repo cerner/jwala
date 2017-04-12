@@ -111,7 +111,7 @@ public class WebServerServiceImpl implements WebServerService {
 
     private void validateCreateWebServer(CreateWebServerRequest createWebServerRequest) {
         try {
-            jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName().toLowerCase());
+            jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName());
             String message = MessageFormat.format("Jvm already exists with this name {0}", createWebServerRequest.getName());
             LOGGER.error(message);
             throw new WebServerServiceException(message);
@@ -119,7 +119,7 @@ public class WebServerServiceImpl implements WebServerService {
             LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
         }
         try {
-            webServerPersistenceService.findWebServerByName(createWebServerRequest.getName().toLowerCase());
+            webServerPersistenceService.findWebServerByName(createWebServerRequest.getName());
             String message = MessageFormat.format("Webserver already exists with this name {0}", createWebServerRequest.getName());
             LOGGER.error(message);
             throw new WebServerServiceException(message);
@@ -183,7 +183,7 @@ public class WebServerServiceImpl implements WebServerService {
 
     private void validateUpdateWebServer(UpdateWebServerRequest anUpdateWebServerCommand) {
         try {
-            jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName().toLowerCase());
+            jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName());
             String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
             LOGGER.error(message);
             throw new WebServerServiceException(message);
@@ -191,8 +191,8 @@ public class WebServerServiceImpl implements WebServerService {
             LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
         }
         try {
-            webServerPersistenceService.findWebServerByName(anUpdateWebServerCommand.getNewName().toLowerCase());
-            String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
+            webServerPersistenceService.findWebServerByName(anUpdateWebServerCommand.getNewName());
+            String message = MessageFormat.format("WebServer already exists with this name {0}", anUpdateWebServerCommand.getNewName());
             LOGGER.error(message);
             throw new WebServerServiceException(message);
         } catch (NoResultException pe) {
