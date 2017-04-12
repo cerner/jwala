@@ -91,12 +91,5 @@ public interface JvmPersistenceService {
      */
     boolean checkJvmResourceFileName(String groupName, String jvmName, String filename);
 
-    /**
-     * Get the JVM id
-     * @param name the name of the JVM
-     * @return the JVM id
-     */
-    Long getJvmId(String name);
-
     String updateResourceMetaData(String jvmName, String resourceName, String metaData);
 }
