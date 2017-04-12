@@ -89,15 +89,7 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer createWebServer(final CreateWebServerRequest createWebServerRequest,
                                      final User aCreatingUser) {
         createWebServerRequest.validate();
-        try {
-            if (null != jvmPersistenceService.getJvmId(createWebServerRequest.getName().toLowerCase())) {
-                String message = MessageFormat.format("Jvm already exists with this name {0}", createWebServerRequest.getName());
-                LOGGER.error(message);
-                throw new WebServerServiceException(message);
-            }
-        } catch (NoResultException pe) {
-            LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
-        }
+        validateCreateWebServer(createWebServerRequest);
 
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
@@ -115,6 +107,25 @@ public class WebServerServiceImpl implements WebServerService {
         final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
         inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
         return wsReturnValue;
+    }
+
+    private void validateCreateWebServer(CreateWebServerRequest createWebServerRequest) {
+        try {
+            jvmPersistenceService.findJvmByExactName(createWebServerRequest.getName().toLowerCase());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", createWebServerRequest.getName());
+            LOGGER.error(message);
+            throw new WebServerServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
+        }
+        try {
+            webServerPersistenceService.findWebServerByName(createWebServerRequest.getName().toLowerCase());
+            String message = MessageFormat.format("Webserver already exists with this name {0}", createWebServerRequest.getName());
+            LOGGER.error(message);
+            throw new WebServerServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No webserver name conflict, ignore no result exception for creating webserver", pe);
+        }
     }
 
     @Override
@@ -152,23 +163,7 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand,
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
-        try {
-            if (null != jvmPersistenceService.getJvmId(anUpdateWebServerCommand.getNewName().toLowerCase())) {
-                String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
-                LOGGER.error(message);
-                throw new WebServerServiceException(message);
-            }
-        } catch (NoResultException pe) {
-            LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
-        }
-
-        WebServer originalWebServer = getWebServer(anUpdateWebServerCommand.getId());
-        if (!anUpdateWebServerCommand.getNewName().equalsIgnoreCase(originalWebServer.getName()) && !WebServerReachableState.WS_NEW.equals(originalWebServer.getState())) {
-            throw new WebServerServiceException(MessageFormat.format("Web Server {0} is in {1} state, can only rename new web servers",
-                    originalWebServer.getName(), originalWebServer.getState().toStateLabel()));
-        }
-
-
+        validateUpdateWebServer(anUpdateWebServerCommand);
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));
@@ -184,6 +179,25 @@ public class WebServerServiceImpl implements WebServerService {
                 anUpdateWebServerCommand.getState());
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
+    }
+
+    private void validateUpdateWebServer(UpdateWebServerRequest anUpdateWebServerCommand) {
+        try {
+            jvmPersistenceService.findJvmByExactName(anUpdateWebServerCommand.getNewName().toLowerCase());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
+            LOGGER.error(message);
+            throw new WebServerServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No jvm name conflict, ignore no result exception for creating webserver", pe);
+        }
+        try {
+            webServerPersistenceService.findWebServerByName(anUpdateWebServerCommand.getNewName().toLowerCase());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", anUpdateWebServerCommand.getNewName());
+            LOGGER.error(message);
+            throw new WebServerServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No webserver name conflict, ignore no result exception for creating webserver", pe);
+        }
     }
 
     @Override
@@ -206,7 +220,7 @@ public class WebServerServiceImpl implements WebServerService {
                 final String msg = MessageFormat.format("Please stop web server {0} first before attempting to delete it",
                         webServer.getName());
                 LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
-                                  // an exception
+                // an exception
                 throw new WebServerServiceException(msg);
             }
 
