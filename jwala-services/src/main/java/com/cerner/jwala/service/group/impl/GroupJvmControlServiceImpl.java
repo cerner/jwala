@@ -15,10 +15,8 @@ import com.cerner.jwala.service.jvm.JvmControlService;
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

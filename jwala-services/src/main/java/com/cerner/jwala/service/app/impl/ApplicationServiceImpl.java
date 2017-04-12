@@ -34,6 +34,9 @@ import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.template.exception.ResourceFileGeneratorException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
@@ -128,7 +132,42 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser) {
         updateApplicationRequest.validate();
 
-        return applicationPersistenceService.updateApplication(updateApplicationRequest);
+        final Application application = applicationPersistenceService.updateApplication(updateApplicationRequest);
+        updateApplicationWarMetaData(updateApplicationRequest, application);
+        return application;
+    }
+
+    private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application application) {
+        final String appWarName = application.getWarName();
+        if (!appWarName.isEmpty()) {
+            final String appName = application.getName();
+            try {
+                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup().getName(), appWarName);
+                ResourceTemplateMetaData originalMetaData = resourceService.getMetaData(originalJsonMetaData);
+                ResourceTemplateMetaData updateMetaData = new ResourceTemplateMetaData(
+                        originalMetaData.getTemplateName(),
+                        originalMetaData.getContentType(),
+                        originalMetaData.getDeployFileName(),
+                        originalMetaData.getDeployPath(),
+                        originalMetaData.getEntity(),
+                        updateApplicationRequest.isUnpackWar(),
+                        originalMetaData.isOverwrite());
+                String updateJsonMetaData = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(updateMetaData);
+                groupPersistenceService.updateGroupAppResourceMetaData(application.getGroup().getName(), appName, appWarName, updateJsonMetaData);
+            } catch (JsonGenerationException e) {
+                final String jsonGenerationExceptionMsg = MessageFormat.format("Failed to generate JSON meta data for web app {0} and resource {1}", appName, appWarName);
+                LOGGER.error(jsonGenerationExceptionMsg, e);
+                throw new ApplicationServiceException(jsonGenerationExceptionMsg);
+            } catch (JsonMappingException e) {
+                final String jsonMappingExceptionMsg = MessageFormat.format("Failed to map JSON meta data for web app {0} and resource {1}", appName, appWarName);
+                LOGGER.error(jsonMappingExceptionMsg, e);
+                throw new ApplicationServiceException(jsonMappingExceptionMsg);
+            } catch (IOException e) {
+                final String ioExceptionMsg = MessageFormat.format("Failed to update the war meta data for application {0} and war {1}", appName, appWarName);
+                LOGGER.error(ioExceptionMsg, e);
+                throw new ApplicationServiceException(ioExceptionMsg);
+            }
+        }
     }
 
     @Transactional
@@ -189,6 +228,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             binaryDistributionLockManager.writeUnlock(lockKey);
         }
     }
+
     /**
      * Method to generate lock key;
      *
@@ -196,7 +236,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     private String generateKey(String... keys) {
         final StringBuilder keyBuilder = new StringBuilder(keys.length);
-        for (String key:keys) {
+        for (String key : keys) {
             keyBuilder.append(key);
         }
         return keyBuilder.toString();
@@ -321,7 +361,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Future<CommandOutput> commandOutputFuture = executorService.submit(new Callable<CommandOutput>() {
             @Override
             public CommandOutput call() throws Exception {
-                final String parentDir =destPath;
+                final String parentDir = destPath;
                 CommandOutput commandOutput = distributionControlService.createDirectory(host, parentDir);
                 if (commandOutput.getReturnCode().wasSuccessful()) {
                     LOGGER.info("Successfully created parent dir {} on host {}", parentDir, host);
@@ -336,7 +376,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if (application.isUnpackWar()) {
                     final String warName = application.getWarName();
                     LOGGER.info("Unpacking war {} on host {}", warName, host);
-                    String jwalaScriptPath =  ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR);
+                    String jwalaScriptPath = ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR);
 
                     // create the .jwala directory as the destination for the unpack-war script
                     commandOutput = distributionControlService.createDirectory(host, jwalaScriptPath);
@@ -506,7 +546,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                                                                          final Application application,
                                                                                          final Set<String> resourceSet) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Map<String, Future<Set<CommandOutput>>>futures = new HashMap<>();
+        final Map<String, Future<Set<CommandOutput>>> futures = new HashMap<>();
         for (final String host : hostNames) {
             Future<Set<CommandOutput>> commandOutputFutureSet = executorService.submit
                     (new Callable<Set<CommandOutput>>() {
@@ -522,7 +562,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                      commandOutputs.add(executeDeployGroupAppTemplate(group.getName(), resource, application, host));
                                  }
                                  return commandOutputs;
-                             }finally{
+                             } finally {
                                  SecurityContextHolder.clearContext();
                              }
 
@@ -536,14 +576,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     /**
      * This method executes all the commands for copying the template over to the destination for a group app config file
-     *
+     * <p>
      * NOTE!!! This method has a duplicate in GroupServiceImpl. DO NOT USE GroupService just to remote this because it will
-     *         create an intermittent Spring circular dependency!!!
+     * create an intermittent Spring circular dependency!!!
      *
-     * @param groupName     name of the group in which the application can be found
-     * @param fileName      name of the file that needs to deployed
-     * @param application   the application object for the application to deploy the config file too
-     * @param hostName      name of the host which needs the application file
+     * @param groupName   name of the group in which the application can be found
+     * @param fileName    name of the file that needs to deployed
+     * @param application the application object for the application to deploy the config file too
+     * @param hostName    name of the host which needs the application file
      * @return returns a command output object
      */
     private CommandOutput executeDeployGroupAppTemplate(final String groupName, final String fileName,
@@ -563,7 +603,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 try {
                     Set<CommandOutput> commandOutputSet = entry.getValue().get(timeout, TimeUnit.SECONDS);
                     for (CommandOutput commandOutput : commandOutputSet) {
-                        if (commandOutput!=null && !commandOutput.getReturnCode().wasSuccessful()) {
+                        if (commandOutput != null && !commandOutput.getReturnCode().wasSuccessful()) {
                             final String errorMessage = "Error in deploying resources to host " + entry.getKey() +
                                     " for application " + appName;
                             LOGGER.error(errorMessage);
