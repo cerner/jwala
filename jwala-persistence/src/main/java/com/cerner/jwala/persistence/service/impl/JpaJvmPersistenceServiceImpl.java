@@ -255,8 +255,4 @@ public class JpaJvmPersistenceServiceImpl implements JvmPersistenceService {
     public boolean checkJvmResourceFileName(final String groupName, final String jvmName, final String fileName) {
         return jvmCrudService.checkJvmResourceFileName(groupName, jvmName, fileName);
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 6ea3c164bfcb925e1049567d2330593dd0c0078c
 }
