@@ -1,12 +1,11 @@
 {
-        "templateName":"httpdconf.tpl",
-        "contentType":"text/plain",
-        "deployPath":"${vars['remote.jwala.data.dir']}/httpd",
-        "deployFileName":"httpd.conf",
-        "entity":{
-                "type":"GROUPED_WEBSERVERS",
-                "group":"Postman-Test-Group",
-                "target":"Postman-Test-Group"
-        }
+  "deployPath" : "${vars.'remote.jwala.data.dir'}/httpd",
+  "templateName" : "HttpdConfTemplate.tpl",
+  "deployFileName" : "httpd.conf",
+  "contentType" : "text/plain",
+  "entity" : {
+    "type" : "GROUPED_WEBSERVERS",
+    "group" : "Postman-Test-Group",
+    "target" : "Postman-Test-Group"
+  }
 }
-
