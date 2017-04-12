@@ -41,6 +41,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import javax.persistence.NoResultException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,7 +136,7 @@ public class WebServerServiceImplTest {
         mockWebServers12.add(mockWebServer2);
 
         reset(Config.mockBinaryDistributionLockManager, Config.mockResourceService, Config.mockWebServerControlService,
-              Config.mockWebServerPersistenceService);
+              Config.mockWebServerPersistenceService, Config.mockJvmPersistenceService);
     }
 
     @SuppressWarnings("unchecked")
@@ -179,7 +180,8 @@ public class WebServerServiceImplTest {
 
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
-        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(null);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
         CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
                                                                 mockWebServer.getName(),
                                                                 mockWebServer.getHost(),
@@ -205,7 +207,7 @@ public class WebServerServiceImplTest {
 
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
-        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(1l);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(Config.mockJvm);
         CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
                 mockWebServer.getName(),
                 mockWebServer.getHost(),
@@ -226,7 +228,6 @@ public class WebServerServiceImplTest {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testUpdateWebServers() throws IOException {
         when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
         when(Config.mockWebServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
@@ -237,7 +238,8 @@ public class WebServerServiceImplTest {
         when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
-        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(null);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
                 groupIds2,
@@ -268,7 +270,6 @@ public class WebServerServiceImplTest {
         when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
-        when(Config.mockJvmPersistenceService.getJvmId(anyString())).thenReturn(1l);
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
                 groupIds2,

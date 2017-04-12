@@ -125,19 +125,26 @@ public class JvmServiceImpl implements JvmService {
 
 
     protected Jvm createJvm(final CreateJvmRequest aCreateJvmRequest) {
-        validateWebserverNameConflict(aCreateJvmRequest);
+        validateCreateJvm(aCreateJvmRequest);
         return jvmPersistenceService.createJvm(aCreateJvmRequest);
     }
 
-    private void validateWebserverNameConflict(CreateJvmRequest aCreateJvmRequest) {
+    private void validateCreateJvm(CreateJvmRequest aCreateJvmRequest) {
         try {
-            if (null != webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName())) {
-                String message = MessageFormat.format("Webserver already exists with this name {0}", aCreateJvmRequest.getJvmName());
-                LOGGER.error(message);
-                throw new JvmServiceException(message);
-            }
+            webServerPersistenceService.findWebServerByName(aCreateJvmRequest.getJvmName().toLowerCase());
+            String message = MessageFormat.format("Webserver already exists with this name {0}", aCreateJvmRequest.getJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
         } catch (NoResultException pe) {
             LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
+        }
+        try {
+            jvmPersistenceService.findJvmByExactName(aCreateJvmRequest.getJvmName().toLowerCase());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", aCreateJvmRequest.getJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No Jvm name conflict, ignore no result exception for creating jvm", pe);
         }
     }
 
@@ -269,15 +276,7 @@ public class JvmServiceImpl implements JvmService {
     public Jvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword) {
 
         updateJvmRequest.validate();
-        try {
-            if (null != webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName())) {
-                String message = MessageFormat.format("Webserver already exists with this name {0}", updateJvmRequest.getNewJvmName());
-                LOGGER.error(message);
-                throw new JvmServiceException(message);
-            }
-        } catch (NoResultException pe) {
-            LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
-        }
+        validateUpdateJvm(updateJvmRequest);
 
         Jvm originalJvm = getJvm(updateJvmRequest.getId());
         if (!originalJvm.getJvmName().equalsIgnoreCase(updateJvmRequest.getNewJvmName()) &&
@@ -290,6 +289,25 @@ public class JvmServiceImpl implements JvmService {
         addJvmToGroups(updateJvmRequest.getAssignmentCommands());
 
         return jvmPersistenceService.updateJvm(updateJvmRequest, updateJvmPassword);
+    }
+
+    private void validateUpdateJvm(UpdateJvmRequest updateJvmRequest) {
+        try {
+            webServerPersistenceService.findWebServerByName(updateJvmRequest.getNewJvmName().toLowerCase());
+            String message = MessageFormat.format("Webserver already exists with this name {0}", updateJvmRequest.getNewJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No webserver name conflict, ignore no result exception for creating jvm", pe);
+        }
+        try {
+            jvmPersistenceService.findJvmByExactName(updateJvmRequest.getNewJvmName().toLowerCase());
+            String message = MessageFormat.format("Jvm already exists with this name {0}", updateJvmRequest.getNewJvmName());
+            LOGGER.error(message);
+            throw new JvmServiceException(message);
+        } catch (NoResultException pe) {
+            LOGGER.debug("No Jvm name conflict, ignore no result exception for creating jvm", pe);
+        }
     }
 
     @Override
