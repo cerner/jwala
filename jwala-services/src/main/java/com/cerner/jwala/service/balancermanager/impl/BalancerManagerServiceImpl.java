@@ -269,13 +269,13 @@ public class BalancerManagerServiceImpl implements BalancerManagerService {
                                                                                                              final String user) {
         LOGGER.info("Entering prepareDrainWork");
         List<BalancerManagerState.GroupDrainStatus.WebServerDrainStatus.JvmDrainStatus> jvmDrainStatusList = new ArrayList<>();
-        final String balancerManagerHtmlUrl = balancerManagerHtmlParser.getUrlPath(webServer.getHost());
+        final String balancerManagerHtmlUrl = balancerManagerHtmlParser.getUrlPath(webServer.getHost(), webServer.getHttpsPort());
         final String balancerManagerResponseHtml = getBalancerManagerResponse(balancerManagerHtmlUrl);
         final Map<String, String> balancers = balancerManagerHtmlParser.findBalancers(balancerManagerResponseHtml);
         for (Map.Entry<String, String> entry : balancers.entrySet()) {
             final String balancerName = entry.getKey();
             final String nonce = entry.getValue();
-            final String balancerManagerXmlUrl = balancerManagerXmlParser.getUrlPath(webServer.getHost(), balancerName, nonce);
+            final String balancerManagerXmlUrl = balancerManagerXmlParser.getUrlPath(webServer.getHost(), webServer.getHttpsPort(), balancerName, nonce);
             final String balancerManagerResponseXml = getBalancerManagerResponse(balancerManagerXmlUrl);
             Manager manager = balancerManagerXmlParser.getWorkerXml(balancerManagerResponseXml);
             Map<String, String> workers;
@@ -288,7 +288,7 @@ public class BalancerManagerServiceImpl implements BalancerManagerService {
                 doDrain(workers, balancerManagerHtmlUrl, webServer, balancerName, nonce, user);
             }
             for (String worker : workers.keySet()) {
-                String workerUrl = balancerManagerHtmlParser.getWorkerUrlPath(webServer.getHost(), balancerName, nonce, worker);
+                String workerUrl = balancerManagerHtmlParser.getWorkerUrlPath(webServer.getHost(), webServer.getHttpsPort(), balancerName, nonce, worker);
                 String workerHtml = getBalancerManagerResponse(workerUrl);
                 Map<String, String> workerStatusMap = balancerManagerHtmlParser.findWorkerStatus(workerHtml);
                 BalancerManagerState.GroupDrainStatus.WebServerDrainStatus.JvmDrainStatus jvmDrainStatus = new BalancerManagerState.GroupDrainStatus.WebServerDrainStatus.JvmDrainStatus(worker,

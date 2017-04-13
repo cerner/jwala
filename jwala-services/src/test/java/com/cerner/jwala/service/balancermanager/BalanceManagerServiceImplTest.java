@@ -123,7 +123,7 @@ public class BalanceManagerServiceImplTest {
 
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserGroup("group1", "webServer1", "user1");
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
@@ -176,7 +176,7 @@ public class BalanceManagerServiceImplTest {
 
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserGroup("group1", "", "user1");
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
@@ -221,7 +221,7 @@ public class BalanceManagerServiceImplTest {
 
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserWebServer("group1", "webServer1", "jvm1", "user1");
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
@@ -267,7 +267,7 @@ public class BalanceManagerServiceImplTest {
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserWebServer("group1", "webServer1", "jvm1", "user1");
         System.out.println(balancerManagerState);
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("http://somehost:9101/hct"));
     }
 
@@ -312,7 +312,7 @@ public class BalanceManagerServiceImplTest {
 
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserWebServer("group1", "webServer1", "", "user1");
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
@@ -333,7 +333,7 @@ public class BalanceManagerServiceImplTest {
 
         when(mockWebServerService.isStarted(mockWebServer)).thenReturn(true);
 
-        when(mockBalancerManagerHtmlParser.getUrlPath(anyString())).thenReturn("any");
+        when(mockBalancerManagerHtmlParser.getUrlPath(anyString(), anyInt())).thenReturn("any");
 
         when(mockGroupService.getGroup(anyString())).thenReturn(mockGroup);
 
@@ -372,7 +372,7 @@ public class BalanceManagerServiceImplTest {
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserJvm("jvm1", "user1");
         System.out.println(balancerManagerState);
         assertEquals("webServer1", balancerManagerState.getGroups().get(0).getwebServers().get(0).getWebServerName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
@@ -429,7 +429,7 @@ public class BalanceManagerServiceImplTest {
 
         final BalancerManagerState balancerManagerState = balanceManagerService.drainUserGroupJvm("group1", "jvm1", "user1");
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
@@ -454,7 +454,7 @@ public class BalanceManagerServiceImplTest {
 
         when(mockWebServerService.isStarted(mockWebServer)).thenReturn(true);
 
-        when(mockBalancerManagerHtmlParser.getUrlPath(anyString())).thenReturn("any");
+        when(mockBalancerManagerHtmlParser.getUrlPath(anyString(), anyInt())).thenReturn("any");
 
         when(mockGroupService.getGroup(anyString())).thenReturn(mockGroup);
 
@@ -493,7 +493,7 @@ public class BalanceManagerServiceImplTest {
 
         final BalancerManagerState balancerManagerState = balanceManagerService.getGroupDrainStatus("group1", "user1");
         assertEquals("group1", balancerManagerState.getGroups().get(0).getGroupName());
-        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyString(), anyString(),
+        verify(mockBalancerManagerHtmlParser).getWorkerUrlPath(anyString(), anyInt(), anyString(), anyString(),
                 eq("https://somehost:9101/hct"));
     }
 
