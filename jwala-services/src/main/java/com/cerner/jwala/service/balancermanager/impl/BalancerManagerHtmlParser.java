@@ -13,12 +13,12 @@ public class BalancerManagerHtmlParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BalancerManagerHtmlParser.class);
 
-    public String getUrlPath(final String host) {
-        return "https://" + host + "/balancer-manager";
+    public String getUrlPath(final String host, final int httpsPort) {
+        return "https://" + host + ":" +  httpsPort + "/balancer-manager";
     }
 
-    public String getWorkerUrlPath(final String host, final String balancerName, final String nonce, final String workerName) {
-        return "https://" + host + "/balancer-manager" + "?b=" + balancerName + "&nonce=" + nonce + "&w=" + workerName;
+    public String getWorkerUrlPath(final String host, final int httpsPort, final String balancerName, final String nonce, final String workerName) {
+        return "https://" + host + ":" +  httpsPort + "/balancer-manager" + "?b=" + balancerName + "&nonce=" + nonce + "&w=" + workerName;
     }
 
     public Map<String, String> findBalancers(final String content) {
