@@ -26,8 +26,8 @@ public class BalancerManagerXmlParser {
         this.jvmService = jvmService;
     }
 
-    String getUrlPath(final String host, final String balancerName, final String nonce) {
-        return "https://" + host + "/balancer-manager" + "?b=" + balancerName + "&xml=1&nonce=" + nonce;
+    String getUrlPath(final String host, final int httpsPort, final String balancerName, final String nonce) {
+        return "https://" + host + ":" +  httpsPort + "/balancer-manager" + "?b=" + balancerName + "&xml=1&nonce=" + nonce;
     }
 
     Manager getWorkerXml(final String balancerManagerContent) {

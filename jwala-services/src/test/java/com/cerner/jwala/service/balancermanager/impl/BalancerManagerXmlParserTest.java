@@ -66,7 +66,7 @@ public class BalancerManagerXmlParserTest {
     BalancerManagerXmlParser balancerManagerXmlParser;
 
     @Before
-    public void setup(){
+    public void setup() {
         mockJvmService = mock(JvmService.class);
         balancerManagerXmlParser = new BalancerManagerXmlParser(mockJvmService);
     }
@@ -76,8 +76,9 @@ public class BalancerManagerXmlParserTest {
         final String host = "test-hostname";
         final String balancerName = "test-balancer-name";
         final String nonce = "test-nonce";
-        String result = balancerManagerXmlParser.getUrlPath(host, balancerName, nonce);
-        assertEquals(MessageFormat.format("https://{0}/balancer-manager?b={1}&xml=1&nonce={2}", host, balancerName, nonce), result);
+        final int httpsPort = 444;
+        String result = balancerManagerXmlParser.getUrlPath(host, httpsPort, balancerName, nonce);
+        assertEquals(MessageFormat.format("https://{0}:{1}/balancer-manager?b={2}&xml=1&nonce={3}", host, httpsPort, balancerName, nonce), result);
     }
 
     @Test
