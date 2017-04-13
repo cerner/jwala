@@ -22,6 +22,7 @@ public class ControlJvmRequestFactory {
             case DELETE_SERVICE: return new DeleteServiceControlJvmRequest(jvm);
             case DEPLOY_JVM_ARCHIVE: return new DeployArchiveControlJvmRequest(jvm);
             case INSTALL_SERVICE: return new InstallServiceControlJvmRequest(jvm);
+            case HEAP_DUMP: return new HeapDumpControlJvmRequest(jvm);
 
             default: throw new UnsupportedJvmControlOperationException(jvmControlOperation);
         }
