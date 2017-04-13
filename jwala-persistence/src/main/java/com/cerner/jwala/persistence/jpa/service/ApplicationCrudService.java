@@ -51,8 +51,6 @@ public interface ApplicationCrudService extends CrudService<JpaApplication> {
 
     Application getApplication(String name);
 
-    int removeTemplate(String name);
-
     String getMetaData(String appName, String jvmName, String groupName, String resourceTemplateName);
 
     /**

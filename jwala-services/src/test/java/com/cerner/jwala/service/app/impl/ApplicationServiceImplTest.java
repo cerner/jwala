@@ -208,13 +208,21 @@ public class ApplicationServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws IOException {
         when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class))).thenReturn(Config.mockApplication2);
+
+        when(Config.mockApplication2.getName()).thenReturn("test-app-name");
+        when(Config.mockApplication2.getWarName()).thenReturn("test-war-name");
+
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
+
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false));
 
         UpdateApplicationRequest cac = new UpdateApplicationRequest(Config.mockApplication2.getId(), Identifier.id(1L, Group.class), "wan", "/wan", true, true, false);
         Application created = applicationService.updateApplication(cac, new User("user"));
 
         assertTrue(created == Config.mockApplication2);
+        verify(Config.mockGroupPersistenceService).updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString());
     }
 
 

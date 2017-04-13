@@ -20,6 +20,7 @@ import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
+import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -40,6 +41,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import javax.persistence.NoResultException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +73,6 @@ public class WebServerServiceImplTest {
 
     @Mock
     private WebServer mockWebServer2;
-
 
     private ArrayList<WebServer> mockWebServersAll = new ArrayList<>();
     private ArrayList<WebServer> mockWebServers11 = new ArrayList<>();
@@ -135,7 +136,7 @@ public class WebServerServiceImplTest {
         mockWebServers12.add(mockWebServer2);
 
         reset(Config.mockBinaryDistributionLockManager, Config.mockResourceService, Config.mockWebServerControlService,
-              Config.mockWebServerPersistenceService);
+              Config.mockWebServerPersistenceService, Config.mockJvmPersistenceService);
     }
 
     @SuppressWarnings("unchecked")
@@ -179,6 +180,8 @@ public class WebServerServiceImplTest {
 
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
         CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
                                                                 mockWebServer.getName(),
                                                                 mockWebServer.getHost(),
@@ -198,8 +201,33 @@ public class WebServerServiceImplTest {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
+    @Test(expected = WebServerServiceException.class)
+    public void testCreateWebServersValidateJvmNameConflict() {
+        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
+
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+        when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(Config.mockJvm);
+        CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
+                mockWebServer.getName(),
+                mockWebServer.getHost(),
+                mockWebServer.getPort(),
+                mockWebServer.getHttpsPort(),
+                mockWebServer.getStatusPath(),
+                mockWebServer.getState());
+        final WebServer webServer = wsService.createWebServer(cmd, testUser);
+
+        assertEquals(new Identifier<WebServer>(1L), webServer.getId());
+        assertEquals(group.getId(), webServer.getGroups().iterator().next().getId());
+        assertEquals("the-ws-name", webServer.getName());
+        assertEquals("the-ws-group-name", webServer.getGroups().iterator().next().getName());
+        assertEquals("the-ws-hostname", webServer.getHost());
+        assertEquals(WebServerReachableState.WS_NEW, Config.inMemService.get(webServer.getId()));
+
+        System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
+    }
+
     @SuppressWarnings("unchecked")
-    @Test
     public void testUpdateWebServers() throws IOException {
         when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
         when(Config.mockWebServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
@@ -210,16 +238,47 @@ public class WebServerServiceImplTest {
         when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
-
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
-                                                                groupIds2,
-                                                                mockWebServer2.getName(),
-                                                                mockWebServer2.getHost(),
-                                                                mockWebServer2.getPort(),
-                                                                mockWebServer2.getHttpsPort(),
-                                                                mockWebServer2.getStatusPath(),
-                                                                mockWebServer2.getState());
+                groupIds2,
+                mockWebServer2.getName(),
+                mockWebServer2.getHost(),
+                mockWebServer2.getPort(),
+                mockWebServer2.getHttpsPort(),
+                mockWebServer2.getStatusPath(),
+                mockWebServer2.getState());
+        final WebServer webServer = wsService.updateWebServer(cmd, testUser);
+
+        assertEquals(new Identifier<WebServer>(2L), webServer.getId());
+        assertEquals(group2.getId(), webServer.getGroups().iterator().next().getId());
+        assertEquals("the-ws-name-2", webServer.getName());
+        assertEquals(group2.getName(), webServer.getGroups().iterator().next().getName());
+        assertEquals("the-ws-hostname", webServer.getHost());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = WebServerServiceException.class)
+    public void testUpdateWebServersValidateWebserverNameConflict() throws IOException {
+        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
+        when(Config.mockWebServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
+
+        ResourceContent mockResourceContent = mock(ResourceContent.class);
+        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
+
+        UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
+                groupIds2,
+                mockWebServer2.getName(),
+                mockWebServer2.getHost(),
+                mockWebServer2.getPort(),
+                mockWebServer2.getHttpsPort(),
+                mockWebServer2.getStatusPath(),
+                mockWebServer2.getState());
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
@@ -471,6 +530,10 @@ public class WebServerServiceImplTest {
 
         private static BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
 
+        private static JvmPersistenceService mockJvmPersistenceService = mock(JvmPersistenceService.class);
+
+        private static Jvm mockJvm = mock(Jvm.class);
+
         @Bean
         public static WebServerPersistenceService getMockWebServerPersistenceService() {
             return mockWebServerPersistenceService;
@@ -495,6 +558,11 @@ public class WebServerServiceImplTest {
         public WebServerService getWebSereWebServerService() {
             return new WebServerServiceImpl(mockWebServerPersistenceService, mockResourceService, inMemService, "/any",
                     mockBinaryDistributionLockManager);
+        }
+
+        @Bean
+        public JvmPersistenceService getJvmPersistenceService() {
+            return mockJvmPersistenceService;
         }
 
     }

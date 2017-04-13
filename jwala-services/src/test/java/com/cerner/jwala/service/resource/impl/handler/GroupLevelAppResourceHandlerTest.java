@@ -1,8 +1,11 @@
 package com.cerner.jwala.service.resource.impl.handler;
 
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
+import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
+import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
@@ -61,7 +64,7 @@ public class GroupLevelAppResourceHandlerTest {
 
     @Test
     public void testUpdateMetaData() {
-        final String updatedMetaData = "{\"updated\":\"meta-data\"}";
+        final String updatedMetaData = "{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}";
         final String resourceName = "update-my-meta-data.txt";
 
         Group mockGroup = mock(Group.class);
@@ -70,13 +73,26 @@ public class GroupLevelAppResourceHandlerTest {
         jvmSet.add(mockJvm);
         when(mockJvm.getJvmName()).thenReturn("mockJvm");
         when(mockGroup.getJvms()).thenReturn(jvmSet);
+        when(mockGroup.getName()).thenReturn("test-group-name");
 
         when(mockGroupPersistence.updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString())).thenReturn(updatedMetaData);
         when(mockGroupPersistence.getGroup(anyString())).thenReturn(mockGroup);
         when(mockAppPersistence.getResourceTemplateNames(anyString(), anyString())).thenReturn(Collections.singletonList(resourceName));
+
+        Application mockApplication = mock(Application.class);
+        when(mockApplication.getName()).thenReturn("test-app-name");
+        when(mockApplication.getId()).thenReturn(new Identifier<Application>(1111L));
+        when(mockApplication.getGroup()).thenReturn(mockGroup);
+        when(mockApplication.getWebAppContext()).thenReturn("/test-app-context");
+        when(mockApplication.isLoadBalanceAcrossServers()).thenReturn(true);
+        when(mockApplication.isSecure()).thenReturn(true);
+        when(mockAppPersistence.getApplication(anyString())).thenReturn(mockApplication);
+
         groupAppResourceHandler.updateResourceMetaData(resourceIdentifier, resourceName, updatedMetaData);
+
         verify(mockGroupPersistence).updateGroupAppResourceMetaData(eq(resourceIdentifier.groupName), eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData));
         verify(mockAppPersistence).updateResourceMetaData(eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData), eq("mockJvm"), eq(resourceIdentifier.groupName));
+        verify(mockAppPersistence).updateApplication(any(UpdateApplicationRequest.class));
     }
 
     @Test
