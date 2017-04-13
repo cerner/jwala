@@ -270,7 +270,7 @@ public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implemen
 
     @Override
     public Jvm findJvmByExactName(String jvmName) {
-        final Query query = entityManager.createQuery("SELECT j FROM JpaJvm j WHERE j.name=:jvmName ORDER BY j.name");
+        final Query query = entityManager.createQuery("SELECT j FROM JpaJvm j WHERE lower(j.name)=lower(:jvmName) ORDER BY j.name");
         query.setParameter("jvmName", jvmName);
         return new JvmBuilder((JpaJvm) query.getSingleResult()).build();
     }

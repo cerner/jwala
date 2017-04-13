@@ -257,16 +257,4 @@ public class JpaJvmPersistenceServiceImpl implements JvmPersistenceService {
     public boolean checkJvmResourceFileName(final String groupName, final String jvmName, final String fileName) {
         return jvmCrudService.checkJvmResourceFileName(groupName, jvmName, fileName);
     }
-
-    @Override
-    public Long getJvmId(final String name) {
-        final Query q =  em.createNamedQuery(JpaJvm.QUERY_GET_JVM_ID);
-        q.setParameter(JpaJvm.QUERY_PARAM_NAME, name);
-        try {
-            return (Long) q.getSingleResult();
-        } catch (final NoResultException e) {
-            logger.error("Failed to query the jvm id where name = {}", name, e);
-            return null;
-        }
-    }
 }
