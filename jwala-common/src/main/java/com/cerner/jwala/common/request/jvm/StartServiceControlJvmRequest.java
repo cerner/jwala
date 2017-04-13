@@ -4,7 +4,7 @@ import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 
 /**
- * Created by sg038069 on 4/9/17.
+ * Created by Steven Ger on 4/9/17
  */
 public class StartServiceControlJvmRequest  extends ControlJvmRequest {
 
@@ -13,7 +13,6 @@ public class StartServiceControlJvmRequest  extends ControlJvmRequest {
     public StartServiceControlJvmRequest(final Jvm jvm) {
         super(jvm.getId(), JvmControlOperation.START);
         this.jvm = jvm;
-        System.out.println("################## jvm = " + jvm);
     }
 
     @Override
