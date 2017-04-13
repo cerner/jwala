@@ -273,6 +273,35 @@ public class WebServerServiceImplTest {
 
         UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
                 groupIds2,
+                "ws-name",
+                mockWebServer2.getHost(),
+                mockWebServer2.getPort(),
+                mockWebServer2.getHttpsPort(),
+                mockWebServer2.getStatusPath(),
+                mockWebServer2.getState());
+        final WebServer webServer = wsService.updateWebServer(cmd, testUser);
+
+        assertEquals(new Identifier<WebServer>(2L), webServer.getId());
+        assertEquals(group2.getId(), webServer.getGroups().iterator().next().getId());
+        assertEquals("the-ws-name-2", webServer.getName());
+        assertEquals(group2.getName(), webServer.getGroups().iterator().next().getName());
+        assertEquals("the-ws-hostname", webServer.getHost());
+    }
+
+    @Test
+    public void testUpdateExistingWebServer() throws IOException {
+        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
+        when(Config.mockWebServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
+
+        ResourceContent mockResourceContent = mock(ResourceContent.class);
+        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
+
+        UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
+                groupIds2,
                 mockWebServer2.getName(),
                 mockWebServer2.getHost(),
                 mockWebServer2.getPort(),

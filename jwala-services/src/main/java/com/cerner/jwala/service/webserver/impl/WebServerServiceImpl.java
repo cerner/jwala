@@ -163,7 +163,10 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer updateWebServer(final UpdateWebServerRequest anUpdateWebServerCommand,
                                      final User anUpdatingUser) {
         anUpdateWebServerCommand.validate();
-        validateUpdateWebServer(anUpdateWebServerCommand);
+        WebServer originalWebServer = getWebServer(anUpdateWebServerCommand.getId());
+        if (!originalWebServer.getName().equalsIgnoreCase(anUpdateWebServerCommand.getNewName())) {
+            validateUpdateWebServer(anUpdateWebServerCommand);
+        }
         final List<Group> groups = new LinkedList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
             groups.add(new Group(id, null));
