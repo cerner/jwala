@@ -46,10 +46,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -258,35 +255,82 @@ public class WebServerServiceImplTest {
         assertEquals("the-ws-hostname", webServer.getHost());
     }
 
+    @Test
     @SuppressWarnings("unchecked")
-    @Test(expected = WebServerServiceException.class)
-    public void testUpdateWebServersValidateWebserverNameConflict() throws IOException {
-        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer2);
-        when(Config.mockWebServerPersistenceService.updateWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer2);
+    public void testUpdateWebServer() {
+        // Happy path test
+        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer);
+        when(mockWebServer.getName()).thenReturn("oldName");
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
 
-        ResourceContent mockResourceContent = mock(ResourceContent.class);
-        when(mockResourceContent.getMetaData()).thenReturn("{deployPath:\"/fake/deploy/path\"}");
-        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
-        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
-        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
+        when(Config.mockJvmPersistenceService.findJvmByExactName("newWebServerName")).thenThrow(new NoResultException());
+        when(Config.mockWebServerPersistenceService.findWebServerByName("newWebServerName")).thenThrow(new NoResultException());
 
-        UpdateWebServerRequest cmd = new UpdateWebServerRequest(mockWebServer2.getId(),
-                groupIds2,
-                "ws-name",
-                mockWebServer2.getHost(),
-                mockWebServer2.getPort(),
-                mockWebServer2.getHttpsPort(),
-                mockWebServer2.getStatusPath(),
-                mockWebServer2.getState());
-        final WebServer webServer = wsService.updateWebServer(cmd, testUser);
-
-        assertEquals(new Identifier<WebServer>(2L), webServer.getId());
-        assertEquals(group2.getId(), webServer.getGroups().iterator().next().getId());
-        assertEquals("the-ws-name-2", webServer.getName());
-        assertEquals(group2.getName(), webServer.getGroups().iterator().next().getName());
-        assertEquals("the-ws-hostname", webServer.getHost());
+        UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+        wsService.updateWebServer(req, new User("user"));
+        verify(Config.getMockWebServerPersistenceService()).updateWebServer(any(WebServer.class), anyString());
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateWebServerWhenStateIsNotNew() {
+        // Update should throw an exception when the state is not new
+        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer);
+        when(mockWebServer.getName()).thenReturn("oldName");
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_UNREACHABLE);
+
+        when(Config.mockJvmPersistenceService.findJvmByExactName("newWebServerName")).thenThrow(new NoResultException());
+        when(Config.mockWebServerPersistenceService.findWebServerByName("newWebServerName")).thenThrow(new NoResultException());
+
+        UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+        try {
+            wsService.updateWebServer(req, new User("user"));
+            fail("WebServerServiceException is expected!");
+        } catch (final WebServerServiceException e) {
+            assertEquals("Web Server oldName is in STOPPED state, can only rename new web servers", e.getMessage());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateWebServerWithNewNameSameWithJvm() {
+        // Update should throw an exception when new web server name is the same with an existing JVM
+        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer);
+        when(mockWebServer.getName()).thenReturn("oldName");
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+
+        UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newName",
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+        try {
+            wsService.updateWebServer(req, new User("user"));
+            fail("WebServerServiceException is expected!");
+        } catch (final WebServerServiceException e) {
+            assertEquals("Jvm already exists with this name newName", e.getMessage());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateWebServerWithNewNameSameWithAnotherWebServer() {
+        // Update should throw an exception when new web server name is the same with an existing JVM
+        when(Config.mockWebServerPersistenceService.getWebServer(any(Identifier.class))).thenReturn(mockWebServer);
+        when(mockWebServer.getName()).thenReturn("oldName");
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+
+        when(Config.mockJvmPersistenceService.findJvmByExactName("newWebServerName")).thenThrow(new NoResultException());
+
+        UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+        try {
+            wsService.updateWebServer(req, new User("user"));
+            fail("WebServerServiceException is expected!");
+        } catch (final WebServerServiceException e) {
+            assertEquals("WebServer already exists with this name newWebServerName", e.getMessage());
+        }
+    }
+
 
     @Test
     public void testUpdateExistingWebServer() throws IOException {
