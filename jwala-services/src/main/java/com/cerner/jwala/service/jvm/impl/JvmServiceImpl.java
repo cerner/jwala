@@ -733,6 +733,8 @@ public class JvmServiceImpl implements JvmService {
     private void deployJvmResourceFiles(Jvm jvm, User user) throws IOException, CommandFailureException {
         final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
         if (generatedFiles != null) {
+            historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), "Starting to deploy JVM resources " +
+                    jvm.getJvmName(), EventType.USER_ACTION_INFO, user.getId());
             for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
                 final ScpDestination scpDestination = entry.getValue();
                 secureCopyFileToJvm(jvm, entry.getKey(), scpDestination.destPath, user, scpDestination.overwrite);

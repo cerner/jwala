@@ -56,6 +56,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static com.cerner.jwala.service.jvm.impl.JvmServiceImplTest.Config.mockHistoryFacadeService;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -501,7 +503,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockClientFactoryHelper.requestGet(any(URI.class))).thenThrow(new RuntimeException("RUN!!"));
         when(jvm.getState()).thenReturn(JvmState.JVM_STARTED);
         jvmService.performDiagnosis(aJvmId, Config.mockUser);
-        verify(Config.mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
+        verify(mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
                 eq(EventType.USER_ACTION_INFO), anyString());
     }
 
@@ -647,6 +649,12 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         Jvm response = jvmService.generateAndDeployJvm(mockJvm.getJvmName(), Config.mockUser);
         assertEquals(response.getJvmName(), mockJvm.getJvmName());
+
+        Mockito.verify(mockHistoryFacadeService, times(1)).write(mockJvm.getHostName(), mockJvm.getGroups(), "Starting to generate remote JVM " +
+                mockJvm.getJvmName(), EventType.USER_ACTION_INFO, Config.mockUser.getId());
+
+        Mockito.verify(mockHistoryFacadeService, times(1)).write(mockJvm.getHostName(), mockJvm.getGroups(), "Starting to deploy JVM resources " +
+                mockJvm.getJvmName(), EventType.USER_ACTION_INFO, Config.mockUser.getId());
 
         // test failing the invoke service
         CommandOutput mockExecDataFail = mock(CommandOutput.class);
