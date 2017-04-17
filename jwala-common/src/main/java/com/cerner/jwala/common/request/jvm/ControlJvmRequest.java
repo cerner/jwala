@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
-import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.Request;
 import com.cerner.jwala.common.rule.jvm.JvmIdRule;
 
@@ -30,6 +29,10 @@ public class ControlJvmRequest implements Serializable, Request {
 
     public JvmControlOperation getControlOperation() {
         return controlOperation;
+    }
+
+    public String getMessage() {
+        return controlOperation.getExternalValue();
     }
 
     @Override

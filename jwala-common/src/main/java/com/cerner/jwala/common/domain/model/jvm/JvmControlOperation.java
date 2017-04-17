@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.cerner.jwala.common.domain.AemDomain.NO_JVM_IN_PROGRESS_STATE;
 import static com.cerner.jwala.common.domain.model.jvm.JvmState.JVM_START;
 import static com.cerner.jwala.common.domain.model.jvm.JvmState.JVM_STOP;
 
@@ -18,31 +17,18 @@ public enum JvmControlOperation {
 
 
     START("start", JVM_START),
-
     STOP("stop", JVM_STOP),
-
-    THREAD_DUMP(
-            "threadDump", NO_JVM_IN_PROGRESS_STATE),
-
-    HEAP_DUMP("heapDump", NO_JVM_IN_PROGRESS_STATE),
-
-    DEPLOY_CONFIG_ARCHIVE("deployConfigArchive", NO_JVM_IN_PROGRESS_STATE),
-
-    DELETE_SERVICE("deleteService", NO_JVM_IN_PROGRESS_STATE),
-
-    INSTALL_SERVICE("installService", NO_JVM_IN_PROGRESS_STATE),
-
-    SCP("secureCopy", NO_JVM_IN_PROGRESS_STATE),
-
-    BACK_UP("backupFile", NO_JVM_IN_PROGRESS_STATE),
-
-    CREATE_DIRECTORY("createDirectory", NO_JVM_IN_PROGRESS_STATE),
-
-    CHANGE_FILE_MODE("changeFileMode", NO_JVM_IN_PROGRESS_STATE),
-
-    CHECK_FILE_EXISTS("checkFileExists", NO_JVM_IN_PROGRESS_STATE),
-
-    CHECK_SERVICE_STATUS("checkServiceStatus", NO_JVM_IN_PROGRESS_STATE);
+    THREAD_DUMP("threadDump", null),
+    HEAP_DUMP("heapDump", null),
+    DEPLOY_JVM_ARCHIVE("deployConfigArchive", null),
+    DELETE_SERVICE("deleteService", null),
+    INSTALL_SERVICE("installService", null),
+    SCP("secureCopy", null),
+    BACK_UP("backupFile", null),
+    CREATE_DIRECTORY("createDirectory", null),
+    CHANGE_FILE_MODE("changeFileMode", null),
+    CHECK_FILE_EXISTS("checkFileExists", null),
+    CHECK_SERVICE_STATUS("checkServiceStatus", null);
 
     private static final Map<String, JvmControlOperation> LOOKUP_MAP = new HashMap<>();
 
