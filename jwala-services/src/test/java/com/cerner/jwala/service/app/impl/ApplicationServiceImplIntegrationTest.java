@@ -8,7 +8,7 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.dao.impl.MediaDaoImpl;
 import com.cerner.jwala.persistence.jpa.service.ApplicationCrudService;
@@ -65,7 +65,7 @@ import static org.mockito.Mockito.when;
 public class ApplicationServiceImplIntegrationTest {
 
     @Mock
-    private AemSshConfig aemSshConfig;
+    private SshConfig sshConfig;
 
     @Mock
     private GroupPersistenceService mockGroupPersistenceService;
@@ -155,11 +155,11 @@ public class ApplicationServiceImplIntegrationTest {
     public void setup() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources");
         SshConfiguration mockSshConfig = mock(SshConfiguration.class);
-        aemSshConfig = mock(AemSshConfig.class);
+        sshConfig = mock(SshConfig.class);
         mockGroupPersistenceService = mock(GroupPersistenceService.class);
         binaryDistributionService = mock(BinaryDistributionService.class);
         when(mockSshConfig.getUserName()).thenReturn("mockUser");
-        when(aemSshConfig.getSshConfiguration()).thenReturn(mockSshConfig);
+        when(sshConfig.getSshConfiguration()).thenReturn(mockSshConfig);
         binaryDistributionLockManager = new BinaryDistributionLockManagerImpl();
         applicationService = new ApplicationServiceImpl(
                 applicationPersistenceService,

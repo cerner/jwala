@@ -92,6 +92,7 @@ public class JvmCommandFactoryTest {
     public void testJvmThreadDump() {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+        when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
@@ -108,6 +109,7 @@ public class JvmCommandFactoryTest {
     public void testJvmHeapDump() {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+        when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
@@ -124,12 +126,13 @@ public class JvmCommandFactoryTest {
     public void testJvmDeployConfigArchive() {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
+        when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists", ""));
 
-        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DEPLOY_CONFIG_ARCHIVE);
+        RemoteCommandReturnInfo commandReturnInfo = jvmCommandFactory.executeCommand(mockJvm, JvmControlOperation.DEPLOY_JVM_ARCHIVE);
 
         assertEquals(SUCCESS_REMOTE_COMMAND_INFO, commandReturnInfo);
         verify(Config.mockSshConfig, times(1)).getEncryptedPassword();

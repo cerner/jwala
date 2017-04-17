@@ -1,4 +1,4 @@
-SET JAVA_HOME=${vars['remote.jwala.java.home']}
+SET JAVA_HOME=${jvm.javaHome}
 SET JRE_HOME=%JAVA_HOME%\jre
 
 SET CATALINA_HOME=${vars['remote.paths.instances']}/${jvm.jvmName}/apache-tomcat-7.0.55

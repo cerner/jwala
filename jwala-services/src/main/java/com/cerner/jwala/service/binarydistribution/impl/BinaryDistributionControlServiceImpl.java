@@ -7,7 +7,7 @@ import com.cerner.jwala.common.exec.*;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
@@ -28,10 +28,10 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
     private static final Logger LOGGER = LoggerFactory.getLogger(BinaryDistributionControlServiceImpl.class);
 
     @Autowired
-    private  SshConfiguration sshConfig;
+    private  SshConfiguration sshConfiguration;
 
     @Autowired
-    private AemSshConfig aemSshConfig;
+    private SshConfig sshConfig;
 
     @Autowired
     private RemoteCommandExecutorService remoteCommandExecutorService;
@@ -47,7 +47,7 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
     public CommandOutput secureCopyFile(final String hostname, final String source, final String destination) throws CommandFailureException  {
         RemoteExecCommand command = new RemoteExecCommand(getConnection(hostname),  new ExecCommand(SECURE_COPY, source, destination));
         try {
-            final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(aemSshConfig.getJschBuilder().build(), command);
+            final JschScpCommandProcessorImpl jschScpCommandProcessor = new JschScpCommandProcessorImpl(sshConfig.getJschBuilder().build(), command);
             jschScpCommandProcessor.processCommand();
             jschScpCommandProcessor.close();
             return  new CommandOutput(new ExecReturnCode(jschScpCommandProcessor.getExecutionReturnCode().getReturnCode()),
@@ -130,7 +130,7 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
      * @return
      */
     private RemoteSystemConnection getConnection(String host) {
-        return new RemoteSystemConnection(sshConfig.getUserName(), sshConfig.getEncryptedPassword(), host, sshConfig.getPort());
+        return new RemoteSystemConnection(sshConfiguration.getUserName(), sshConfiguration.getEncryptedPassword(), host, sshConfiguration.getPort());
     }
 }
 
