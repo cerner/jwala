@@ -503,7 +503,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockClientFactoryHelper.requestGet(any(URI.class))).thenThrow(new RuntimeException("RUN!!"));
         when(jvm.getState()).thenReturn(JvmState.JVM_STARTED);
         jvmService.performDiagnosis(aJvmId, Config.mockUser);
-        verify(mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
+        verify(Config.mockHistoryFacadeService).write(anyString(), anyCollection(), eq("Diagnose and resolve state"),
                 eq(EventType.USER_ACTION_INFO), anyString());
     }
 
@@ -650,10 +650,10 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         Jvm response = jvmService.generateAndDeployJvm(mockJvm.getJvmName(), Config.mockUser);
         assertEquals(response.getJvmName(), mockJvm.getJvmName());
 
-        Mockito.verify(mockHistoryFacadeService, times(1)).write(mockJvm.getHostName(), mockJvm.getGroups(), "Starting to generate remote JVM " +
+        verify(Config.mockHistoryFacadeService, times(1)).write(mockJvm.getHostName(), mockJvm.getGroups(), "Starting to generate remote JVM " +
                 mockJvm.getJvmName(), EventType.USER_ACTION_INFO, Config.mockUser.getId());
 
-        Mockito.verify(mockHistoryFacadeService, times(1)).write(mockJvm.getHostName(), mockJvm.getGroups(), "Starting to deploy JVM resources " +
+        verify(Config.mockHistoryFacadeService, times(1)).write(mockJvm.getHostName(), mockJvm.getGroups(), "Starting to deploy JVM resources " +
                 mockJvm.getJvmName(), EventType.USER_ACTION_INFO, Config.mockUser.getId());
 
         // test failing the invoke service
