@@ -47,7 +47,8 @@ newman.run({
     console.log('running a collection...');
 }).on('done', function (err, summary) {
     if (summary.run.failures.length !== 0) {
-    process.exit(-1);
+		console.log('collection failed on test cases');
+		process.exit(-1);
 	}
     else {
         console.log('collection run completed.');
