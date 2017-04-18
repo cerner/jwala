@@ -902,6 +902,21 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
+    @Test (expected = JvmServiceException.class)
+    public void testGenerateAndDeployFileJvmStartedHotDeployTrueThrowsIOException() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenThrow(new IOException("Test throwing the IOException during tokenization"));
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+
+        jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
+
+        verify(Config.mockResourceService, never()).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
+    }
+
     @Test
     public void testGenerateJvmConfigJar() {
         Set<Group> groups = new HashSet<Group>() {{

@@ -786,7 +786,7 @@ public class JvmServiceImpl implements JvmService {
                     .setResourceName(fileName)
                     .setJvmName(jvmName)
                     .build();
-            checkJvmStateForDeploy(fileName, jvm, resourceIdentifier);
+            checkJvmStateForDeploy(jvm, resourceIdentifier);
 
             resourceService.validateSingleResourceForGeneration(resourceIdentifier);
             resourceService.generateAndDeployFile(resourceIdentifier, jvm.getJvmName(), fileName, jvm.getHostName());
@@ -801,15 +801,15 @@ public class JvmServiceImpl implements JvmService {
         return jvm;
     }
 
-    private void checkJvmStateForDeploy(String fileName, Jvm jvm, ResourceIdentifier resourceIdentifier) throws IOException {
+    private void checkJvmStateForDeploy(Jvm jvm, ResourceIdentifier resourceIdentifier) throws IOException {
         final Jvm jvmByExactName = jvmPersistenceService.findJvmByExactName(jvm.getJvmName());
         final String metaDataString = resourceService.getResourceContent(resourceIdentifier).getMetaData();
-        ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(fileName, jvmByExactName, metaDataString);
+        ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, jvmByExactName, metaDataString);
         if (jvm.getState().isStartedState()) {
             if (metaData.isHotDeploy()){
-                LOGGER.info("JVM {} is started, but the resource {} is hot deployable, continuing with deploy ...", jvm.getJvmName(), fileName);
+                LOGGER.info("JVM {} is started, but the resource {} is hot deployable, continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
             } else {
-                LOGGER.error("The target JVM {} must be stopped before attempting to update the resource files", jvm.getJvmName());
+                LOGGER.error("The target JVM {} must be stopped or the resource {} must be set to hotDeploy=true before attempting to update the resource files", jvm.getJvmName(), resourceIdentifier.resourceName);
                 throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
                         "The target JVM must be stopped before attempting to update the resource files");
             }

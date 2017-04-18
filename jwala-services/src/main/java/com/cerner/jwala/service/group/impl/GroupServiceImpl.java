@@ -34,6 +34,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -250,7 +251,6 @@ public class GroupServiceImpl implements GroupService {
     }
 
 
-
     @Override
     public String getGroupJvmResourceTemplateMetaData(String groupName, String fileName) {
         return groupPersistenceService.getGroupJvmResourceTemplateMetaData(groupName, fileName);
@@ -412,11 +412,31 @@ public class GroupServiceImpl implements GroupService {
         final List<Jvm> jvms = jvmService.getJvmsByGroupName(group.getName());
 
         // Check if any JVMs are running before generating the file
-        final List<String> startedJvmNameList = new ArrayList<>();
-        jvms.stream().filter(jvm -> jvm.getState().isStartedState()).forEach(startedJvm -> startedJvmNameList.add(startedJvm.getJvmName()));
-        if (!startedJvmNameList.isEmpty()) {
-            final String errMsg = MessageFormat.format("Failed to deploy file {0} for group {1} since the following JVMs are running: {2}",
-                    fileName, groupName, startedJvmNameList);
+        final List<Jvm> startedJvmNameList = new ArrayList<>();
+        final List<String> startedAndNotHotDeployList = new ArrayList<>();
+        jvms.stream().filter(jvm -> jvm.getState().isStartedState()).forEach(startedJvm -> startedJvmNameList.add(startedJvm));
+        startedJvmNameList.stream().filter(
+                jvm -> {
+                    try {
+                        return !resourceService.getTokenizedMetaData(
+                                fileName,
+                                jvm,
+                                resourceService.getResourceContent(
+                                        new ResourceIdentifier.Builder()
+                                                .setResourceName(fileName)
+                                                .setJvmName(jvm.getJvmName())
+                                                .setGroupName(groupName)
+                                                .build()).getMetaData())
+                                .isHotDeploy();
+                    } catch (IOException e) {
+                        LOGGER.error("ERROR");
+                        throw new GroupServiceException("ERROR");
+                    }
+                })
+                .forEach(jvm -> startedAndNotHotDeployList.add(jvm.getJvmName()));
+        if (!startedAndNotHotDeployList.isEmpty()) {
+            final String errMsg = MessageFormat.format("Failed to deploy file {0} for group {1} since the following JVMs are running and the file is not configured for hot deploy: {2}",
+                    fileName, groupName, startedAndNotHotDeployList);
             LOGGER.error(errMsg);
             throw new GroupServiceException(errMsg);
         }
