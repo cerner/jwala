@@ -19,6 +19,7 @@ public class ControlJvmRequestFactory {
 
         switch (jvmControlOperation) {
             case START: return new StartServiceControlJvmRequest(jvm);
+            case STOP: return new StopServiceControlJvmRequest(jvm);
             case DELETE_SERVICE: return new DeleteServiceControlJvmRequest(jvm);
             case DEPLOY_JVM_ARCHIVE: return new DeployArchiveControlJvmRequest(jvm);
             case INSTALL_SERVICE: return new InstallServiceControlJvmRequest(jvm);
