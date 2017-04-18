@@ -151,7 +151,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         originalMetaData.getDeployPath(),
                         originalMetaData.getEntity(),
                         updateApplicationRequest.isUnpackWar(),
-                        originalMetaData.isOverwrite());
+                        originalMetaData.isOverwrite(),
+                        originalMetaData.isHotDeploy());
                 String updateJsonMetaData = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(updateMetaData);
                 groupPersistenceService.updateGroupAppResourceMetaData(application.getGroup().getName(), appName, appWarName, updateJsonMetaData);
             } catch (JsonGenerationException e) {

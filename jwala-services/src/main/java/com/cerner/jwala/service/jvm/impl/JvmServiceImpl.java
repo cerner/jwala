@@ -782,22 +782,38 @@ public class JvmServiceImpl implements JvmService {
         // only one at a time per jvm
         binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().getId().toString());
         try {
-            if (jvm.getState().isStartedState()) {
-                LOGGER.error("The target JVM {} must be stopped before attempting to update the resource files", jvm.getJvmName());
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
-                        "The target JVM must be stopped before attempting to update the resource files");
-            }
             ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
                     .setResourceName(fileName)
                     .setJvmName(jvmName)
                     .build();
+            checkJvmStateForDeploy(fileName, jvm, resourceIdentifier);
+
             resourceService.validateSingleResourceForGeneration(resourceIdentifier);
             resourceService.generateAndDeployFile(resourceIdentifier, jvm.getJvmName(), fileName, jvm.getHostName());
+        } catch (IOException e) {
+            String errorMsg = MessageFormat.format("Failed to retrieve meta data when generating and deploying file {0} for JVM {1}", fileName, jvmName);
+            LOGGER.error(errorMsg, e);
+            throw new JvmServiceException(errorMsg);
         } finally {
             binaryDistributionLockManager.writeUnlock(jvmName + "-" + jvm.getId().getId().toString());
             LOGGER.debug("End generateAndDeployFile for {} by user {}", jvmName, user.getId());
         }
         return jvm;
+    }
+
+    private void checkJvmStateForDeploy(String fileName, Jvm jvm, ResourceIdentifier resourceIdentifier) throws IOException {
+        final Jvm jvmByExactName = jvmPersistenceService.findJvmByExactName(jvm.getJvmName());
+        final String metaDataString = resourceService.getResourceContent(resourceIdentifier).getMetaData();
+        ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(fileName, jvmByExactName, metaDataString);
+        if (jvm.getState().isStartedState()) {
+            if (metaData.isHotDeploy()){
+                LOGGER.info("JVM {} is started, but the resource {} is hot deployable, continuing with deploy ...", jvm.getJvmName(), fileName);
+            } else {
+                LOGGER.error("The target JVM {} must be stopped before attempting to update the resource files", jvm.getJvmName());
+                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
+                        "The target JVM must be stopped before attempting to update the resource files");
+            }
+        }
     }
 
     @Override
