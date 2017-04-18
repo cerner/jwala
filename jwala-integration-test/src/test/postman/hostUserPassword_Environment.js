@@ -9,12 +9,12 @@ var target_os = args[3];
 
 var myEnvironment = require('./jwala.postman_environment.json');
 	myEnvironment.values.push({
-		  "key": "host",
-		  "type": "text",
-		  "value": host,
-		  "enabled": true,
-		  "warning": ""
-		});
+	  "key": "host",
+	  "type": "text",
+	  "value": host,
+	  "enabled": true,
+	  "warning": ""
+	});
 	myEnvironment.values.push({
       "key": "userName",
       "type": "text",
@@ -41,8 +41,16 @@ newman.run({
     collection: require('./jwala-collection.postman_collection.json'),
                 environment: myEnvironment,
                 insecure: true,
+				bail: true,
     reporters: 'cli'
-}, function (err) {
-    if (err) { throw err; }
-    console.log('collection run complete!');
+}).on('start', function (err, args) { // on start of run, log to console
+    console.log('running a collection...');
+}).on('done', function (err, summary) {
+    if (summary.run.failures.length !== 0) {
+		console.log('collection failed on test cases');
+		process.exit(-1);
+	}
+    else {
+        console.log('collection run completed.');
+    }
 });
