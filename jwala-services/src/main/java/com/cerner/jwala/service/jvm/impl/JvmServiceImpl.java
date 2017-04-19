@@ -786,7 +786,7 @@ public class JvmServiceImpl implements JvmService {
                     .setResourceName(fileName)
                     .setJvmName(jvmName)
                     .build();
-            checkJvmStateForDeploy(jvm, resourceIdentifier);
+            checkJvmStateBeforeDeploy(jvm, resourceIdentifier);
 
             resourceService.validateSingleResourceForGeneration(resourceIdentifier);
             resourceService.generateAndDeployFile(resourceIdentifier, jvm.getJvmName(), fileName, jvm.getHostName());
@@ -801,7 +801,7 @@ public class JvmServiceImpl implements JvmService {
         return jvm;
     }
 
-    private void checkJvmStateForDeploy(Jvm jvm, ResourceIdentifier resourceIdentifier) throws IOException {
+    private void checkJvmStateBeforeDeploy(Jvm jvm, ResourceIdentifier resourceIdentifier) throws IOException {
         final Jvm jvmByExactName = jvmPersistenceService.findJvmByExactName(jvm.getJvmName());
         final String metaDataString = resourceService.getResourceContent(resourceIdentifier).getMetaData();
         ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, jvmByExactName, metaDataString);
