@@ -794,7 +794,8 @@ public class GroupServiceRestImplTest {
         when(mockJvm.getHostName()).thenReturn(hostname);
         when(mockGroup.getJvms()).thenReturn(jvms);
         when(mockJvm.getState()).thenReturn(jvmState);
-        groupServiceRest.performGroupAppDeployToJvms("test-group", "test-file", mockAuthenticatedUser, mockGroup, "test-app", mockApplicationServiceRest, hostname);
+
+        groupServiceRest.performGroupAppDeployToJvms("test-group", "test-file", mockAuthenticatedUser, mockGroup, "test-app", mockApplicationServiceRest, hostname, false);
     }
 
     /**

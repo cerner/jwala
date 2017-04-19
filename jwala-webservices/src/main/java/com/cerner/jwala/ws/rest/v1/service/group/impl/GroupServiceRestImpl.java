@@ -669,7 +669,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             metaData = resourceService.getTokenizedMetaData(fileName, app, groupAppMetaData);
             if (metaData.getEntity().getDeployToJvms()) {
                 // deploy to all jvms in group
-                performGroupAppDeployToJvms(groupName, fileName, aUser, group, appName, applicationServiceRest, hostName);
+                performGroupAppDeployToJvms(groupName, fileName, aUser, group, appName, applicationServiceRest, hostName, metaData.isHotDeploy());
             } else {
                 ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
                         .setGroupName(groupName)
@@ -746,8 +746,8 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             }
     }
 
-    protected void performGroupAppDeployToJvms(final String groupName, final String fileName, final AuthenticatedUser aUser, final Group group,
-                                               final String appName, final ApplicationServiceRest appServiceRest, final String hostName) {
+    void performGroupAppDeployToJvms(final String groupName, final String fileName, final AuthenticatedUser aUser, final Group group,
+                                     final String appName, final ApplicationServiceRest appServiceRest, final String hostName, boolean hotDeploy) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
         final Set<Jvm> groupJvms = group.getJvms();
         Set<Jvm> jvms;
@@ -765,8 +765,8 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         }
         if (null != jvms && !jvms.isEmpty()) {
             for (Jvm jvm : jvms) {
-                if (jvm.getState().isStartedState()) {
-                    LOGGER.info("Failed to deploy file {} for group {}: not all JVMs were stopped - {} was started", fileName, group.getName(), jvm.getJvmName());
+                if (jvm.getState().isStartedState() && !hotDeploy) {
+                    LOGGER.info("Failed to deploy file {} for group {}: not all JVMs were stopped - {} was started and the resource was not configured with hotDeploy=true", fileName, group.getName(), jvm.getJvmName());
                     throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "All JVMs in the group must be stopped before continuing. Operation stopped for JVM " + jvm.getJvmName());
                 }
             }
