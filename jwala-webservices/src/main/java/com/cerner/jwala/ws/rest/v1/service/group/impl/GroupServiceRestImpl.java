@@ -662,10 +662,11 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         LOGGER.info("Generate and deploy group app file {} for group {} by user {} to host {}", fileName, groupName, aUser.getUser().getId(), hostName);
 
         Group group = groupService.getGroup(groupName);
+        Application app = applicationService.getApplication(appName);
         final String groupAppMetaData = groupService.getGroupAppResourceTemplateMetaData(groupName, fileName);
         ResourceTemplateMetaData metaData;
         try {
-            metaData = resourceService.getMetaData(groupAppMetaData);
+            metaData = resourceService.getTokenizedMetaData(fileName, app, groupAppMetaData);
             if (metaData.getEntity().getDeployToJvms()) {
                 // deploy to all jvms in group
                 performGroupAppDeployToJvms(groupName, fileName, aUser, group, appName, applicationServiceRest, hostName);
@@ -678,10 +679,10 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                 resourceService.validateSingleResourceForGeneration(resourceIdentifier);
                 if (hostName != null && !hostName.isEmpty()) {
                     // deploy to particular host
-                    performGroupAppDeployToHost(groupName, fileName, appName, hostName);
+                    performGroupAppDeployToHost(groupName, fileName, appName, hostName, metaData.isHotDeploy());
                 } else {
                     // deploy to all hosts in group
-                    performGroupAppDeployToHosts(groupName, fileName, appName);
+                    performGroupAppDeployToHosts(groupName, fileName, appName, metaData.isHotDeploy());
                 }
             }
         } catch (IOException e) {
@@ -693,20 +694,21 @@ public class GroupServiceRestImpl implements GroupServiceRest {
 
     /**
      * This method deploys group app config template to only one host
-     *
-     * @param groupName name of the group we can find the webapp under
+     *  @param groupName name of the group we can find the webapp under
      * @param fileName  name of the file that needs to be deployed to the host
      * @param appName   name of the application which needs to be deployed
      * @param hostName  name of the host to which we want the file to be deployed to
+     * @param hotDeploy
      */
-    protected void performGroupAppDeployToHost(final String groupName, final String fileName, final String appName, final String hostName) {
+    private void performGroupAppDeployToHost(final String groupName, final String fileName, final String appName, final String hostName, boolean hotDeploy) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
         Set<Jvm> jvms = groupService.getGroup(groupName).getJvms();
         if (null != jvms && !jvms.isEmpty()) {
             for (Jvm jvm : jvms) {
-                if (jvm.getHostName().equalsIgnoreCase(hostName) && jvm.getState().isStartedState()) {
-                    LOGGER.info("Failed to deploy file {} for group {} on host {}: not all JVMs were stopped - {} was started", fileName, groupName, hostName, jvm.getJvmName());
-                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "All JVMs on the host " + hostName + " must be stopped before continuing. Operation stopped for JVM " + jvm.getJvmName());
+                if (jvm.getHostName().equalsIgnoreCase(hostName) && jvm.getState().isStartedState() && !hotDeploy) {
+                    String deployStoppedMessage = MessageFormat.format("Failed to deploy file {0} for group {1} on host {2}: not all JVMs were stopped - {3} was started and not configured for hot deploy", fileName, groupName, hostName, jvm.getJvmName());
+                    LOGGER.info(deployStoppedMessage);
+                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployStoppedMessage);
                 }
             }
             Future<Response> response  = createFutureResponseForAppDeploy(groupName, fileName, appName, null, hostName);
@@ -717,14 +719,15 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         }
     }
 
-    protected void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName) {
+    private void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName, boolean hotDeploy) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
         Set<Jvm> jvms = groupService.getGroup(groupName).getJvms();
         if (null != jvms && !jvms.isEmpty()) {
             for (Jvm jvm : jvms) {
-                if (jvm.getState().isStartedState()) {
-                    LOGGER.info("Failed to deploy file {} for group {}: not all JVMs were stopped - {} was started", fileName, groupName, jvm.getJvmName());
-                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "All JVMs in the group must be stopped before continuing. Operation stopped for JVM " + jvm.getJvmName());
+                if (jvm.getState().isStartedState() && !hotDeploy) {
+                    String deployStoppedMessage = MessageFormat.format("Failed to deploy file {0} for group {1} to all hosts: not all JVMs were stopped - {2} was started and not configured for hot deploy", fileName, groupName, jvm.getJvmName());
+                    LOGGER.info(deployStoppedMessage);
+                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployStoppedMessage);
                 }
             }
             List<String> deployedHosts = new ArrayList<>(jvms.size());

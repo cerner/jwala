@@ -191,13 +191,16 @@ public class GroupServiceImplDeployTest {
         ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
         Entity mockEntity = mock(Entity.class);
         when(mockMetaData.getEntity()).thenReturn(mockEntity);
-        when(mockEntity.getDeployToJvms()).thenReturn(true);
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Application.class), anyString())).thenReturn(mockMetaData);
+        when(Config.mockGroupService.deployGroupAppTemplate(anyString(), anyString(), any(Application.class), any(Jvm.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
 
         Response returnResponse = groupServiceRest.generateAndDeployGroupAppFile("testGroup", "hct.xml", "testApp", mockAuthUser, null);
         assertEquals(200, returnResponse.getStatus());
 
         when(mockJvm.getHostName()).thenReturn("TestHost");
+        when(Config.mockGroupService.deployGroupAppTemplate(anyString(), anyString(), any(Application.class), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS", ""));
         returnResponse = groupServiceRest.generateAndDeployGroupAppFile("testGroup", "hct.xml", "testApp", mockAuthUser, hostName);
         assertEquals(200, returnResponse.getStatus());
 
@@ -225,7 +228,7 @@ public class GroupServiceImplDeployTest {
             groupServiceRest.generateAndDeployGroupAppFile("testGroup", "hct.xml", "testApp", mockAuthUser, null);
         } catch (InternalErrorException ie) {
             internalErrorException = true;
-            assertTrue(ie.getMessage().contains("All JVMs in the group must be stopped"));
+            assertTrue(ie.getMessage().contains("not all JVMs were stopped"));
         }
         assertTrue(internalErrorException);
     }
@@ -262,7 +265,9 @@ public class GroupServiceImplDeployTest {
         when(mockMetaData.getEntity()).thenReturn(mockEntity);
         when(mockEntity.getDeployToJvms()).thenReturn(false);
         when(mockEntity.getTarget()).thenReturn("testApp");
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Application.class), anyString())).thenReturn(mockMetaData);
         Response returnResponse = groupServiceRest.generateAndDeployGroupAppFile("testGroup", "hct.xml", "testApp", mockAuthUser, null);
         assertEquals(200, returnResponse.getStatus());
 
@@ -280,6 +285,7 @@ public class GroupServiceImplDeployTest {
     public void testGroupAppDeployToHostsFailedForStartedJvm() throws IOException {
         Group mockGroup = mock(Group.class);
         Jvm mockJvm = mock(Jvm.class);
+        Application mockApp = mock(Application.class);
         when(mockJvm.getHostName()).thenReturn("test-host-name");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-name");
@@ -291,8 +297,10 @@ public class GroupServiceImplDeployTest {
         ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
         Entity mockMetaDataEntity = mock(Entity.class);
         when(mockMetaData.getEntity()).thenReturn(mockMetaDataEntity);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
         when(mockMetaDataEntity.getDeployToJvms()).thenReturn(false);
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+        when(Config.mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Application.class), anyString())).thenReturn(mockMetaData);
 
         groupServiceRest.generateAndDeployGroupAppFile("test-group-name", "test.properties", "test-app-name", mockAuthUser, "test-host-name");
     }

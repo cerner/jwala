@@ -1,5 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.group.impl;
 
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.group.GroupControlOperation;
 import com.cerner.jwala.common.domain.model.id.Identifier;
@@ -14,8 +15,6 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.InternalErrorException;
-import com.cerner.jwala.common.exec.CommandOutput;
-import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.AddJvmsToGroupRequest;
 import com.cerner.jwala.common.request.group.CreateGroupRequest;
@@ -64,9 +63,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -777,7 +778,9 @@ public class GroupServiceRestImplTest {
     public void testGenerateAndDeployGroupAppFileFail() throws IOException {
         when(mockGroupService.getGroup(anyString())).thenReturn(mockGroup);
         when(mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("anyString");
-        when(mockResourceService.getMetaData(anyString())).thenThrow(new IOException("Cannot parse meta data: \"anyString\""));
+        Application mockApp = mock(Application.class);
+        when(mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
+        when(mockResourceService.getTokenizedMetaData(anyString(), any(Application.class), anyString())).thenThrow(new IOException("Cannot parse meta data: \"anyString\""));
         groupServiceRest.generateAndDeployGroupAppFile("test-group", "anyFile.txt", "testApp", mockAuthenticatedUser, "anyHost");
     }
 
