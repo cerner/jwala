@@ -9,8 +9,8 @@ import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupCreateTes
 import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupDeleteTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmCreateTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmDeleteTest;
-import com.cerner.jwala.ui.selenium.testsuite.configuration.operations.HistoryTablePopupTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.*;
+import com.cerner.jwala.ui.selenium.testsuite.operations.HistoryTablePopupTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
