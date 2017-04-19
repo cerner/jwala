@@ -6,9 +6,7 @@ import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
-import com.cerner.jwala.common.domain.model.resource.Entity;
-import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
-import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.resource.*;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
@@ -143,12 +141,42 @@ public class GroupServiceImplDeployTest {
         when(Config.mockGroupService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
         when(Config.mockGroupService.getGroupWebServerResourceTemplate(anyString(), anyString(), anyBoolean(), any(ResourceGroup.class))).thenReturn("new httpd.conf context");
         when(Config.mockGroupService.getGroupWebServerResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"contentType\":\"text/plain\",\"deployPath\":\"./anyPath\"}");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(WebServer.class), anyString())).thenReturn(mockMetaData);
+
+        Response returnedResponse = groupServiceRest.generateAndDeployGroupWebServersFile("testGroup", "httpd.conf", mockAuthUser);
+        assertEquals(200, returnedResponse.getStatusInfo().getStatusCode());
+    }
+
+    @Test (expected = InternalErrorException.class)
+    public void testGroupWebServerDeployWebServerStartedThrowsIOExceptionDuringMetaDataTokenization() throws CommandFailureException, IOException {
+        Group mockGroup = mock(Group.class);
+        WebServer mockWebServer = mock(WebServer.class);
+
+        Set<WebServer> webServerSet = new HashSet<>();
+        webServerSet.add(mockWebServer);
+
+        when(mockGroup.getWebServers()).thenReturn(webServerSet);
+        when(mockWebServer.getName()).thenReturn("testWebServer");
+        when(mockWebServer.getId()).thenReturn(new Identifier<WebServer>(99L));
+        when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_REACHABLE);
+        when(Config.mockGroupService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
+        when(Config.mockGroupService.getGroupWebServerResourceTemplate(anyString(), anyString(), anyBoolean(), any(ResourceGroup.class))).thenReturn("new httpd.conf context");
+        when(Config.mockGroupService.getGroupWebServerResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"contentType\":\"text/plain\",\"deployPath\":\"./anyPath\"}");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(WebServer.class), anyString())).thenThrow(new IOException("FAIL THIS TEST"));
+
         Response returnedResponse = groupServiceRest.generateAndDeployGroupWebServersFile("testGroup", "httpd.conf", mockAuthUser);
         assertEquals(200, returnedResponse.getStatusInfo().getStatusCode());
     }
 
     @Test(expected = InternalErrorException.class)
-    public void testGenerateAndDeployGroupWebServerFileWithWebServerStarted() {
+    public void testGenerateAndDeployGroupWebServerFileWithWebServerStarted() throws IOException {
         Group mockGroup = mock(Group.class);
         WebServer mockWebServer = mock(WebServer.class);
         Set<WebServer> webServerSet = new HashSet<>();
@@ -158,6 +186,10 @@ public class GroupServiceImplDeployTest {
         when(Config.mockGroupService.getGroupWebServerResourceTemplate(anyString(), anyString(), anyBoolean(), any(ResourceGroup.class))).thenReturn("Httpd.conf template content");
         when(mockGroup.getWebServers()).thenReturn(webServerSet);
         when(Config.mockWebServerService.isStarted(any(WebServer.class))).thenReturn(true);
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(WebServer.class), anyString())).thenReturn(mockMetaData);
         groupServiceRest.generateAndDeployGroupWebServersFile("groupName", "httpd.conf", mockAuthUser);
     }
 

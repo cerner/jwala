@@ -7,6 +7,7 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -492,6 +493,7 @@ public class GroupServiceRestImplTest {
         when(mockMetaData.getContentType()).thenReturn(MediaType.TEXT_PLAIN);
         when(mockMetaData.getDeployFileName()).thenReturn("httpd.conf");
         when(mockMetaData.getDeployPath()).thenReturn("/some/test/path");
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
 
         Set<WebServer> wsSet = new HashSet<>();
         wsSet.add(mockWebServer);
@@ -503,7 +505,7 @@ public class GroupServiceRestImplTest {
         when(mockWebServerService.getResourceTemplate(anyString(), anyString(), anyBoolean(), any(ResourceGroup.class))).thenReturn(httpdConfTemplateContent);
         when(mockResourceService.updateResourceMetaData(any(ResourceIdentifier.class), anyString(), anyString())).thenReturn(rawMetaData);
         when(mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
-//        when(mockWebServerControlService.secureCopyFile(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS",""));
+        when(mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
 
         Response response = groupServiceRest.generateAndDeployGroupWebServersFile(group.getName(), "httpd.conf", mockAuthenticatedUser);
         assertEquals(200, response.getStatus());
