@@ -215,18 +215,33 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .setJvmName(jvmName)
                     .build();
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
-            if (jvm.getState().isStartedState()) {
-                LOGGER.error("The target JVM must be stopped before attempting to update the resource files");
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
-                        "The target JVM must be stopped before attempting to update the resource files");
-            }
-            final String hostName = jvm.getHostName();
-            return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, hostName);
+            checkJvmStateBeforeDeploy(jvm, resourceIdentifier);
+            return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, jvm.getHostName());
         } catch (ResourceFileGeneratorException e) {
             LOGGER.error("Fail to generate the resource file {}", resourceTemplateName, e);
             throw new DeployApplicationConfException(e);
         } finally {
             binaryDistributionLockManager.writeUnlock(lockKey);
+        }
+    }
+
+    private void checkJvmStateBeforeDeploy(Jvm jvm, ResourceIdentifier resourceIdentifier) {
+        try {
+            String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
+            boolean hotDeploy = resourceService.getMetaData(metaDataStr).isHotDeploy();
+            if (jvm.getState().isStartedState()) {
+                if (hotDeploy) {
+                    LOGGER.info("JVM {} is started, but resource {} is configured with hotDeploy=true. Continuing with deploy ...");
+                } else {
+                    String deployMsg = MessageFormat.format("The JVM {0} must be stopped or the resource {1} must be configured with hotDeploy=true before the resource can be deployed", jvm.getJvmName(), resourceIdentifier.resourceName);
+                    LOGGER.error(deployMsg);
+                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
+                }
+            }
+        } catch (IOException e) {
+            String errMsg = MessageFormat.format("Failed to parse the meta data of resource {0} for JVM {1}", resourceIdentifier.resourceName, jvm.getJvmName());
+            LOGGER.error(errMsg, e);
+            throw new ApplicationServiceException(errMsg);
         }
     }
 

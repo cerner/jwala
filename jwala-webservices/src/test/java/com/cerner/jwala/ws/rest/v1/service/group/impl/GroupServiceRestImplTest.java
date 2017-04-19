@@ -68,7 +68,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -157,9 +156,6 @@ public class GroupServiceRestImplTest {
     private ApplicationService mockApplicationService;
 
     @Mock
-    private ExecutorService mockExecutorService;
-
-    @Mock
     private WebServerControlService mockWebServerControlService;
 
     @Mock
@@ -211,11 +207,6 @@ public class GroupServiceRestImplTest {
         mockResourceService = mock(ResourceService.class);
         mockGroupService = mock(GroupService.class);
         mockBinaryDistributionService = mock(BinaryDistributionService.class);
-
-        groupServiceRest = new GroupServiceRestImpl(mockGroupService, mockResourceService, mockGroupControlService,
-                mockGroupJvmControlService, mockGroupWSControlService, mockJvmService, mockWebServerService,
-                mockApplicationService, applicationServiceRest, mockWebServerServiceRest);
-
 
         final WebServerServiceRest webServerServiceRest = new WebServerServiceRestImpl(mockWebServerService, mockWebServerControlService, mockWebServerCommandService,  mockResourceService, mockGroupService, mockBinaryDistributionService, mockHistoryFacadeService);
 
@@ -782,7 +773,7 @@ public class GroupServiceRestImplTest {
         when(mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("anyString");
         Application mockApp = mock(Application.class);
         when(mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
-        when(mockResourceService.getTokenizedMetaData(anyString(), any(Application.class), anyString())).thenThrow(new IOException("Cannot parse meta data: \"anyString\""));
+        when(mockResourceService.getMetaData(anyString())).thenThrow(new IOException("Cannot parse meta data: \"anyString\""));
         groupServiceRest.generateAndDeployGroupAppFile("test-group", "anyFile.txt", "testApp", mockAuthenticatedUser, "anyHost");
     }
 

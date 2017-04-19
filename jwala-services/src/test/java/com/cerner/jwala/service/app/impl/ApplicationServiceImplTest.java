@@ -5,10 +5,7 @@ import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
-import com.cerner.jwala.common.domain.model.resource.Entity;
-import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
-import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
-import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.resource.*;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.exception.BadRequestException;
@@ -276,6 +273,10 @@ public class ApplicationServiceImplTest {
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(), any(ResourceGeneratorType.class))).thenReturn("{\"deployPath\":\"./test/deploy-path/conf/CatalinaSSL/localhost\",\"contentType\":\"text/xml\",\"entity\":{\"type\":\"APPLICATION\",\"target\":\"soarcom-hct\",\"group\":\"soarcom-616\",\"parentName\":null,\"deployToJvms\":true},\"templateName\":\"hctXmlTemplate.tpl\",\"deployFileName\":\"hct.xml\"}");
         when(Config.mockResourceService.generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString())).thenReturn(execData);
 
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+
         CommandOutput retExecData = applicationService.deployConf("hct", "hct-group", "jvm-1", "hct.xml", mock(ResourceGroup.class), testUser);
         assertTrue(retExecData.getReturnCode().wasSuccessful());
 
@@ -313,13 +314,17 @@ public class ApplicationServiceImplTest {
     }
 
     @Test(expected = InternalErrorException.class)
-    public void testDeployConfJvmNotStopped() {
+    public void testDeployConfJvmNotStopped() throws IOException {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         when(Config.jvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(mockJvm);
         when(Config.applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(Config.mockApplication);
         when(Config.applicationPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("IGNORED CONTENT");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
         applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
     }
 
