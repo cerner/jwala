@@ -21,10 +21,7 @@ import com.cerner.jwala.common.exec.ExecCommand;
 import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
-import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
-import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
-import com.cerner.jwala.common.request.jvm.CreateJvmRequest;
-import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
+import com.cerner.jwala.common.request.jvm.*;
 import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -602,18 +599,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(Config.mockApplicationService).deployConf(anyString(), anyString(), anyString(), anyString(), any(ResourceGroup.class), any(User.class));
     }
 
-    @Test(expected = InternalErrorException.class)
-    public void testCheckSetenvBat() {
-        final String jvmName = "test-jvm-check-for-setenvbat";
-        when(Config.mockJvmPersistenceService.getResourceTemplate(jvmName, "setenv.bat")).thenReturn("ignore template content, just need to check no exception is thrown");
-        jvmService.checkForSetenvScript(jvmName);
-
-        verify(Config.mockJvmPersistenceService).getResourceTemplate(anyString(), anyString());
-
-        when(Config.mockJvmPersistenceService.getResourceTemplate(jvmName, "setenv.bat")).thenThrow(new NonRetrievableResourceTemplateContentException("JVM", "setenv.bat", new Throwable()));
-        jvmService.checkForSetenvScript(jvmName);
-    }
-
     @Test
     public void testGenerateAndDeployConfig() throws CommandFailureException, IOException {
 
@@ -629,17 +614,16 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(commandOutput);
         when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString())).thenReturn(commandOutput);
         when(Config.mockJvmControlService.executeChangeFileModeCommand(any(Jvm.class), anyString(), anyString(), anyString())).thenReturn(commandOutput);
-
-        when(Config.mockJvmControlService.controlJvm(eq(new ControlJvmRequest(mockJvm.getId(), JvmControlOperation.DELETE_SERVICE)), any(User.class))).thenReturn(commandOutput);
-        when(Config.mockJvmControlService.controlJvm(eq(new ControlJvmRequest(mockJvm.getId(), JvmControlOperation.DEPLOY_CONFIG_ARCHIVE)), any(User.class))).thenReturn(commandOutput);
-        when(Config.mockJvmControlService.controlJvm(eq(new ControlJvmRequest(mockJvm.getId(), JvmControlOperation.INSTALL_SERVICE)), any(User.class))).thenReturn(commandOutput);
+        when(Config.mockJvmControlService.controlJvm(eq(ControlJvmRequestFactory.create(JvmControlOperation.DELETE_SERVICE, mockJvm)), any(User.class))).thenReturn(commandOutput);
+        when(Config.mockJvmControlService.controlJvm(eq(ControlJvmRequestFactory.create(JvmControlOperation.DEPLOY_JVM_ARCHIVE, mockJvm)), any(User.class))).thenReturn(commandOutput);
+        when(Config.mockJvmControlService.controlJvm(eq(ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, mockJvm)), any(User.class))).thenReturn(commandOutput);
+        when(Config.mockJvmControlService.executeCheckFileExistsCommand(any(Jvm.class), anyString())).thenReturn(commandOutput);
 
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class))).thenReturn("<server>some xml</server>");
 
         when(Config.mockResourceService.generateResourceGroup()).thenReturn(mockResourceGroup);
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("<server>some xml</server>");
-        when(Config.mockJvmControlService.executeCheckFileExistsCommand(any(Jvm.class), anyString())).thenReturn(commandOutput);
 
         final List<String> templateNames = new ArrayList<>();
         templateNames.add("setenv.bat");
@@ -653,7 +637,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockExecDataFail.getReturnCode()).thenReturn(new ExecReturnCode(1));
         when(mockExecDataFail.getStandardError()).thenReturn("ERROR");
 
-        when(Config.mockJvmControlService.controlJvm(eq(new ControlJvmRequest(mockJvm.getId(), JvmControlOperation.INSTALL_SERVICE)), any(User.class))).thenReturn(mockExecDataFail);
+        when(Config.mockJvmControlService.controlJvm(eq(new InstallServiceControlJvmRequest(mockJvm)), any(User.class))).thenReturn(mockExecDataFail);
 
         boolean exceptionThrown = false;
         try {

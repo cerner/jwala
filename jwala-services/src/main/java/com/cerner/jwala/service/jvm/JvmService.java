@@ -27,7 +27,7 @@ public interface JvmService {
 
     void deleteJvm(Identifier<Jvm> id, boolean hardDelete, User user);
 
-    void deleteJvmService(ControlJvmRequest controlJvmRequest, Jvm jvm, User user);
+    void deleteJvmService(Jvm jvm, User user);
 
     Jvm generateAndDeployJvm(String jvmName, User user);
 
@@ -99,12 +99,6 @@ public interface JvmService {
      * @param parentGroup
      */
     void createDefaultTemplates(String jvmName, Group parentGroup);
-
-    /**
-     * Check for setEnv Script
-     * @param jvmName
-     */
-    void checkForSetenvScript(String jvmName);
 
     /**
      * Delete a JVM

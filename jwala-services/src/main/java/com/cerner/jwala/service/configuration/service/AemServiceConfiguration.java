@@ -13,7 +13,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.control.configuration.AemCommandExecutorConfig;
-import com.cerner.jwala.control.configuration.AemSshConfig;
+import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.persistence.configuration.AemPersistenceServiceConfiguration;
 import com.cerner.jwala.persistence.jpa.service.*;
 import com.cerner.jwala.persistence.jpa.service.impl.GroupJvmRelationshipServiceImpl;
@@ -123,7 +123,7 @@ public class AemServiceConfiguration {
     private AemCommandExecutorConfig aemCommandExecutorConfig;
 
     @Autowired
-    private AemSshConfig aemSshConfig;
+    private SshConfig sshConfig;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -265,7 +265,7 @@ public class AemServiceConfiguration {
     @Bean(name = "webServerCommandService")
     public WebServerCommandService getWebServerCommandService(final WebServerService webServerService,
                                                               final RemoteCommandExecutorService remoteCommandExecutorService) {
-        final SshConfiguration sshConfig = aemSshConfig.getSshConfiguration();
+        final SshConfiguration sshConfig = this.sshConfig.getSshConfiguration();
 
         final JschBuilder jschBuilder = new JschBuilder().setPrivateKeyFileName(sshConfig.getPrivateKeyFile())
                 .setKnownHostsFileName(sshConfig.getKnownHostsFile());
@@ -278,7 +278,7 @@ public class AemServiceConfiguration {
 
     @Bean
     public ApplicationCommandService getApplicationCommandService() {
-        return new ApplicationCommandServiceImpl(aemSshConfig.getSshConfiguration(), aemSshConfig.getJschBuilder());
+        return new ApplicationCommandServiceImpl(sshConfig.getSshConfiguration(), sshConfig.getJschBuilder());
     }
 
     @Bean(name = "resourceService")
@@ -355,7 +355,7 @@ public class AemServiceConfiguration {
     }
 
     @Bean
-    public GenericKeyedObjectPool<ChannelSessionKey, Channel> getChannelPool(final AemSshConfig sshConfig) throws JSchException {
+    public GenericKeyedObjectPool<ChannelSessionKey, Channel> getChannelPool(final SshConfig sshConfig) throws JSchException {
         final GenericKeyedObjectPoolConfig genericKeyedObjectPoolConfig = new GenericKeyedObjectPoolConfig();
         genericKeyedObjectPoolConfig.setMaxTotalPerKey(10);
         genericKeyedObjectPoolConfig.setBlockWhenExhausted(true);

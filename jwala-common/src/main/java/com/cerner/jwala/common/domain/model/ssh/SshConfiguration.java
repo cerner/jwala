@@ -2,6 +2,7 @@ package com.cerner.jwala.common.domain.model.ssh;
 
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.exception.InternalErrorException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -27,11 +28,8 @@ public class SshConfiguration {
                             final char[] theEncPassword) {
 
 
-        if (theUserName == null
-                || thePort == null
-                || thePrivateKeyFile == null
-                || theKnownHostsFile == null) {
-            String message = "Startup Aborted: Jwala SSH Properties Not Set in Application Properties file";
+        if (StringUtils.isBlank(theUserName) || StringUtils.isBlank(new String(theEncPassword))) {
+            String message = "Startup Aborted: Jwala SSH username, port and password properties not found in vars.properties!!!";
             LOGGER.error(message);
             throw new InternalErrorException(FaultType.SSH_CONFIG_MISSING, message);
         }
@@ -39,7 +37,7 @@ public class SshConfiguration {
         port = thePort;
         privateKeyFile = thePrivateKeyFile;
         knownHostsFile = theKnownHostsFile;
-        encPassword = theEncPassword != null ? Arrays.copyOf(theEncPassword, theEncPassword.length) : new char[]{};
+        encPassword = Arrays.copyOf(theEncPassword, theEncPassword.length);
     }
 
     public String getUserName() {

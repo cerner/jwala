@@ -19,6 +19,7 @@ public class CurrentState<S, T extends OperationalState>  {
     private final Long webServerCount;
     private final Long webServerStartedCount;
     private final Long webServerStoppedCount;
+    private final Long webServerForciblyStoppedCount;
     private final Long jvmCount;
     private final Long jvmStartedCount;
     private final Long jvmStoppedCount;
@@ -33,6 +34,7 @@ public class CurrentState<S, T extends OperationalState>  {
         this.webServerCount = null;
         this.webServerStartedCount = null;
         this.webServerStoppedCount = null;
+        this.webServerForciblyStoppedCount = null;
         this.jvmCount = null;
         this.jvmStartedCount = null;
         this.jvmStoppedCount = null;
@@ -45,7 +47,8 @@ public class CurrentState<S, T extends OperationalState>  {
 
     public CurrentState(final Identifier<S> id, final T state, final DateTime asOf, final StateType type,
                         final Long webServerCount, final Long webServerStartedCount, final Long webServerStoppedCount,
-                        final Long jvmCount, final Long jvmStartedCount, final Long jvmStoppedCount, final Long jvmForciblyStoppedCount, final String message) {
+                        final Long webServerForciblyStoppedCount, final Long jvmCount, final Long jvmStartedCount,
+                        final Long jvmStoppedCount, final Long jvmForciblyStoppedCount, final String message) {
         this.id = id;
         this.state = state;
         this.asOf = asOf;
@@ -53,6 +56,7 @@ public class CurrentState<S, T extends OperationalState>  {
         this.webServerCount = webServerCount;
         this.webServerStartedCount = webServerStartedCount;
         this.webServerStoppedCount = webServerStoppedCount;
+        this.webServerForciblyStoppedCount = webServerForciblyStoppedCount;
         this.jvmCount = jvmCount;
         this.jvmStartedCount = jvmStartedCount;
         this.jvmStoppedCount = jvmStoppedCount;
@@ -62,9 +66,10 @@ public class CurrentState<S, T extends OperationalState>  {
 
     public CurrentState(final Identifier<S> id, final T state, final DateTime asOf, final StateType type,
                         final Long webServerCount, final Long webServerStartedCount, final Long webServerStoppedCount,
-                        final Long jvmCount, final Long jvmStartedCount, final Long jvmStoppedCount, final Long jvmForciblyStoppedCount) {
+                        final Long webServerForciblyStoppedCount, final Long jvmCount, final Long jvmStartedCount,
+                        final Long jvmStoppedCount, final Long jvmForciblyStoppedCount) {
         this(id, state, asOf, type,
-                webServerCount, webServerStartedCount, webServerStoppedCount,
+                webServerCount, webServerStartedCount, webServerStoppedCount, webServerForciblyStoppedCount,
                 jvmCount, jvmStartedCount, jvmStoppedCount, jvmForciblyStoppedCount, DEFAULT_EMPTY_MESSAGE);
     }
 
@@ -118,6 +123,7 @@ public class CurrentState<S, T extends OperationalState>  {
                 .append(this.webServerCount, rhs.webServerCount)
                 .append(this.webServerStartedCount, rhs.webServerStartedCount)
                 .append(this.webServerStoppedCount, rhs.webServerStoppedCount)
+                .append(this.webServerForciblyStoppedCount, rhs.webServerForciblyStoppedCount)
                 .append(this.jvmCount, rhs.jvmCount)
                 .append(this.jvmStartedCount, rhs.jvmStartedCount)
                 .append(this.jvmStoppedCount, rhs.jvmStoppedCount)
@@ -136,6 +142,7 @@ public class CurrentState<S, T extends OperationalState>  {
                 .append(webServerCount)
                 .append(webServerStartedCount)
                 .append(webServerStoppedCount)
+                .append(webServerForciblyStoppedCount)
                 .append(jvmCount)
                 .append(jvmStartedCount)
                 .append(jvmStoppedCount)
@@ -154,6 +161,7 @@ public class CurrentState<S, T extends OperationalState>  {
                 .append("webServerCount", webServerCount)
                 .append("webServerStartedCount", webServerStartedCount)
                 .append("webServerStoppedCount", webServerStoppedCount)
+                .append("webServerForciblyStoppedCount", webServerForciblyStoppedCount)
                 .append("jvmCount", jvmCount)
                 .append("jvmStartedCount", jvmStartedCount)
                 .append("jvmStoppedCount", jvmStoppedCount)
@@ -171,6 +179,10 @@ public class CurrentState<S, T extends OperationalState>  {
 
     public Long getWebServerStoppedCount() {
         return webServerStoppedCount;
+    }
+
+    public Long getWebServerForciblyStoppedCount() {
+        return webServerForciblyStoppedCount;
     }
 
     public Long getJvmCount() {

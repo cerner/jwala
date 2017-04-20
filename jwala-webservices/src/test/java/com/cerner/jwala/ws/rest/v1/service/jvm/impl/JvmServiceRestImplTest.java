@@ -237,7 +237,10 @@ public class JvmServiceRestImplTest {
 
     @Test
     public void testControlJvm() {
+        final Jvm mockJvm = mock(Jvm.class);
+        Identifier<Jvm> identifier = Identifier.id(1l, Jvm.class);
         when(jvmControlService.controlJvm(any(ControlJvmRequest.class), any(User.class))).thenReturn(new CommandOutput(new ExecReturnCode(0), "", ""));
+        when(jvmService.getJvm(identifier)).thenReturn(mockJvm);
 
         final CommandOutput execData = mock(CommandOutput.class);
         final ExecReturnCode execDataReturnCode = mock(ExecReturnCode.class);
@@ -245,7 +248,7 @@ public class JvmServiceRestImplTest {
         when(execData.getReturnCode()).thenReturn(execDataReturnCode);
 
         final JsonControlJvm jsonControlJvm = new JsonControlJvm("start");
-        final Response response = jvmServiceRest.controlJvm(Identifier.id(1l, Jvm.class), jsonControlJvm, null, null, authenticatedUser);
+        final Response response = jvmServiceRest.controlJvm(identifier, jsonControlJvm, null, null, authenticatedUser);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
 

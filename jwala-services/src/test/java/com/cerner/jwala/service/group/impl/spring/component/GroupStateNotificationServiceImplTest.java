@@ -19,7 +19,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -64,15 +64,23 @@ public class GroupStateNotificationServiceImplTest {
         final Identifier<Jvm> id = new Identifier<>(1L);
         when(mockJvmCrudService.getJvm(eq(id))).thenReturn(mockJpaJvm);
         when(mockJpaJvm.getGroups()).thenReturn(jpaGroupList);
+        when(mockJvmCrudService.getJvmCount(anyString())).thenReturn(6L);
         when(mockJvmCrudService.getJvmStartedCount(anyString())).thenReturn(3L);
-        when(mockJvmCrudService.getJvmCount(anyString())).thenReturn(4L);
+        when(mockJvmCrudService.getJvmStoppedCount(anyString())).thenReturn(2L);
+        when(mockJvmCrudService.getJvmForciblyStoppedCount(anyString())).thenReturn(1L);
+        when(mockWebServerCrudService.getWebServerCount(anyString())).thenReturn(16L);
         when(mockWebServerCrudService.getWebServerStartedCount(anyString())).thenReturn(2L);
-        when(mockWebServerCrudService.getWebServerCount(anyString())).thenReturn(2L);
+        when(mockWebServerCrudService.getWebServerStoppedCount(anyString())).thenReturn(8L);
+        when(mockWebServerCrudService.getWebServerForciblyStoppedCount(anyString())).thenReturn(6L);
         groupStateNotificationServiceImpl.retrieveStateAndSend(id, Jvm.class);
         System.out.println(groupStateArray[0]);
         System.out.println(groupStateArray[1]);
-        assertEquals("Identifier[id=1], null", groupStateArray[0]);
-        assertEquals("Identifier[id=2], null", groupStateArray[1]);
+        assertTrue(groupStateArray[0].indexOf("type=GROUP,message=,webServerCount=16,webServerStartedCount=2," +
+                "webServerStoppedCount=8,webServerForciblyStoppedCount=6,jvmCount=6,jvmStartedCount=3,jvmStoppedCount=2," +
+                "jvmForciblyStoppedCount=1]") > -1);
+        assertTrue(groupStateArray[1].indexOf("type=GROUP,message=,webServerCount=16,webServerStartedCount=2," +
+                "webServerStoppedCount=8,webServerForciblyStoppedCount=6,jvmCount=6,jvmStartedCount=3,jvmStoppedCount=2," +
+                "jvmForciblyStoppedCount=1]") > -1);
     }
 
     private static class TesterMessagingService implements MessagingService {
@@ -80,7 +88,7 @@ public class GroupStateNotificationServiceImplTest {
         @Override
         public void send(Object payLoad) {
             final CurrentState<Group, OperationalState> groupState = (CurrentState<Group, OperationalState>) payLoad;
-            groupStateArray[groupStateArrayCount++] = groupState.getId() + ", " + groupState.getState();
+            groupStateArray[groupStateArrayCount++] = groupState.getId() + ", " + groupState.toString();
         }
     }
 

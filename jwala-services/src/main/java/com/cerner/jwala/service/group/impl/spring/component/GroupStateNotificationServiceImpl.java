@@ -94,10 +94,12 @@ public class GroupStateNotificationServiceImpl implements GroupStateNotification
             final Long jvmCount = jvmCrudService.getJvmCount(group.getName());
             final Long webServerStartedCount = webServerCrudService.getWebServerStartedCount(group.getName());
             final Long webServerStoppedCount = webServerCrudService.getWebServerStoppedCount(group.getName());
+            final Long webServerForciblyStoppedCount = webServerCrudService.getWebServerForciblyStoppedCount(group.getName());
             final Long webServerCount = webServerCrudService.getWebServerCount(group.getName());
             final CurrentState<Group, OperationalState> groupState = new CurrentState<>(new Identifier<>(group.getId()),
                     null, DateTime.now(), StateType.GROUP, webServerCount, webServerStartedCount,
-                    webServerStoppedCount, jvmCount, jvmStartedCount, jvmStoppedCount, jvmForciblyStoppedCount);
+                    webServerStoppedCount, webServerForciblyStoppedCount, jvmCount, jvmStartedCount, jvmStoppedCount,
+                    jvmForciblyStoppedCount);
 
             if (send) {
                 messagingService.send(groupState);
