@@ -47,17 +47,17 @@ buildscript {
 }
 
 task deleteStagingDir(type: Delete) {
-    delete "$buildDir/$tomcatDir"
+    delete "$buildDir/${'apache.tomcat.dir'}"
 }
 
 task downloadDeploymentBinaries(dependsOn: deleteStagingDir, type: Download) {
-    src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl, unZipExeBinaryUrl])
-    dest "$buildDir/$tomcatDir/data/binaries"
+    src([project.property('jdk.binary.url'), project.property('apache.httpd.binary.url'), project.property('apache.tomcat.binary.url'), project.property('unzip.exe.binary.url')])
+    dest "$buildDir/${'apache.tomcat.dir'}/data/binaries"
 }
 
 task downloadDeploymentBinariesLinux(dependsOn: deleteStagingDir, type: Download) {
-    src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl])
-    dest "$buildDir/$tomcatDir/data/binaries"
+    src([project.property('jdk.binary.url'), project.property('apache.httpd.binary.url'), project.property('apache.tomcat.binary.url')])
+    dest "$buildDir/${'apache.tomcat.dir'}/data/binaries"
 }
 
 task downloadTomcat(type: Download) {
@@ -66,8 +66,8 @@ task downloadTomcat(type: Download) {
     } else {
         dependsOn downloadDeploymentBinaries
     }
-    src "${tomcatBinaryUrl}"
-    dest new File(buildDir, new File("${tomcatBinaryUrl}").getName())
+    src project.property('apache.tomcat.binary.url')
+    dest new File(buildDir, new File(project.property('apache.tomcat.binary.url')).getName())
 }
 
 task downloadAndUnzipTomcat(dependsOn: downloadTomcat, type: Copy) {
@@ -76,8 +76,8 @@ task downloadAndUnzipTomcat(dependsOn: downloadTomcat, type: Copy) {
 }
 
 task deleteDownloadedZip(dependsOn: downloadAndUnzipTomcat, type: Delete) {
-    delete new File("$buildDir", new File("${tomcatBinaryUrl}").getName())
-    delete new File("$buildDir/$tomcatDir", 'webapps')
+    delete new File("$buildDir", new File(project.property('apache.tomcat.binary.url')).getName())
+    delete new File("$buildDir/${'apache.tomcat.dir'}", 'webapps')
 }
 
 task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
@@ -92,23 +92,23 @@ task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
                 eol: FixCrLfFilter.CrLf.newInstance("lf")) //convert to unix format
     }
 
-    into("$buildDir/$tomcatDir")
+    into("$buildDir/${'apache.tomcat.dir'}")
 }
 
 task deleteReadMeFiles(dependsOn: copyConfigurationOverrides, type: Delete) {
-    delete fileTree("$buildDir/$tomcatDir") {
+    delete fileTree("$buildDir/${'apache.tomcat.dir'}") {
         include '**/ReadMe.txt'
     }
 }
 
 task copyTomcatExtras(dependsOn: deleteReadMeFiles, type: Download) {
     src 'http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.55/bin/extras/catalina-jmx-remote.jar'
-    dest new File("$buildDir/$tomcatDir/lib", "catalina-jmx-remote.jar")
+    dest new File("$buildDir/${'apache.tomcat.dir'}/lib", "catalina-jmx-remote.jar")
 }
 
 task copyJwalaDependenciesToTomcatLib(dependsOn: copyTomcatExtras, type: Copy) {
     from configurations.compile
-    into("$buildDir/$tomcatDir/lib")
+    into("$buildDir/${'apache.tomcat.dir'}/lib")
 }
 
 task copyJwalaH2EmbededJar(dependsOn: copyJwalaDependenciesToTomcatLib, type: Copy) {
@@ -116,19 +116,19 @@ task copyJwalaH2EmbededJar(dependsOn: copyJwalaDependenciesToTomcatLib, type: Co
         dependsOn(build)
     }
     from project(':jwala-h2-embedded').file("build/libs")
-    into file("$buildDir/$tomcatDir/lib")
+    into file("$buildDir/${'apache.tomcat.dir'}/lib")
 }
 task copyJwalaAgent(dependsOn: copyJwalaH2EmbededJar, type: Copy) {
     project(':jwala-tomcat-agent') {
         dependsOn(build)
     }
     from(project(':jwala-tomcat-agent').file("build/libs"))
-    from(file("$buildDir/$tomcatDir/lib/")) {
+    from(file("$buildDir/${'apache.tomcat.dir'}/lib/")) {
         include "$jgroups_lib"
         include "$slf4j_lib"
         include "$joda_time_lib"
     }
-    into file("$buildDir/$tomcatDir/data/agent")
+    into file("$buildDir/${'apache.tomcat.dir'}/data/agent")
 }
 
 task copyJwalaWebappWar(dependsOn: copyJwalaAgent, type: Copy) {
@@ -136,13 +136,13 @@ task copyJwalaWebappWar(dependsOn: copyJwalaAgent, type: Copy) {
         dependsOn(build)
     }
     from project(':jwala-webapp').file("build/libs")
-    into file("$buildDir/$tomcatDir/data/webapps")
+    into file("$buildDir/${'apache.tomcat.dir'}/data/webapps")
 }
 task copySql(dependsOn: [':jwala-persistence:createDdl', copyJwalaWebappWar], type: Copy) {
     from project(':jwala-persistence').projectDir
     include 'create.sql'
     include 'update.sql'
-    into file("$buildDir/$tomcatDir/data/db")
+    into file("$buildDir/${'apache.tomcat.dir'}/data/db")
 }
 
 task createJwalaDb(dependsOn: copySql) << {
@@ -152,26 +152,26 @@ task createJwalaDb(dependsOn: copySql) << {
     }
 
     def sql = Sql.newInstance(
-            "jdbc:h2:file://$buildDir/$tomcatDir/data/db/jwala;LOCK_MODE=0",
+            "jdbc:h2:file://$buildDir/${'apache.tomcat.dir'}/data/db/jwala;LOCK_MODE=0",
             'sa',
             '',
             'org.h2.Driver')
 
-    def dbFile = file("$buildDir/$tomcatDir/data/db/jwala.h2.db")
+    def dbFile = file("$buildDir/${'apache.tomcat.dir'}/data/db/jwala.h2.db")
     if (dbFile.exists()) {
         sql.execute('drop all objects')
     }
-    sql.execute(file("$buildDir/$tomcatDir/data/db/create.sql").text)
+    sql.execute(file("$buildDir/${'apache.tomcat.dir'}/data/db/create.sql").text)
     sql.close()
 }
 
 task zipJwalaTomcat(dependsOn: createJwalaDb, type: Zip) {
-    from "$buildDir/$tomcatDir"
+    from "$buildDir/${'apache.tomcat.dir'}"
     if (project.hasProperty("zipOs") && zipOs == "linux") {
         baseName = 'jwala-tomcat-linux'
     } else {
         baseName = 'jwala-tomcat'
     }
-    into "$tomcatDir"// note that this specifies path *in* the archive
+    into "${'apache.tomcat.dir'}"// note that this specifies path *in* the archive
     destinationDir file("$buildDir") // directory that you want your archive to be placed in
 }
