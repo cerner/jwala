@@ -723,38 +723,37 @@ public class GroupServiceRestImpl implements GroupServiceRest {
      * @param fileName  name of the file that needs to be deployed to the host
      * @param appName   name of the application which needs to be deployed
      * @param hostName  name of the host to which we want the file to be deployed to
-     * @param hotDeploy
+     * @param hotDeploy meta data attribute that specifies if the resource can be hot deployed to a JVM
      */
     private void performGroupAppDeployToHost(final String groupName, final String fileName, final String appName, final String hostName, boolean hotDeploy) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
-        Set<Jvm> jvms = groupService.getGroup(groupName).getJvms();
-        if (null != jvms && !jvms.isEmpty()) {
-            for (Jvm jvm : jvms) {
-                if (jvm.getHostName().equalsIgnoreCase(hostName) && jvm.getState().isStartedState() && !hotDeploy) {
-                    String deployStoppedMessage = MessageFormat.format("Failed to deploy file {0} for group {1} on host {2}: not all JVMs were stopped - {3} was started and not configured for hot deploy", fileName, groupName, hostName, jvm.getJvmName());
-                    LOGGER.info(deployStoppedMessage);
-                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployStoppedMessage);
-                }
-            }
+        final Group group = groupService.getGroup(groupName);
+        Set<Jvm> jvms = new HashSet<>();
+        new ArrayList<Jvm>(group.getJvms()).stream().filter(jvm -> jvm.getHostName().equalsIgnoreCase(hostName)).forEach(jvms::add);
+        if (!jvms.isEmpty()) {
+
+            checkJvmsStatesBeforeDeployAppResource(fileName, group, hotDeploy, jvms);
+
             Future<Response> response = createFutureResponseForAppDeploy(groupName, fileName, appName, null, hostName);
             if (response != null) {
                 futureMap.put(hostName, response);
                 checkResponsesForErrorStatus(futureMap);
             }
         }
+        if (!futureMap.isEmpty()) {
+            checkResponsesForErrorStatus(futureMap);
+        }
+
     }
 
     private void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName, boolean hotDeploy) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
-        Set<Jvm> jvms = groupService.getGroup(groupName).getJvms();
+        final Group group = groupService.getGroup(groupName);
+        Set<Jvm> jvms = group.getJvms();
         if (null != jvms && !jvms.isEmpty()) {
-            for (Jvm jvm : jvms) {
-                if (jvm.getState().isStartedState() && !hotDeploy) {
-                    String deployStoppedMessage = MessageFormat.format("Failed to deploy file {0} for group {1} to all hosts: not all JVMs were stopped - {2} was started and not configured for hot deploy", fileName, groupName, jvm.getJvmName());
-                    LOGGER.info(deployStoppedMessage);
-                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployStoppedMessage);
-                }
-            }
+
+            checkJvmsStatesBeforeDeployAppResource(fileName, group, hotDeploy, jvms);
+
             List<String> deployedHosts = new ArrayList<>(jvms.size());
             for (final Jvm jvm : jvms) {
                 final String hostName = jvm.getHostName();
@@ -766,7 +765,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                 }
             }
         }
-        if (futureMap.size() > 0) {
+        if (!futureMap.isEmpty()) {
             checkResponsesForErrorStatus(futureMap);
         }
     }
@@ -777,7 +776,6 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         Set<Jvm> jvms = getJvmsByHostname(hostName, groupJvms);
         if (null != jvms && !jvms.isEmpty()) {
             checkJvmsStatesBeforeDeployAppResource(fileName, group, hotDeploy, jvms);
-
             Map<String, Future<Response>> futureMap = executeGroupAppDeployToJvms(groupName, fileName, aUser, appName, appServiceRest, jvms);
             checkResponsesForErrorStatus(futureMap);
         }
@@ -847,7 +845,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
      * @param hostName  name of the host where the resources need to be deployed to
      * @return returns a Future<Response> object if successful.
      */
-    protected Future<Response> createFutureResponseForAppDeploy(final String groupName, final String fileName, final String appName, final Jvm jvm, final String hostName) {
+    private Future<Response> createFutureResponseForAppDeploy(final String groupName, final String fileName, final String appName, final Jvm jvm, final String hostName) {
         final Application application = applicationService.getApplication(appName);
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Future<Response> responseFuture = executorService.submit(new Callable<Response>() {
