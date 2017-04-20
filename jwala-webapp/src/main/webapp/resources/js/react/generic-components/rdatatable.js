@@ -143,6 +143,7 @@ var RDataTable = React.createClass({
                     if (!hasMatch) {
                         if (self.state.filterVal === "" ||
                             (self.state.filterVal !== "" &&
+                            tmpStr !== undefined &&
                             tmpStr !== null &&
                             tmpStr.toLowerCase().indexOf(self.state.filterVal.toLowerCase()) > -1)) {
                             hasMatch = true;
