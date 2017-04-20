@@ -421,4 +421,13 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
         }
         return false;
     }
+
+    @Override
+    public Long getWebServerForciblyStoppedCount(final String groupName) {
+        final Query query = entityManager.createNamedQuery(JpaWebServer.QUERY_GET_WS_COUNT_BY_STATE_AND_GROUP_NAME);
+        query.setParameter(JpaWebServer.QUERY_PARAM_STATE, WebServerReachableState.FORCED_STOPPED);
+        query.setParameter(JpaWebServer.QUERY_PARAM_GROUP_NAME, groupName);
+        return (Long) query.getSingleResult();
+    }
+
 }
