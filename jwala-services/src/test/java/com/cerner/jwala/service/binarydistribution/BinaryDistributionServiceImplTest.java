@@ -228,7 +228,7 @@ public class BinaryDistributionServiceImplTest {
         when(Config.mockBinaryDistributionControlService.secureCopyFile(eq(hostname), anyString(), anyString())).thenReturn(successfulCommandOutput);
         when(Config.mockBinaryDistributionControlService.unzipBinary(eq(hostname), anyString(), anyString(), anyString())).thenReturn(successfulCommandOutput);
         when(Config.mockBinaryDistributionControlService.deleteBinary(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
-        binaryDistributionService.distributeJdk(mockJvm);
+        binaryDistributionService.distributeMedia("jvm1", hostname, null, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService).secureCopyFile(eq(hostname), anyString(), anyString());
     }
 
@@ -243,7 +243,7 @@ public class BinaryDistributionServiceImplTest {
         when(mockJdkMedia.getRemoteHostPath()).thenReturn("anywhere");
         when(mockJdkMedia.getMediaDir()).thenReturn("anywhere");
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(successfulCommandOutput);
-        binaryDistributionService.distributeJdk(mockJvm);
+        binaryDistributionService.distributeMedia("jvm1", hostname, null, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService, never()).secureCopyFile(eq(hostname), anyString(), anyString());
     }
 
