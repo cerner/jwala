@@ -1,10 +1,9 @@
 package com.cerner.jwala.service.binarydistribution.impl;
 
 import com.cerner.jwala.common.domain.model.fault.FaultType;
-import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
-import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
@@ -14,6 +13,7 @@ import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.File;
-import java.text.MessageFormat;
+import java.util.Arrays;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
 
@@ -68,23 +68,23 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     }
 
     @Override
-    public void distributeJdk(final Jvm jvm) {
-        LOGGER.info("Start deploy jdk for {}", jvm.getHostName());
-        final Media jdkMedia = jvm.getJdkMedia();
-        final String binaryDeployDir = jdkMedia.getRemoteHostPath().replaceAll("\\\\", "/");
-        if (binaryDeployDir != null && !binaryDeployDir.isEmpty()) {
-            if (!checkIfMediaDirExists(jvm.getJdkMedia().getMediaDir().split(","), jvm.getHostName(), binaryDeployDir)) {
-                historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), "DISTRIBUTE_JDK " + jdkMedia.getName(),
-                        EventType.APPLICATION_EVENT, getUserNameFromSecurityContext());
-                distributeBinary(jvm.getHostName(), jdkMedia.getPath(), jdkMedia.getRemoteHostPath(), "");
-            } else {
-                LOGGER.warn("JDK directories already exists, installation of {} skipped!", jvm.getJdkMedia().getName());
-            }
-        } else {
-            final String errMsg = MessageFormat.format("JDK dir location is null or empty for JVM {0}. Not deploying JDK.", jvm.getJvmName());
-            throw new ApplicationException(errMsg);
+    public void distributeMedia(final String serverName, final String hostName, Group[] groups, final Media media) {
+        LOGGER.info("Deploying {}'s {} to {}", serverName,  media.getName(), hostName);
+
+        String installPath = media.getRemoteHostPath();
+        if (StringUtils.isEmpty(installPath)) {
+            throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }
-        LOGGER.info("End deploy jdk for {}", jvm.getHostName());
+
+        installPath = installPath.replaceAll("\\/", "/");
+        if (!checkIfMediaDirExists(media.getMediaDir().split(","), hostName, installPath)) {
+            historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
+                    getUserNameFromSecurityContext());
+            distributeBinary(hostName, media.getPath(), installPath, "");
+        } else {
+            LOGGER.warn("{} already exists. Skipping {} installation.", installPath, media.getName());
+        }
+        LOGGER.info("{}'s {} successfully deployed to {}", serverName, media.getName(), hostName);
     }
 
     private void distributeBinary(final String hostname, final String zipFileName, final String jwalaRemoteHome, final String exclude) {
