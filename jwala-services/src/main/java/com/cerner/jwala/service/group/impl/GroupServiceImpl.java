@@ -411,35 +411,8 @@ public class GroupServiceImpl implements GroupService {
         final Group group = groupPersistenceService.getGroup(groupName);
         final List<Jvm> jvms = jvmService.getJvmsByGroupName(group.getName());
 
-        // Check if any JVMs are running before generating the file
-        final List<Jvm> startedJvmNameList = new ArrayList<>();
-        final List<String> startedAndNotHotDeployList = new ArrayList<>();
-        jvms.stream().filter(jvm -> jvm.getState().isStartedState()).forEach(startedJvm -> startedJvmNameList.add(startedJvm));
-        startedJvmNameList.stream().filter(
-                jvm -> {
-                    try {
-                        return !resourceService.getTokenizedMetaData(
-                                fileName,
-                                jvm,
-                                resourceService.getResourceContent(
-                                        new ResourceIdentifier.Builder()
-                                                .setResourceName(fileName)
-                                                .setJvmName(jvm.getJvmName())
-                                                .setGroupName(groupName)
-                                                .build()).getMetaData())
-                                .isHotDeploy();
-                    } catch (IOException e) {
-                        LOGGER.error("ERROR");
-                        throw new GroupServiceException("ERROR");
-                    }
-                })
-                .forEach(jvm -> startedAndNotHotDeployList.add(jvm.getJvmName()));
-        if (!startedAndNotHotDeployList.isEmpty()) {
-            final String errMsg = MessageFormat.format("Failed to deploy file {0} for group {1} since the following JVMs are running and the file is not configured for hot deploy: {2}",
-                    fileName, groupName, startedAndNotHotDeployList);
-            LOGGER.error(errMsg);
-            throw new GroupServiceException(errMsg);
-        }
+        checkJvmStatesBeforeDeployFile(groupName, fileName, jvms);
+
 
         final Map<String, Future<Jvm>> futures = new HashMap<>(jvms.size());
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -459,6 +432,41 @@ public class GroupServiceImpl implements GroupService {
 
         checkJvmGenerateAndDeployFutureErrorStatus(futures);
         return group;
+    }
+
+    private void checkJvmStatesBeforeDeployFile(String groupName, String fileName, List<Jvm> jvms) {
+        // Check if any JVMs are running before generating the file
+        final List<Jvm> startedJvmNameList = new ArrayList<>();
+        final List<String> startedAndNotHotDeployList = new ArrayList<>();
+        jvms.stream().filter(jvm -> jvm.getState().isStartedState()).forEach(startedJvm -> startedJvmNameList.add(startedJvm));
+
+        for (Jvm jvm : startedJvmNameList) {
+            try {
+                String metaDataStr = resourceService.getResourceContent(
+                        new ResourceIdentifier.Builder()
+                                .setResourceName(fileName)
+                                .setJvmName(jvm.getJvmName())
+                                .setGroupName(groupName)
+                                .build()).getMetaData();
+                ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(fileName, jvm, metaDataStr);
+                if (metaData.isHotDeploy()) {
+                    LOGGER.info("JVM {} is started but resource {} is configured for hot deploy. Continuing with deploy ...", jvm.getJvmName(), fileName);
+                } else {
+                    startedAndNotHotDeployList.add(jvm.getJvmName());
+                }
+            } catch (IOException e) {
+                String errMsg = MessageFormat.format("Failed to tokenize meta data for resource {0} of JVM {1}", fileName, jvm.getJvmName());
+                LOGGER.error(errMsg);
+                throw new GroupServiceException(errMsg);
+            }
+        }
+
+        if (!startedAndNotHotDeployList.isEmpty()) {
+            final String errMsg = MessageFormat.format("Failed to deploy file {0} for group {1} since the following JVMs are running and the file is not configured for hot deploy: {2}",
+                    fileName, groupName, startedAndNotHotDeployList);
+            LOGGER.error(errMsg);
+            throw new GroupServiceException(errMsg);
+        }
     }
 
     /**

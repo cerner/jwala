@@ -13,25 +13,26 @@ import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.*;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
-import com.cerner.jwala.persistence.service.*;
-import com.cerner.jwala.service.HistoryFacadeService;
-import com.cerner.jwala.service.MessagingService;
+import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
+import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
-import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
-import com.cerner.jwala.service.repository.RepositoryService;
-import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
-import com.cerner.jwala.service.resource.ResourceHandler;
+import com.cerner.jwala.service.group.GroupService;
+import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.resource.ResourceService;
-import com.cerner.jwala.service.resource.impl.ResourceContentGeneratorServiceImpl;
-import com.cerner.jwala.service.resource.impl.ResourceServiceImpl;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.Tika;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -40,47 +41,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {GroupServiceImplVerifyTest.Config.class})
 public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
+    @Autowired
     private GroupServiceImpl groupService;
-    private GroupPersistenceService groupPersistenceService;
-    private ApplicationPersistenceService applicationPersistenceService;
+
     private User user;
-    private BinaryDistributionService binaryDistributionService;
-
-    @Mock
-    private ResourcePersistenceService mockResourcePersistenceService;
-
-    @Mock
-    private GroupPersistenceService mockGroupPesistenceService;
-
-    @Mock
-    private ApplicationPersistenceService mockAppPersistenceService;
-
-    @Mock
-    private JvmPersistenceService mockJvmPersistenceService;
-
-    @Mock
-    private WebServerPersistenceService mockWebServerPersistenceService;
-
-    @Mock
-    private ResourceDao mockResourceDao;
-
-    @Mock
-    private ResourceHandler mockResourceHandler;
-
-    @Mock
-    private MessagingService mockMessagingService;
-
-    @Mock
-    private HistoryFacadeService mockHistoryFacadeService;
-
-    private ResourceContentGeneratorService resourceContentGeneratorService;
-
-    @Mock
-    private RepositoryService mockRepositoryService;
-
-    private ResourceService resourceService;
 
     public GroupServiceImplVerifyTest() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH,
@@ -90,28 +58,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
     @Before
     public void setUp() {
-        groupPersistenceService = mock(GroupPersistenceService.class);
-        applicationPersistenceService = mock(ApplicationPersistenceService.class);
-        binaryDistributionService = mock(BinaryDistributionService.class);
-
-        mockGroupPesistenceService = mock(GroupPersistenceService.class);
-        mockJvmPersistenceService = mock(JvmPersistenceService.class);
-        mockAppPersistenceService = mock(ApplicationPersistenceService.class);
-
-
-        resourceContentGeneratorService = new ResourceContentGeneratorServiceImpl(mockGroupPesistenceService, mockWebServerPersistenceService, mockJvmPersistenceService,
-                mockAppPersistenceService, mockHistoryFacadeService);
-
-        resourceService = new ResourceServiceImpl(mockResourcePersistenceService, mockGroupPesistenceService,
-                mockAppPersistenceService, mockJvmPersistenceService, mockWebServerPersistenceService,
-                 mockResourceDao, mockResourceHandler, resourceContentGeneratorService,
-                binaryDistributionService, new Tika(), mockRepositoryService);
-
-        groupService = new GroupServiceImpl(groupPersistenceService,
-                applicationPersistenceService,
-                resourceService);
         user = new User("unused");
-
     }
 
     @Test
@@ -123,7 +70,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
                 user);
 
         verify(command, times(1)).validate();
-        verify(groupPersistenceService, times(1)).createGroup(command);
+        verify(Config.mockGroupPersistenceService, times(1)).createGroup(command);
     }
 
     @Test
@@ -133,7 +80,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         groupService.getGroup(id);
 
-        verify(groupPersistenceService, times(1)).getGroup(eq(id));
+        verify(Config.mockGroupPersistenceService, times(1)).getGroup(eq(id));
     }
 
     @Test
@@ -141,7 +88,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         groupService.getGroups();
 
-        verify(groupPersistenceService, times(1)).getGroups();
+        verify(Config.mockGroupPersistenceService, times(1)).getGroups();
     }
 
     @Test
@@ -151,7 +98,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         groupService.findGroups(fragment);
 
-        verify(groupPersistenceService, times(1)).findGroups(eq(fragment));
+        verify(Config.mockGroupPersistenceService, times(1)).findGroups(eq(fragment));
     }
 
     @Test(expected = BadRequestException.class)
@@ -168,14 +115,14 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         groupService.updateGroup(updateGroupRequest, user);
 
         verify(updateGroupRequest).validate();
-        verify(groupPersistenceService).updateGroup(updateGroupRequest);
+        verify(Config.mockGroupPersistenceService).updateGroup(updateGroupRequest);
     }
 
     @Test
     public void testRemoveGroup() {
         final Identifier<Group> id = new Identifier<>(-123456L);
         groupService.removeGroup(id);
-        verify(groupPersistenceService, times(1)).removeGroup(eq(id));
+        verify(Config.mockGroupPersistenceService, times(1)).removeGroup(eq(id));
     }
 
     @Test
@@ -183,7 +130,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         final AddJvmToGroupRequest addJvmToGroupRequest = mock(AddJvmToGroupRequest.class);
         groupService.addJvmToGroup(addJvmToGroupRequest, user);
         verify(addJvmToGroupRequest, times(1)).validate();
-        verify(groupPersistenceService, times(1)).addJvmToGroup(addJvmToGroupRequest);
+        verify(Config.mockGroupPersistenceService, times(1)).addJvmToGroup(addJvmToGroupRequest);
     }
 
     @Test
@@ -199,7 +146,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         verify(addJvmsToGroupRequest, times(1)).validate();
         for (final AddJvmToGroupRequest addJvmToGroupRequest : addJvmToGroupRequests) {
             verify(addJvmToGroupRequest, times(1)).validate();
-            verify(groupPersistenceService, times(1)).addJvmToGroup(addJvmToGroupRequest);
+            verify(Config.mockGroupPersistenceService, times(1)).addJvmToGroup(addJvmToGroupRequest);
         }
     }
 
@@ -211,7 +158,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         groupService.removeJvmFromGroup(removeJvmFromGroupRequest, user);
 
         verify(removeJvmFromGroupRequest, times(1)).validate();
-        verify(groupPersistenceService, times(1)).removeJvmFromGroup(removeJvmFromGroupRequest);
+        verify(Config.mockGroupPersistenceService, times(1)).removeJvmFromGroup(removeJvmFromGroupRequest);
 
         // TODO: Remove if this is no londer needed.
         // verify(stateNotificationWorker).refreshState(eq(groupStateService), any(Group.class));
@@ -229,7 +176,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         final Group group = new Group(new Identifier<Group>("1"), "Group1", jvmSet);
 
-        when(groupPersistenceService.getGroup(any(Identifier.class), eq(false))).thenReturn(group);
+        when(Config.mockGroupPersistenceService.getGroup(any(Identifier.class), eq(false))).thenReturn(group);
 
         final List<Jvm> otherGroupingDetailsOfJvm = groupService.getOtherGroupingDetailsOfJvms(new Identifier<Group>("1"));
 
@@ -256,7 +203,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         groupSet.add(new Group(new Identifier<Group>("1"), "Group1", new HashSet<Jvm>(), webServerSet, null, null));
 
-        when(groupPersistenceService.getGroup(any(Identifier.class), eq(true))).thenReturn(groupSet.get(2));
+        when(Config.mockGroupPersistenceService.getGroup(any(Identifier.class), eq(true))).thenReturn(groupSet.get(2));
 
         final List<WebServer> otherGroupingDetailsOfWebServer =
                 groupService.getOtherGroupingDetailsOfWebServers(new Identifier<Group>("1"));
@@ -285,18 +232,18 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         uploadRequests.add(uploadJvmRequest);
         final Identifier<Group> aGroupId = new Identifier<>(11L);
         groupService.populateJvmConfig(aGroupId, uploadRequests, user, false);
-        verify(groupPersistenceService, times(1)).populateJvmConfig(aGroupId, uploadRequests, user, false);
+        verify(Config.mockGroupPersistenceService, times(1)).populateJvmConfig(aGroupId, uploadRequests, user, false);
     }
 
     @Test
     public void testGroupJvmsResourceTemplateNames() {
         groupService.getGroupJvmsResourceTemplateNames("testGroupName");
-        verify(groupPersistenceService, times(1)).getGroupJvmsResourceTemplateNames("testGroupName");
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupJvmsResourceTemplateNames("testGroupName");
 
 
         List<String> jvmTemplates = new ArrayList<>();
         jvmTemplates.add("server.xml");
-        when(groupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(jvmTemplates);
+        when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(jvmTemplates);
         List<String> templateNames = groupService.getGroupJvmsResourceTemplateNames("testGroupName");
         assertEquals(1, templateNames.size());
     }
@@ -304,14 +251,18 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
     @Test
     public void testGroupWebServersResourceTemplateNames() {
         groupService.getGroupWebServersResourceTemplateNames("testGroupName");
-        verify(groupPersistenceService, times(1)).getGroupWebServersResourceTemplateNames("testGroupName");
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupWebServersResourceTemplateNames("testGroupName");
     }
 
     @Test
     public void testGetGroupJvmResourceTemplate() {
+        reset(Config.mockGroupPersistenceService);
+
         groupService.getGroupJvmResourceTemplate("testGroupName", "server.xml", new ResourceGroup(), false);
-        verify(groupPersistenceService, times(1)).getGroupJvmResourceTemplate("testGroupName", "server.xml");
-        verify(groupPersistenceService, times(0)).getGroup("testGroupName");
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupJvmResourceTemplate("testGroupName", "server.xml");
+        verify(Config.mockGroupPersistenceService, times(0)).getGroup("testGroupName");
+
+        reset(Config.mockGroupPersistenceService, Config.mockResourceService);
 
         Group mockGroup = mock(Group.class);
         Set<Jvm> jvms = new HashSet<>();
@@ -319,17 +270,23 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         groups.add(mockGroup);
         jvms.add(new Jvm(new Identifier<Jvm>(111L), "testJvmName", groups));
         when(mockGroup.getJvms()).thenReturn(jvms);
-        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(groupPersistenceService.getGroupJvmResourceTemplate(anyString(), anyString())).thenReturn("${jvm.jvmName}");
-        String tokenizedTemplate = groupService.getGroupJvmResourceTemplate("testGroupName", "server.xml", new ResourceGroup(), true);
-        assertEquals("testJvmName", tokenizedTemplate);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupJvmResourceTemplate(anyString(), anyString())).thenReturn("${jvm.jvmName}");
+
+        groupService.getGroupJvmResourceTemplate("testGroupName", "server.xml", new ResourceGroup(), true);
+
+        verify(Config.mockGroupPersistenceService).getGroupJvmResourceTemplate(eq("testGroupName"), eq("server.xml"));
+        verify(Config.mockGroupPersistenceService).getGroup(eq("testGroupName"));
+        verify(Config.mockResourceService).generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(Jvm.class), any(ResourceGeneratorType.class));
     }
 
     @Test
     public void testGetGroupWebServerResourceTemplate() {
         groupService.getGroupWebServerResourceTemplate("testGroupName", "httpd.conf", false, new ResourceGroup());
-        verify(groupPersistenceService, times(1)).getGroupWebServerResourceTemplate("testGroupName", "httpd.conf");
-        verify(groupPersistenceService, times(0)).getGroup("testGroupName");
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupWebServerResourceTemplate("testGroupName", "httpd.conf");
+        verify(Config.mockGroupPersistenceService, times(0)).getGroup("testGroupName");
+
+        reset(Config.mockGroupPersistenceService, Config.mockResourceService);
 
         Group mockGroup = mock(Group.class);
         Set<WebServer> webServers = new HashSet<>();
@@ -338,23 +295,28 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         webServers.add(testWebServer);
         when(mockGroup.getWebServers()).thenReturn(webServers);
         when(mockGroup.getId()).thenReturn(new Identifier<Group>(111L));
-        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(groupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
-        when(groupPersistenceService.getGroupWebServerResourceTemplate(anyString(), anyString())).thenReturn("${webServer.name}");
-        String tokenizedTemplate = groupService.getGroupWebServerResourceTemplate("testGroupName", "httpd.conf", true, new ResourceGroup());
-        assertEquals("testWebServerName", tokenizedTemplate);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupWebServerResourceTemplate(anyString(), anyString())).thenReturn("${webServer.name}");
+
+        groupService.getGroupWebServerResourceTemplate("testGroupName", "httpd.conf", true, new ResourceGroup());
+
+        verify(Config.mockGroupPersistenceService).getGroupWebServerResourceTemplate(eq("testGroupName"), eq("httpd.conf"));
+        verify(Config.mockGroupPersistenceService).getGroup(eq("testGroupName"));
+        verify(Config.mockGroupPersistenceService).getGroupWithWebServers(any(Identifier.class));
+        verify(Config.mockResourceService).generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(WebServer.class), any(ResourceGeneratorType.class));
     }
 
     @Test
     public void testUpdateGroupJvmTemplate() {
         groupService.updateGroupJvmResourceTemplate("testGroupName", "server.xml", "${jvm.jvmName}");
-        verify(groupPersistenceService).updateGroupJvmResourceTemplate("testGroupName", "server.xml", "${jvm.jvmName}");
+        verify(Config.mockGroupPersistenceService).updateGroupJvmResourceTemplate("testGroupName", "server.xml", "${jvm.jvmName}");
     }
 
     @Test
     public void testUpdateGroupWebServerTemplate() {
         groupService.updateGroupWebServerResourceTemplate("testGroupName", "httpd.conf", "${webServer.name}");
-        verify(groupPersistenceService).updateGroupWebServerResourceTemplate("testGroupName", "httpd.conf", "${webServer.name}");
+        verify(Config.mockGroupPersistenceService).updateGroupWebServerResourceTemplate("testGroupName", "httpd.conf", "${webServer.name}");
     }
 
     @Test
@@ -362,35 +324,42 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         Group mockGroup = mock(Group.class);
         Set<WebServer> wsList = new HashSet<>();
         WebServer webServer = new WebServer(new Identifier<WebServer>(111L), new HashSet<Group>(), "testWebServerName");
-        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(groupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
         when(mockGroup.getWebServers()).thenReturn(wsList);
         String template = groupService.previewGroupWebServerResourceTemplate("myFile", "testGroupName", "${webServer.name}", new ResourceGroup());
         assertEquals("${webServer.name}", template);
 
+        reset(Config.mockGroupPersistenceService, Config.mockResourceService);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroup);
+
         wsList.add(webServer);
-        template = groupService.previewGroupWebServerResourceTemplate("myFile", "testGroupName", "${webServer.name}", new ResourceGroup());
-        assertEquals("testWebServerName", template);
+        groupService.previewGroupWebServerResourceTemplate("myFile", "testGroupName", "${webServer.name}", new ResourceGroup());
+
+        verify(Config.mockGroupPersistenceService).getGroup(eq("testGroupName"));
+        verify(Config.mockGroupPersistenceService).getGroupWithWebServers(any(Identifier.class));
+        verify(Config.mockResourceService).generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(WebServer.class), any(ResourceGeneratorType.class));
     }
 
     @Test
     public void testGetGroupWithWebServer() {
         final Identifier<Group> aGroupId = new Identifier<>(1212L);
         groupService.getGroupWithWebServers(aGroupId);
-        verify(groupPersistenceService).getGroupWithWebServers(aGroupId);
+        verify(Config.mockGroupPersistenceService).getGroupWithWebServers(aGroupId);
     }
 
     @Test
     public void testGetGroupName() {
         final String testGroupName = "testGroupName";
         groupService.getGroup(testGroupName);
-        verify(groupPersistenceService).getGroup(testGroupName);
+        verify(Config.mockGroupPersistenceService).getGroup(testGroupName);
     }
 
     @Test
     public void testGetGroupsFetchWebServers() {
         groupService.getGroups(true);
-        verify(groupPersistenceService).getGroups(true);
+        verify(Config.mockGroupPersistenceService).getGroups(true);
     }
 
     @Test
@@ -401,27 +370,27 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         Group mockGroupWithWS = mock(Group.class);
         when(mockGroupWithWS.getWebServers()).thenReturn(new HashSet<WebServer>());
 
-        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(groupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroupWithWS);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupWithWebServers(any(Identifier.class))).thenReturn(mockGroupWithWS);
 
         final String testGroupName = "testGroupName";
         groupService.removeGroup(testGroupName);
-        verify(groupPersistenceService).removeGroup(testGroupName);
+        verify(Config.mockGroupPersistenceService).removeGroup(testGroupName);
     }
 
     @Test
     public void testGetGroupAppTemplateNames() {
-        when(groupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(new ArrayList<String>());
+        when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(new ArrayList<String>());
         groupService.getGroupAppsResourceTemplateNames("testGroup");
-        verify(groupPersistenceService).getGroupAppsResourceTemplateNames("testGroup");
+        verify(Config.mockGroupPersistenceService).getGroupAppsResourceTemplateNames("testGroup");
     }
 
     @Test
     public void testUpdateGroupAppResourceTemplate() {
-        when(groupPersistenceService.updateGroupAppResourceTemplate(anyString(), eq("some-app-name"), anyString(),
+        when(Config.mockGroupPersistenceService.updateGroupAppResourceTemplate(anyString(), eq("some-app-name"), anyString(),
                 anyString())).thenReturn("template content");
         groupService.updateGroupAppResourceTemplate("testGroup", "some-app-name", "hct.xml", "template content");
-        verify(groupPersistenceService).updateGroupAppResourceTemplate("testGroup", "some-app-name", "hct.xml", "template content");
+        verify(Config.mockGroupPersistenceService).updateGroupAppResourceTemplate("testGroup", "some-app-name", "hct.xml", "template content");
     }
 
     @Test(expected = ApplicationException.class)
@@ -443,11 +412,11 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         when(mockApp.getWarName()).thenReturn("testApp.war");
         when(mockApp.isLoadBalanceAcrossServers()).thenReturn(true);
         when(mockGroup.getJvms()).thenReturn(jvmsList);
-        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(applicationPersistenceService.getApplications()).thenReturn(appList);
-        when(applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(mockApp);
-        when(applicationPersistenceService.getApplication(anyString())).thenReturn(mockApp);
-        when(groupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockApplicationPersistenceService.getApplications()).thenReturn(appList);
+        when(Config.mockApplicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(mockApp);
+        when(Config.mockApplicationPersistenceService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
 
         String content = groupService.previewGroupAppResourceTemplate("testGroup", "hct.xml", "hct content", new ResourceGroup());
         assertEquals("hct content", content);
@@ -474,21 +443,26 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         when(mockApp.getWarName()).thenReturn("testApp.war");
         when(mockApp.isLoadBalanceAcrossServers()).thenReturn(true);
         when(mockGroup.getJvms()).thenReturn(jvmsList);
-        when(groupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(groupPersistenceService.getGroupAppResourceTemplate(anyString(), anyString(), anyString())).thenReturn("hct content ${webApp.name}");
-        when(applicationPersistenceService.getApplications()).thenReturn(appList);
-        when(applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(mockApp);
-        when(applicationPersistenceService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplate(anyString(), anyString(), anyString())).thenReturn("hct content ${webApp.name}");
+        when(Config.mockApplicationPersistenceService.getApplications()).thenReturn(appList);
+        when(Config.mockApplicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(mockApp);
+        when(Config.mockApplicationPersistenceService.getApplication(anyString())).thenReturn(mockApp);
 
         String content = groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", false, new ResourceGroup());
         assertEquals("hct content ${webApp.name}", content);
 
-        when(groupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
-        when(groupPersistenceService.getGroups()).thenReturn(Collections.singletonList(mockGroup));
-        content = groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", true, new ResourceGroup());
-        assertEquals("hct content testApp", content);
+        reset(Config.mockGroupPersistenceService, Config.mockApplicationPersistenceService, Config.mockResourceService);
 
-        when(groupPersistenceService.getGroupAppResourceTemplate(anyString(), anyString(), anyString())).thenReturn("hct content ${webApp.fail.name}");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
+        when(Config.mockGroupPersistenceService.getGroups()).thenReturn(Collections.singletonList(mockGroup));
+        groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", true, new ResourceGroup());
+
+        verify(Config.mockGroupPersistenceService).getGroupAppResourceTemplate(eq("testGroup"), eq("testAppName"), eq("hct.xml"));
+        verify(Config.mockApplicationPersistenceService).getApplication(eq("testAppName"));
+        verify(Config.mockResourceService).generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(Application.class), any(ResourceGeneratorType.class));
+
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplate(anyString(), anyString(), anyString())).thenReturn("hct content ${webApp.fail.name}");
         try {
             groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", true, new ResourceGroup());
         } catch (ApplicationException ae) {
@@ -513,13 +487,52 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         group2Hosts.add("host2");
         group2Hosts.add("host3");
 
-        when(groupPersistenceService.getGroups()).thenReturn(mockGroupsList);
+        when(Config.mockGroupPersistenceService.getGroups()).thenReturn(mockGroupsList);
         when(mockGroup1.getName()).thenReturn("mockGroup1");
         when(mockGroup2.getName()).thenReturn("mockGroup2");
-        when(groupPersistenceService.getHosts(eq("mockGroup1"))).thenReturn(group1Hosts);
-        when(groupPersistenceService.getHosts(eq("mockGroup2"))).thenReturn(group2Hosts);
+        when(Config.mockGroupPersistenceService.getHosts(eq("mockGroup1"))).thenReturn(group1Hosts);
+        when(Config.mockGroupPersistenceService.getHosts(eq("mockGroup2"))).thenReturn(group2Hosts);
 
         List<String> result = groupService.getAllHosts();
         assertEquals(3, result.size());
+    }
+
+    static class Config {
+
+        private static JvmService mockJvmService = mock(JvmService.class);
+        private static ExecutorService mockExecutorService = mock(ExecutorService.class);
+        private static ResourceService mockResourceService = mock(ResourceService.class);
+        private static ApplicationPersistenceService mockApplicationPersistenceService = mock(ApplicationPersistenceService.class);
+        private static GroupPersistenceService mockGroupPersistenceService = mock(GroupPersistenceService.class);
+
+        @Bean
+        public JvmService getJvmService() {
+            return mockJvmService;
+        }
+
+        @Bean
+        public ExecutorService getExecutorService() {
+            return mockExecutorService;
+        }
+
+        @Bean
+        public ResourceService getResourceService() {
+            return mockResourceService;
+        }
+
+        @Bean
+        public ApplicationPersistenceService getApplicationPersistenceService() {
+            return mockApplicationPersistenceService;
+        }
+
+        @Bean
+        public GroupPersistenceService getGroupPersistenceService() {
+            return mockGroupPersistenceService;
+        }
+
+        @Bean
+        public GroupService getGroupService() {
+            return new GroupServiceImpl(Config.mockGroupPersistenceService, mockApplicationPersistenceService, mockResourceService);
+        }
     }
 }

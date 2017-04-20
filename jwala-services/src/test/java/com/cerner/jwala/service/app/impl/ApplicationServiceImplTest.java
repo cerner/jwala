@@ -275,7 +275,7 @@ public class ApplicationServiceImplTest {
 
         when(mockMetaData.isHotDeploy()).thenReturn(false);
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
 
         CommandOutput retExecData = applicationService.deployConf("hct", "hct-group", "jvm-1", "hct.xml", mock(ResourceGroup.class), testUser);
         assertTrue(retExecData.getReturnCode().wasSuccessful());
@@ -324,8 +324,44 @@ public class ApplicationServiceImplTest {
         ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
         when(mockMetaData.isHotDeploy()).thenReturn(false);
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
         applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+    }
+
+    @Test
+    public void testDeployConfJvmNotStoppedAndHotDeploy() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getJvmName()).thenReturn("jvm-name");
+        when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+        when(Config.jvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(mockJvm);
+        when(Config.applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(Config.mockApplication);
+        when(Config.applicationPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("IGNORED CONTENT");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(true);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
+
+        applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+        verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
+    }
+
+    @Test (expected = ApplicationServiceException.class)
+    public void testDeployConfJvmNotStoppedAndHotDeployThrowsException() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getJvmName()).thenReturn("jvm-name");
+        when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+        when(Config.jvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(mockJvm);
+        when(Config.applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(Config.mockApplication);
+        when(Config.applicationPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("IGNORED CONTENT");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(true);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenThrow(new IOException("FAIL THIS TEST"));
+
+        applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -642,6 +678,7 @@ public class ApplicationServiceImplTest {
 
         verify(Config.mockResourceService, times(1)).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
+
     static class Config {
 
         private static ApplicationPersistenceService applicationPersistenceService = mock(ApplicationPersistenceService.class);

@@ -337,20 +337,20 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         LOGGER.info("generate and deploy the web server file {} to group {} by user", resourceFileName, groupName, aUser.getUser().getId());
         final Group group = groupService.getGroup(groupName);
         final Group groupWithWebServers = groupService.getGroupWithWebServers(group.getId());
-        final String httpdTemplateContent = groupService.getGroupWebServerResourceTemplate(groupName, resourceFileName, false, resourceService.generateResourceGroup());
+        final String resourceTemplateContent = groupService.getGroupWebServerResourceTemplate(groupName, resourceFileName, false, resourceService.generateResourceGroup());
         final String resourceMetaData = groupService.getGroupWebServerResourceTemplateMetaData(groupName, resourceFileName);
         final Set<WebServer> webServers = groupWithWebServers.getWebServers();
         if (null != webServers && !webServers.isEmpty()) {
 
             checkWebServerStateBeforeDeploy(resourceFileName, groupWithWebServers, webServers);
 
-            final Map<String, Future<Response>> futureMap = executeWebServerResourceDeploy(groupName, resourceFileName, aUser, httpdTemplateContent, resourceMetaData, webServers);
+            final Map<String, Future<Response>> futureMap = executeWebServerResourceDeploy(groupName, resourceFileName, aUser, resourceTemplateContent, resourceMetaData, webServers);
 
             checkResponsesForErrorStatus(futureMap);
         } else {
             LOGGER.info("No web servers in group {}", groupName);
         }
-        return ResponseBuilder.ok(httpdTemplateContent);
+        return ResponseBuilder.ok(resourceTemplateContent);
     }
 
     private Map<String, Future<Response>> executeWebServerResourceDeploy(final String groupName, final String resourceFileName, final AuthenticatedUser aUser, final String httpdTemplateContent, final String resourceMetaData, Set<WebServer> webServers) {
@@ -379,6 +379,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
     }
 
     private void checkWebServerStateBeforeDeploy(String resourceFileName, Group groupWithWebServers, Set<WebServer> webServers) {
+        List<String> startedWebServers = new ArrayList<>();
         for (WebServer webServer : webServers) {
             ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
                     .setWebServerName(webServer.getName())
@@ -388,11 +389,12 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
             try {
                 ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceFileName, webServer, metaDataStr);
-                if (webServerService.isStarted(webServer) && !metaData.isHotDeploy()) {
-                    String deployMsg = MessageFormat.format("Failed to deploy {0} for group {1}: not all web servers were stopped - {2} was started and the resource was not configured for hotDeploy=true",
-                            resourceFileName, groupWithWebServers.getName(), webServer.getName());
-                    LOGGER.info(deployMsg);
-                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
+                if (webServerService.isStarted(webServer)) {
+                    if (metaData.isHotDeploy()) {
+                        LOGGER.info("Web Server {} is started, but resource {} is configured for hot deploy. Continuing with deploy ...", webServer.getName(), resourceFileName);
+                    } else {
+                        startedWebServers.add(webServer.getName());
+                    }
                 }
             } catch (IOException e) {
                 String errorMsg = MessageFormat.format("Failed to tokenize resource {0} meta data for Web Server {1} during deployment of Web Server resource", resourceFileName, webServer.getName());
@@ -400,6 +402,14 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                 throw new InternalErrorException(FaultType.BAD_STREAM, errorMsg);
             }
         }
+
+        if (!startedWebServers.isEmpty()) {
+            String deployMsg = MessageFormat.format("Failed to deploy {0} for group {1}: the following Web Servers were started and the resource was not configured for hotDeploy=true: {2}",
+                    resourceFileName, groupWithWebServers.getName(), startedWebServers);
+            LOGGER.info(deployMsg);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
+        }
+
     }
 
     private void checkResponsesForErrorStatus(Map<String, Future<Response>> futureMap) {
@@ -628,11 +638,6 @@ public class GroupServiceRestImpl implements GroupServiceRest {
 
     @Context
     private MessageContext context;
-
-    // FOR UNIT TEST ONLY
-    public void setMessageContext(MessageContext testContext) {
-        context = testContext;
-    }
 
     @Override
     public Response updateGroupAppResourceTemplate(final String groupName, final String appName, final String resourceTemplateName, final String content) {

@@ -228,10 +228,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     private void checkJvmStateBeforeDeploy(Jvm jvm, ResourceIdentifier resourceIdentifier) {
         try {
             String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
-            boolean hotDeploy = resourceService.getMetaData(metaDataStr).isHotDeploy();
+            boolean hotDeploy = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, jvm, metaDataStr).isHotDeploy();
             if (jvm.getState().isStartedState()) {
                 if (hotDeploy) {
-                    LOGGER.info("JVM {} is started, but resource {} is configured with hotDeploy=true. Continuing with deploy ...");
+                    LOGGER.info("JVM {} is started, but resource {} is configured with hotDeploy=true. Continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
                 } else {
                     String deployMsg = MessageFormat.format("The JVM {0} must be stopped or the resource {1} must be configured with hotDeploy=true before the resource can be deployed", jvm.getJvmName(), resourceIdentifier.resourceName);
                     LOGGER.error(deployMsg);
@@ -534,7 +534,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    protected Set<String> getWebAppOnlyResources(final Group group, String appName) {
+    private Set<String> getWebAppOnlyResources(final Group group, String appName) {
         final String groupName = group.getName();
         final Set<String> resourceSet = new HashSet<>();
         List<String> resourceTemplates = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName, appName);
@@ -650,12 +650,4 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    public BinaryDistributionLockManager getLockManager() {
-        return binaryDistributionLockManager;
-    }
-
-    public ApplicationServiceImpl setLockManager(BinaryDistributionLockManager binaryDistributionLockManager) {
-        this.binaryDistributionLockManager = binaryDistributionLockManager;
-        return this;
-    }
 }
