@@ -216,8 +216,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
             checkJvmStateBeforeDeploy(jvm, resourceIdentifier);
-            Group group=groupPersistenceService.getGroup(groupName);
-            historyFacadeService.write("", group, "Generating and Deploying resource files in webapp\"" + appName + "\" resources", EventType.USER_ACTION_INFO, user.getId());
             return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, jvm.getHostName());
         } catch (ResourceFileGeneratorException e) {
             LOGGER.error("Fail to generate the resource file {}", resourceTemplateName, e);
