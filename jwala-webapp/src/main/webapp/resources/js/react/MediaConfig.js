@@ -218,12 +218,10 @@ var MediaTypeDropdown = React.createClass({
         return {selectedMediaType: this.props.selectedMediaType, mediaTypes: []}
     },
     componentDidMount: function() {
-        // TODO uncomment to support Apache and Tomcat media
-        /*var self = this;
+        var self = this;
         ServiceFactory.getMediaService().getMediaTypes().then(function(response){
             self.setState({mediaTypes: response.applicationResponseContent});
-        });*/
-        this.setState({mediaTypes:["JDK"]});
+        });
     },
     render: function() {
         var self = this;
