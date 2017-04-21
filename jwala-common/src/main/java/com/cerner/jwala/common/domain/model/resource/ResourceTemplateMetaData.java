@@ -24,6 +24,7 @@ public class ResourceTemplateMetaData {
     private final Entity entity;
     private boolean unpack;
     private boolean overwrite;
+    private boolean hotDeploy;
 
     @JsonIgnore
     private String jsonData;
@@ -35,7 +36,8 @@ public class ResourceTemplateMetaData {
                                     @JsonProperty("deployPath") final String deployPath,
                                     @JsonProperty("entity") final Entity entity,
                                     @JsonProperty("unpack") final Boolean unpack,
-                                    @JsonProperty("overwrite") Boolean overwrite) {
+                                    @JsonProperty("overwrite") Boolean overwrite,
+                                    @JsonProperty("hotDeploy") Boolean hotDeploy) {
         this.templateName = templateName;
         this.contentType = contentType;
         this.deployFileName = deployFileName;
@@ -43,6 +45,7 @@ public class ResourceTemplateMetaData {
         this.entity = entity;
         this.unpack = unpack == null ? false : unpack;
         this.overwrite = overwrite == null ? true : overwrite;
+        this.hotDeploy = hotDeploy == null ? false : hotDeploy;
     }
 
     public String getTemplateName() {
@@ -81,6 +84,10 @@ public class ResourceTemplateMetaData {
         this.jsonData = jsonData;
     }
 
+    public boolean isHotDeploy() {
+        return hotDeploy;
+    }
+
     @Override
     public String toString() {
         return "ResourceTemplateMetaData{" +
@@ -91,6 +98,7 @@ public class ResourceTemplateMetaData {
                 ", entity=" + entity +
                 ", unpack=" + unpack +
                 ", overwrite=" + overwrite +
+                ", hotDeploy=" + hotDeploy +
                 '}';
     }
 }
