@@ -815,12 +815,8 @@ var GroupOperationsDataTable = React.createClass({
     webServerConfirmDeleteCallback: function(data) {
         let self = this;
         webServerService.deleteWebServer(data.id.id, true).then(function(e){
-            // Remove deleted row
-             $("[id*='ws-child-table']").find("td:contains('" + data.name + "')").filter(function() {
-                if ($(this).text() === data.name) {
-                    $(this).parent().remove();
-                }
-            });
+            $.alert("Web server " + data.name + " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.",
+                    "Delete Web Server", true, function(){location.reload()});
         }).caught(
             function(e) {
                 self.setState({showDeleteConfirmDialog: false})
@@ -843,12 +839,8 @@ var GroupOperationsDataTable = React.createClass({
     jvmConfirmDeleteCallback: function(data) {
         let self = this;
         jvmService.deleteJvm(data.id.id, true).then(function(e){
-            // Remove deleted row
-            $("[id*='jvm-child-table']").find("td:contains('" + data.jvmName + "')").filter(function() {
-                if ($(this).text() === data.jvmName) {
-                    $(this).parent().remove();
-                }
-            });
+            $.alert("JVM " + data.jvmName + " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.",
+                    "Delete JVM", true, function(){location.reload()});
         }).caught(
             function(e) {
                 self.setState({showDeleteConfirmDialog: false})

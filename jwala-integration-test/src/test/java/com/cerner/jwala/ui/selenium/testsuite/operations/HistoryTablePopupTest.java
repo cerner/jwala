@@ -1,4 +1,4 @@
-package com.cerner.jwala.ui.selenium.testsuite.configuration.operations;
+package com.cerner.jwala.ui.selenium.testsuite.operations;
 
 import com.cerner.jwala.ui.selenium.testsuite.JwalaTest;
 import org.junit.Test;

@@ -9,8 +9,12 @@ import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupCreateTes
 import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupDeleteTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmCreateTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmDeleteTest;
-import com.cerner.jwala.ui.selenium.testsuite.configuration.operations.HistoryTablePopupTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.*;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.webServer.WebServerCreateTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.webServer.WebServerDeleteTest;
+import com.cerner.jwala.ui.selenium.testsuite.operations.HistoryTablePopupTest;
+import com.cerner.jwala.ui.selenium.testsuite.operations.JvmOperationsPageDeleteTest;
+import com.cerner.jwala.ui.selenium.testsuite.operations.WebServerOperationsPageDelete;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -24,10 +28,11 @@ import java.util.concurrent.TimeUnit;
  * Created by Jedd Cuison on 2/22/2017
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, AppCreateTest.class,
-        ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class, ModifyExternalPropertyResource.class,
-        DeleteExternalProperty.class, HistoryTablePopupTest.class, AppDeleteTest.class, JvmDeleteTest.class, GroupDeleteTest.class,
-        LogoutTest.class})
+@Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, WebServerCreateTest.class,
+        AppCreateTest.class, ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class,
+        ModifyExternalPropertyResource.class, DeleteExternalProperty.class, HistoryTablePopupTest.class, AppDeleteTest.class,
+        JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class, WebServerDeleteTest.class,
+        JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, LogoutTest.class})
 public class JwalaChromeTestSuite extends TestSuite {
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
