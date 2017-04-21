@@ -315,6 +315,8 @@ public class ApplicationServiceImplTest {
 
     @Test(expected = InternalErrorException.class)
     public void testDeployConfJvmNotStopped() throws IOException {
+        reset(Config.jvmPersistenceService, Config.applicationPersistenceService, Config.mockResourceService);
+
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
@@ -326,6 +328,8 @@ public class ApplicationServiceImplTest {
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
         applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
     @Test

@@ -36,13 +36,13 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
     @Autowired
     private RemoteCommandExecutorService remoteCommandExecutorService;
 
-    static String CREATE_DIR="if [ ! -e \"%s\" ]; then mkdir -p %s; fi;";
-    static String REMOVE="rm";
-    static String SECURE_COPY = "scp";
-    static String TEST = "test -e";
-    static String CHMOD = "chmod";
-    static String MOVE = "mv";
-    static String COPY = "cp";
+    private static String CREATE_DIR="if [ ! -e \"%s\" ]; then mkdir -p %s; fi;";
+    private static String REMOVE="rm";
+    private static String SECURE_COPY = "scp";
+    private static String TEST = "test -e";
+    private static String CHMOD = "chmod";
+    private static String MOVE = "mv";
+    private static String COPY = "cp";
 
     @Override
     public CommandOutput secureCopyFile(final String hostname, final String source, final String destination) throws CommandFailureException  {

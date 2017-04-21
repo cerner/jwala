@@ -229,15 +229,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         try {
             String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
             boolean hotDeploy = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, jvm, metaDataStr).isHotDeploy();
-            if (jvm.getState().isStartedState()) {
-                if (hotDeploy) {
-                    LOGGER.info("JVM {} is started, but resource {} is configured with hotDeploy=true. Continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
-                } else {
-                    String deployMsg = MessageFormat.format("The JVM {0} must be stopped or the resource {1} must be configured with hotDeploy=true before the resource can be deployed", jvm.getJvmName(), resourceIdentifier.resourceName);
-                    LOGGER.error(deployMsg);
-                    throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
-                }
+            if (jvm.getState().isStartedState() && !hotDeploy) {
+                String deployMsg = MessageFormat.format("The JVM {0} must be stopped or the resource {1} must be configured with hotDeploy=true before the resource can be deployed", jvm.getJvmName(), resourceIdentifier.resourceName);
+                LOGGER.error(deployMsg);
+                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
             }
+            LOGGER.info("JVM {} is started, but resource {} is configured with hotDeploy=true. Continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
         } catch (IOException e) {
             String errMsg = MessageFormat.format("Failed to parse the meta data of resource {0} for JVM {1}", resourceIdentifier.resourceName, jvm.getJvmName());
             LOGGER.error(errMsg, e);

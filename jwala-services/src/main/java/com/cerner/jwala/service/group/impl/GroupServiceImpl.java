@@ -449,11 +449,11 @@ public class GroupServiceImpl implements GroupService {
                                 .setGroupName(groupName)
                                 .build()).getMetaData();
                 ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(fileName, jvm, metaDataStr);
-                if (metaData.isHotDeploy()) {
-                    LOGGER.info("JVM {} is started but resource {} is configured for hot deploy. Continuing with deploy ...", jvm.getJvmName(), fileName);
-                } else {
+                if (!metaData.isHotDeploy()) {
                     startedAndNotHotDeployList.add(jvm.getJvmName());
+                    continue;
                 }
+                LOGGER.info("JVM {} is started but resource {} is configured for hot deploy. Continuing with deploy ...", jvm.getJvmName(), fileName);
             } catch (IOException e) {
                 String errMsg = MessageFormat.format("Failed to tokenize meta data for resource {0} of JVM {1}", fileName, jvm.getJvmName());
                 LOGGER.error(errMsg);

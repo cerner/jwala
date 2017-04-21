@@ -374,14 +374,11 @@ public class WebServerServiceImpl implements WebServerService {
     private void checkWebServerStateBeforeDeploy(WebServer webServer, ResourceIdentifier resourceIdentifier) throws IOException {
         final String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
         ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, webServer, metaDataStr);
-        if (isStarted(webServer)) {
-            if (metaData.isHotDeploy()) {
-                LOGGER.info("Web Server {} is started, but resource {} is configured to be hot deployed. Continuing with deploy ...", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
-            } else {
+        if (isStarted(webServer) && !metaData.isHotDeploy()) {
                 String errorMsg = MessageFormat.format("The target Web Server {0} must be stopped or the resource must be configured to be hotDeploy=true before attempting to deploy the resource {1}", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
                 LOGGER.error(errorMsg);
                 throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMsg);
-            }
         }
+        LOGGER.info("Web Server {} is started, but resource {} is configured to be hot deployed. Continuing with deploy ...", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
     }
 }

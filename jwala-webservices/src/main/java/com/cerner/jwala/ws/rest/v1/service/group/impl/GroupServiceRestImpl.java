@@ -389,13 +389,11 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
             try {
                 ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceFileName, webServer, metaDataStr);
-                if (webServerService.isStarted(webServer)) {
-                    if (metaData.isHotDeploy()) {
-                        LOGGER.info("Web Server {} is started, but resource {} is configured for hot deploy. Continuing with deploy ...", webServer.getName(), resourceFileName);
-                    } else {
-                        startedWebServers.add(webServer.getName());
-                    }
+                if (webServerService.isStarted(webServer) && !metaData.isHotDeploy()) {
+                    startedWebServers.add(webServer.getName());
+                    continue;
                 }
+                LOGGER.info("Web Server {} is started, but resource {} is configured for hot deploy. Continuing with deploy ...", webServer.getName(), resourceFileName);
             } catch (IOException e) {
                 String errorMsg = MessageFormat.format("Failed to tokenize resource {0} meta data for Web Server {1} during deployment of Web Server resource", resourceFileName, webServer.getName());
                 LOGGER.error(errorMsg, e);
@@ -798,13 +796,14 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         } else {
             LOGGER.debug("got no hostname deploying to all group jvms");
             jvms = groupJvms;
-        } return jvms;
+        }
+        return jvms;
     }
 
     private Map<String, Future<Response>> executeGroupAppDeployToJvms(final String groupName, final String fileName, final AuthenticatedUser aUser, final String appName, final ApplicationServiceRest appServiceRest, Set<Jvm> jvms) {
         final String groupAppTemplateContent = groupService.getGroupAppResourceTemplate(groupName, appName, fileName, false, new ResourceGroup());
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final  Map<String, Future<Response>> futureMap = new HashMap<>();
+        final Map<String, Future<Response>> futureMap = new HashMap<>();
         for (Jvm jvm : jvms) {
             final String jvmName = jvm.getJvmName();
             Future<Response> responseFuture = executorService.submit(new Callable<Response>() {
@@ -823,16 +822,14 @@ public class GroupServiceRestImpl implements GroupServiceRest {
     private void checkJvmsStatesBeforeDeployAppResource(String fileName, Group group, boolean hotDeploy, Set<Jvm> jvms) {
         List<String> jvmsStarted = new ArrayList<>();
         for (Jvm jvm : jvms) {
-            if (jvm.getState().isStartedState()) {
-                if (hotDeploy) {
-                    LOGGER.info("JVM {} is started, but hot deploy for {} is true. Continuing with deploy ...", jvm.getJvmName(), fileName);
-                } else {
-                    jvmsStarted.add(jvm.getJvmName());
-                }
+            if (jvm.getState().isStartedState() && !hotDeploy) {
+                jvmsStarted.add(jvm.getJvmName());
+                continue;
             }
+            LOGGER.info("JVM {} is started, but hot deploy for {} is true. Continuing with deploy ...", jvm.getJvmName(), fileName);
         }
 
-        if (!jvmsStarted.isEmpty()){
+        if (!jvmsStarted.isEmpty()) {
             String deployMsg = MessageFormat.format("Failed to deploy file {0} for group {1}: not all JVMs were stopped - the following JVMs were started and the resource was not configured with hotDeploy=true: {2}", fileName, group.getName(), jvmsStarted);
             LOGGER.error(deployMsg);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
