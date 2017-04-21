@@ -609,7 +609,7 @@ public class ApplicationServiceImplTest {
         when(Config.binaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Secure copy succeeded", ""));
         when(Config.binaryDistributionControlService.changeFileMode(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Change file mode succeeded", ""));
         when(Config.binaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists succeeded", ""));
-        when(Config.binaryDistributionControlService.backupFile(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
+        when(Config.binaryDistributionControlService.backupFileWithMove(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
         when(Config.binaryDistributionControlService.unzipBinary(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Unzip succeeded", ""));
 
         applicationService.copyApplicationWarToGroupHosts(mockApplicationForCopy);

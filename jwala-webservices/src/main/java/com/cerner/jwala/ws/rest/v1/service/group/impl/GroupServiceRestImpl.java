@@ -690,7 +690,6 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         LOGGER.info("Generate and deploy group app file {} for group {} by user {} to host {}", fileName, groupName, aUser.getUser().getId(), hostName);
 
         Group group = groupService.getGroup(groupName);
-        Application app = applicationService.getApplication(appName);
         final String groupAppMetaData = groupService.getGroupAppResourceTemplateMetaData(groupName, fileName);
         ResourceTemplateMetaData metaData;
         try {

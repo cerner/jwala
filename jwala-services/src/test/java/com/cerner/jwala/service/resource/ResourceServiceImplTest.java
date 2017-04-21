@@ -954,7 +954,7 @@ public class ResourceServiceImplTest {
 
         when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Created directory", ""));
         when(Config.mockDistributionService.remoteFileCheck(anyString(), anyString())).thenReturn(true);
-        when(Config.mockBinaryDistributionControlService.backupFile(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
+        when(Config.mockBinaryDistributionControlService.backupFileWithMove(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
         final CommandOutput scpResult = new CommandOutput(new ExecReturnCode(0), "SCP succeeded", "");
         when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(scpResult);
 
@@ -1025,7 +1025,7 @@ public class ResourceServiceImplTest {
 
         when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Created directory", ""));
         when(Config.mockDistributionService.remoteFileCheck(anyString(), anyString())).thenReturn(true);
-        when(Config.mockBinaryDistributionControlService.backupFile(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "", "BACK UP FAILED"));
+        when(Config.mockBinaryDistributionControlService.backupFileWithMove(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(1), "", "BACK UP FAILED"));
         final CommandOutput scpResult = new CommandOutput(new ExecReturnCode(0), "SCP succeeded", "");
         when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(scpResult);
 

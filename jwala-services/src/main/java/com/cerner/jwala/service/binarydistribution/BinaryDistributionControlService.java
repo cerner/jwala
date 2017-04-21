@@ -71,16 +71,16 @@ public interface BinaryDistributionControlService {
     /**
      *
      * @param hostname Name of the host
-     * @return Uname of the host Linux, CYGWIN_NT-6.3, etc
-     * @throws CommandFailureException
+     * @param remotePath remote file of directory
+     * @throws CommandFailureException exception thrown when the command fails
      */
-    CommandOutput getUName(final String hostname) throws CommandFailureException;
+    CommandOutput backupFileWithCopy(final String hostname, final String remotePath) throws CommandFailureException;
 
     /**
      *
      * @param hostname Name of the host
      * @param remotePath remote file of directory
-     * @throws CommandFailureException
+     * @throws CommandFailureException exception thrown when the command fails
      */
-    CommandOutput backupFile(final String hostname, final String remotePath) throws CommandFailureException;
+    CommandOutput backupFileWithMove(final String hostname, final String remotePath) throws CommandFailureException;
 }

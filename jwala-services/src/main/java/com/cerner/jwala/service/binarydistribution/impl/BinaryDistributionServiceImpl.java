@@ -230,7 +230,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
 
     @Override
     public void backupFile(final String hostname, final String remoteFilePath) {
-        binaryDistributionControlService.backupFile(hostname, remoteFilePath);
+        binaryDistributionControlService.backupFileWithMove(hostname, remoteFilePath);
     }
 
     /**

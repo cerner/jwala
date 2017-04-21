@@ -429,7 +429,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
                     if (commandOutput.getReturnCode().wasSuccessful()) {
                         LOGGER.debug("unpacked directory found at {}, backing it up", zipDestinationOption);
-                        commandOutput = distributionControlService.backupFile(host, zipDestinationOption);
+                        commandOutput = distributionControlService.backupFileWithMove(host, zipDestinationOption);
 
                         if (commandOutput.getReturnCode().wasSuccessful()) {
                             LOGGER.debug("successful back up of {}", zipDestinationOption);
