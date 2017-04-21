@@ -809,9 +809,9 @@ public class JvmServiceImpl implements JvmService {
             if (metaData.isHotDeploy()){
                 LOGGER.info("JVM {} is started, but the resource {} is hot deployable, continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
             } else {
-                LOGGER.error("The target JVM {} must be stopped or the resource {} must be set to hotDeploy=true before attempting to update the resource files", jvm.getJvmName(), resourceIdentifier.resourceName);
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
-                        "The target JVM must be stopped before attempting to update the resource files");
+                String errMsg = MessageFormat.format("The target JVM {0} must be stopped or the resource {1} must be set to hotDeploy=true before attempting to update the resource files", jvm.getJvmName(), resourceIdentifier.resourceName);
+                LOGGER.error(errMsg);
+                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errMsg);
             }
         }
     }
