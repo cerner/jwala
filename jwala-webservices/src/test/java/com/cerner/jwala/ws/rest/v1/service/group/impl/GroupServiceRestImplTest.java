@@ -1,11 +1,13 @@
 package com.cerner.jwala.ws.rest.v1.service.group.impl;
 
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.group.GroupControlOperation;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -14,8 +16,6 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.InternalErrorException;
-import com.cerner.jwala.common.exec.CommandOutput;
-import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.AddJvmsToGroupRequest;
 import com.cerner.jwala.common.request.group.CreateGroupRequest;
@@ -64,9 +64,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -155,9 +156,6 @@ public class GroupServiceRestImplTest {
     private ApplicationService mockApplicationService;
 
     @Mock
-    private ExecutorService mockExecutorService;
-
-    @Mock
     private WebServerControlService mockWebServerControlService;
 
     @Mock
@@ -209,11 +207,6 @@ public class GroupServiceRestImplTest {
         mockResourceService = mock(ResourceService.class);
         mockGroupService = mock(GroupService.class);
         mockBinaryDistributionService = mock(BinaryDistributionService.class);
-
-        groupServiceRest = new GroupServiceRestImpl(mockGroupService, mockResourceService, mockGroupControlService,
-                mockGroupJvmControlService, mockGroupWSControlService, mockJvmService, mockWebServerService,
-                mockApplicationService, applicationServiceRest, mockWebServerServiceRest);
-
 
         final WebServerServiceRest webServerServiceRest = new WebServerServiceRestImpl(mockWebServerService, mockWebServerControlService, mockWebServerCommandService,  mockResourceService, mockGroupService, mockBinaryDistributionService, mockHistoryFacadeService);
 
@@ -491,6 +484,7 @@ public class GroupServiceRestImplTest {
         when(mockMetaData.getContentType()).thenReturn(MediaType.TEXT_PLAIN);
         when(mockMetaData.getDeployFileName()).thenReturn("httpd.conf");
         when(mockMetaData.getDeployPath()).thenReturn("/some/test/path");
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
 
         Set<WebServer> wsSet = new HashSet<>();
         wsSet.add(mockWebServer);
@@ -502,7 +496,7 @@ public class GroupServiceRestImplTest {
         when(mockWebServerService.getResourceTemplate(anyString(), anyString(), anyBoolean(), any(ResourceGroup.class))).thenReturn(httpdConfTemplateContent);
         when(mockResourceService.updateResourceMetaData(any(ResourceIdentifier.class), anyString(), anyString())).thenReturn(rawMetaData);
         when(mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
-//        when(mockWebServerControlService.secureCopyFile(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "SUCCESS",""));
+        when(mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
 
         Response response = groupServiceRest.generateAndDeployGroupWebServersFile(group.getName(), "httpd.conf", mockAuthenticatedUser);
         assertEquals(200, response.getStatus());
@@ -777,6 +771,8 @@ public class GroupServiceRestImplTest {
     public void testGenerateAndDeployGroupAppFileFail() throws IOException {
         when(mockGroupService.getGroup(anyString())).thenReturn(mockGroup);
         when(mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("anyString");
+        Application mockApp = mock(Application.class);
+        when(mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
         when(mockResourceService.getMetaData(anyString())).thenThrow(new IOException("Cannot parse meta data: \"anyString\""));
         groupServiceRest.generateAndDeployGroupAppFile("test-group", "anyFile.txt", "testApp", mockAuthenticatedUser, "anyHost");
     }
@@ -791,7 +787,8 @@ public class GroupServiceRestImplTest {
         when(mockJvm.getHostName()).thenReturn(hostname);
         when(mockGroup.getJvms()).thenReturn(jvms);
         when(mockJvm.getState()).thenReturn(jvmState);
-        groupServiceRest.performGroupAppDeployToJvms("test-group", "test-file", mockAuthenticatedUser, mockGroup, "test-app", mockApplicationServiceRest, hostname);
+
+        groupServiceRest.performGroupAppDeployToJvms("test-group", "test-file", mockAuthenticatedUser, mockGroup, "test-app", mockApplicationServiceRest, hostname, false);
     }
 
     /**

@@ -590,6 +590,99 @@ public class WebServerServiceImplTest {
         verify(Config.mockWebServerPersistenceService, never()).removeWebServer(id);
     }
 
+    @Test
+    public void testGenerateAndDeploy() throws IOException {
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("test-ws-user");
+
+        WebServer mockWS = mock(WebServer.class);
+        when(mockWS.getId()).thenReturn(new Identifier<WebServer>(1111L));
+        when(mockWS.getHost()).thenReturn("test-ws-host");
+        when(mockWS.getState()).thenReturn(WebServerReachableState.WS_UNREACHABLE);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(eq("test-web-server"))).thenReturn(mockWS);
+
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\" : \"meta data\"}", "test resource ws content"));
+        when(Config.mockResourceService.getTokenizedMetaData(eq("test-ws-resource.txt"),eq(mockWS), eq("{\"fake\" : \"meta data\"}"))).thenReturn(mockResourceTemplateMetaData);
+
+        wsService.generateAndDeployFile("test-web-server","test-ws-resource.txt", mockUser);
+
+        verify(Config.mockBinaryDistributionLockManager).writeLock(anyString());
+        verify(Config.mockBinaryDistributionLockManager).writeUnlock(anyString());
+        verify(Config.mockResourceService).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), eq("test-web-server"), eq("test-ws-resource.txt"), eq("test-ws-host"));
+    }
+
+    @Test
+    public void testGenerateAndDeployWebServerStartedAndHotDeploy() throws IOException {
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("test-ws-user");
+
+        WebServer mockWS = mock(WebServer.class);
+        when(mockWS.getId()).thenReturn(new Identifier<WebServer>(1111L));
+        when(mockWS.getHost()).thenReturn("test-ws-host");
+        when(mockWS.getState()).thenReturn(WebServerReachableState.WS_REACHABLE);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(eq("test-web-server"))).thenReturn(mockWS);
+
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.isHotDeploy()).thenReturn(true);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\" : \"meta data\"}", "test resource ws content"));
+        when(Config.mockResourceService.getTokenizedMetaData(eq("test-ws-resource.txt"),eq(mockWS), eq("{\"fake\" : \"meta data\"}"))).thenReturn(mockResourceTemplateMetaData);
+
+        wsService.generateAndDeployFile("test-web-server","test-ws-resource.txt", mockUser);
+
+        verify(Config.mockBinaryDistributionLockManager).writeLock(anyString());
+        verify(Config.mockBinaryDistributionLockManager).writeUnlock(anyString());
+        verify(Config.mockResourceService).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), eq("test-web-server"), eq("test-ws-resource.txt"), eq("test-ws-host"));
+    }
+
+    @Test (expected = InternalErrorException.class)
+    public void testGenerateAndDeployWebServerStartedAndHotDeployFalse() throws IOException {
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("test-ws-user");
+
+        WebServer mockWS = mock(WebServer.class);
+        when(mockWS.getId()).thenReturn(new Identifier<WebServer>(1111L));
+        when(mockWS.getHost()).thenReturn("test-ws-host");
+        when(mockWS.getState()).thenReturn(WebServerReachableState.WS_REACHABLE);
+        when(Config.mockWebServerPersistenceService.findWebServerByName(eq("test-web-server"))).thenReturn(mockWS);
+
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\" : \"meta data\"}", "test resource ws content"));
+        when(Config.mockResourceService.getTokenizedMetaData(eq("test-ws-resource.txt"),eq(mockWS), eq("{\"fake\" : \"meta data\"}"))).thenReturn(mockResourceTemplateMetaData);
+
+        wsService.generateAndDeployFile("test-web-server","test-ws-resource.txt", mockUser);
+
+        verify(Config.mockBinaryDistributionLockManager).writeLock(anyString());
+        verify(Config.mockBinaryDistributionLockManager).writeUnlock(anyString());
+        verify(Config.mockResourceService, never()).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), eq("test-web-server"), eq("test-ws-resource.txt"), eq("test-ws-host"));
+    }
+
+    @Test (expected = WebServerServiceException.class)
+    public void testGenerateAndDeployFailsToTokenizeMetaData() throws IOException {
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("test-ws-user");
+
+        WebServer mockWS = mock(WebServer.class);
+        when(mockWS.getId()).thenReturn(new Identifier<WebServer>(1111L));
+        when(mockWS.getHost()).thenReturn("test-ws-host");
+        when(Config.mockWebServerPersistenceService.findWebServerByName(eq("test-web-server"))).thenReturn(mockWS);
+
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\" : \"meta data\"}", "test resource ws content"));
+        when(Config.mockResourceService.getTokenizedMetaData(eq("test-ws-resource.txt"),eq(mockWS), eq("{\"fake\" : \"meta data\"}"))).thenThrow(new IOException("FAIL THIS TEST"));
+
+        wsService.generateAndDeployFile("test-web-server","test-ws-resource.txt", mockUser);
+
+        verify(Config.mockBinaryDistributionLockManager).writeLock(anyString());
+        verify(Config.mockBinaryDistributionLockManager).writeUnlock(anyString());
+        verify(Config.mockResourceService, never()).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), eq("test-web-server"), eq("test-ws-resource.txt"), eq("test-ws-host"));
+    }
+
     static class Config {
 
         private static WebServerPersistenceService mockWebServerPersistenceService = mock(WebServerPersistenceService.class);

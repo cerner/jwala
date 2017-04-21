@@ -5,10 +5,7 @@ import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
-import com.cerner.jwala.common.domain.model.resource.Entity;
-import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
-import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
-import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.resource.*;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.exception.BadRequestException;
@@ -216,7 +213,7 @@ public class ApplicationServiceImplTest {
 
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
 
-        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false));
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false, null));
 
         UpdateApplicationRequest cac = new UpdateApplicationRequest(Config.mockApplication2.getId(), Identifier.id(1L, Group.class), "wan", "/wan", true, true, false);
         Application created = applicationService.updateApplication(cac, new User("user"));
@@ -276,6 +273,10 @@ public class ApplicationServiceImplTest {
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(), any(ResourceGeneratorType.class))).thenReturn("{\"deployPath\":\"./test/deploy-path/conf/CatalinaSSL/localhost\",\"contentType\":\"text/xml\",\"entity\":{\"type\":\"APPLICATION\",\"target\":\"soarcom-hct\",\"group\":\"soarcom-616\",\"parentName\":null,\"deployToJvms\":true},\"templateName\":\"hctXmlTemplate.tpl\",\"deployFileName\":\"hct.xml\"}");
         when(Config.mockResourceService.generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString())).thenReturn(execData);
 
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
+
         CommandOutput retExecData = applicationService.deployConf("hct", "hct-group", "jvm-1", "hct.xml", mock(ResourceGroup.class), testUser);
         assertTrue(retExecData.getReturnCode().wasSuccessful());
 
@@ -313,14 +314,58 @@ public class ApplicationServiceImplTest {
     }
 
     @Test(expected = InternalErrorException.class)
-    public void testDeployConfJvmNotStopped() {
+    public void testDeployConfJvmNotStopped() throws IOException {
+        reset(Config.jvmPersistenceService, Config.applicationPersistenceService, Config.mockResourceService);
+
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         when(Config.jvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(mockJvm);
         when(Config.applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(Config.mockApplication);
         when(Config.applicationPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("IGNORED CONTENT");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(false);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
         applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testDeployConfJvmNotStoppedAndHotDeploy() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getJvmName()).thenReturn("jvm-name");
+        when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+        when(Config.jvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(mockJvm);
+        when(Config.applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(Config.mockApplication);
+        when(Config.applicationPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("IGNORED CONTENT");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(true);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockMetaData);
+
+        applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+        verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
+    }
+
+    @Test (expected = ApplicationServiceException.class)
+    public void testDeployConfJvmNotStoppedAndHotDeployThrowsException() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getJvmName()).thenReturn("jvm-name");
+        when(Config.jvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+        when(Config.jvmPersistenceService.findJvm(anyString(), anyString())).thenReturn(mockJvm);
+        when(Config.applicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(Config.mockApplication);
+        when(Config.applicationPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("IGNORED CONTENT");
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.isHotDeploy()).thenReturn(true);
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"test\":\"meta data\"}", "test resource content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenThrow(new IOException("FAIL THIS TEST"));
+
+        applicationService.deployConf("testApp", "testGroup", "testJvm", "HttpSslConfTemplate.tpl", mock(ResourceGroup.class), testUser);
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -568,7 +613,7 @@ public class ApplicationServiceImplTest {
         when(Config.binaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Secure copy succeeded", ""));
         when(Config.binaryDistributionControlService.changeFileMode(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Change file mode succeeded", ""));
         when(Config.binaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists succeeded", ""));
-        when(Config.binaryDistributionControlService.backupFile(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
+        when(Config.binaryDistributionControlService.backupFileWithMove(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
         when(Config.binaryDistributionControlService.unzipBinary(anyString(), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Unzip succeeded", ""));
 
         applicationService.copyApplicationWarToGroupHosts(mockApplicationForCopy);
@@ -637,6 +682,7 @@ public class ApplicationServiceImplTest {
 
         verify(Config.mockResourceService, times(1)).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
+
     static class Config {
 
         private static ApplicationPersistenceService applicationPersistenceService = mock(ApplicationPersistenceService.class);

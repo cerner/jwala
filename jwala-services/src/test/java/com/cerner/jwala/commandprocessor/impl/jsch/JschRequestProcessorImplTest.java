@@ -1,16 +1,13 @@
 package com.cerner.jwala.commandprocessor.impl.jsch;
 
 import com.cerner.jwala.commandprocessor.impl.CommonSshTestConfiguration;
-import com.cerner.jwala.common.IntegrationTestRule;
 import com.cerner.jwala.common.exec.ExecCommand;
-import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.exec.RemoteExecCommand;
 import com.cerner.jwala.common.exec.RemoteSystemConnection;
 import com.cerner.jwala.exception.ExitCodeNotAvailableException;
 import com.cerner.jwala.exception.RemoteCommandFailureException;
 import com.jcraft.jsch.JSchException;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 

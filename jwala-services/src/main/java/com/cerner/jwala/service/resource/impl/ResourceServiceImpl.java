@@ -724,11 +724,16 @@ public class ResourceServiceImpl implements ResourceService {
         return generateResourceFile(resourceIdentifier.resourceName, content, generateResourceGroup(), resourceHandler.getSelectedValue(resourceIdentifier), ResourceGeneratorType.PREVIEW);
     }
 
-    private CommandOutput secureCopyFile(final String hostName, final String sourcePath, final String destPath, boolean overwrite, Object selectedValue) throws CommandFailureException {
+    private CommandOutput secureCopyFile(final String hostName, final String sourcePath, final String destPath, ResourceTemplateMetaData metaData, Object selectedValue) throws CommandFailureException {
         final boolean fileExists = distributionService.remoteFileCheck(hostName, destPath);
-        if (fileExists && overwrite) {
-            LOGGER.info("Found the file {}", destPath);
-            final CommandOutput commandOutput = distributionControlService.backupFile(hostName, destPath);
+        if (fileExists && metaData.isOverwrite()) {
+            LOGGER.info("Found the file {}, backing up", destPath);
+            final CommandOutput commandOutput;
+            if (metaData.isHotDeploy()) {
+                commandOutput = distributionControlService.backupFileWithCopy(hostName, destPath);
+            } else {
+                commandOutput = distributionControlService.backupFileWithMove(hostName, destPath);
+            }
             if (!commandOutput.getReturnCode().wasSuccessful()) {
                 String message = MessageFormat.format("Failed to backup source file {0} at destination {1} on host {2}", sourcePath, destPath, hostName);
                 LOGGER.error(message);
@@ -898,7 +903,7 @@ public class ResourceServiceImpl implements ResourceService {
                 LOGGER.error(errorMessage);
                 throw new ResourceServiceException(errorMessage);
             }
-            commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData.isOverwrite(), selectedValue);
+            commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData, selectedValue);
             if (resourceTemplateMetaData.isUnpack()) {
                 doUnpack(hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
             }

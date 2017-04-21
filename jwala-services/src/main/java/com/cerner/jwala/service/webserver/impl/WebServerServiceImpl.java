@@ -357,21 +357,35 @@ public class WebServerServiceImpl implements WebServerService {
     public WebServer generateAndDeployFile(String webServerName, String fileName, User user) {
         WebServer webServer = getWebServer(webServerName);
         binaryDistributionLockManager.writeLock(webServerName + "-" + webServer.getId().getId().toString());
+        ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
+                .setWebServerName(webServerName)
+                .setResourceName(fileName)
+                .build();
+
         try {
-            // check the web server state
-            if (isStarted(getWebServer(webServerName))) {
-                LOGGER.error("The target Web Server {} must be stopped before attempting to update the resource file", webServerName);
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "The target Web Server must be stopped before attempting to update the resource file");
-            }
-            ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
-                    .setWebServerName(webServerName)
-                    .setResourceName(fileName)
-                    .build();
+            checkWebServerStateBeforeDeploy(webServer, resourceIdentifier);
+
             resourceService.validateSingleResourceForGeneration(resourceIdentifier);
             resourceService.generateAndDeployFile(resourceIdentifier, webServerName, fileName, webServer.getHost());
+        } catch (IOException e) {
+            String errorMsg = MessageFormat.format("Failed to retrieve meta data when generating and deploying file {0} for Web Server {1}", fileName, webServerName);
+            LOGGER.error(errorMsg, e);
+            throw new WebServerServiceException(errorMsg);
         } finally {
             binaryDistributionLockManager.writeUnlock(webServerName + "-" + webServer.getId().getId().toString());
         }
+
         return webServer;
+    }
+
+    private void checkWebServerStateBeforeDeploy(WebServer webServer, ResourceIdentifier resourceIdentifier) throws IOException {
+        final String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
+        ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, webServer, metaDataStr);
+        if (isStarted(webServer) && !metaData.isHotDeploy()) {
+                String errorMsg = MessageFormat.format("The target Web Server {0} must be stopped or the resource must be configured to be hotDeploy=true before attempting to deploy the resource {1}", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
+                LOGGER.error(errorMsg);
+                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMsg);
+        }
+        LOGGER.info("Web Server {} is started, but resource {} is configured to be hot deployed. Continuing with deploy ...", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
     }
 }

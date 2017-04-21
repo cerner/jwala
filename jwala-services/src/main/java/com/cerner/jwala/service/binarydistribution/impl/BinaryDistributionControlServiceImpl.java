@@ -36,12 +36,13 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
     @Autowired
     private RemoteCommandExecutorService remoteCommandExecutorService;
 
-    static String CREATE_DIR="if [ ! -e \"%s\" ]; then mkdir -p %s; fi;";
-    static String REMOVE="rm";
-    static String SECURE_COPY = "scp";
-    static String TEST = "test -e";
-    static String CHMOD = "chmod";
-    static String MOVE = "mv";
+    private static String CREATE_DIR="if [ ! -e \"%s\" ]; then mkdir -p %s; fi;";
+    private static String REMOVE="rm";
+    private static String SECURE_COPY = "scp";
+    private static String TEST = "test -e";
+    private static String CHMOD = "chmod";
+    private static String MOVE = "mv";
+    private static String COPY = "cp";
 
     @Override
     public CommandOutput secureCopyFile(final String hostname, final String source, final String destination) throws CommandFailureException  {
@@ -102,26 +103,22 @@ public class BinaryDistributionControlServiceImpl implements BinaryDistributionC
     }
 
     @Override
-    public CommandOutput getUName(String hostname) throws CommandFailureException {
-        RemoteCommandReturnInfo remoteCommandReturnInfo = remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(hostname),  new ExecCommand("uname")));
-        CommandOutput commandOutput = new CommandOutput(new ExecReturnCode(remoteCommandReturnInfo.retCode),
-                remoteCommandReturnInfo.standardOuput, remoteCommandReturnInfo.errorOupout);
-        return commandOutput;
+    public CommandOutput backupFileWithCopy(String hostname, String remotePath) throws CommandFailureException {
+        return executeBackup(hostname, remotePath, COPY);
     }
 
     @Override
-    public CommandOutput backupFile(final String hostname, final String remotePath) throws CommandFailureException {
+    public CommandOutput backupFileWithMove(final String hostname, final String remotePath) throws CommandFailureException {
+        return executeBackup(hostname, remotePath, MOVE);
+    }
+
+    private CommandOutput executeBackup(final String hostname, final String remotePath, String command) {
         final String currentDateSuffix = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Date.from(Instant.now()));
         final String destPathBackup = remotePath + "." + currentDateSuffix;
-        RemoteCommandReturnInfo remoteCommandReturnInfo = remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(hostname),  new ExecCommand(MOVE, remotePath, destPathBackup)));
+        RemoteCommandReturnInfo remoteCommandReturnInfo = remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(hostname),  new ExecCommand(command, remotePath, destPathBackup)));
         CommandOutput commandOutput = new CommandOutput(new ExecReturnCode(remoteCommandReturnInfo.retCode),
                 remoteCommandReturnInfo.standardOuput, remoteCommandReturnInfo.errorOupout);
         return commandOutput;
-    }
-
-    public void printCommandOutput(CommandOutput commandOutput) {
-        LOGGER.info(commandOutput.getStandardOutput());
-        LOGGER.info(commandOutput.getStandardError());
     }
 
     /**

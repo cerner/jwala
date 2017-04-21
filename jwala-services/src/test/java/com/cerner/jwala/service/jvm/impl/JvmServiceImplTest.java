@@ -10,6 +10,7 @@ import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.path.Path;
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -24,7 +25,6 @@ import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
 import com.cerner.jwala.common.request.jvm.*;
 import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
-import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
@@ -823,6 +823,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockExecData.getReturnCode()).thenReturn(new ExecReturnCode(0));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), anyString(), any(ResourceGeneratorType.class))).thenReturn("<server>xml</server>");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
         when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class))).thenReturn("<server>xml</server>");
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockExecData);
         when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString())).thenReturn(mockExecData);
@@ -832,6 +834,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockMetaData.getDeployPath()).thenReturn("/");
         when(mockMetaData.getContentType()).thenReturn(MediaType.APPLICATION_XML);
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
+
         Jvm jvm = jvmService.generateAndDeployFile("test-jvm-deploy-file", "server.xml", Config.mockUser);
         assertEquals(mockJvm, jvm);
 
@@ -874,12 +877,44 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test(expected = InternalErrorException.class)
-    public void testGenerateAndDeployFileJvmStarted() {
+    public void testGenerateAndDeployFileJvmStarted() throws IOException {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
+    }
+
+    @Test
+    public void testGenerateAndDeployFileJvmStartedHotDeployTrue() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, true));
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+
+        jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
+
+        verify(Config.mockResourceService).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
+    }
+
+    @Test (expected = JvmServiceException.class)
+    public void testGenerateAndDeployFileJvmStartedHotDeployTrueThrowsIOException() throws IOException {
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
+        when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenThrow(new IOException("Test throwing the IOException during tokenization"));
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+
+        jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
+
+        verify(Config.mockResourceService, never()).validateSingleResourceForGeneration(any(ResourceIdentifier.class));
+        verify(Config.mockResourceService, never()).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
     @Test
