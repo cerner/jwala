@@ -59,8 +59,8 @@ ServerRoot /opt/ctp/apache-httpd-2.4.20/
 # prevent Apache from glomming onto all bound IP addresses.
 #
 #Listen 12.34.56.78:80
-Listen 80
-Listen 443
+Listen ${webServer.port}
+Listen ${webServer.httpsPort}
 
 #
 # Dynamic Shared Object (DSO) Support
@@ -202,7 +202,7 @@ SSLSessionCache shmcb:logs/ssl_cache_shm
 #IPINS
 LoadModule rewrite_module modules/mod_rewrite.so
 
-<VirtualHost *:443>
+<VirtualHost *:${webServer.httpsPort}>
 
       DocumentRoot "htdocs"
       Header edit Location ^http://(.*)$  https://$1
