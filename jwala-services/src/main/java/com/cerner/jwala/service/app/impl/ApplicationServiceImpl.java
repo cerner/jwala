@@ -139,7 +139,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application application) {
         final String appWarName = application.getWarName();
-        if (appWarName!=null && !appWarName.isEmpty()) {
+        if (!StringUtils.isEmpty(appWarName)) {
             final String appName = application.getName();
             try {
                 String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup().getName(), appWarName);
