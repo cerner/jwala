@@ -84,4 +84,6 @@ public interface WebServerCrudService extends CrudService<JpaWebServer> {
     boolean checkWebServerResourceFileName(String groupName, String webServerName, String fileName);
 
     void updateResourceMetaData(String webServerName, String resourceName, String metaData);
+
+    Long getWebServerForciblyStoppedCount(String groupName);
 }
