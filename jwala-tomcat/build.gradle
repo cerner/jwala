@@ -51,12 +51,12 @@ task deleteStagingDir(type: Delete) {
 }
 
 task downloadDeploymentBinaries(dependsOn: deleteStagingDir, type: Download) {
-    src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl, unZipExeBinaryUrl])
+    src([project.property('jdk.binary.url'), project.property('apache.httpd.binary.url'), project.property('apache.tomcat.binary.url'), project.property('unzip.exe.binary.url')])
     dest "$buildDir/$tomcatDir/data/binaries"
 }
 
 task downloadDeploymentBinariesLinux(dependsOn: deleteStagingDir, type: Download) {
-    src([jdkBinaryUrl, apachehttpdBinaryUrl, apachetomcatDeploymentBinaryUrl])
+    src([project.property('jdk.binary.url'), project.property('apache.httpd.binary.url'), project.property('apache.tomcat.binary.url')])
     dest "$buildDir/$tomcatDir/data/binaries"
 }
 
@@ -66,8 +66,8 @@ task downloadTomcat(type: Download) {
     } else {
         dependsOn downloadDeploymentBinaries
     }
-    src "${tomcatBinaryUrl}"
-    dest new File(buildDir, new File("${tomcatBinaryUrl}").getName())
+    src project.property('apache.tomcat.binary.url')
+    dest new File(buildDir, new File(project.property('apache.tomcat.binary.url')).getName())
 }
 
 task downloadAndUnzipTomcat(dependsOn: downloadTomcat, type: Copy) {
@@ -76,7 +76,7 @@ task downloadAndUnzipTomcat(dependsOn: downloadTomcat, type: Copy) {
 }
 
 task deleteDownloadedZip(dependsOn: downloadAndUnzipTomcat, type: Delete) {
-    delete new File("$buildDir", new File("${tomcatBinaryUrl}").getName())
+    delete new File("$buildDir", new File(project.property('apache.tomcat.binary.url')).getName())
     delete new File("$buildDir/$tomcatDir", 'webapps')
 }
 
@@ -87,6 +87,7 @@ task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
 
     from('src/main/resources') {
         include '**/*.sh'
+        include '**/*/*.sh'
         include '**/*/*.sh'
         filter(FixCrLfFilter.class,
                 eol: FixCrLfFilter.CrLf.newInstance("lf")) //convert to unix format
