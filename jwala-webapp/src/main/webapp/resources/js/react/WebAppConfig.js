@@ -20,7 +20,7 @@ var WebAppConfig = React.createClass({
                    <RDataTable ref="dataTable"
                                tableIndex="id.id"
                                colDefinitions={[{key: "id", isVisible: false},
-                                                {key: "secure", renderCallback: this.renderSecureColumn, sortable: false, isVisible: false},
+                                                {key: "secure", renderCallback: this.renderSecureColumn, sortable: false},
                                                 {title: "WebApp Name", key: "name", renderCallback: this.renderWebAppNameCallback},
                                                 {title: "Context", key: "webAppContext"},
                                                 {title: "Web Archive", key: "warName"},
