@@ -9,13 +9,13 @@
         </layout>
     </appender>
 
-    <appender name="TRACE_JWALA" class="org.apache.log4j.RollingFileAppender">
+    <appender name="TRACE_JWALA" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="${catalina.base}/logs/jwala.log" />
         <param name="DateFormat" value="yyyyMMdd" />
         <param name="HeaderDateFormat" value="yyyy-MM-dd HH:mm:ss" />
         <param name="Header" value="Jwala Log file\n" />
-        <param name="MaxFileSize" value="25MB" />
-        <param name="MaxBackupIndex" value="20" />
+        <param name="MaxFileSizeBeforeRoll" value="100000000" />
+        <param name="MaxBackupIndex" value="5" />
         <!-- specify the layout -->
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%p] [%t] [%c{1}:%L] %m%n" />
