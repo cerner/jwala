@@ -70,6 +70,7 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
     @ManyToMany(mappedBy = "webServers", fetch = FetchType.EAGER)
     private List<JpaGroup> groups = new ArrayList<>();
 
+    @OneToOne (targetEntity = JpaMedia.class)
     @Column(nullable = true)
     private JpaMedia apacheHttpdMedia;
 
