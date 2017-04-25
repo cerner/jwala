@@ -1,4 +1,4 @@
-package com.cerner.jwala.persistence.jpa.domain;
+package com.cerner.jwala.common.domain.model;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;

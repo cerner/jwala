@@ -215,7 +215,9 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
             validateResources(webServer);
 
             binaryDistributionService.distributeUnzip(webServer.getHost());
-            binaryDistributionService.distributeWebServer(webServer.getHost());
+
+            binaryDistributionService.distributeMedia(webServer.getName(), webServer.getHost(), webServer.getGroups()
+                    .toArray(new Group[webServer.getGroups().size()]), webServer.getApacheHttpdMedia());
 
             // check for httpd.conf template
             validateHttpdConf(webServer);

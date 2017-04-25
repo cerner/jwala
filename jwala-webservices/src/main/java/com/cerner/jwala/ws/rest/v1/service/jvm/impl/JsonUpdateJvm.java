@@ -38,7 +38,8 @@ public class JsonUpdateJvm extends JsonCreateJvm {
                          final String theSystemProperties,
                          final String theUserName,
                          final String theEncryptedPassword,
-                         final String theJdkMediaId) {
+                         final String theJdkMediaId,
+                         final String tomcatMediaId) {
         jvmId = theJvmId;
         setJvmName(theJvmName);
         setHostName(theHostName);
@@ -61,6 +62,7 @@ public class JsonUpdateJvm extends JsonCreateJvm {
         setUserName(theUserName);
         setEncryptedPassword(theEncryptedPassword);
         setJdkMediaId(theJdkMediaId);
+        setTomcatMediaId(tomcatMediaId);
     }
 
     public UpdateJvmRequest toUpdateJvmRequest() throws BadRequestException {
@@ -68,6 +70,11 @@ public class JsonUpdateJvm extends JsonCreateJvm {
         Identifier<Media> jdkMediaId = null;
         if (getJdkMediaId() != null && !getJdkMediaId().isEmpty()) {
             jdkMediaId = new Identifier<>(getJdkMediaId());
+        }
+
+        Identifier<Media> tomcatMediaId = null;
+        if (getTomcatMediaId() != null && !getTomcatMediaId().isEmpty()) {
+            tomcatMediaId = new Identifier<>(getTomcatMediaId());
         }
 
         return new UpdateJvmRequest(convertJvmId(),
@@ -83,7 +90,8 @@ public class JsonUpdateJvm extends JsonCreateJvm {
                 getSystemProperties(),
                 getUserName(),
                 getEncryptedPassword(),
-                jdkMediaId);
+                jdkMediaId,
+                tomcatMediaId);
     }
 
     private Identifier<Jvm> convertJvmId() {

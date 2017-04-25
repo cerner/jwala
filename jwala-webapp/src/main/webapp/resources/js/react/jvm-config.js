@@ -238,7 +238,7 @@ var JvmConfigForm = React.createClass({
         var jdkVersions = [];
         var tomcatVersions = [];
         var jdkMedia = {};
-        var tomcatVersion = "";
+        var tomcatMedia = {};
         var httpPort = "";
         var httpsPort = "";
         var redirectPort = "";
@@ -263,7 +263,7 @@ var JvmConfigForm = React.createClass({
             userName = this.props.data.userName;
             encryptedPassword = this.props.data.encryptedPassword;
             jdkMedia = this.props.data.jdkMedia;
-            tomcatVersion = this.props.data.tomcatVersion;
+            tomcatMedia = this.props.data.tomcatMedia;
         }
 
         return {
@@ -275,7 +275,7 @@ var JvmConfigForm = React.createClass({
             jdkVersions: [],
             tomcatVersions: [],
             jdkMedia: jdkMedia,
-            tomcatVersion: tomcatVersion,
+            tomcatMedia: tomcatMedia,
             groupMultiSelectData: [],
             httpPort: httpPort,
             httpsPort: httpsPort,
@@ -432,20 +432,16 @@ var JvmConfigForm = React.createClass({
                                 </select>
                         	    </td>
                         	</tr>
-
-{/*                        	TODO remove the tomcat version for now - the main focus is the JDK update
-
                         	<tr>
                         	    <td>Apache Tomcat Version</td>
                         	</tr>
                         	<tr>
                         	    <td>
-                        	    <select name="tomcatVersion" ref="tomcatVersion" valueLink={this.linkState("tomcatVersion")}>
+                        	    <select name="tomcatMediaId" ref="tomcatVersion" valueLink={this.linkState("tomcatVersion")}>
                                     {this.getTomcatVersions()}
                                 </select>
                         	    </td>
-                        	</tr>*/}
-
+                        	</tr>
                             <tr>
                                 <td>
                                     *Group
@@ -539,8 +535,8 @@ var JvmConfigForm = React.createClass({
                                                                                 notEqualTo: 0
                                                                              },
                                                                             "ajpPort": {range: [1, 65535]},
-                                                                            "jdkVersion": {required: true}/*,
-                                                                            "tomcatVersion": {required: false}*/
+                                                                            "jdkVersion": {required: true},
+                                                                            "tomcatVersion": {required: false}
                                                                             },
                                                                             messages: {
                                                                                 "groupSelector[]": {
@@ -578,7 +574,7 @@ var JvmConfigForm = React.createClass({
             for (var i=0; i<allMedia.length; i++) {
                 if (allMedia[i].type === "JDK") {
                     jdkVersions.push(allMedia[i]);
-                } else {
+                } else if (allMedia[i].type === "TOMCAT") {
                     tomcatVersions.push(allMedia[i]);
                 }
             }
@@ -588,19 +584,22 @@ var JvmConfigForm = React.createClass({
         });
     },
     getJdkVersions: function() {
-        var items=[<option key='no-jvm-version' value=''>---Select JDK---</option>];
+        var items=[<option key='no-jdk-version' value=''>---Select JDK---</option>];
         for (var i=0; i < this.state.jdkVersions.length; i++){
             var jdkVersionOption = this.state.jdkVersions[i];
             var selected = this.state.jdkMedia !== null && jdkVersionOption.id == this.state.jdkMedia.id;
-            items.push(<option selected={selected} value={jdkVersionOption.id}>{jdkVersionOption.name}</option>);
+            items.push(<option key={"jdk-version-" + jdkVersionOption.id} selected={selected}
+                               value={jdkVersionOption.id}>{jdkVersionOption.name}</option>);
         }
         return items;
     },
     getTomcatVersions: function() {
-        var items=[<option key='no-apache-tomcat-version' value=''></option>];
+        var items=[<option key='no-tomcat-version' value=''>---Select Tomcat---</option>];
         for (var i=0; i < this.state.tomcatVersions.length; i++){
-            var apacheTomcatOption = this.state.tomcatVersions[i];
-            items.push(<option value={apacheTomcatOption.id}>{apacheTomcatOption.name}</option>);
+            var tomcatVersionOption = this.state.tomcatVersions[i];
+            var selected = this.state.tomcatMedia !== null && tomcatVersionOption.id == this.state.tomcatMedia.id;
+            items.push(<option key={"tomcat-version-" + tomcatVersionOption.id} selected={selected}
+                               value={tomcatVersionOption.id}>{tomcatVersionOption.name}</option>);
         }
         return items;
     }
@@ -626,12 +625,9 @@ var JvmConfigDataTable = React.createClass({
                          maxDisplayTextLen:10},
                         {sTitle:"HTTP", mData:"httpPort"},
                         {sTitle:"HTTPS", mData:"httpsPort"},
-                        {sTitle:"Redir", mData:"redirectPort"},
-                        {sTitle:"Shutd", mData:"shutdownPort"},
-                        {sTitle:"AJP", mData:"ajpPort"},
                         {sTitle:"Username", mData: "userName"},
-                        {sTitle:"JDK", mData:"jdkMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderJdkMediaName}/*,
-                        {sTitle:"Tomcat", mData:"tomcatMedia"}*/];
+                        {sTitle:"JDK", mData:"jdkMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName},
+                        {sTitle:"Tomcat", mData:"tomcatMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName}];
         return <JwalaDataTable ref="dataTableWrapper"
                                tableId="jvm-config-datatable"
                                tableDef={tableDef}
@@ -648,11 +644,10 @@ var JvmConfigDataTable = React.createClass({
             });
         };
    },
-   renderJdkMediaName:function(dataTable, data, aoColumnDefs, itemIndex) {
+   renderMediaName:function(dataTable, data, aoColumnDefs, itemIndex) {
         var self = this;
         aoColumnDefs[itemIndex].fnCreatedCell = function (nTd, sData, oData, iRow, iCol) {
-            var jdkMediaName = sData && sData.name ? sData.name : "";
-            return React.renderComponent(React.createElement("span", {}, jdkMediaName), nTd);
+            return React.renderComponent(React.createElement("span", {}, sData && sData.name ? sData.name : ""), nTd);
         }
    },
    componentDidMount: function() {

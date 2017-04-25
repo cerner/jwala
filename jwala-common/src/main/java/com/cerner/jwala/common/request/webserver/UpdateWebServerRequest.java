@@ -27,15 +27,12 @@ public class UpdateWebServerRequest implements Serializable, Request {
     private final Integer newHttpsPort;
     private final Path newStatusPath;
     private final WebServerReachableState state;
+    private final String apacheHttpdMediaId;
 
-    public UpdateWebServerRequest(final Identifier<WebServer> theId,
-                                  final Collection<Identifier<Group>> theNewGroupIds,
-                                  final String theNewName,
-                                  final String theNewHost,
-                                  final Integer theNewPort,
-                                  final Integer theNewHttpsPort,
-                                  final Path theNewStatusPath,
-                                  final WebServerReachableState state) {
+    public UpdateWebServerRequest(final Identifier<WebServer> theId, final Collection<Identifier<Group>> theNewGroupIds,
+                                  final String theNewName, final String theNewHost, final Integer theNewPort,
+                                  final Integer theNewHttpsPort, final Path theNewStatusPath, final WebServerReachableState state,
+                                  final String apacheHttpdMediaId) {
         id = theId;
         newHost = theNewHost;
         newPort = theNewPort;
@@ -44,6 +41,7 @@ public class UpdateWebServerRequest implements Serializable, Request {
         newGroupIds = Collections.unmodifiableCollection(new HashSet<>(theNewGroupIds));
         newStatusPath = theNewStatusPath;
         this.state = state;
+        this.apacheHttpdMediaId = apacheHttpdMediaId;
     }
 
     public Identifier<WebServer> getId() {
@@ -76,6 +74,10 @@ public class UpdateWebServerRequest implements Serializable, Request {
 
     public WebServerReachableState getState() {
         return state;
+    }
+
+    public String getApacheHttpdMediaId() {
+        return apacheHttpdMediaId;
     }
 
     @Override

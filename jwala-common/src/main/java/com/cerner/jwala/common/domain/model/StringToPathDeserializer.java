@@ -1,4 +1,4 @@
-package com.cerner.jwala.persistence.jpa.domain;
+package com.cerner.jwala.common.domain.model;
 
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationContext;
@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * De-serializes a String to a {@link java.nio.file.Path}
+ * De-serializes a String to a {@link Path}
  *
  * Created by Jedd Cuison on 12/9/2016
  */
