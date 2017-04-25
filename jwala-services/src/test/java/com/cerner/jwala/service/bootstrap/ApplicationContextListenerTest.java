@@ -7,7 +7,7 @@ import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.media.MediaService;
 import org.junit.Before;

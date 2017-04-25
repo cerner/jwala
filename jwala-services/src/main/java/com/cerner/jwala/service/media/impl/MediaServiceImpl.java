@@ -2,9 +2,9 @@ package com.cerner.jwala.service.media.impl;
 
 import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;

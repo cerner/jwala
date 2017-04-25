@@ -1,4 +1,4 @@
-package com.cerner.jwala.persistence.jpa.type;
+package com.cerner.jwala.common.domain.model.media;
 
 /**
  * The list of media types

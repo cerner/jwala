@@ -2,7 +2,6 @@ package com.cerner.jwala.common.domain.model.media;
 
 import com.cerner.jwala.common.domain.model.PathToStringSerializer;
 import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
-import org.apache.tika.mime.MediaType;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -16,20 +15,20 @@ public class Media {
     private Long id;
     private String name;
     private MediaType type;
-    private Path path;
-    private Path remoteHostPath;
+    private Path localPath;
+    private Path remoteDir;
     private Path mediaDir;
 
     public Media() {
     }
 
-    public Media(final Long id, final String name, final MediaType type, final Path path, final Path remoteHostPath,
+    public Media(final Long id, final String name, final MediaType type, final Path localPath, final Path remoteDir,
                  final Path mediaDir) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.path = path;
-        this.remoteHostPath = remoteHostPath;
+        this.localPath = localPath;
+        this.remoteDir = remoteDir;
         this.mediaDir = mediaDir;
     }
 
@@ -50,13 +49,13 @@ public class Media {
     }
 
     @JsonSerialize(using = PathToStringSerializer.class)
-    public Path getPath() {
-        return path;
+    public Path getLocalPath() {
+        return localPath;
     }
 
     @JsonDeserialize(using = StringToPathDeserializer.class)
-    public void setPath(Path path) {
-        this.path = path;
+    public void setLocalPath(Path path) {
+        this.localPath = path;
     }
 
     public MediaType getType() {
@@ -68,13 +67,13 @@ public class Media {
     }
 
     @JsonSerialize(using = PathToStringSerializer.class)
-    public Path getRemoteHostPath() {
-        return remoteHostPath;
+    public Path getRemoteDir() {
+        return remoteDir;
     }
 
     @JsonDeserialize(using = StringToPathDeserializer.class)
-    public void setRemoteHostPath(Path remoteHostPath) {
-        this.remoteHostPath = remoteHostPath;
+    public void setRemoteDir(Path remoteDir) {
+        this.remoteDir = remoteDir;
     }
 
     @JsonSerialize(using = PathToStringSerializer.class)

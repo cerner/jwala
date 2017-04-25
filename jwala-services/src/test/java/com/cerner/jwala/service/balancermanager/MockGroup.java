@@ -6,10 +6,10 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.media.Media;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
-import org.apache.tika.mime.MediaType;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -39,9 +39,9 @@ public class MockGroup {
                 Calendar.getInstance(),
                 "username",
                 "encryptedpassword",
-                new Media(1L, "JDK 1.7-test", MediaType.APPLICATION_ZIP, Paths.get("/local/archive/path.zip", "JDK"),
+                new Media(1L, "JDK 1.7-test", MediaType.JDK, Paths.get("/local/archive/path.zip", "JDK"),
                           Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
-                new Media(2L, "Apache Tomcat 7.0.55-test", MediaType.APPLICATION_ZIP, Paths.get("/local/archive/path.zip"),
+                new Media(2L, "Apache Tomcat 7.0.55-test", MediaType.TOMCAT, Paths.get("/local/archive/path.zip"),
                         Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
                 "d:/java/home", null);
         this.jvms.add(jvm);
@@ -66,9 +66,9 @@ public class MockGroup {
                 Calendar.getInstance(),
                 "username",
                 "encryptedpassword",
-                new Media(1L, "JDK 1.7-test", MediaType.APPLICATION_ZIP, Paths.get("/local/archive/path.zip", "JDK"),
+                new Media(1L, "JDK 1.7-test", MediaType.JDK, Paths.get("/local/archive/path.zip", "JDK"),
                         Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
-                new Media(2L, "Apache Tomcat 7.0.55-test", MediaType.APPLICATION_ZIP, Paths.get("/local/archive/path.zip"),
+                new Media(2L, "Apache Tomcat 7.0.55-test", MediaType.TOMCAT, Paths.get("/local/archive/path.zip"),
                         Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
                 "d:/java/home", null);
         return jvm;

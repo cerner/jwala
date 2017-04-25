@@ -610,7 +610,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
-        when(mockJvm.getJdkMedia()).thenReturn(new Media(1L, "test media", MediaType.APPLICATION_ZIP,
+        when(mockJvm.getJdkMedia()).thenReturn(new Media(1L, "test media", com.cerner.jwala.common.domain.model.media.MediaType.JDK,
                 Paths.get("x:/test/archive/path.zip"), Paths.get("x:/test-destination"), Paths.get("root-dir-destination")));
         when(commandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(commandOutput);
