@@ -30,7 +30,7 @@ public class JsonCreateWebServer {
     private final String hostName;
     private final String httpsPort;
     private final String statusPath;
-    private final String apacheHttpdMediaName;
+    private final String apacheHttpdMediaId;
 
     public JsonCreateWebServer(final String theName,
                                final String theHostName,
@@ -45,7 +45,7 @@ public class JsonCreateWebServer {
         httpsPort = theHttpsPort;
         groupIds = Collections.unmodifiableSet(new HashSet<>(theGroupIds));
         statusPath = theStatusPath;
-        this.apacheHttpdMediaName = apacheHttpdMediaId;
+        this.apacheHttpdMediaId = apacheHttpdMediaId;
     }
 
     public CreateWebServerRequest toCreateWebServerRequest() {
@@ -58,7 +58,7 @@ public class JsonCreateWebServer {
                 null);
 
         return new CreateWebServerRequest(ids, webserverName, hostName, port, securePort, new Path(statusPath),
-                WebServerReachableState.WS_NEW, null);
+                WebServerReachableState.WS_NEW, apacheHttpdMediaId);
     }
 
     private Integer convertFrom(final String aValue,

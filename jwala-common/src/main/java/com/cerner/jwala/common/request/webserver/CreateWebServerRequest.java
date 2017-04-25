@@ -3,7 +3,6 @@ package com.cerner.jwala.common.request.webserver;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
-import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.request.Request;
@@ -23,7 +22,7 @@ public class CreateWebServerRequest implements Serializable, Request {
     private final Integer httpsPort;
     private final Path statusPath;
     private final WebServerReachableState state;
-    private final Media apacheHttpdMedia;
+    private final String apacheHttpdMediaId;
 
     public CreateWebServerRequest(final Collection<Identifier<Group>> theGroupIds,
                                   final String theName,
@@ -32,7 +31,7 @@ public class CreateWebServerRequest implements Serializable, Request {
                                   final Integer theHttpsPort,
                                   final Path theStatusPath,
                                   final WebServerReachableState state,
-                                  final Media apacheHttpdMedia) {
+                                  final String apacheHttpdMediaId) {
         host = theHost;
         port = thePort;
         httpsPort = theHttpsPort;
@@ -40,7 +39,7 @@ public class CreateWebServerRequest implements Serializable, Request {
         groupIds = theGroupIds;
         this.state = state;
         statusPath = theStatusPath;
-        this.apacheHttpdMedia = apacheHttpdMedia;
+        this.apacheHttpdMediaId = apacheHttpdMediaId;
     }
 
     public Collection<Identifier<Group>> getGroups() {
@@ -71,8 +70,8 @@ public class CreateWebServerRequest implements Serializable, Request {
         return state;
     }
 
-    public Media getApacheHttpdMedia() {
-        return apacheHttpdMedia;
+    public String getApacheHttpdMediaId() {
+        return apacheHttpdMediaId;
     }
 
     @Override

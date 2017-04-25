@@ -187,7 +187,7 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer.getHttpsPort(),
                                                                 mockWebServer.getStatusPath(),
                                                                 mockWebServer.getState(),
-                                                                mockWebServer.getApacheHttpdMedia());
+                                                                "apacheHttpdMediaId");
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
@@ -214,7 +214,7 @@ public class WebServerServiceImplTest {
                 mockWebServer.getHttpsPort(),
                 mockWebServer.getStatusPath(),
                 mockWebServer.getState(),
-                mockWebServer.getApacheHttpdMedia());
+                "apacheHttpdMediaId");
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());

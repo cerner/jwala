@@ -10,6 +10,7 @@ import com.cerner.jwala.common.request.group.RemoveJvmFromGroupRequest;
 import com.cerner.jwala.common.request.group.UpdateGroupRequest;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.ConfigTemplate;
 
 import java.util.List;
@@ -115,4 +116,6 @@ public interface GroupPersistenceService {
     String updateGroupJvmResourceMetaData(String groupName, String resourceName, String metaData);
 
     String updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData);
+
+    List<JpaGroup> findGroups(List<Long> idList);
 }
