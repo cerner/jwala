@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
 import static org.mockito.Matchers.anyString;
@@ -221,8 +222,8 @@ public class BinaryDistributionServiceImplTest {
         final Media mockJdkMedia = mock(Media.class);
         when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
         when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJdkMedia.getRemoteHostPath()).thenReturn("anywhere");
-        when(mockJdkMedia.getMediaDir()).thenReturn("anywhere");
+        when(mockJdkMedia.getRemoteHostPath()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(unsuccessfulCommandOutout);
         when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
         when(Config.mockBinaryDistributionControlService.secureCopyFile(eq(hostname), anyString(), anyString())).thenReturn(successfulCommandOutput);
@@ -240,8 +241,8 @@ public class BinaryDistributionServiceImplTest {
         final Media mockJdkMedia = mock(Media.class);
         when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
         when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJdkMedia.getRemoteHostPath()).thenReturn("anywhere");
-        when(mockJdkMedia.getMediaDir()).thenReturn("anywhere");
+        when(mockJdkMedia.getRemoteHostPath()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(successfulCommandOutput);
         binaryDistributionService.distributeMedia("jvm1", hostname, null, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService, never()).secureCopyFile(eq(hostname), anyString(), anyString());

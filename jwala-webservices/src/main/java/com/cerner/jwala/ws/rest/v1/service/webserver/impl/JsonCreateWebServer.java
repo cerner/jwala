@@ -30,19 +30,22 @@ public class JsonCreateWebServer {
     private final String hostName;
     private final String httpsPort;
     private final String statusPath;
+    private final String apacheHttpdMediaName;
 
     public JsonCreateWebServer(final String theName,
                                final String theHostName,
                                final String thePortNumber,
                                final String theHttpsPort,
                                final Set<String> theGroupIds,
-                               final String theStatusPath) {
+                               final String theStatusPath,
+                               final String apacheHttpdMediaId) {
         webserverName = theName;
         hostName = theHostName;
         portNumber = thePortNumber;
         httpsPort = theHttpsPort;
         groupIds = Collections.unmodifiableSet(new HashSet<>(theGroupIds));
         statusPath = theStatusPath;
+        this.apacheHttpdMediaName = apacheHttpdMediaId;
     }
 
     public CreateWebServerRequest toCreateWebServerRequest() {
@@ -55,7 +58,7 @@ public class JsonCreateWebServer {
                 null);
 
         return new CreateWebServerRequest(ids, webserverName, hostName, port, securePort, new Path(statusPath),
-                WebServerReachableState.WS_NEW);
+                WebServerReachableState.WS_NEW, null);
     }
 
     private Integer convertFrom(final String aValue,
@@ -108,7 +111,8 @@ public class JsonCreateWebServer {
                     node.get("portNumber").getValueAsText(),
                     node.get("httpsPort").getValueAsText(),
                        deserializeGroupIdentifiers(node),
-                    node.get("statusPath").getTextValue());
+                    node.get("statusPath").getTextValue(),
+                    node.get("apacheHttpdMediaId").getTextValue());
             return jcws;
         }
     }

@@ -8,6 +8,7 @@ import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
+import org.modelmapper.ModelMapper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,8 @@ import java.util.Set;
 public class JvmBuilder {
 
     private JpaJvm jpaJvm;
+
+    private ModelMapper modelMapper = new ModelMapper();
 
     public JvmBuilder() {
     }
@@ -51,9 +54,9 @@ public class JvmBuilder {
                 .setLastUpdatedDate(jpaJvm.getLastUpdateDate())
                 .setUserName(jpaJvm.getUserName())
                 .setEncryptedPassword(jpaJvm.getEncryptedPassword())
-                .setJdkMedia(createJdkMedia(jdkMedia))
-                .setJavaHome(createJavaHomeFromMedia(jdkMedia));
-//                .setTomcatMedia(jpaJvm.getTomcatMedia());
+                .setJdkMedia(jpaJvm.getJdkMedia() == null ? null : modelMapper.map(jpaJvm.getJdkMedia(), Media.class))
+                .setJavaHome(createJavaHomeFromMedia(jdkMedia))
+                .setTomcatMedia(jpaJvm.getTomcatMedia() == null ? null : modelMapper.map(jpaJvm.getTomcatMedia(), Media.class));
         return builder.build();
     }
 
@@ -66,20 +69,6 @@ public class JvmBuilder {
             return jdkMedia.getRemoteDir() + "/" + jdkMedia.getMediaDir();
         } else {
             return "";
-        }
-    }
-
-    private Media createJdkMedia(com.cerner.jwala.persistence.jpa.domain.JpaMedia jdkMedia) {
-        if (jdkMedia != null) {
-            final int id = jdkMedia.getId() != null ? Integer.parseInt(jdkMedia.getId().toString()) : -1;
-            final String name = jdkMedia.getName();
-            final String path = jdkMedia.getLocalPath() != null ? jdkMedia.getLocalPath().toString() : "";
-            final String type = jdkMedia.getType() != null ? jdkMedia.getType().toString() : "";
-            final String remoteHostPath = jdkMedia.getRemoteDir() != null ? jdkMedia.getRemoteDir().toString() : "";
-            final String mediaDir = jdkMedia.getMediaDir() != null ? jdkMedia.getMediaDir().toString() : "";
-            return new Media(id, name, path, type, remoteHostPath, mediaDir);
-        } else {
-            return null;
         }
     }
 

@@ -24,9 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,22 +53,34 @@ public class JpaJvmPersistenceServiceImpl implements JvmPersistenceService {
     @Override
     public Jvm createJvm(CreateJvmRequest createJvmRequest) {
         JpaMedia jdkMedia = null;
+        JpaMedia tomcatMedia = null;
+
         if (createJvmRequest.getJdkMediaId() != null ) {
             jdkMedia = mediaDao.findById(createJvmRequest.getJdkMediaId().getId());
         }
-//        Media tomcatMedia = mediaDaoImpl.find(createJvmRequest.getTomcatMediaId());
-        final JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jdkMedia);
+
+        if (createJvmRequest.getTomcatMediaId() != null) {
+            tomcatMedia = mediaDao.findById(createJvmRequest.getTomcatMediaId().getId());
+        }
+
+        final JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jdkMedia, tomcatMedia);
         return jvmFrom(jpaJvm);
     }
 
     @Override
     public Jvm updateJvm(UpdateJvmRequest updateJvmRequest, boolean updateJvmPassword) {
         JpaMedia jdkMedia = null;
+        JpaMedia tomcatMedia = null;
+
         if (updateJvmRequest.getNewJdkMediaId() != null ) {
             jdkMedia = mediaDao.findById(updateJvmRequest.getNewJdkMediaId().getId());
         }
-//        Media tomcatMedia = mediaDaoImpl.find(createJvmRequest.getTomcatMediaId());
-        final JpaJvm jpaJvm = jvmCrudService.updateJvm(updateJvmRequest, updateJvmPassword, jdkMedia);
+
+        if (updateJvmRequest.getNewTomcatMediaId() != null) {
+            tomcatMedia = mediaDao.findById(updateJvmRequest.getNewTomcatMediaId().getId());
+        }
+
+        final JpaJvm jpaJvm = jvmCrudService.updateJvm(updateJvmRequest, updateJvmPassword, jdkMedia, tomcatMedia);
         return jvmFrom(jpaJvm);
     }
 

@@ -2,6 +2,7 @@ package com.cerner.jwala.common.domain.model.webserver;
 
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.uri.UriBuilder;
 
@@ -21,6 +22,7 @@ public class WebServer implements Serializable {
     private final Integer httpsPort;
     private final Path statusPath;
     private final WebServerReachableState state;
+    private final Media apacheHttpdMedia;
 
     /**
      * Constructor for a bare minimum web server with group details.
@@ -38,6 +40,7 @@ public class WebServer implements Serializable {
         name = theName;
         httpsPort = null;
         statusPath = null;
+        apacheHttpdMedia = null;
         for (final Group grp : theGroups) {
             groups.put(grp.getId(), grp);
         }
@@ -51,13 +54,15 @@ public class WebServer implements Serializable {
                      final Integer thePort,
                      final Integer theHttpsPort,
                      final Path theStatusPath,
-                     final WebServerReachableState state) {
+                     final WebServerReachableState state,
+                     final Media apacheHttpdMedia) {
         id = theId;
         host = theHost;
         port = thePort;
         name = theName;
         httpsPort = theHttpsPort;
         statusPath = theStatusPath;
+        this.apacheHttpdMedia = apacheHttpdMedia;
         for (final Group grp : theGroups) {
             groups.put(grp.getId(), grp);
         }
@@ -70,7 +75,8 @@ public class WebServer implements Serializable {
                      final Integer port,
                      final Integer httpsPort,
                      final Path statusPath,
-                     final WebServerReachableState state) {
+                     final WebServerReachableState state,
+                     final Media apacheHttpdMedia) {
         this.id = id;
         this.host = host;
         this.name = name;
@@ -78,6 +84,7 @@ public class WebServer implements Serializable {
         this.httpsPort = httpsPort;
         this.statusPath = statusPath;
         this.state = state;
+        this.apacheHttpdMedia = apacheHttpdMedia;
     }
 
     public Identifier<WebServer> getId() {
@@ -137,6 +144,10 @@ public class WebServer implements Serializable {
             return state.toStateLabel();
         else
             return "";
+    }
+
+    public Media getApacheHttpdMedia() {
+        return apacheHttpdMedia;
     }
 
     @Override

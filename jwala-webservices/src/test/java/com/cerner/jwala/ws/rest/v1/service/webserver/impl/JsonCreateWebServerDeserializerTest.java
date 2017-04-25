@@ -41,6 +41,7 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("portNumber", portNumber),
                                    keyTextValue("httpsPort", httpsPort),
                                    keyTextValue("statusPath", statusPath),
+                                   keyTextValue("apacheHttpdMediaId", "321"),
                                    keyValue("groupIds",
                                             array(object(keyTextValue("groupId", groupIdOne)),
                                                   object(keyTextValue("groupId", groupIdTwo))))));
@@ -55,6 +56,7 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("portNumber", portNumber),
                                    keyTextValue("httpsPort", httpsPort),
                                    keyTextValue("statusPath", statusPath),
+                                   keyTextValue("apacheHttpdMediaId", "321"),
                                    keyValue("groupIds", array(object(keyTextValue("groupId", groupIdOne))))));
         final JsonCreateWebServer create = readValue(json);
         verifyAssertions(create, webserverName, hostName, groupIdOne);
@@ -66,7 +68,8 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("hostName", hostName),
                                    keyTextValue("portNumber", portNumber),
                                    keyTextValue("httpsPort", httpsPort),
-                                   keyTextValue("statusPath", statusPath)));
+                                   keyTextValue("statusPath", statusPath),
+                                   keyTextValue("apacheHttpdMediaId", "321")));
         final JsonCreateWebServer create = readValue(json);
         verifyAssertions(create, webserverName, hostName);
     }
@@ -77,7 +80,8 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("hostName", hostName),
                                    keyTextValue("portNumber", "abcd"),
                                    keyTextValue("httpsPort", "312"),
-                                   keyTextValue("statusPath", statusPath)));
+                                   keyTextValue("statusPath", statusPath),
+                                   keyTextValue("apacheHttpdMediaId", "321")));
         final JsonCreateWebServer create = readValue(json);
         create.toCreateWebServerRequest();
     }
@@ -88,7 +92,8 @@ public class JsonCreateWebServerDeserializerTest {
                                    keyTextValue("hostName", hostName),
                                    keyTextValue("portNumber", "321"),
                                    keyTextValue("httpsPort", "sxxs"),
-                                   keyTextValue("statusPath", statusPath)));
+                                   keyTextValue("statusPath", statusPath),
+                                   keyTextValue("apacheHttpdMediaId", "321")));
         final JsonCreateWebServer create = readValue(json);
         create.toCreateWebServerRequest();
     }

@@ -97,15 +97,9 @@ public class WebServerPersistenceServiceImpl implements WebServerPersistenceServ
             // check for an existing httpd.conf
             WebServer webServer = uploadWebServerTemplateRequest.getWebServer();
             final String webServerName = webServer.getName();
-            WebServer updateWebServer = new WebServer(
-                    webServer.getId(),
-                    webServer.getGroups(),
-                    webServerName,
-                    webServer.getHost(),
-                    webServer.getPort(),
-                    webServer.getHttpsPort(),
-                    webServer.getStatusPath(),
-                    webServer.getState());
+            WebServer updateWebServer = new WebServer(webServer.getId(), webServer.getGroups(), webServerName,
+                    webServer.getHost(), webServer.getPort(), webServer.getHttpsPort(), webServer.getStatusPath(),
+                    webServer.getState(), webServer.getApacheHttpdMedia());
             updateWebServer(updateWebServer, userId);
         }
 

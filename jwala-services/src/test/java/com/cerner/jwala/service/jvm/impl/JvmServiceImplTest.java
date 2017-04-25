@@ -71,6 +71,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -609,7 +610,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
-        when(mockJvm.getJdkMedia()).thenReturn(new Media(1, "test media", "x:/test/archive/path.zip", "JDK", "x:/test-destination", "root-dir-destination"));
+        when(mockJvm.getJdkMedia()).thenReturn(new Media(1L, "test media", MediaType.APPLICATION_ZIP,
+                Paths.get("x:/test/archive/path.zip"), Paths.get("x:/test-destination"), Paths.get("root-dir-destination")));
         when(commandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(commandOutput);
         when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString())).thenReturn(commandOutput);

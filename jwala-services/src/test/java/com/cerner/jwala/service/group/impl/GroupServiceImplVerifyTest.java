@@ -198,8 +198,8 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         groupSet.add(new Group(new Identifier<Group>("3"), "Group3"));
 
         final Set<WebServer> webServerSet = new HashSet<>();
-        webServerSet.add(new WebServer(new Identifier<WebServer>("1"), groupSet, "WebServer1", null,
-                null, null, null, WebServerReachableState.WS_UNREACHABLE));
+        webServerSet.add(new WebServer(new Identifier<WebServer>("1"), groupSet, "WebServer1", null, null, null, null,
+                WebServerReachableState.WS_UNREACHABLE, null));
 
         groupSet.add(new Group(new Identifier<Group>("1"), "Group1", new HashSet<Jvm>(), webServerSet, null, null));
 

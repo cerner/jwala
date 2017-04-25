@@ -23,6 +23,7 @@ import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
+import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
@@ -185,7 +186,8 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer.getPort(),
                                                                 mockWebServer.getHttpsPort(),
                                                                 mockWebServer.getStatusPath(),
-                                                                mockWebServer.getState());
+                                                                mockWebServer.getState(),
+                                                                mockWebServer.getApacheHttpdMedia());
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
@@ -211,7 +213,8 @@ public class WebServerServiceImplTest {
                 mockWebServer.getPort(),
                 mockWebServer.getHttpsPort(),
                 mockWebServer.getStatusPath(),
-                mockWebServer.getState());
+                mockWebServer.getState(),
+                mockWebServer.getApacheHttpdMedia());
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
@@ -245,7 +248,8 @@ public class WebServerServiceImplTest {
                 mockWebServer2.getPort(),
                 mockWebServer2.getHttpsPort(),
                 mockWebServer2.getStatusPath(),
-                mockWebServer2.getState());
+                mockWebServer2.getState(),
+                mockWebServer2.getApacheHttpdMedia().getName());
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
@@ -267,7 +271,7 @@ public class WebServerServiceImplTest {
         when(Config.mockWebServerPersistenceService.findWebServerByName("newWebServerName")).thenThrow(new NoResultException());
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         wsService.updateWebServer(req, new User("user"));
         verify(Config.getMockWebServerPersistenceService()).updateWebServer(any(WebServer.class), anyString());
     }
@@ -284,7 +288,7 @@ public class WebServerServiceImplTest {
         when(Config.mockWebServerPersistenceService.findWebServerByName("newWebServerName")).thenThrow(new NoResultException());
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         try {
             wsService.updateWebServer(req, new User("user"));
             fail("WebServerServiceException is expected!");
@@ -302,7 +306,7 @@ public class WebServerServiceImplTest {
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         try {
             wsService.updateWebServer(req, new User("user"));
             fail("WebServerServiceException is expected!");
@@ -322,7 +326,7 @@ public class WebServerServiceImplTest {
         when(Config.mockJvmPersistenceService.findJvmByExactName("newWebServerName")).thenThrow(new NoResultException());
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         try {
             wsService.updateWebServer(req, new User("user"));
             fail("WebServerServiceException is expected!");
@@ -351,7 +355,8 @@ public class WebServerServiceImplTest {
                 mockWebServer2.getPort(),
                 mockWebServer2.getHttpsPort(),
                 mockWebServer2.getStatusPath(),
-                mockWebServer2.getState());
+                mockWebServer2.getState(),
+                "someMediaId");
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
@@ -700,6 +705,8 @@ public class WebServerServiceImplTest {
 
         private static Jvm mockJvm = mock(Jvm.class);
 
+        private static MediaService mediaService = mock(MediaService.class);
+
         @Bean
         public static WebServerPersistenceService getMockWebServerPersistenceService() {
             return mockWebServerPersistenceService;
@@ -721,15 +728,19 @@ public class WebServerServiceImplTest {
         }
 
         @Bean
-        public WebServerService getWebSereWebServerService() {
-            return new WebServerServiceImpl(mockWebServerPersistenceService, mockResourceService, inMemService, "/any",
-                    mockBinaryDistributionLockManager);
-        }
-
-        @Bean
         public JvmPersistenceService getJvmPersistenceService() {
             return mockJvmPersistenceService;
         }
 
+        @Bean
+        public static MediaService getMediaService() {
+            return mediaService;
+        }
+
+        @Bean
+        public WebServerService getWebSereWebServerService() {
+            return new WebServerServiceImpl(mockWebServerPersistenceService, mockResourceService, inMemService, "/any",
+                    mockBinaryDistributionLockManager);
+        }
     }
 }

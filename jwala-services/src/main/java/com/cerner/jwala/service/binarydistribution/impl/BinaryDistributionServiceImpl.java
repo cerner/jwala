@@ -68,23 +68,23 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     }
 
     @Override
-    public void distributeMedia(final String serverName, final String hostName, Group[] groups, final Media media) {
-        LOGGER.info("Deploying {}'s {} to {}", serverName,  media.getName(), hostName);
+    public void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media) {
+        LOGGER.info("Deploying {}'s {} to {}", jvmOrWebServerName,  media.getName(), hostName);
 
-        String installPath = media.getRemoteHostPath();
+        String installPath = media.getRemoteHostPath().toString();
         if (StringUtils.isEmpty(installPath)) {
             throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }
 
         installPath = installPath.replaceAll("\\/", "/");
-        if (!checkIfMediaDirExists(media.getMediaDir().split(","), hostName, installPath)) {
+        if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
             historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
                     getUserNameFromSecurityContext());
-            distributeBinary(hostName, media.getPath(), installPath, "");
+            distributeBinary(hostName, media.getPath().toString(), installPath, "");
         } else {
             LOGGER.warn("{} already exists. Skipping {} installation.", installPath, media.getName());
         }
-        LOGGER.info("{}'s {} successfully deployed to {}", serverName, media.getName(), hostName);
+        LOGGER.info("{}'s {} successfully deployed to {}", jvmOrWebServerName, media.getName(), hostName);
     }
 
     private void distributeBinary(final String hostname, final String zipFileName, final String jwalaRemoteHome, final String exclude) {

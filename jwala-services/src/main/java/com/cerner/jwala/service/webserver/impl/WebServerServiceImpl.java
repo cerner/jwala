@@ -3,6 +3,7 @@ package com.cerner.jwala.service.webserver.impl;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -15,11 +16,13 @@ import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
+import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
@@ -28,6 +31,7 @@ import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +67,9 @@ public class WebServerServiceImpl implements WebServerService {
 
     @Autowired
     private JvmPersistenceService jvmPersistenceService;
+
+    @Autowired
+    private MediaService mediaService;
 
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
@@ -102,7 +109,8 @@ public class WebServerServiceImpl implements WebServerService {
                 createWebServerRequest.getPort(),
                 createWebServerRequest.getHttpsPort(),
                 createWebServerRequest.getStatusPath(),
-                createWebServerRequest.getState());
+                createWebServerRequest.getState(),
+                createWebServerRequest.getApacheHttpdMedia());
 
         final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
         inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
@@ -179,14 +187,14 @@ public class WebServerServiceImpl implements WebServerService {
             groups.add(new Group(id, null));
         }
         final Identifier<WebServer> id = anUpdateWebServerCommand.getId();
-        final WebServer webServer = new WebServer(id,
-                groups,
-                anUpdateWebServerCommand.getNewName(),
-                anUpdateWebServerCommand.getNewHost(),
-                anUpdateWebServerCommand.getNewPort(),
-                anUpdateWebServerCommand.getNewHttpsPort(),
-                anUpdateWebServerCommand.getNewStatusPath(),
-                anUpdateWebServerCommand.getState());
+
+        // We got to clean up the way our DTO and entities relate to each other or better yet get rid of the DTOs!
+        // We're converting to DTO here then web server persistence is going to convert it back.
+        final JpaMedia jpaApacheHttpdMedia = mediaService.find(anUpdateWebServerCommand.getApacheHttpdMediaId());
+        final Media media = jpaApacheHttpdMedia == null ? null : new ModelMapper().map(jpaApacheHttpdMedia, Media.class);
+        final WebServer webServer = new WebServer(id, groups, anUpdateWebServerCommand.getNewName(), anUpdateWebServerCommand.getNewHost(),
+                anUpdateWebServerCommand.getNewPort(), anUpdateWebServerCommand.getNewHttpsPort(), anUpdateWebServerCommand.getNewStatusPath(),
+                anUpdateWebServerCommand.getState(), media);
 
         return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
     }

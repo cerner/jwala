@@ -111,7 +111,7 @@ public class MediaServiceImplTest {
 
         Set<Group> groupSet = new HashSet<>();
         groupSet.add(mockGroup);
-        Media media = new Media(1,"jdk", null, null, null, null);
+        Media media = new Media(1L,"jdk", org.apache.tika.mime.MediaType.APPLICATION_ZIP, null, null, null);
         List<Jvm> jvmList = new ArrayList<Jvm>();
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L),
                                 "testJvm",
