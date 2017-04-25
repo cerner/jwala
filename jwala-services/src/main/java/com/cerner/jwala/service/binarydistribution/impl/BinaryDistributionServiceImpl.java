@@ -71,7 +71,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     public void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media) {
         LOGGER.info("Deploying {}'s {} to {}", jvmOrWebServerName,  media.getName(), hostName);
 
-        String installPath = media.getRemoteHostPath().toString();
+        String installPath = media.getRemoteDir().toString();
         if (StringUtils.isEmpty(installPath)) {
             throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }
@@ -80,7 +80,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
         if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
             historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
                     getUserNameFromSecurityContext());
-            distributeBinary(hostName, media.getPath().toString(), installPath, "");
+            distributeBinary(hostName, media.getLocalPath().toString(), installPath, "");
         } else {
             LOGGER.warn("{} already exists. Skipping {} installation.", installPath, media.getName());
         }

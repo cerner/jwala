@@ -1,7 +1,7 @@
 package com.cerner.jwala.service.media;
 
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 
 import java.util.List;
 import java.util.Map;
