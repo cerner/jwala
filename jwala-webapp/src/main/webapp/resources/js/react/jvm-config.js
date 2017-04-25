@@ -535,8 +535,8 @@ var JvmConfigForm = React.createClass({
                                                                                 notEqualTo: 0
                                                                              },
                                                                             "ajpPort": {range: [1, 65535]},
-                                                                            "jdkVersion": {required: true},
-                                                                            "tomcatVersion": {required: false}
+                                                                            "jdkMediaId": {required: true},
+                                                                            "tomcatMediaId": {required: true}
                                                                             },
                                                                             messages: {
                                                                                 "groupSelector[]": {
@@ -587,7 +587,7 @@ var JvmConfigForm = React.createClass({
         var items=[<option key='no-jdk-version' value=''>---Select JDK---</option>];
         for (var i=0; i < this.state.jdkVersions.length; i++){
             var jdkVersionOption = this.state.jdkVersions[i];
-            var selected = this.state.jdkMedia !== null && jdkVersionOption.id == this.state.jdkMedia.id;
+            var selected = this.state.jdkMedia !== null && jdkVersionOption.id === this.state.jdkMedia.id;
             items.push(<option key={"jdk-version-" + jdkVersionOption.id} selected={selected}
                                value={jdkVersionOption.id}>{jdkVersionOption.name}</option>);
         }
@@ -597,7 +597,7 @@ var JvmConfigForm = React.createClass({
         var items=[<option key='no-tomcat-version' value=''>---Select Tomcat---</option>];
         for (var i=0; i < this.state.tomcatVersions.length; i++){
             var tomcatVersionOption = this.state.tomcatVersions[i];
-            var selected = this.state.tomcatMedia !== null && tomcatVersionOption.id == this.state.tomcatMedia.id;
+            var selected = this.state.tomcatMedia !== null && tomcatVersionOption.id === this.state.tomcatMedia.id;
             items.push(<option key={"tomcat-version-" + tomcatVersionOption.id} selected={selected}
                                value={tomcatVersionOption.id}>{tomcatVersionOption.name}</option>);
         }
