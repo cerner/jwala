@@ -6,5 +6,16 @@ package com.cerner.jwala.persistence.jpa.type;
  * Created by Jedd Anthony Cuison on 12/6/2016
  */
 public enum MediaType {
-    APACHE, JDK, TOMCAT
+    APACHE("Apache HTTPD"), JDK("JDK"), TOMCAT("Apache Tomcat");
+
+    final String name;
+
+    MediaType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }
