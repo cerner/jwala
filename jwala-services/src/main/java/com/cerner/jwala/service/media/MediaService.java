@@ -50,7 +50,7 @@ public interface MediaService {
      * Returns a list of {@link MediaType}
      * @return List of {@link MediaType}
      */
-    MediaType [] getMediaTypes();
+    MediaType[] getMediaTypes();
 
     /**
      * Update a media

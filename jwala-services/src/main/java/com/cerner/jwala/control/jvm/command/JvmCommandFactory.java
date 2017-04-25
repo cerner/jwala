@@ -175,7 +175,7 @@ public class JvmCommandFactory {
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
         String dumpFile = "heapDump." + StringUtils.replace(jvm.getJvmName(), " ", "") + "." + fmt.print(DateTime.now());
         String dumpLiveStr = ApplicationProperties.getAsBoolean(PropertyKeys.JMAP_DUMP_LIVE_ENABLED.name()) ? "live," : "\"\"";
-        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR) + "/" +
+        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
                 ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
         return new ExecCommand(getFullPathScript(jvm, scriptName),
@@ -193,7 +193,7 @@ public class JvmCommandFactory {
      * @return
      */
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
-        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR) + "/" +
+        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
                 ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
 
@@ -219,7 +219,7 @@ public class JvmCommandFactory {
     private ExecCommand getExecCommandForDeploy(Jvm jvm) {
         final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
         final String remoteJavaHome = jvm.getJavaHome();
-        final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR);
+        final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
         return new ExecCommand(remoteScriptDir + "/" + jvm.getJvmName() + "/" + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME,
                 remoteScriptDir + "/" + jvm.getJvmName() + ".jar",
                 remotePathsInstancesDir + "/" + jvm.getJvmName(),
@@ -244,7 +244,7 @@ public class JvmCommandFactory {
             encryptedPassword = null;
         }
 
-        String remotePathsInstancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATH_INSTANCES_DIR);
+        String remotePathsInstancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
 
         final String quotedUsername;
         if (userName != null && userName.length() > 0) {

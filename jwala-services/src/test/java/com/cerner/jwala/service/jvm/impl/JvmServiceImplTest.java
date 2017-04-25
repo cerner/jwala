@@ -9,6 +9,7 @@ import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.media.Media;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
@@ -21,6 +22,7 @@ import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecCommand;
 import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
+import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
 import com.cerner.jwala.common.request.jvm.*;
 import com.cerner.jwala.control.AemControl;
@@ -47,7 +49,6 @@ import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
 import com.jcraft.jsch.JSchException;
 import org.apache.commons.io.FileUtils;
-import org.apache.tika.mime.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -108,7 +109,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     @Before
     public void setup() throws IOException {
         initMocks(this);
-        FileUtils.forceMkdir(new File(ApplicationProperties.get("paths.generated.resource.dir") + "/" + JUNIT_JVM));
+        FileUtils.forceMkdir(new File(ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + JUNIT_JVM));
 
         reset(Config.mockJvmPersistenceService, Config.mockGroupService, Config.mockApplicationService,
                 Config.mockMessagingTemplate, Config.mockGroupStateNotificationService, Config.mockResourceService,
@@ -610,8 +611,10 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
-        when(mockJvm.getJdkMedia()).thenReturn(new Media(1L, "test media", com.cerner.jwala.common.domain.model.media.MediaType.JDK,
+        when(mockJvm.getJdkMedia()).thenReturn(new Media(1L, "test JDK media", MediaType.JDK,
                 Paths.get("x:/test/archive/path.zip"), Paths.get("x:/test-destination"), Paths.get("root-dir-destination")));
+        when(mockJvm.getTomcatMedia()).thenReturn(new Media(2L, "test Tomcat media", MediaType.TOMCAT,
+                Paths.get("./src/test/resources/binaries/apache-tomcat-test.zip"), Paths.get("x:/test-destination-tomcat"), Paths.get("tomcat-root-dir-destination")));
         when(commandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(commandOutput);
         when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString())).thenReturn(commandOutput);
@@ -826,7 +829,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), anyString(), any(ResourceGeneratorType.class))).thenReturn("<server>xml</server>");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
-        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", org.apache.tika.mime.MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
         when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class))).thenReturn("<server>xml</server>");
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockExecData);
         when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString())).thenReturn(mockExecData);
@@ -834,7 +837,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(), any(ResourceGeneratorType.class))).thenReturn("{\"deployFileName\":\"server.xml\", \"deployPath\":\"/\",\"contentType\":\"text/plain\"}");
         when(mockMetaData.getDeployFileName()).thenReturn("server.xml");
         when(mockMetaData.getDeployPath()).thenReturn("/");
-        when(mockMetaData.getContentType()).thenReturn(MediaType.APPLICATION_XML);
+        when(mockMetaData.getContentType()).thenReturn(org.apache.tika.mime.MediaType.APPLICATION_XML);
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
 
         Jvm jvm = jvmService.generateAndDeployFile("test-jvm-deploy-file", "server.xml", Config.mockUser);
@@ -884,7 +887,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
-        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", org.apache.tika.mime.MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
     }
@@ -895,7 +898,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
-        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, true));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", org.apache.tika.mime.MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, true));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
 
         jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
@@ -925,7 +928,15 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
             add(new Group(Identifier.id(2L, Group.class), "junit-group"));
         }};
 
-        Jvm jvm = new Jvm(Identifier.id(1L, Jvm.class), JUNIT_JVM, groups);
+        Media mockTomcatMedia = mock(Media.class);
+        java.nio.file.Path mockPath = mock(java.nio.file.Path.class);
+        when(mockPath.toFile()).thenReturn(new File("./src/test/resources/binaries/apache-tomcat-test.zip"));
+        when(mockTomcatMedia.getLocalPath()).thenReturn(mockPath);
+
+        Jvm jvm = mock(Jvm.class);
+        when(jvm.getJvmName()).thenReturn(JUNIT_JVM);
+        when(jvm.getGroups()).thenReturn(groups);
+        when(jvm.getTomcatMedia()).thenReturn(mockTomcatMedia);
 
         when(Config.mockJvmPersistenceService.findJvmByExactName(jvm.getJvmName())).thenReturn(jvm);
         when(Config.mockResourceService.generateResourceFile(anyString(),
@@ -946,7 +957,15 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
             add(new Group(Identifier.id(2L, Group.class), "junit-group"));
         }};
 
-        Jvm jvm = new Jvm(Identifier.id(1L, Jvm.class), JUNIT_JVM, groups);
+        Media mockTomcatMedia = mock(Media.class);
+        java.nio.file.Path mockPath = mock(java.nio.file.Path.class);
+        when(mockPath.toFile()).thenReturn(new File("./src/test/resources/binaries/apache-tomcat-test.zip"));
+        when(mockTomcatMedia.getLocalPath()).thenReturn(mockPath);
+
+        Jvm jvm = mock(Jvm.class);
+        when(jvm.getJvmName()).thenReturn(JUNIT_JVM);
+        when(jvm.getGroups()).thenReturn(groups);
+        when(jvm.getTomcatMedia()).thenReturn(mockTomcatMedia);
 
         when(Config.mockJvmPersistenceService.findJvmByExactName(jvm.getJvmName())).thenReturn(jvm);
         when(Config.mockResourceService.generateResourceFile(anyString(),

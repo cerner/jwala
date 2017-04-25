@@ -398,7 +398,7 @@ public class JvmServiceImpl implements JvmService {
 
             validateJvmAndAppResources(jvm);
 
-            checkForJdkBinaries(jvm);
+            checkForJvmBinaries(jvm);
 
             distributeBinaries(jvm);
 
@@ -452,12 +452,27 @@ public class JvmServiceImpl implements JvmService {
         return jvm;
     }
 
-    private void checkForJdkBinaries(Jvm jvm) {
-        if (jvm.getJdkMedia() == null) {
-            final String jvmName = jvm.getJvmName();
-            LOGGER.error("No JDK version specified for JVM {}. Stopping the JV generation.", jvmName);
-            throw new InternalErrorException(FaultType.JVM_JDK_NOT_SPECIFIED, "No JDK version specified for JVM " + jvmName + ". Stopping the JVM generation.");
+    private void checkForJvmBinaries(final Jvm jvm) {
+        final String jvmName = jvm.getJvmName();
+        final List<String> errorMsgs = new ArrayList<>();
+
+        if (null == jvm.getJdkMedia()) {
+            final String jdkMediaErrorMsg = MessageFormat.format("No JDK version specified for JVM {0}. Stopping the JVM generation.", jvmName);
+            LOGGER.error(jdkMediaErrorMsg);
+            errorMsgs.add(jdkMediaErrorMsg);
         }
+
+        if (null == jvm.getTomcatMedia()){
+            final String tomcatMediaErrorMsg = MessageFormat.format("No Tomcat version specified for JVM {0}. Stopping the JVM generation", jvmName);
+            LOGGER.error(tomcatMediaErrorMsg);
+            errorMsgs.add(tomcatMediaErrorMsg);
+        }
+
+        if (!errorMsgs.isEmpty()) {
+            throw new InternalErrorException(FaultType.JVM_JDK_NOT_SPECIFIED, "Failed to start the JVM generation because of the following errors with the expected binaries.", errorMsgs);
+        }
+
+        LOGGER.info("Found JDK media {} for JVM {}. Continuing with deploy ...");
     }
 
     private void validateJvmAndAppResources(Jvm jvm) {
@@ -658,7 +673,7 @@ public class JvmServiceImpl implements JvmService {
 
     }
 
-    protected String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
+    String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Start generateJvmConfigJar ");
         ManagedJvmBuilder managedJvmBuilder =
@@ -686,7 +701,7 @@ public class JvmServiceImpl implements JvmService {
         long startTime = System.currentTimeMillis();
         String configTarName = jvm.getJvmName() + ".jar";
         final String scriptsDir = ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR);
-        String jvmJarFile = ApplicationProperties.get("paths.generated.resource.dir") + File.separator + jvm.getJvmName() + File.separator + configTarName;
+        String jvmJarFile = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + File.separator + jvm.getJvmName() + File.separator + configTarName;
         String destination = scriptsDir + "/" + configTarName;
         LOGGER.info("Copy config jar {} to {} ", jvmJarFile, destination);
         final boolean alwaysOverwriteJvmConfigJar = true;
@@ -710,7 +725,7 @@ public class JvmServiceImpl implements JvmService {
         }
 
         // make sure the start/stop scripts are executable
-        String instancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATH_INSTANCES_DIR);
+        String instancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
         String tomcatDirName = ApplicationProperties.getRequired(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
 
         final String targetAbsoluteDir = instancesDir + '/' + jvm.getJvmName() + '/' + tomcatDirName + "/bin";
@@ -807,9 +822,9 @@ public class JvmServiceImpl implements JvmService {
         final String metaDataString = resourceService.getResourceContent(resourceIdentifier).getMetaData();
         ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, jvmByExactName, metaDataString);
         if (jvm.getState().isStartedState() && !metaData.isHotDeploy()) {
-                String errMsg = MessageFormat.format("The target JVM {0} must be stopped or the resource {1} must be set to hotDeploy=true before attempting to update the resource files", jvm.getJvmName(), resourceIdentifier.resourceName);
-                LOGGER.error(errMsg);
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errMsg);
+            String errMsg = MessageFormat.format("The target JVM {0} must be stopped or the resource {1} must be set to hotDeploy=true before attempting to update the resource files", jvm.getJvmName(), resourceIdentifier.resourceName);
+            LOGGER.error(errMsg);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errMsg);
         }
         LOGGER.info("JVM {} is started, but the resource {} is hot deployable, continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
     }
@@ -983,7 +998,7 @@ public class JvmServiceImpl implements JvmService {
                     MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
                 final String generatedResourceStr = resourceService.generateResourceFile(jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
                         resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
-                generatedFiles.put(createConfigFile(ApplicationProperties.get("paths.generated.resource.dir") + '/' + jvmName, deployFileName, generatedResourceStr),
+                generatedFiles.put(createConfigFile(ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName, deployFileName, generatedResourceStr),
                         new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName, resourceTemplateMetaData.isOverwrite()));
             } else {
                 generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
