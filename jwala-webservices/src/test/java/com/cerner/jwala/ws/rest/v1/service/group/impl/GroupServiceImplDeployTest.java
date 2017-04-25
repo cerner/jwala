@@ -66,8 +66,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
-        classes = {GroupServiceImplDeployTest.Config.class
-        })
+        classes = {GroupServiceImplDeployTest.Config.class})
 public class GroupServiceImplDeployTest {
 
     @Autowired
@@ -480,6 +479,13 @@ public class GroupServiceImplDeployTest {
         private static final BinaryDistributionControlService binaryDistributionControlService = mock(BinaryDistributionControlService.class);
         private static final GroupStateNotificationService mockGroupStateNotificationService = mock(GroupStateNotificationService.class);
         private static final SimpMessagingServiceImpl mockSimpleMessagingService = mock(SimpMessagingServiceImpl.class);
+        private static HistoryFacadeService historyFacadeService = mock(HistoryFacadeService.class);
+
+
+        @Bean
+        public HistoryFacadeService getHistoryFacadeService(){
+            return historyFacadeService;
+        }
 
 
         @Bean
