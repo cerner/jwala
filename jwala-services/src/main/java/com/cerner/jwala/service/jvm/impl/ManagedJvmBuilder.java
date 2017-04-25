@@ -310,7 +310,7 @@ public class ManagedJvmBuilder {
         return this;
     }
 
-    protected File getTomcatStagingDir() {
+    private File getTomcatStagingDir() {
         String[] dirs = getStagingDir().list();
         if (dirs == null || dirs.length == 0) {
             throw new ApplicationException("Staging directory " + getStagingDir().getAbsolutePath() + " is empty.");
@@ -329,19 +329,11 @@ public class ManagedJvmBuilder {
     }
 
     private File getTomcatBinary() {
-        return new File(getBinaryDir() + "/" + getTomcatBinaryName());
-    }
-
-    private String getTomcatBinaryName() {
-        return ApplicationProperties.getRequired(PropertyKeys.TOMCAT_BINARY_FILE_NAME);
-    }
-
-    private String getBinaryDir() {
-        return ApplicationProperties.get("jwala.binary.dir");
+        return jvm.getTomcatMedia().getLocalPath().toFile();
     }
 
     private String getWorkDir() {
-        return ApplicationProperties.get("paths.generated.resource.dir");
+        return ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR);
     }
 
     private String getAgentDir() {

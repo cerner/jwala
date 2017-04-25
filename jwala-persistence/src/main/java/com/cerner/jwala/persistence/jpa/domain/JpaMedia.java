@@ -2,8 +2,8 @@ package com.cerner.jwala.persistence.jpa.domain;
 
 import com.cerner.jwala.common.domain.model.PathToStringSerializer;
 import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.persistence.jpa.domain.constraint.ValidPath;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;

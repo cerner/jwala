@@ -222,7 +222,7 @@ public class BinaryDistributionServiceImplTest {
         final Media mockJdkMedia = mock(Media.class);
         when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
         when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJdkMedia.getRemoteHostPath()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(unsuccessfulCommandOutout);
         when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
@@ -241,7 +241,7 @@ public class BinaryDistributionServiceImplTest {
         final Media mockJdkMedia = mock(Media.class);
         when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
         when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJdkMedia.getRemoteHostPath()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(successfulCommandOutput);
         binaryDistributionService.distributeMedia("jvm1", hostname, null, mockJdkMedia);

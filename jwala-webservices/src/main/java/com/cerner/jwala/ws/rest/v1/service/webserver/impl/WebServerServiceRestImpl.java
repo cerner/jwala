@@ -56,7 +56,6 @@ import java.util.List;
 public class WebServerServiceRestImpl implements WebServerServiceRest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServerServiceRestImpl.class);
-    public static final String PATHS_GENERATED_RESOURCE_DIR = "paths.generated.resource.dir";
     private static final String COMMANDS_SCRIPTS_PATH = ApplicationProperties.get("commands.scripts-path");
     private static final String HTTPD_CONF = "httpd.conf";
     private static final Long DEFAULT_WAIT_TIMEOUT = 30000L;
@@ -341,7 +340,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
 
         // create the install_serviceWS.bat file
         String installServiceScriptText = webServerService.generateInstallServiceScript(webServer);
-        final String jwalaGeneratedResourcesDir = ApplicationProperties.get(PATHS_GENERATED_RESOURCE_DIR);
+        final String jwalaGeneratedResourcesDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR);
 
 
         final String name = webServer.getName();
