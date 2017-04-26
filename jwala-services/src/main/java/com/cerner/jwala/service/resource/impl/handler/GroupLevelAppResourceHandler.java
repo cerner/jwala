@@ -106,7 +106,15 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
 
     private ResourceTemplateMetaData updateApplicationWarMetaData(ResourceIdentifier resourceIdentifier, ResourceTemplateMetaData metaDataCopy, Application app) {
         boolean isUnpackWar = app.isUnpackWar();
-        metaDataCopy = new ResourceTemplateMetaData(metaDataCopy.getTemplateName(), metaDataCopy.getContentType(), metaDataCopy.getDeployFileName(), metaDataCopy.getDeployPath(), metaDataCopy.getEntity(), isUnpackWar, metaDataCopy.isOverwrite());
+        metaDataCopy = new ResourceTemplateMetaData(
+                metaDataCopy.getTemplateName(),
+                metaDataCopy.getContentType(),
+                metaDataCopy.getDeployFileName(),
+                metaDataCopy.getDeployPath(),
+                metaDataCopy.getEntity(),
+                isUnpackWar,
+                metaDataCopy.isOverwrite(),
+                metaDataCopy.isHotDeploy());
 
         try {
             final ObjectMapper objectMapper = new ObjectMapper();

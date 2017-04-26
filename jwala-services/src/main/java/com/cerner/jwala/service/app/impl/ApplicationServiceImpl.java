@@ -139,7 +139,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application application) {
         final String appWarName = application.getWarName();
-        if (!appWarName.isEmpty()) {
+        if (!StringUtils.isEmpty(appWarName)) {
             final String appName = application.getName();
             try {
                 String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup().getName(), appWarName);
@@ -151,7 +151,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         originalMetaData.getDeployPath(),
                         originalMetaData.getEntity(),
                         updateApplicationRequest.isUnpackWar(),
-                        originalMetaData.isOverwrite());
+                        originalMetaData.isOverwrite(),
+                        originalMetaData.isHotDeploy());
                 String updateJsonMetaData = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(updateMetaData);
                 groupPersistenceService.updateGroupAppResourceMetaData(application.getGroup().getName(), appName, appWarName, updateJsonMetaData);
             } catch (JsonGenerationException e) {
@@ -214,18 +215,30 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .setJvmName(jvmName)
                     .build();
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
-            if (jvm.getState().isStartedState()) {
-                LOGGER.error("The target JVM must be stopped before attempting to update the resource files");
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
-                        "The target JVM must be stopped before attempting to update the resource files");
-            }
-            final String hostName = jvm.getHostName();
-            return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, hostName);
+            checkJvmStateBeforeDeploy(jvm, resourceIdentifier);
+            return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, jvm.getHostName());
         } catch (ResourceFileGeneratorException e) {
             LOGGER.error("Fail to generate the resource file {}", resourceTemplateName, e);
             throw new DeployApplicationConfException(e);
         } finally {
             binaryDistributionLockManager.writeUnlock(lockKey);
+        }
+    }
+
+    private void checkJvmStateBeforeDeploy(Jvm jvm, ResourceIdentifier resourceIdentifier) {
+        try {
+            String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
+            boolean hotDeploy = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, jvm, metaDataStr).isHotDeploy();
+            if (jvm.getState().isStartedState() && !hotDeploy) {
+                String deployMsg = MessageFormat.format("The JVM {0} must be stopped or the resource {1} must be configured with hotDeploy=true before the resource can be deployed", jvm.getJvmName(), resourceIdentifier.resourceName);
+                LOGGER.error(deployMsg);
+                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, deployMsg);
+            }
+            LOGGER.info("JVM {} is started, but resource {} is configured with hotDeploy=true. Continuing with deploy ...", jvm.getJvmName(), resourceIdentifier.resourceName);
+        } catch (IOException e) {
+            String errMsg = MessageFormat.format("Failed to parse the meta data of resource {0} for JVM {1}", resourceIdentifier.resourceName, jvm.getJvmName());
+            LOGGER.error(errMsg, e);
+            throw new ApplicationServiceException(errMsg);
         }
     }
 
@@ -413,7 +426,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
                     if (commandOutput.getReturnCode().wasSuccessful()) {
                         LOGGER.debug("unpacked directory found at {}, backing it up", zipDestinationOption);
-                        commandOutput = distributionControlService.backupFile(host, zipDestinationOption);
+                        commandOutput = distributionControlService.backupFileWithMove(host, zipDestinationOption);
 
                         if (commandOutput.getReturnCode().wasSuccessful()) {
                             LOGGER.debug("successful back up of {}", zipDestinationOption);
@@ -518,7 +531,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    protected Set<String> getWebAppOnlyResources(final Group group, String appName) {
+    private Set<String> getWebAppOnlyResources(final Group group, String appName) {
         final String groupName = group.getName();
         final Set<String> resourceSet = new HashSet<>();
         List<String> resourceTemplates = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName, appName);
@@ -634,12 +647,4 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    public BinaryDistributionLockManager getLockManager() {
-        return binaryDistributionLockManager;
-    }
-
-    public ApplicationServiceImpl setLockManager(BinaryDistributionLockManager binaryDistributionLockManager) {
-        this.binaryDistributionLockManager = binaryDistributionLockManager;
-        return this;
-    }
 }
