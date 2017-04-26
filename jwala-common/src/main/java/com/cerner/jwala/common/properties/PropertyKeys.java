@@ -30,7 +30,6 @@ public enum PropertyKeys {
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
     SCRIPTS_PATH("commands.scripts-path"),
-    TOMCAT_BINARY_FILE_NAME("jwala.tomcat.zip.name"),
     TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
     USER_NAME("ssh.userName");
 
