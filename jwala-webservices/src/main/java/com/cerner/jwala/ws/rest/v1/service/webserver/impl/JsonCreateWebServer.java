@@ -106,13 +106,14 @@ public class JsonCreateWebServer {
             final ObjectCodec obj = jp.getCodec();
             final JsonNode node = obj.readTree(jp).get(0);
 
+            final JsonNode apacheHttpdMediaId = node.get("apacheHttpdMediaId");
             final JsonCreateWebServer jcws = new JsonCreateWebServer(node.get("webserverName").getTextValue(),
                     node.get("hostName").getTextValue(),
                     node.get("portNumber").getValueAsText(),
                     node.get("httpsPort").getValueAsText(),
                        deserializeGroupIdentifiers(node),
                     node.get("statusPath").getTextValue(),
-                    node.get("apacheHttpdMediaId").getTextValue());
+                    apacheHttpdMediaId == null ? null : apacheHttpdMediaId.getTextValue());
             return jcws;
         }
     }
