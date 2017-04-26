@@ -185,19 +185,8 @@ public class WebServerServiceImplTest {
     public void testCreateWebServers() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
 
-        final JpaWebServer mockJpaWebServer = mock(JpaWebServer.class);
-        when(mockJpaWebServer.getId()).thenReturn(1L);
-        when(mockJpaWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
-        when(mockJpaWebServer.getName()).thenReturn("the-ws-name");
-        when(mockJpaWebServer.getHost()).thenReturn("the-ws-hostname");
-        JpaGroup mockJpaGroup = mock(JpaGroup.class);
-        when(mockJpaGroup.getId()).thenReturn(1L);
-        when(mockJpaGroup.getName()).thenReturn("the-ws-group-name");
-        when(mockJpaWebServer.getGroups()).thenReturn(Collections.singletonList(mockJpaGroup));
-
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
         when(Config.mockWebServerPersistenceService.createWebServer(any(WebServer.class), anyString())).thenReturn(mockWebServer);
-        when(Config.mockWebServerPersistenceService.createWebServer(any(JpaWebServer.class))).thenReturn(mockJpaWebServer);
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
         when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
         CreateWebServerRequest cmd = new CreateWebServerRequest(mockWebServer.getGroupIds(),
