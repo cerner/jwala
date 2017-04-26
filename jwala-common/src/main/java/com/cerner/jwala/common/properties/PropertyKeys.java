@@ -5,7 +5,6 @@ package com.cerner.jwala.common.properties;
  */
 public enum PropertyKeys {
 
-    APACHE_HTTPD_FILE_NAME("jwala.apache.httpd.zip.name"),
     ENCRYPTED_PASSWORD("ssh.encrypted.password"),
     JDK_BINARY_FILE_NAME("jwala.default.jdk.zip"),
     JMAP_DUMP_LIVE_ENABLED("jmap.dump.live.enabled"),
@@ -24,9 +23,7 @@ public enum PropertyKeys {
     PRIVATE_KEY_FILE("ssh.privateKeyFile"),
     REMOTE_JAWALA_DATA_DIR("remote.jwala.data.dir"),
     REMOTE_PATHS_APACHE_HTTPD("remote.paths.apache.httpd"),
-    REMOTE_PATHS_DEPLOY_DIR("remote.paths.deploy.dir"),
     REMOTE_PATHS_INSTANCES_DIR("remote.paths.instances"),
-    REMOTE_PATHS_HTTPD_ROOT_DIR_NAME("remote.paths.httpd.root.dir.name"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
     SCRIPTS_PATH("commands.scripts-path"),

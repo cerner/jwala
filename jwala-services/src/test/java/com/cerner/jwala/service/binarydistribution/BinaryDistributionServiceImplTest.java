@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.binarydistribution;
 
+import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
@@ -10,6 +11,7 @@ import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionServiceImpl;
@@ -249,20 +251,28 @@ public class BinaryDistributionServiceImplTest {
     }
 
     @Test
-    @Ignore
-    public void testDistributeWebServer() throws CommandFailureException {
-        final File apache = new File(ApplicationProperties.get("remote.paths.apache.httpd"));
-        final String webServerDir = apache.getName();
-        final String webServerBinaryDeployDir = apache.getParentFile().getAbsolutePath().replaceAll("\\\\", "/");
-        final String hostname = "localhost";
-        final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
-        when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.secureCopyFile(eq(hostname), anyString(), anyString())).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.deleteBinary(eq(hostname), eq(webServerBinaryDeployDir + "/" + webServerDir + ".zip"))).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.unzipBinary(eq(hostname), anyString(), anyString(), anyString())).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.deleteBinary(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
-        binaryDistributionService.distributeWebServer(hostname);
-        verify(Config.mockBinaryDistributionControlService).secureCopyFile(eq(hostname), anyString(), anyString());
+    @SuppressWarnings("unchecked")
+    public void testDistributeMedia() {
+        final Media media = new Media();
+        media.setName("Apache HTTPD 2.4.20");
+        media.setRemoteDir(Paths.get("c:\\ctp"));
+        media.setMediaDir(Paths.get("apache-httpd-2.4.20"));
+        media.setLocalPath(Paths.get("c:\\downloads\\apache-httpd-2.4.20.zip"));
+        final Group [] groupArray = new Group[1];
+        final CommandOutput success = new CommandOutput(new ExecReturnCode(0), null, null);
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "/apache-httpd-2.4.20"))
+                .thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", "c:\\ctp"))
+                .thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "c:\\ctp/apache-httpd-2.4.20"))
+                .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
+        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:\\downloads\\apache-httpd-2.4.20.zip", "c:\\ctp"))
+                .thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:\\ctp/apache-httpd-2.4.20.zip", "c:\\ctp", ""))
+                .thenReturn(success);
+        binaryDistributionService.distributeMedia("webserver1", "localhost", groupArray, media);
+        verify(Config.historyFacadeService).write(eq("localhost"), anyCollection(), eq("Distribute Apache HTTPD 2.4.20"),
+                eq(EventType.SYSTEM_INFO), anyString());
     }
 
     @Test

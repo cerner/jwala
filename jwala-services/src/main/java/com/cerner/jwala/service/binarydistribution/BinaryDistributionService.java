@@ -7,12 +7,6 @@ import com.cerner.jwala.common.domain.model.media.Media;
  * Created by Arvindo Kinny on 10/11/2016.
  */
 public interface BinaryDistributionService extends DistributionService {
-    /**
-     * Distribute jwala Apache http webserver to remote host
-     * @param hostname
-     */
-    @Deprecated
-    void distributeWebServer(final String hostname);
 
     /**
      * This method copies unzip.exe to remote host
