@@ -726,7 +726,7 @@ public class JvmServiceImpl implements JvmService {
 
         // make sure the start/stop scripts are executable
         String instancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
-        String tomcatDirName = ApplicationProperties.getRequired(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
+        String tomcatDirName = jvm.getTomcatMedia().getMediaDir().toString();
 
         final String targetAbsoluteDir = instancesDir + '/' + jvm.getJvmName() + '/' + tomcatDirName + "/bin";
         if (!jvmControlService.executeCheckFileExistsCommand(jvm, targetAbsoluteDir).getReturnCode().wasSuccessful()) {

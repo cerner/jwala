@@ -4,7 +4,7 @@ set svc_username=%1
 set svc_password=%2
 
 SET JAVA_HOME=${jvm.javaHome}
-SET CATALINA_HOME=${vars['remote.paths.instances']}\\${jvm.jvmName}\\${vars['remote.tomcat.dir.name']}
+SET CATALINA_HOME=${vars['remote.paths.instances']}\\${jvm.jvmName}\\${jvm.tomcatMedia.mediaDir}
 SET TOMCAT_BIN_DIR=%CATALINA_HOME%\bin
 
 if exist %TOMCAT_BIN_DIR%\setenv.bat CALL %TOMCAT_BIN_DIR%\setenv.bat

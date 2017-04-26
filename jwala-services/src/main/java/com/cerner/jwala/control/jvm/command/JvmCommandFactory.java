@@ -177,7 +177,7 @@ public class JvmCommandFactory {
         String dumpLiveStr = ApplicationProperties.getAsBoolean(PropertyKeys.JMAP_DUMP_LIVE_ENABLED.name()) ? "live," : "\"\"";
         String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
-                ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
+                jvm.getTomcatMedia().getMediaDir();
         return new ExecCommand(getFullPathScript(jvm, scriptName),
                 jvm.getJavaHome(),
                 ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR),
@@ -195,7 +195,7 @@ public class JvmCommandFactory {
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
         String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
-                ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
+                jvm.getTomcatMedia().getMediaDir();
 
         return new ExecCommand(getFullPathScript(jvm, scriptName),
                 jvm.getJavaHome(), jvmInstanceDir, jvm.getJvmName());
@@ -258,7 +258,7 @@ public class JvmCommandFactory {
                 getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
                 jvm.getJvmName(),
                 remotePathsInstancesDir,
-                ApplicationProperties.getRequired(PropertyKeys.REMOTE_TOMCAT_DIR_NAME),
+                jvm.getTomcatMedia().getMediaDir().toString(),
                 quotedUsername, decryptedPassword);
     }
 

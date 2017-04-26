@@ -2,6 +2,7 @@ package com.cerner.jwala.control.jvm.command;
 
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecReturnCode;
@@ -23,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -94,6 +96,12 @@ public class JvmCommandFactoryTest {
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
         when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
 
+        Media mockTomcatMedia = mock(Media.class);
+        Path mockPath = mock(Path.class);
+        when(mockTomcatMedia.getMediaDir()).thenReturn(mockPath);
+        when(mockPath.toString()).thenReturn("test-tomcat-7");
+        when(mockJvm.getTomcatMedia()).thenReturn(mockTomcatMedia);
+
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists", ""));
@@ -110,6 +118,12 @@ public class JvmCommandFactoryTest {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
         when(mockJvm.getJavaHome()).thenReturn("c:/jdk/java-home");
+
+        Media mockTomcatMedia = mock(Media.class);
+        Path mockPath = mock(Path.class);
+        when(mockTomcatMedia.getMediaDir()).thenReturn(mockPath);
+        when(mockPath.toString()).thenReturn("test-tomcat-7");
+        when(mockJvm.getTomcatMedia()).thenReturn(mockTomcatMedia);
 
         when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
@@ -144,7 +158,12 @@ public class JvmCommandFactoryTest {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getJvmName()).thenReturn("test-jvm-command-factory");
 
-        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
+        Media mockTomcatMedia = mock(Media.class);
+        Path mockPath = mock(Path.class);
+        when(mockTomcatMedia.getMediaDir()).thenReturn(mockPath);
+        when(mockPath.toString()).thenReturn("test-tomcat-7");
+
+        when(mockJvm.getTomcatMedia()).thenReturn(mockTomcatMedia);        when(Config.mockRemoteCommandExecutorService.executeCommand(any(RemoteExecCommand.class))).thenReturn(SUCCESS_REMOTE_COMMAND_INFO);
 
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "File exists", ""));
 
