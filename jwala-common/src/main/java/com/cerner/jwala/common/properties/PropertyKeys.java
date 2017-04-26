@@ -29,7 +29,6 @@ public enum PropertyKeys {
     REMOTE_PATHS_HTTPD_ROOT_DIR_NAME("remote.paths.httpd.root.dir.name"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
-    REMOTE_TOMCAT_DIR_NAME("remote.tomcat.dir.name"),
     SCRIPTS_PATH("commands.scripts-path"),
     TOMCAT_BINARY_FILE_NAME("jwala.tomcat.zip.name"),
     TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
