@@ -92,6 +92,7 @@ public class JsonCreateWebServer {
                 ", hostName='" + hostName + '\'' +
                 ", httpsPort='" + httpsPort + '\'' +
                 ", statusPath='" + statusPath + '\'' +
+                ", apacheHttpdMediaId='" + apacheHttpdMediaId + '\'' +
                 '}';
     }
 
@@ -109,11 +110,11 @@ public class JsonCreateWebServer {
             final JsonNode apacheHttpdMediaId = node.get("apacheHttpdMediaId");
             final JsonCreateWebServer jcws = new JsonCreateWebServer(node.get("webserverName").getTextValue(),
                     node.get("hostName").getTextValue(),
-                    node.get("portNumber").getValueAsText(),
-                    node.get("httpsPort").getValueAsText(),
+                    node.get("portNumber").asText(),
+                    node.get("httpsPort").asText(),
                        deserializeGroupIdentifiers(node),
                     node.get("statusPath").getTextValue(),
-                    apacheHttpdMediaId == null ? null : apacheHttpdMediaId.getTextValue());
+                    apacheHttpdMediaId == null ? null : apacheHttpdMediaId.asText());
             return jcws;
         }
     }
