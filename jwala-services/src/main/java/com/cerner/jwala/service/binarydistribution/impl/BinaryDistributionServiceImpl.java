@@ -36,7 +36,8 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     protected SshConfiguration sshConfig;
 
     private static final String UNZIPEXE = "unzip.exe";
-    private static final String EXCLUDED_FILES = "ReadMe.txt *--";
+
+    public static final String EXCLUDED_FILES = "ReadMe.txt *--";
 
     @Autowired
     private BinaryDistributionControlService binaryDistributionControlService;

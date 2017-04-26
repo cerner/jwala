@@ -268,7 +268,8 @@ public class BinaryDistributionServiceImplTest {
                 .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
         when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:\\downloads\\apache-httpd-2.4.20.zip", "c:\\ctp"))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:\\ctp/apache-httpd-2.4.20.zip", "c:\\ctp", ""))
+        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:\\ctp/apache-httpd-2.4.20.zip", "c:\\ctp",
+                BinaryDistributionServiceImpl.EXCLUDED_FILES))
                 .thenReturn(success);
         binaryDistributionService.distributeMedia("webserver1", "localhost", groupArray, media);
         verify(Config.historyFacadeService).write(eq("localhost"), anyCollection(), eq("Distribute Apache HTTPD 2.4.20"),
