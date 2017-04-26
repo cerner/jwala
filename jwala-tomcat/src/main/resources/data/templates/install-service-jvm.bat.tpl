@@ -26,7 +26,7 @@ IF "%JAVA_SERVICE_OPTS%" NEQ "" SET SERVICE_OPTS=++JvmOptions %JAVA_SERVICE_OPTS
 IF "%START_PATH%" NEQ "" SET SERVICE_OPTS=%SERVICE_OPTS% --StartPath %START_PATH%
 
 ECHO Update Java Options
-CMD /C  %TOMCAT_BIN_DIR%\\tomcat${jvm.tomcatMedia.mediaDir.toString().minus('apache-tomcat').tokenize('.')[0]}.exe //US//${jvm.jvmName} --JavaHome ${jvm.javaHome} %SERVICE_OPTS% --StdOutput "" --StdError ""
+CMD /C  %TOMCAT_BIN_DIR%\\tomcat${jvm.tomcatMedia.mediaDir.toString().minus('apache-tomcat-').tokenize('.')[0]}.exe //US//${jvm.jvmName} --JavaHome ${jvm.javaHome} %SERVICE_OPTS% --StdOutput "" --StdError ""
 
 ECHO Change the service to automatically start
 SC CONFIG ${jvm.jvmName} start= auto
