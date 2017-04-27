@@ -394,7 +394,7 @@ var WebServerConfigForm = React.createClass({
             let allMedia = response.applicationResponseContent;
             let apacheHttpdVersions = [];
             for (let i = 0; i < allMedia.length; i++) {
-                if (allMedia[i].type === "APACHE") {
+                if (allMedia[i].type.name === "APACHE") {
                     apacheHttpdVersions.push(allMedia[i]);
                 }
             }

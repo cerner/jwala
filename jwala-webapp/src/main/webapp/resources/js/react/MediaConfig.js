@@ -14,7 +14,7 @@ var MediaConfig = React.createClass({
                                tableIndex="id"
                                colDefinitions={[{key: "id", isVisible: false},
                                                 {title: "Name", key: "name", renderCallback: this.mediaNameRenderCallback},
-                                                {title: "Type", key: "type"},
+                                                {title: "Type", key: "type.displayName"},
                                                 {title: "Remote Target Directory", key: "remoteDir"},
                                                 {title: "Media Directory Name", key: "mediaDir"}]}
                                selectItemCallback={this.selectItemCallback}
@@ -132,7 +132,7 @@ var MediaConfigForm = React.createClass({
     ],
     getInitialState: function() {
         var name = this.props.formData && this.props.formData.name ? this.props.formData.name : null;
-        var type = this.props.formData && this.props.formData.type ? this.props.formData.type : null;
+        var type = this.props.formData && this.props.formData.type ? this.props.formData.type.name : null;
         var localPath = this.props.formData && this.props.formData.localPath ? this.props.formData.localPath : null;
         var remoteDir = this.props.formData && this.props.formData.remoteDir ? this.props.formData.remoteDir : null;
         var mediaDir = this.props.formData && this.props.formData.mediaDir ? this.props.formData.mediaDir : null;
@@ -227,15 +227,18 @@ var MediaTypeDropdown = React.createClass({
         var self = this;
         var options = [];
         this.state.mediaTypes.forEach(function(mediaType){
-            if (self.state.selectedMediaType === mediaType) {
-                options.push(<option value={mediaType} selected="selected">{mediaType}</option>);
+            if (self.state.selectedMediaType === mediaType.name) {
+                options.push(<option value={mediaType.name} selected="selected">{mediaType.displayName}</option>);
             } else {
-                options.push(<option value={mediaType}>{mediaType}</option>);
+                options.push(<option value={mediaType.name}>{mediaType.displayName}</option>);
             }
         });
 
         if (options.length > 0) {
-            return <select className="mediaTypeSelect" name="type" refs="mediaTypeSelect" onChange={this.onChangeSelect} value={this.state.selectedMediaType}>{options}</select>
+            return <select className="mediaTypeSelect" name="type" refs="mediaTypeSelect" onChange={this.onChangeSelect}
+                           value={this.state.selectedMediaType}>
+                       {options}
+                   </select>;
         }
         return <div>Loading Media Types...</div>
     },
