@@ -2962,6 +2962,59 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "update server.xml metadata for hotDeploy copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/metadata/server.xml;group=JVMs;jvm={{JvmName}}",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "error: hot deploy server.xml error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		},
