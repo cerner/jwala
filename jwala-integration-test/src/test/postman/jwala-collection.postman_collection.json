@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "1db9b1e5-9960-5842-21e4-fdafbd8de47d",
+		"_postman_id": "87ca9cd2-8697-cefd-7f37-a7748bd35b89",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -2860,6 +2860,112 @@
 			]
 		},
 		{
+			"name": "k)hot deploy",
+			"description": "",
+			"item": [
+				{
+					"name": "update server.xml metadata for hotDeploy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/metadata/server.xml;group=JVMs;jvm={{JvmName}}",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update httpd metadata to add hotDeploy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/metadata/httpd.conf;group=Web%20Servers;webServer={{WebserverName}}",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "hot deploy server.xml",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "hot deploy httpd.conf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/httpd.conf",
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "l) get group operation",
 			"description": "",
 			"item": [
@@ -5216,7 +5322,10 @@
 						"url": "{{url}}/v1.0/jvms/2?hardDelete=false",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -5652,7 +5761,10 @@
 						"url": "{{url}}/services/v2.0/jvms/Postman-test-jvm-delete",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
