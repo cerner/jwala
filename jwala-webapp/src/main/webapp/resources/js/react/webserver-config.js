@@ -415,13 +415,13 @@ var WebServerConfigForm = React.createClass({
     },
     onStatusPathFocus: function() {
         if (!this.state.statusPath) {
-            this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-            (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+            this.setState({statusPath: "http://" + this.state.host + ":" + this.state.port + "/" +
+                jwalaVars.apacheHttpdStatusPingResource});
         }
     },
     onClickGenerateStatusPath: function() {
-        this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+        this.setState({statusPath: "http://" + this.state.host + ":" + this.state.port + "/" +
+            jwalaVars.apacheHttpdStatusPingResource});
     },
     onSelectGroups: function(groupIds) {
         this.setState({groupIds:groupIds});
