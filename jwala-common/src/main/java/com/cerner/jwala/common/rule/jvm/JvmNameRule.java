@@ -16,8 +16,13 @@ public class JvmNameRule extends ValidNameRule {
     }
 
     @Override
+    public boolean isValid() {
+        return super.isValid() && name.length() < 65;
+    }
+
+    @Override
     protected String getMessage() {
-        return "Invalid Jvm Name : \"" + name + "\"";
+        return name != null && name.length() > 64 ? "Length of JVM should not exceed 64 characters" : "Invalid Jvm Name : \"" + name + "\"";
     }
 
 }

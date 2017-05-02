@@ -23,7 +23,7 @@ public class JvmNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null};
+        final String[] invalidNames = {"", "    ", null,"65charactersNameHereCheckforInvalidity123456789101112131415161718"};
 
         for (final String name : invalidNames) {
             final JvmNameRule rule = new JvmNameRule(name);
