@@ -6,6 +6,8 @@ import com.cerner.jwala.common.rule.ValidNameRule;
 
 public class JvmNameRule extends ValidNameRule {
 
+    public static final int MAX_LENGTH = 64;
+
     public JvmNameRule(final String theName) {
         super(theName);
     }
@@ -17,12 +19,12 @@ public class JvmNameRule extends ValidNameRule {
 
     @Override
     public boolean isValid() {
-        return super.isValid() && name.length() < 65;
+        return super.isValid() && name.length() <= MAX_LENGTH;
     }
 
     @Override
     protected String getMessage() {
-        return name != null && name.length() > 64 ? "Length of JVM should not exceed 64 characters" : "Invalid Jvm Name : \"" + name + "\"";
+        return name != null && name.length() > MAX_LENGTH ? "Length of JVM should not exceed 64 characters" : "Invalid Jvm Name : \"" + name + "\"";
     }
 
 }
