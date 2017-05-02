@@ -55,7 +55,7 @@ ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia
 # prevent Apache from glomming onto all bound IP addresses.
 #
 #Listen 12.34.56.78:80
-Listen 80
+Listen ${webServer.port}
 
 #
 # Dynamic Shared Object (DSO) Support
