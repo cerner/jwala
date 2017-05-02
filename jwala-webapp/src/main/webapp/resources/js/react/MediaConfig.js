@@ -56,15 +56,18 @@ var MediaConfig = React.createClass({
     okAddCallback: function() {
         var self = this;
         if (this.refs.mediaAddForm.isValid()) {
+            this.refs.mediaAddForm.setBusy(true);
             this.refs.modalAddMediaDlg.setEnabled(false);
             ServiceFactory.getMediaService().createMedia(new FormData(this.refs.mediaAddForm.refs.form.getDOMNode()))
             .then(function(response){
                 self.refs.modalAddMediaDlg.close();
                 self.loadTableData();
             }).caught(function(response){
-                self.refs.modalAddMediaDlg.setEnabled(true);
                 self.refs.mediaAddForm.setBusy(false);
                 $.errorAlert(JSON.parse(response.responseText).message);
+            }).lastly(function(){
+                self.refs.mediaAddForm.setBusy(false);
+                self.refs.modalAddMediaDlg.setEnabled(true);
             });
         }
     },
@@ -143,7 +146,8 @@ var MediaConfigForm = React.createClass({
         var localPathTextHidden = null;
         var mediaDirTextHidden = null;
         var mediaArchiveFileInput = null;
-        var uploadBusyImg = this.state.showUploadBusy ? <span>Uploading {this.state.mediaArchiveFile.name} ... <img className="uploadMediaBusyIcon" src="public-resources/img/busy-circular.gif"/></span>: null;
+        var uploadBusyImg = this.state.showUploadBusy ? <span>Uploading {this.state.mediaArchiveFile.name} ...
+                    <img className="uploadMediaBusyIcon" src="public-resources/img/busy-circular.gif"/></span>: null;
 
         if (this.props.formData && this.props.formData.id) {
             idTextHidden = <input type="hidden" name="id" value={this.props.formData.id}/>;
@@ -190,7 +194,6 @@ var MediaConfigForm = React.createClass({
         if (this.validator !== null) {
             this.validator.form();
             if (this.validator.numberOfInvalids() === 0) {
-                this.setState({showUploadBusy:true})
                 return true;
             }
         } else {
