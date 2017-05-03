@@ -361,7 +361,8 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
             LOGGER.info("Successfully invoked service {}", name);
         } else {
             final String standardError = installServiceResult.getStandardError();
-            LOGGER.error("Failed to create windows service for {} :: {}", name, !standardError.isEmpty() ? standardError : installServiceResult.getStandardOutput());
+            LOGGER.error("Failed to create windows service for {} :: Ret Code = {} Std Err = {}", name, installServiceResult.getReturnCode(),
+                    StringUtils.isNotEmpty(standardError) ? standardError : installServiceResult.getStandardOutput());
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Failed to create windows service for " + name + ". " + installServiceResult.standardErrorOrStandardOut());
         }
     }

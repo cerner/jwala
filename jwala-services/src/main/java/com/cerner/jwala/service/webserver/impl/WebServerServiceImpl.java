@@ -213,7 +213,6 @@ public class WebServerServiceImpl implements WebServerService {
         jpaWebServer.setPort(anUpdateWebServerCommand.getNewPort());
         jpaWebServer.setHttpsPort(anUpdateWebServerCommand.getNewHttpsPort());
         jpaWebServer.setStatusPath(anUpdateWebServerCommand.getNewStatusPath().getPath());
-        jpaWebServer.setState(anUpdateWebServerCommand.getState());
 
         final JpaMedia jpaApacheHttpdMedia = anUpdateWebServerCommand.getApacheHttpdMediaId() == null ? null :
                 mediaService.find(Long.valueOf(anUpdateWebServerCommand.getApacheHttpdMediaId()));

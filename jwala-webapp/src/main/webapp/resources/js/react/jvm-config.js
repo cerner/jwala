@@ -571,10 +571,10 @@ var JvmConfigForm = React.createClass({
         mediaService.getAllMedia().then((function(response){
             var allMedia = response.applicationResponseContent;
             var jdkVersions = [], tomcatVersions = [];
-            for (var i=0; i<allMedia.length; i++) {
-                if (allMedia[i].type === "JDK") {
+            for (var i=0; i < allMedia.length; i++) {
+                if (allMedia[i].type.name === "JDK") {
                     jdkVersions.push(allMedia[i]);
-                } else if (allMedia[i].type === "TOMCAT") {
+                } else if (allMedia[i].type.name === "TOMCAT") {
                     tomcatVersions.push(allMedia[i]);
                 }
             }
@@ -584,7 +584,7 @@ var JvmConfigForm = React.createClass({
         });
     },
     getJdkVersions: function() {
-        var items=[<option key='no-jdk-version' value=''>---Select JDK---</option>];
+        var items=[<option key='no-jdk-version' value=''>--- Select JDK ---</option>];
         for (var i=0; i < this.state.jdkVersions.length; i++){
             var jdkVersionOption = this.state.jdkVersions[i];
             var selected = this.state.jdkMedia !== null && jdkVersionOption.id === this.state.jdkMedia.id;
@@ -594,7 +594,7 @@ var JvmConfigForm = React.createClass({
         return items;
     },
     getTomcatVersions: function() {
-        var items=[<option key='no-tomcat-version' value=''>---Select Tomcat---</option>];
+        var items=[<option key='no-tomcat-version' value=''>--- Select Tomcat ---</option>];
         for (var i=0; i < this.state.tomcatVersions.length; i++){
             var tomcatVersionOption = this.state.tomcatVersions[i];
             var selected = this.state.tomcatMedia !== null && tomcatVersionOption.id === this.state.tomcatMedia.id;

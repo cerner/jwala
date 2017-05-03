@@ -394,7 +394,7 @@ var WebServerConfigForm = React.createClass({
             let allMedia = response.applicationResponseContent;
             let apacheHttpdVersions = [];
             for (let i = 0; i < allMedia.length; i++) {
-                if (allMedia[i].type === "APACHE") {
+                if (allMedia[i].type.name === "APACHE") {
                     apacheHttpdVersions.push(allMedia[i]);
                 }
             }
@@ -415,13 +415,13 @@ var WebServerConfigForm = React.createClass({
     },
     onStatusPathFocus: function() {
         if (!this.state.statusPath) {
-            this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-            (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+            this.setState({statusPath: "http://" + this.state.host + ":" + this.state.port + "/" +
+                jwalaVars.apacheHttpdStatusPingResource});
         }
     },
     onClickGenerateStatusPath: function() {
-        this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+        this.setState({statusPath: "http://" + this.state.host + ":" + this.state.port + "/" +
+            jwalaVars.apacheHttpdStatusPingResource});
     },
     onSelectGroups: function(groupIds) {
         this.setState({groupIds:groupIds});

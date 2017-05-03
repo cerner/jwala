@@ -22,12 +22,12 @@ public class Media {
     public Media() {
     }
 
-    public Media(final Long id, final String name, final MediaType type, final Path localPath, final Path remoteDir,
+    public Media(final Long id, final String name, final MediaType type, final Path path, final Path remoteDir,
                  final Path mediaDir) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.localPath = localPath;
+        this.localPath = path;
         this.remoteDir = remoteDir;
         this.mediaDir = mediaDir;
     }
@@ -54,8 +54,8 @@ public class Media {
     }
 
     @JsonDeserialize(using = StringToPathDeserializer.class)
-    public void setLocalPath(Path path) {
-        this.localPath = path;
+    public void setLocalPath(Path localPath) {
+        this.localPath = localPath;
     }
 
     public MediaType getType() {

@@ -36,7 +36,8 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     protected SshConfiguration sshConfig;
 
     private static final String UNZIPEXE = "unzip.exe";
-    private static final String APACHE_EXCLUDE = "ReadMe.txt *--";
+
+    public static final String EXCLUDED_FILES = "ReadMe.txt *--";
 
     @Autowired
     private BinaryDistributionControlService binaryDistributionControlService;
@@ -47,54 +48,38 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     @Autowired
     private HistoryFacadeService historyFacadeService;
 
-
-    @Override
-    public void distributeWebServer(final String hostname) {
-        String writeLockResourceName = hostname;
-        try {
-            binaryDistributionLockManager.writeLock(writeLockResourceName);
-            String apacheDirName = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_HTTPD_ROOT_DIR_NAME);
-            String remoteDeployDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_DEPLOY_DIR);
-            String httpdZipFile = ApplicationProperties.getRequired(PropertyKeys.APACHE_HTTPD_FILE_NAME);
-            String jwalaBinaryDir = ApplicationProperties.getRequired(PropertyKeys.LOCAL_JWALA_BINARY_DIR);
-            if (!binaryDistributionControlService.checkFileExists(hostname, remoteDeployDir+"/"+apacheDirName).getReturnCode().wasSuccessful()) {
-                distributeBinary(hostname, jwalaBinaryDir + File.separator + httpdZipFile, remoteDeployDir, APACHE_EXCLUDE);
-            } else {
-                LOGGER.warn("Webserver directories already exists, installation of {} skipped!", httpdZipFile);
-            }
-        } finally {
-            binaryDistributionLockManager.writeUnlock(writeLockResourceName);
-        }
-    }
-
     @Override
     public void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media) {
         LOGGER.info("Deploying {}'s {} to {}", jvmOrWebServerName,  media.getName(), hostName);
 
-        String installPath = media.getRemoteDir().toString();
+        final String installPath = media.getRemoteDir().normalize().toString();
         if (StringUtils.isEmpty(installPath)) {
             throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }
 
-        installPath = installPath.replaceAll("\\/", "/");
-        if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
-            historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
-                    getUserNameFromSecurityContext());
-            distributeBinary(hostName, media.getLocalPath().toString(), installPath, "");
-        } else {
-            LOGGER.warn("{} already exists. Skipping {} installation.", installPath, media.getName());
+        try {
+            binaryDistributionLockManager.writeLock(hostName);
+            if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
+                historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
+                        getUserNameFromSecurityContext());
+                distributeBinary(hostName, media.getLocalPath().toString(), installPath, EXCLUDED_FILES);
+            } else {
+                LOGGER.warn("{} already exists. Skipping {} installation.", installPath, media.getName());
+            }
+            LOGGER.info("{}'s {} successfully deployed to {}", jvmOrWebServerName, media.getName(), hostName);
+        } finally {
+            binaryDistributionLockManager.writeUnlock(hostName);
         }
-        LOGGER.info("{}'s {} successfully deployed to {}", jvmOrWebServerName, media.getName(), hostName);
     }
 
     private void distributeBinary(final String hostname, final String zipFileName, final String jwalaRemoteHome, final String exclude) {
         remoteCreateDirectory(hostname, jwalaRemoteHome);
         remoteSecureCopyFile(hostname, zipFileName, jwalaRemoteHome);
-        remoteUnzipBinary(hostname, jwalaRemoteHome + "/" + getFileName(zipFileName), jwalaRemoteHome + "/", exclude);
+        remoteUnzipBinary(hostname, jwalaRemoteHome + "/" + getFileName(zipFileName), jwalaRemoteHome, exclude);
     }
 
     private String getFileName(String fullPath){
-        return fullPath.substring(fullPath.lastIndexOf(File.separator), fullPath.length());
+        return fullPath.substring(fullPath.lastIndexOf(File.separator) + 1, fullPath.length());
     }
 
     @Override

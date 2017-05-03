@@ -34,7 +34,7 @@
 # same ServerRoot for multiple httpd daemons, you will need to change at
 # least PidFile.
 #
-ServerRoot "${vars['remote.paths.apache.httpd']}"
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -240,8 +240,8 @@ ServerAdmin admin@example.com
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-DocumentRoot "${vars['remote.paths.apache.httpd']}/htdocs"
-<Directory "${vars['remote.paths.apache.httpd']}/htdocs">
+DocumentRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/htdocs"
+<Directory "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/htdocs">
     #
     # Possible values for the Options directive are "None", "All",
     # or any combination of:
@@ -357,7 +357,7 @@ LogLevel warn
     # client.  The same rules about trailing "/" apply to ScriptAlias
     # directives as to Alias.
     #
-    ScriptAlias /cgi-bin/ "${vars['remote.paths.apache.httpd']}/cgi-bin/"
+    ScriptAlias /cgi-bin/ "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/cgi-bin/"
 
 </IfModule>
 
@@ -370,10 +370,10 @@ LogLevel warn
 </IfModule>
 
 #
-# "${vars['remote.paths.apache.httpd']}/cgi-bin" should be changed to whatever your ScriptAliased
+# "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/cgi-bin" should be changed to whatever your ScriptAliased
 # CGI directory exists, if you have that configured.
 #
-<Directory "${vars['remote.paths.apache.httpd']}/cgi-bin">
+<Directory "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/cgi-bin">
     AllowOverride None
     Options None
     Require all granted
