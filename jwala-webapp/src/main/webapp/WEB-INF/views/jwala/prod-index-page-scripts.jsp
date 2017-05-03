@@ -74,6 +74,7 @@
 <script src="gen-public-resources/js/react/generic-components/rdatatable.js"></script>
 <script src="gen-public-resources/js/react/generic-components/rbutton.js"></script>
 <script src="gen-public-resources/js/react/generic-components/generic-button.js"></script>
+<script src="gen-public-resources/js/react/generic-components/ScreenOverlay.js"></script>
 <script src="gen-public-resources/js/react/flashing-button.js"></script>
 <script src="gen-public-resources/js/react/generic-components/datatable-button.js"></script>
 <script src="gen-public-resources/js/react/group-operations/GroupOperations.js"></script>

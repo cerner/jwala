@@ -1,10 +1,11 @@
 /** @jsx React.DOM */
 var MediaConfig = React.createClass({
     getInitialState: function() {
-        return {selectedMedia: null};
+        return {selectedMedia: null, showScreenOverlay: false};
     },
     render: function() {
         return <div className="MediaConfig">
+                   <ScreenOverlay show={this.state.showScreenOverlay} />
                    <div className="btnContainer">
                        <GenericButton label="Delete" accessKey="d" callback={this.delBtnCallback}/>
                        <GenericButton label="Add" accessKey="a" callback={this.addBtnCallback}/>
@@ -57,18 +58,19 @@ var MediaConfig = React.createClass({
         var self = this;
         if (this.refs.mediaAddForm.isValid()) {
             this.refs.mediaAddForm.setBusy(true);
-            this.refs.modalAddMediaDlg.setEnabled(false);
+            this.setState({showScreenOverlay: true});
             ServiceFactory.getMediaService().createMedia(new FormData(this.refs.mediaAddForm.refs.form.getDOMNode()))
             .then(function(response){
                 self.refs.modalAddMediaDlg.close();
                 self.loadTableData();
             }).caught(function(response){
-                self.refs.mediaAddForm.setBusy(false);
                 $.errorAlert(JSON.parse(response.responseText).message);
             }).lastly(function(){
-                self.refs.mediaAddForm.setBusy(false);
-                self.refs.modalAddMediaDlg.setEnabled(true);
-            });
+                if (self.refs.mediaAddForm) {
+                    self.refs.mediaAddForm.setBusy(false);
+                }
+                self.setState({showScreenOverlay: false});
+             });
         }
     },
     okEditCallback: function() {
