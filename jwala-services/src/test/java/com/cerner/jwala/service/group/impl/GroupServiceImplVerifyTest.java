@@ -10,6 +10,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exception.BadRequestException;
+import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.*;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
@@ -30,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import javax.persistence.EntityExistsException;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -59,17 +61,28 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
     @Before
     public void setUp() {
         user = new User("unused");
+        reset(Config.mockGroupPersistenceService);
     }
 
     @Test
     public void testCreateGroup() {
 
-        final CreateGroupRequest command = mock(CreateGroupRequest.class);
-
+        final CreateGroupRequest command = new CreateGroupRequest("Group");
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenThrow(NotFoundException.class);
         groupService.createGroup(command,
                 user);
 
-        verify(command, times(1)).validate();
+        verify(Config.mockGroupPersistenceService, times(1)).createGroup(command);
+    }
+
+    @Test(expected = EntityExistsException.class)
+    public void testCreateGroupException() {
+        Group group = mock(Group.class);
+        final CreateGroupRequest command = new CreateGroupRequest("Group");
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(group);
+        groupService.createGroup(command,
+                user);
+
         verify(Config.mockGroupPersistenceService, times(1)).createGroup(command);
     }
 
@@ -111,10 +124,27 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
     @Test
     public void testUpdateGroup() throws InterruptedException {
-        final UpdateGroupRequest updateGroupRequest = mock(UpdateGroupRequest.class);
+        Group mockGroup = mock(Group.class);
+        final Identifier<Group> id = new Identifier<>(-123456L);
+        final UpdateGroupRequest updateGroupRequest = new UpdateGroupRequest(id, "testGroup");
+        when(Config.mockGroupPersistenceService.getGroup(any(Identifier.class))).thenReturn(mockGroup);
+        when(mockGroup.getName()).thenReturn("testGroup");
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenThrow(NotFoundException.class);
+        groupService.updateGroup(updateGroupRequest, user);
+        
+        verify(Config.mockGroupPersistenceService).updateGroup(updateGroupRequest);
+    }
+
+    @Test(expected = EntityExistsException.class)
+    public void testUpdateGroupException() throws InterruptedException {
+        Group mockGroup = mock(Group.class);
+        final Identifier<Group> id = new Identifier<>(-123456L);
+        final UpdateGroupRequest updateGroupRequest = new UpdateGroupRequest(id, "testGroup");
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
+        when(Config.mockGroupPersistenceService.getGroup(any(Identifier.class))).thenReturn(mockGroup);
+        when(mockGroup.getName()).thenReturn("testGroup1");
         groupService.updateGroup(updateGroupRequest, user);
 
-        verify(updateGroupRequest).validate();
         verify(Config.mockGroupPersistenceService).updateGroup(updateGroupRequest);
     }
 
