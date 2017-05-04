@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "87ca9cd2-8697-cefd-7f37-a7748bd35b89",
+		"_postman_id": "37bfe38a-d007-1fb6-22fa-f2b48c3510c8",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -2888,7 +2888,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/${vars['remote.tomcat.dir.name']}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -2936,7 +2936,10 @@
 						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
 						"method": "PUT",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -2958,7 +2961,10 @@
 						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/httpd.conf",
 						"method": "PUT",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -2988,7 +2994,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/${vars['remote.tomcat.dir.name']}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3011,7 +3017,10 @@
 						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
 						"method": "PUT",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
