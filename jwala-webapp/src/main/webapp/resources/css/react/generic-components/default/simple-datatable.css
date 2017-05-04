@@ -35,3 +35,7 @@ table.simple-data-table td > div > a {
 table.simple-data-table td > div > a:hover {
     color:#4585C5;
 }
+
+table.simple-data-table td {
+    border-left: none !important;
+}
