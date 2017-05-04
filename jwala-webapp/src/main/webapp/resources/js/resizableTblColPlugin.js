@@ -93,8 +93,6 @@
             $(self[idx]).find("tbody").mouseleave(onTbodyMouseLeave);
 
             $(self[idx]).addClass("adj-col");
-            $(self[idx]).find("thead th").addClass("adj-col");
-            $(self[idx]).find("tbody td").addClass("adj-col");
         });
     }
 
