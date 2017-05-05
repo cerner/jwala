@@ -32,7 +32,8 @@ public enum PropertyKeys {
     PORT("ssh.port"),
     PRIVATE_KEY_FILE("ssh.privateKeyFile"),
     KNOWN_HOSTS_FILE("ssh.knownHostsFile"),
-    ENCRYPTED_PASSWORD("ssh.encrypted.password");
+    ENCRYPTED_PASSWORD("ssh.encrypted.password"),
+    MOD_PROXY_OVERRIDE("mod_proxy_override");
 
     private String propertyName;
 

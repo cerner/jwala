@@ -1,12 +1,15 @@
 package com.cerner.jwala.common.rule.jvm;
 
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.exception.MessageResponseStatus;
+import com.cerner.jwala.common.properties.ApplicationProperties;
+import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.rule.ValidNameRule;
 
 public class JvmNameRule extends ValidNameRule {
 
-    public static final int MAX_LENGTH = 64;
+    public final int MAX_LENGTH = ApplicationProperties.getAsInteger(PropertyKeys.MOD_PROXY_OVERRIDE, 64);
 
     public JvmNameRule(final String theName) {
         super(theName);
