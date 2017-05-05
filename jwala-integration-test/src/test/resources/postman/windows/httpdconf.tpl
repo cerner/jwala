@@ -35,7 +35,7 @@
 # least PidFile.
 #
 #ServerRoot ./
-ServerRoot ${vars['remote.paths.deploy.dir']}/apache-httpd-2.4.20/
+ServerRoot ${vars['remote.jwala.data.dir']}../../apache-httpd-2.4.20/
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory

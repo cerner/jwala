@@ -143,8 +143,7 @@ public class JvmServiceImpl implements JvmService {
         }
     }
 
-    protected Jvm createAndAssignJvm(final CreateJvmAndAddToGroupsRequest aCreateAndAssignRequest,
-                                     final User aCreatingUser) {
+    private Jvm createAndAssignJvm(final CreateJvmAndAddToGroupsRequest aCreateAndAssignRequest) {
         aCreateAndAssignRequest.validate();
 
         // The commands are validated in createJvm() and groupPersistenceService.addJvmToGroup()
@@ -162,7 +161,7 @@ public class JvmServiceImpl implements JvmService {
     @Transactional
     public Jvm createJvm(CreateJvmAndAddToGroupsRequest createJvmAndAddToGroupsRequest, User user) {
         // create the JVM in the database
-        final Jvm jvm = createAndAssignJvm(createJvmAndAddToGroupsRequest, user);
+        final Jvm jvm = createAndAssignJvm(createJvmAndAddToGroupsRequest);
 
         // inherit the templates from the group
         if (null != jvm.getGroups() && !jvm.getGroups().isEmpty()) {
