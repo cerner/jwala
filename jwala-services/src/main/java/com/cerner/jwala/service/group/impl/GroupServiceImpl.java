@@ -67,6 +67,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group createGroup(final CreateGroupRequest createGroupRequest,
                              final User aCreatingUser) {
+        createGroupRequest.validate();
         try {
             groupPersistenceService.getGroup(createGroupRequest.getGroupName());
             String message = MessageFormat.format("Group Name already exists: {0} ", createGroupRequest.getGroupName());
@@ -75,7 +76,6 @@ public class GroupServiceImpl implements GroupService {
         } catch (NotFoundException e) {
             LOGGER.debug("No group name conflict, ignoring not found exception for creating group ", e);
         }
-        createGroupRequest.validate();
 
         return groupPersistenceService.createGroup(createGroupRequest);
     }
@@ -121,6 +121,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group updateGroup(final UpdateGroupRequest anUpdateGroupRequest,
                              final User anUpdatingUser) {
+        anUpdateGroupRequest.validate();
         Group orginalGroup = getGroup(anUpdateGroupRequest.getId());
         try {
             if (!orginalGroup.getName().equalsIgnoreCase(anUpdateGroupRequest.getNewName()) && null != groupPersistenceService.getGroup(anUpdateGroupRequest.getNewName())) {
@@ -131,7 +132,6 @@ public class GroupServiceImpl implements GroupService {
         } catch (NotFoundException e) {
             LOGGER.debug("No group name conflict, ignoring not found exception for creating group ", e);
         }
-        anUpdateGroupRequest.validate();
         return groupPersistenceService.updateGroup(anUpdateGroupRequest);
     }
 
