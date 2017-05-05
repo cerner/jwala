@@ -173,7 +173,6 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
     public Response deployConf(final String appName, final String groupName, final String jvmName,
                                final String resourceTemplateName, final AuthenticatedUser authUser) {
         LOGGER.info("Deploying the application conf file {} for app {} to JVM {} in group {} by ", resourceTemplateName, appName, jvmName, groupName, authUser.getUser().getId());
-        historyFacadeService.write("", groupService.getGroup(groupName), "Deploying application resource " + resourceTemplateName + " via resources tab", EventType.USER_ACTION_INFO, authUser.getUser().getId());
         return ResponseBuilder.ok(service.deployConf(appName, groupName, jvmName, resourceTemplateName, resourceService.generateResourceGroup(), authUser.getUser()));
     }
 

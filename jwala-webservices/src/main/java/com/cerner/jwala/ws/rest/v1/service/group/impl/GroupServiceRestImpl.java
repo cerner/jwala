@@ -10,6 +10,7 @@ import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.exception.FaultCodeException;
@@ -711,12 +712,12 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                 resourceService.validateSingleResourceForGeneration(resourceIdentifier);
                 if (hostName != null && !hostName.isEmpty()) {
                     // deploy to particular host
-                    historyFacadeService.write(hostName, group, "Deploying application resource "+resourceIdentifier.resourceName+" via operations", EventType.USER_ACTION_INFO, aUser.getUser().getId());
+                    historyFacadeService.write(hostName, group, "Deploying application resource " +
+                            resourceIdentifier.resourceName, EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     performGroupAppDeployToHost(groupName, fileName, appName, hostName, metaData.isHotDeploy());
                 } else {
                     // deploy to all hosts in group
-                    historyFacadeService.write("", group, "Deploying application resource "+resourceIdentifier.resourceName+" via operations to all hosts", EventType.USER_ACTION_INFO, aUser.getUser().getId());
-                    performGroupAppDeployToHosts(groupName, fileName, appName, metaData.isHotDeploy());
+                    performGroupAppDeployToHosts(groupName, fileName, appName, metaData.isHotDeploy(), aUser);
                 }
             }
         } catch (IOException e) {
@@ -756,7 +757,8 @@ public class GroupServiceRestImpl implements GroupServiceRest {
 
     }
 
-    private void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName, boolean hotDeploy) {
+    private void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName,
+                                              boolean hotDeploy, AuthenticatedUser aUser) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
         final Group group = groupService.getGroup(groupName);
         Set<Jvm> jvms = group.getJvms();
@@ -768,6 +770,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             for (final Jvm jvm : jvms) {
                 final String hostName = jvm.getHostName();
                 if (!deployedHosts.contains(hostName)) {
+                    historyFacadeService.write(hostName, group, "Deploying application resource " + fileName, EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     deployedHosts.add(hostName);
                     Future<Response> response = createFutureResponseForAppDeploy(groupName, fileName, appName, jvm, null);
                     if (response != null)
