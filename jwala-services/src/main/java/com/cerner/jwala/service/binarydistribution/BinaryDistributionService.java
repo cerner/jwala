@@ -21,5 +21,5 @@ public interface BinaryDistributionService extends DistributionService {
      * @param groups the groups where the server is assigned to
      * @param media the media to be distributed
      */
-    void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media);
+    <T> void distributeMedia(final T jvmOrWebServer, final String hostName, Group[] groups, final Media media);
 }

@@ -26,7 +26,7 @@ if $cygwin; then
   fi
 
   #pwd -P is a clever unix trick to get the absolute path to this dir
-  `pwd -P`/.jwala/$1/install-service-http.bat $2
+  `pwd -P`/.jwala/$1/install-service-http.bat $2 $3
 
   for (( c=1; c<=5; c++ ))
   do

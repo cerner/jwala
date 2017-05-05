@@ -17,6 +17,8 @@ import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.jvm.exception.JvmServiceException;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -45,11 +47,13 @@ public class JvmCommandFactory {
     protected SshConfiguration sshConfig;
 
     @Autowired
-    protected RemoteCommandExecutorService remoteCommandExecutorService;
+    private RemoteCommandExecutorService remoteCommandExecutorService;
 
     @Autowired
-    protected BinaryDistributionControlService binaryDistributionControlService;
+    private BinaryDistributionControlService binaryDistributionControlService;
 
+    @Autowired
+    private ResourceContentGeneratorService resourceContentGeneratorService;
 
     /**
      * @param jvm
@@ -179,7 +183,7 @@ public class JvmCommandFactory {
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
                 jvm.getTomcatMedia().getMediaDir();
         return new ExecCommand(getFullPathScript(jvm, scriptName),
-                jvm.getJavaHome(),
+                resourceContentGeneratorService.generateContent("Java home", jvm.getJavaHome(), null, jvm, ResourceGeneratorType.METADATA),
                 ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR),
                 dumpFile, dumpLiveStr, jvmInstanceDir, jvm.getJvmName());
         //Windows " | grep PID | awk '{ print $3 }'`
@@ -198,7 +202,9 @@ public class JvmCommandFactory {
                 jvm.getTomcatMedia().getMediaDir();
 
         return new ExecCommand(getFullPathScript(jvm, scriptName),
-                jvm.getJavaHome(), jvmInstanceDir, jvm.getJvmName());
+                resourceContentGeneratorService.generateContent("Java home", jvm.getJavaHome(), null, jvm, ResourceGeneratorType.METADATA),
+                jvmInstanceDir,
+                jvm.getJvmName());
     }
 
     /**
@@ -218,7 +224,7 @@ public class JvmCommandFactory {
      */
     private ExecCommand getExecCommandForDeploy(Jvm jvm) {
         final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
-        final String remoteJavaHome = jvm.getJavaHome();
+        final String remoteJavaHome = resourceContentGeneratorService.generateContent("Java home", jvm.getJavaHome(), null, jvm, ResourceGeneratorType.METADATA);
         final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
         return new ExecCommand(remoteScriptDir + "/" + jvm.getJvmName() + "/" + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME,
                 remoteScriptDir + "/" + jvm.getJvmName() + ".jar",
