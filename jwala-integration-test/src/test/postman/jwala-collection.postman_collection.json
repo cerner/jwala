@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "37bfe38a-d007-1fb6-22fa-f2b48c3510c8",
+		"_postman_id": "6c486119-a384-f2f9-12ee-b598d6a00488",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -562,7 +562,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"USMLVV1CDS0050\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
+							"raw": "{\"jvmName\":\"{{JvmName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
 						},
 						"description": ""
 					},
@@ -627,7 +627,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"Postman-test-webserver\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"USMLVV1CDS0050\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\"}]"
+							"raw": "[{\"webserverName\":\"{{WebserverName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\"}]"
 						},
 						"description": ""
 					},
@@ -2975,7 +2975,10 @@
 						"url": "https://{{host}}/apache_pb.png",
 						"method": "GET",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -3840,7 +3843,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"USMLVV1CDS0050\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
+							"raw": "{\"jvmName\":\"{{JvmName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
 						},
 						"description": ""
 					},
@@ -3871,7 +3874,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"Postman-test-Jvm\",\"hostName\":\"USMLVV1CDS0050\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
+							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"{{JvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
 						},
 						"description": ""
 					},
@@ -5112,7 +5115,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/healthcheck-webapp-1.0.1.war/HEALTH-CHECK-4.0?hostName=USMLVV1CDS0050",
+						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/healthcheck-webapp-1.0.1.war/HEALTH-CHECK-4.0?hostName={{host}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
