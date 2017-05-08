@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "1db9b1e5-9960-5842-21e4-fdafbd8de47d",
+		"_postman_id": "6c486119-a384-f2f9-12ee-b598d6a00488",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -562,7 +562,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"USMLVV1CDS0050\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
+							"raw": "{\"jvmName\":\"{{JvmName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
 						},
 						"description": ""
 					},
@@ -627,7 +627,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"Postman-test-webserver\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"USMLVV1CDS0050\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\"}]"
+							"raw": "[{\"webserverName\":\"{{WebserverName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\"}]"
 						},
 						"description": ""
 					},
@@ -2860,6 +2860,213 @@
 			]
 		},
 		{
+			"name": "k)hot deploy",
+			"description": "",
+			"item": [
+				{
+					"name": "update server.xml metadata for hotDeploy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/metadata/server.xml;group=JVMs;jvm={{JvmName}}",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/${vars['remote.tomcat.dir.name']}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update httpd metadata to add hotDeploy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/metadata/httpd.conf;group=Web%20Servers;webServer={{WebserverName}}",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "verify jvm started",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "https://{{host}}:9131/hello/",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "hot deploy server.xml",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "verify webserver started",
+					"request": {
+						"url": "https://{{host}}/apache_pb.png",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "hot deploy httpd.conf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/httpd.conf",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update server.xml metadata for hotDeploy copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/metadata/server.xml;group=JVMs;jvm={{JvmName}}",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.paths.instances'}/${jvm.jvmName}/${vars['remote.tomcat.dir.name']}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "error: hot deploy server.xml error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "l) get group operation",
 			"description": "",
 			"item": [
@@ -3636,7 +3843,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"USMLVV1CDS0050\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
+							"raw": "{\"jvmName\":\"{{JvmName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":8001,\"redirectPort\":8002,\"shutdownPort\":8003,\"ajpPort\":8004,\"userName\":\"\",\"encryptedPassword\":\"\"}"
 						},
 						"description": ""
 					},
@@ -3667,7 +3874,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"Postman-test-Jvm\",\"hostName\":\"USMLVV1CDS0050\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
+							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"{{JvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
 						},
 						"description": ""
 					},
@@ -4908,7 +5115,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/healthcheck-webapp-1.0.1.war/HEALTH-CHECK-4.0?hostName=USMLVV1CDS0050",
+						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/healthcheck-webapp-1.0.1.war/HEALTH-CHECK-4.0?hostName={{host}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5216,7 +5423,10 @@
 						"url": "{{url}}/v1.0/jvms/2?hardDelete=false",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -5652,7 +5862,10 @@
 						"url": "{{url}}/services/v2.0/jvms/Postman-test-jvm-delete",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
