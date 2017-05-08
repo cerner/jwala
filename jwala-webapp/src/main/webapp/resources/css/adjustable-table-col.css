@@ -3,15 +3,15 @@ table.adj-col {
     border-collapse: collapse !important;
 }
 
-th.adj-col {
+table.adj-col th {
     border-left: 1px solid rgb(230, 230, 230) !important;
     overflow: hidden !important;
     white-space: nowrap !important;
     padding: 3px 18px 3px 3px !important;
 }
 
-td.adj-col {
-    border-left: 1px solid rgb(230, 230, 230) !important;
+table.adj-col td {
+    border-left: 1px solid rgb(230, 230, 230);
     overflow: hidden !important;
     white-space: nowrap !important;
     padding-right: 1px !important;

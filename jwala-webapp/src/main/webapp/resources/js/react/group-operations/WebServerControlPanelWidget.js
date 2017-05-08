@@ -41,16 +41,13 @@ var WebServerControlPanelWidget = React.createClass({
                              disabledTitle="Only users with admin role can access this feature"/>
 
                     <button ref="httpdConfBtn" className="button-link anchor-font-style">httpd.conf</button>
-
-                    <a target="_blank" ref="statusLink" href={"https://" + this.props.data.host + ":" + this.props.data.httpsPort
-                            + jwalaVars.loadBalancerStatusMount}>status</a>
-
+                    <button ref="statusLinkBtn" className="button-link anchor-font-style">status</button>
                </div>
     },
 
     componentDidMount: function() {
         $(this.refs.httpdConfBtn.getDOMNode()).click(this.onClickHttpdConf);
-        $(this.refs.statusLink.getDOMNode()).click(this.onClickStatusLink);
+        $(this.refs.statusLinkBtn.getDOMNode()).click(this.onClickStatusLink);
     },
 
     webServerStart: function() {
@@ -111,7 +108,8 @@ var WebServerControlPanelWidget = React.createClass({
     },
 
     onClickStatusLink: function(e) {
-        return e.stopPropagation();
+        let statusUrl = "https://" + this.props.data.host + ":" + this.props.data.httpsPort + jwalaVars.loadBalancerStatusMount
+        window.open(statusUrl);
     },
 
     /**
