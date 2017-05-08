@@ -2192,7 +2192,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":{{JdkMediaId}},\"localPath\":\"d:\\\\stp\\\\toc-0.0.126\\\\apache-tomcat-7.0.55\\\\data\\\\binaries\\\\test-53158b89-6ad5-42c8-b196-70ed6b0a68dc.zip\",\"mediaDir\":\"test\",\"name\":\"Postman-Test-Media\",\"type\":\"JDK\",\"remoteDir\":\"c:\\\\stp\"}"
+							"raw": "{\"id\":{{JdkMediaId}},\"localPath\":\"{{jdkMediaSrc}}\",\"mediaDir\":\"test\",\"name\":\"Postman-Test-JDK-Media\",\"type\":\"JDK\",\"remoteDir\":\"${vars['remote.jwala.data.dir']}/../..\"}"
 						},
 						"description": ""
 					},
@@ -5664,7 +5664,7 @@
 				{
 					"name": "delete media",
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-Media",
+						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media",
 						"method": "DELETE",
 						"header": [],
 						"body": {

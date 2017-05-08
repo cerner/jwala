@@ -91,8 +91,8 @@
 
     <Connector 
       port="${jvm.httpsPort}" 
-	  SSLCertificateFile="${vars['remote.jwala.data.dir']}../../app/data/security/id/${jvm.hostName}.cer"
-      SSLCertificateKeyFile="${vars['remote.jwala.data.dir']}../../app/data/security/id/${jvm.hostName}.key"
+	  SSLCertificateFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.cer"
+      SSLCertificateKeyFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.key"
       SSLEnabled="true"
       SSLPassword="" 
       acceptCount="100" 

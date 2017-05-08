@@ -4,10 +4,10 @@ SET JRE_HOME=%JAVA_HOME%\jre
 SET CATALINA_HOME=${vars['remote.paths.instances']}/${jvm.jvmName}/apache-tomcat-7.0.55
 SET CATALINA_OPTS=-XX:PermSize=512m -XX:MaxPermSize=512m 
 
-SET PROPERTIES_ROOT_PATH=${vars['remote.jwala.data.dir']}..\..\app\properties
+SET PROPERTIES_ROOT_PATH=${vars['remote.jwala.data.dir']}\..\..\app\properties
 SET STP_OPTS=-DPROPERTIES_ROOT_PATH=%PROPERTIES_ROOT_PATH%
 
-SET STP_PROPERTIES_DIR=${vars['remote.jwala.data.dir']}..\..\app\properties
+SET STP_PROPERTIES_DIR=${vars['remote.jwala.data.dir']}\..\..\app\properties
 SET STP_OPTS=%STP_OPTS% -DSTP_PROPERTIES_DIR=%STP_PROPERTIES_DIR%
 
 SET LOG_ROOT_DIR=${vars['remote.paths.instances']}/${jvm.jvmName}/apache-tomcat-7.0.55/logs
