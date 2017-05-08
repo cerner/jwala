@@ -56,7 +56,6 @@ import java.util.List;
 public class WebServerServiceRestImpl implements WebServerServiceRest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServerServiceRestImpl.class);
-    public static final String PATHS_GENERATED_RESOURCE_DIR = "paths.generated.resource.dir";
     private static final String COMMANDS_SCRIPTS_PATH = ApplicationProperties.get("commands.scripts-path");
     private static final String HTTPD_CONF = "httpd.conf";
     private static final Long DEFAULT_WAIT_TIMEOUT = 30000L;
@@ -215,7 +214,9 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
             validateResources(webServer);
 
             binaryDistributionService.distributeUnzip(webServer.getHost());
-            binaryDistributionService.distributeWebServer(webServer.getHost());
+
+            binaryDistributionService.distributeMedia(webServer.getName(), webServer.getHost(), webServer.getGroups()
+                    .toArray(new Group[webServer.getGroups().size()]), webServer.getApacheHttpdMedia());
 
             // check for httpd.conf template
             validateHttpdConf(webServer);
@@ -339,7 +340,7 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
 
         // create the install_serviceWS.bat file
         String installServiceScriptText = webServerService.generateInstallServiceScript(webServer);
-        final String jwalaGeneratedResourcesDir = ApplicationProperties.get(PATHS_GENERATED_RESOURCE_DIR);
+        final String jwalaGeneratedResourcesDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR);
 
 
         final String name = webServer.getName();
@@ -360,7 +361,8 @@ public class WebServerServiceRestImpl implements WebServerServiceRest {
             LOGGER.info("Successfully invoked service {}", name);
         } else {
             final String standardError = installServiceResult.getStandardError();
-            LOGGER.error("Failed to create windows service for {} :: {}", name, !standardError.isEmpty() ? standardError : installServiceResult.getStandardOutput());
+            LOGGER.error("Failed to create windows service for {} :: Ret Code = {} Std Err = {}", name, installServiceResult.getReturnCode(),
+                    StringUtils.isNotEmpty(standardError) ? standardError : installServiceResult.getStandardOutput());
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Failed to create windows service for " + name + ". " + installServiceResult.standardErrorOrStandardOut());
         }
     }

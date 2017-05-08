@@ -15,11 +15,17 @@ import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
+import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
+import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
+import com.cerner.jwala.persistence.jpa.domain.builder.JpaWebServerBuilder;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
+import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
@@ -28,6 +34,7 @@ import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.service.webserver.exception.WebServerServiceException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +46,7 @@ import javax.persistence.NoResultException;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WebServerServiceImpl implements WebServerService {
@@ -63,6 +70,14 @@ public class WebServerServiceImpl implements WebServerService {
 
     @Autowired
     private JvmPersistenceService jvmPersistenceService;
+
+    @Autowired
+    private MediaService mediaService;
+
+    @Autowired
+    private GroupPersistenceService groupPersistenceService;
+
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public WebServerServiceImpl(final WebServerPersistenceService webServerPersistenceService,
                                 final ResourceService resourceService,
@@ -91,22 +106,38 @@ public class WebServerServiceImpl implements WebServerService {
         createWebServerRequest.validate();
         validateCreateWebServer(createWebServerRequest);
 
-        final List<Group> groups = new LinkedList<>();
+        final List<Long> groupIdList = new ArrayList<>();
         for (Identifier<Group> id : createWebServerRequest.getGroups()) {
-            groups.add(new Group(id, null));
+            groupIdList.add(id.getId());
         }
-        final WebServer webServer = new WebServer(null,
-                groups,
-                createWebServerRequest.getName(),
-                createWebServerRequest.getHost(),
-                createWebServerRequest.getPort(),
-                createWebServerRequest.getHttpsPort(),
-                createWebServerRequest.getStatusPath(),
-                createWebServerRequest.getState());
 
-        final WebServer wsReturnValue = webServerPersistenceService.createWebServer(webServer, aCreatingUser.getId());
-        inMemoryStateManagerService.put(wsReturnValue.getId(), wsReturnValue.getState());
-        return wsReturnValue;
+        final JpaWebServer jpaWebServer = new JpaWebServer();
+
+        final List<JpaGroup> jpaGroupList = groupPersistenceService.findGroups(groupIdList);
+        jpaWebServer.setGroups(jpaGroupList);
+
+        jpaWebServer.setName(createWebServerRequest.getName());
+        jpaWebServer.setHost(createWebServerRequest.getHost());
+        jpaWebServer.setPort(createWebServerRequest.getPort());
+        jpaWebServer.setHttpsPort(createWebServerRequest.getHttpsPort());
+        jpaWebServer.setStatusPath(createWebServerRequest.getStatusPath().getPath());
+        jpaWebServer.setState(createWebServerRequest.getState());
+
+        final JpaMedia jpaApacheHttpdMedia = createWebServerRequest.getApacheHttpdMediaId() == null ? null :
+                mediaService.find(Long.valueOf(createWebServerRequest.getApacheHttpdMediaId()));
+        jpaWebServer.setApacheHttpdMedia(jpaApacheHttpdMedia);
+
+        final JpaWebServer createdJpaWebServer = webServerPersistenceService.createWebServer(jpaWebServer);
+
+        // associate the web server to the group
+        for (JpaGroup wsGroup : jpaGroupList) {
+            final List<JpaWebServer> webServers = wsGroup.getWebServers();
+            webServers.add(createdJpaWebServer);
+            wsGroup.setWebServers(webServers);
+        }
+
+        inMemoryStateManagerService.put(new Identifier<>(createdJpaWebServer.getId()), createdJpaWebServer.getState());
+        return new JpaWebServerBuilder(createdJpaWebServer).build();
     }
 
     private void validateCreateWebServer(CreateWebServerRequest createWebServerRequest) {
@@ -174,21 +205,36 @@ public class WebServerServiceImpl implements WebServerService {
             validateUpdateWebServer(anUpdateWebServerCommand);
         }
 
-        final List<Group> groups = new LinkedList<>();
+        final List<Long> groupIdList = new ArrayList<>();
         for (Identifier<Group> id : anUpdateWebServerCommand.getNewGroupIds()) {
-            groups.add(new Group(id, null));
+            groupIdList.add(id.getId());
         }
-        final Identifier<WebServer> id = anUpdateWebServerCommand.getId();
-        final WebServer webServer = new WebServer(id,
-                groups,
-                anUpdateWebServerCommand.getNewName(),
-                anUpdateWebServerCommand.getNewHost(),
-                anUpdateWebServerCommand.getNewPort(),
-                anUpdateWebServerCommand.getNewHttpsPort(),
-                anUpdateWebServerCommand.getNewStatusPath(),
-                anUpdateWebServerCommand.getState());
 
-        return webServerPersistenceService.updateWebServer(webServer, anUpdatingUser.getId());
+        final JpaWebServer jpaWebServer = webServerPersistenceService.findWebServer(anUpdateWebServerCommand.getId().getId());
+
+        final List<JpaGroup> jpaGroupList = groupPersistenceService.findGroups(groupIdList);
+        jpaWebServer.setGroups(jpaGroupList);
+
+        jpaWebServer.setName(anUpdateWebServerCommand.getNewName());
+        jpaWebServer.setHost(anUpdateWebServerCommand.getNewHost());
+        jpaWebServer.setPort(anUpdateWebServerCommand.getNewPort());
+        jpaWebServer.setHttpsPort(anUpdateWebServerCommand.getNewHttpsPort());
+        jpaWebServer.setStatusPath(anUpdateWebServerCommand.getNewStatusPath().getPath());
+
+        final JpaMedia jpaApacheHttpdMedia = anUpdateWebServerCommand.getApacheHttpdMediaId() == null ? null :
+                mediaService.find(Long.valueOf(anUpdateWebServerCommand.getApacheHttpdMediaId()));
+        jpaWebServer.setApacheHttpdMedia(jpaApacheHttpdMedia);
+
+        final JpaWebServer updatedWebServer = webServerPersistenceService.updateWebServer(jpaWebServer);
+
+        // associate the web server to the group
+        for (JpaGroup wsGroup : jpaGroupList) {
+            final List<JpaWebServer> webServers = wsGroup.getWebServers();
+            webServers.add(updatedWebServer);
+            wsGroup.setWebServers(webServers);
+        }
+
+        return new JpaWebServerBuilder(updatedWebServer).build();
     }
 
     private void validateUpdateWebServer(UpdateWebServerRequest anUpdateWebServerCommand) {

@@ -22,10 +22,10 @@ public abstract class AbstractRepositoryService implements RepositoryService {
     protected abstract Path getRepositoryPath();
 
     @Override
-    public String upload(final String filename, final InputStream resource) {
+    public String upload(final String baseFilename, final InputStream resource) {
         try {
             final String absoluteFilename = getRepositoryPath().toAbsolutePath().normalize().toString() + "/" +
-                    getResourceNameUniqueName(filename);
+                    getResourceNameUniqueName(baseFilename);
             final FileOutputStream out = new FileOutputStream(absoluteFilename);
             final byte [] bytes = new byte[BYTE_ARRAY_SIZE];
             int byteCount;

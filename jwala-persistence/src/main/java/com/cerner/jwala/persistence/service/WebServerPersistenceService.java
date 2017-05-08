@@ -8,6 +8,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaWebServerConfigTemplate;
 
 import java.util.List;
@@ -69,4 +70,28 @@ public interface WebServerPersistenceService {
     boolean checkWebServerResourceFileName(String groupName, String webServerName, String fileName);
 
     String updateResourceMetaData(String webServerName, String resourceName, String metaData);
+
+    /*** methods that uses JPA entities ***/
+
+    /**
+     * Creates a web server
+     * @param jpaWebServer the JPA web server entity
+     * @return the new web server
+     */
+    JpaWebServer createWebServer(JpaWebServer jpaWebServer);
+
+    /**
+     * Updates a web server
+     * @param jpaWebServer the JPA web server entity
+     * @return the update web server
+     */
+    JpaWebServer updateWebServer(JpaWebServer jpaWebServer);
+
+    /**
+     * Find a web server
+     * @param id
+     * @return web server entity
+     */
+    JpaWebServer findWebServer(Long id);
+
 }

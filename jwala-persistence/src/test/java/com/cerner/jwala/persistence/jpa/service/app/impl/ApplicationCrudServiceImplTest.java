@@ -6,6 +6,7 @@ import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.exception.BadRequestException;
@@ -31,7 +32,6 @@ import com.cerner.jwala.persistence.jpa.service.impl.ApplicationCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.GroupJvmRelationshipServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.JvmCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.impl.JpaGroupPersistenceServiceImpl;
@@ -241,8 +241,9 @@ public class ApplicationCrudServiceImplTest {
 
     @Test(expected = NonRetrievableResourceTemplateContentException.class)
     public void testGetResourceTemplateNonExistent() {
-        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testGetResourceTemplateJvm", "testHost", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
-        JpaJvm jvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
+        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testGetResourceTemplateJvm", "testHost", 9100, 9101,
+                9102, -1, 9103, new Path("./"), "", null, null, null, null);
+        JpaJvm jvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia, jpaMedia);
         applicationCrudService.getResourceTemplate("testNoAppExists", "hct.xml", jvm);
     }
 
@@ -252,10 +253,11 @@ public class ApplicationCrudServiceImplTest {
         Scanner scanner = new Scanner(data).useDelimiter("\\A");
         String templateContent = scanner.hasNext() ? scanner.next() : "";
 
-        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "testHost", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
+        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "testHost", 9100, 9101, 9102, -1, 9103,
+                new Path("./"), "", null, null, null, null);
         CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest(new Identifier<Group>(jpaGroup.getId()), "testAppResourceTemplateName", "/hctTest", true, true, false);
         Group group = new Group(new Identifier<Group>(jpaGroup.getId()), jpaGroup.getName());
-        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
+        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia, jpaMedia);
         JpaApplication jpaApp = applicationCrudService.createApplication(createApplicationRequest, jpaGroup);
 
         List<Application> appsForJpaGroup = applicationCrudService.findApplicationsBelongingTo(new Identifier<Group>(jpaGroup.getId()));
@@ -286,8 +288,9 @@ public class ApplicationCrudServiceImplTest {
 
     @Test(expected = ResourceTemplateUpdateException.class)
     public void testUpdateResourceTemplate() {
-        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "testHost", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
-        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
+        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "testHost", 9100, 9101, 9102, -1, 9103,
+                new Path("./"), "", null, null, null, null);
+        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia, jpaMedia);
         applicationCrudService.updateResourceTemplate("noApp", "noTemplate", "doesn't matter", jpaJvm);
     }
 
@@ -317,8 +320,9 @@ public class ApplicationCrudServiceImplTest {
 
     @Test
     public void testFindApplicationBelongingToJvm() {
-        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testAppJvm", "theHost", 9100, 9101, 9102, -1, 9103, new Path("."), "", null, null, null);
-        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
+        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testAppJvm", "theHost", 9100, 9101, 9102, -1, 9103,
+                new Path("."), "", null, null, null, null);
+        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia, jpaMedia);
 
         List<Application> apps = applicationCrudService.findApplicationsBelongingToJvm(new Identifier<Jvm>(jpaJvm.getId()));
         assertEquals(0, apps.size());
@@ -329,8 +333,9 @@ public class ApplicationCrudServiceImplTest {
         CreateApplicationRequest createTestApp = new CreateApplicationRequest(new Identifier<Group>(jpaGroup.getId()), "testAppName", "/testApp", true, true, false);
         JpaApplication jpaApp = applicationCrudService.createApplication(createTestApp, jpaGroup);
 
-        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "hostName", 9100, 9101, 9102, -1, 9103, new Path("./"), "", null, null, null);
-        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia);
+        CreateJvmRequest createJvmRequest = new CreateJvmRequest("testJvmName", "hostName", 9100, 9101, 9102, -1, 9103,
+                new Path("./"), "", null, null, null, null);
+        JpaJvm jpaJvm = jvmCrudService.createJvm(createJvmRequest, jpaMedia, jpaMedia);
 
         List<JpaJvm> jvmList = new ArrayList<>();
         jvmList.add(jpaJvm);

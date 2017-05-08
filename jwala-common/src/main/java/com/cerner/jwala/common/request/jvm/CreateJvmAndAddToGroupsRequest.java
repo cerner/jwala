@@ -34,23 +34,10 @@ public class CreateJvmAndAddToGroupsRequest implements Serializable, Request {
                                           final String theSystemProperties,
                                           final String theUserName,
                                           final String theEncryptedPassword,
-                                          final Identifier<Media> theJdkMediaId/*,
-                                          final Identifier<Media> theTomcatMediaId*/) {
-
-        createCommand = new CreateJvmRequest(theName,
-                theHostName,
-                theHttpPort,
-                theHttpsPort,
-                theRedirectPort,
-                theShutdownPort,
-                theAjpPort,
-                theStatusPath,
-                theSystemProperties,
-                theUserName,
-                theEncryptedPassword,
-                theJdkMediaId/*,
-                theTomcatMediaId*/
-                );
+                                          final Identifier<Media> theJdkMediaId,
+                                          final Identifier<Media> theTomcatMediaId) {
+        createCommand = new CreateJvmRequest(theName, theHostName, theHttpPort, theHttpsPort, theRedirectPort, theShutdownPort,
+                theAjpPort, theStatusPath, theSystemProperties, theUserName, theEncryptedPassword, theJdkMediaId, theTomcatMediaId);
         groups = Collections.unmodifiableSet(new HashSet<>(theGroups));
     }
 

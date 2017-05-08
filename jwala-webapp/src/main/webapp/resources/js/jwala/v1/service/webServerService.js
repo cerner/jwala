@@ -25,7 +25,7 @@ var webServerService = {
         json["groupIds"] = groupIdArray;
         return "[" + JSON.stringify(json) + "]";
     },
-	insertNewWebServer : function(webserverName, groupIds, hostName, portNumber, httpsPort, statusPath,
+	insertNewWebServer : function(webserverName, groupIds, hostName, portNumber, httpsPort, statusPath, apacheHttpdMediaId,
 	                        successCallback, errorCallback) {
 		return serviceFoundation.post("v1.0/webservers",
 		                              "json",
@@ -34,7 +34,8 @@ var webServerService = {
 		                                                hostName:hostName,
 		                                                portNumber:portNumber,
 		                                                httpsPort:httpsPort,
-                                                        statusPath:statusPath}]),
+                                                        statusPath:statusPath,
+                                                        apacheHttpdMediaId:apacheHttpdMediaId}]),
 		                                                successCallback,
 		                                                errorCallback);
 	},
