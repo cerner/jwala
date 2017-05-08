@@ -47,7 +47,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class WebServerServiceImpl implements WebServerService {
@@ -132,7 +131,9 @@ public class WebServerServiceImpl implements WebServerService {
 
         // associate the web server to the group
         for (JpaGroup wsGroup : jpaGroupList) {
-            wsGroup.setWebServers(Collections.singletonList(createdJpaWebServer));
+            final List<JpaWebServer> webServers = wsGroup.getWebServers();
+            webServers.add(createdJpaWebServer);
+            wsGroup.setWebServers(webServers);
         }
 
         inMemoryStateManagerService.put(new Identifier<>(createdJpaWebServer.getId()), createdJpaWebServer.getState());
@@ -225,6 +226,14 @@ public class WebServerServiceImpl implements WebServerService {
         jpaWebServer.setApacheHttpdMedia(jpaApacheHttpdMedia);
 
         final JpaWebServer updatedWebServer = webServerPersistenceService.updateWebServer(jpaWebServer);
+
+        // associate the web server to the group
+        for (JpaGroup wsGroup : jpaGroupList) {
+            final List<JpaWebServer> webServers = wsGroup.getWebServers();
+            webServers.add(updatedWebServer);
+            wsGroup.setWebServers(webServers);
+        }
+
         return new JpaWebServerBuilder(updatedWebServer).build();
     }
 

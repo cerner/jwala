@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
@@ -60,7 +59,6 @@ public class WebServerCommandFactory {
 
     @Autowired
     private ResourceContentGeneratorService resourceContentGeneratorService;
-
     /**
      * @param webserver the web server target for the command
      * @param operation the operation to be executed
@@ -109,15 +107,7 @@ public class WebServerCommandFactory {
             final String installServiceWsScriptName = INSTALL_WS_SERVICE_SCRIPT_NAME.getValue();
             checkExistsAndCopy(webServer, installServiceWsScriptName);
 
-            Path remoteDir = webServer.getApacheHttpdMedia().getRemoteDir();
-            final String installPath = resourceContentGeneratorService.generateContent(
-                    webServer.getApacheHttpdMedia().getType().getDisplayName(),
-                    remoteDir.toString(),
-                    null,
-                    webServer,
-                    ResourceGeneratorType.METADATA);
-
-            final String apacheHttpdDir = installPath + "/" + webServer.getApacheHttpdMedia().getMediaDir().normalize().toString();
+            final String apacheHttpdDir = webServer.getApacheHttpdMedia().getRemoteDir().toString() + "/" + webServer.getApacheHttpdMedia().getMediaDir().normalize().toString();
 
             return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(webServer),
                     getShellCommand(installServiceWsScriptName, webServer, getHttpdConfPath(webServer), apacheHttpdDir)));

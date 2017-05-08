@@ -2,10 +2,8 @@ package com.cerner.jwala.service.binarydistribution.impl;
 
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
-import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
-import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
@@ -15,8 +13,6 @@ import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
-import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
-import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +22,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
@@ -53,21 +48,11 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     @Autowired
     private HistoryFacadeService historyFacadeService;
 
-    @Autowired
-    private ResourceContentGeneratorService resourceContentGeneratorService;
-
     @Override
-    public <T> void distributeMedia(final T jvmOrWebServer, final String hostName, Group[] groups, final Media media) {
-        String jvmOrWebServerName;
-        if (jvmOrWebServer instanceof Jvm) {
-            jvmOrWebServerName = ((Jvm) jvmOrWebServer).getJvmName();
-        } else {
-            jvmOrWebServerName = ((WebServer)jvmOrWebServer).getName();
-        }
+    public void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media) {
         LOGGER.info("Deploying {}'s {} to {}", jvmOrWebServerName,  media.getName(), hostName);
 
-        Path remoteDir = media.getRemoteDir();
-        final String installPath = resourceContentGeneratorService.generateContent(media.getType().getDisplayName(), remoteDir.toString(), null, jvmOrWebServer, ResourceGeneratorType.METADATA);
+        final String installPath = media.getRemoteDir().toString();
         if (StringUtils.isEmpty(installPath)) {
             throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }

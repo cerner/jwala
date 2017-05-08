@@ -530,7 +530,7 @@ public class JvmServiceImpl implements JvmService {
         try {
             binaryDistributionLockManager.writeLock(hostName);
             binaryDistributionService.distributeUnzip(hostName);
-            binaryDistributionService.distributeMedia(jvm, jvm.getHostName(), jvm.getGroups()
+            binaryDistributionService.distributeMedia(jvm.getJvmName(), jvm.getHostName(), jvm.getGroups()
                     .toArray(new Group[jvm.getGroups().size()]), jvm.getJdkMedia());
         } finally {
             binaryDistributionLockManager.writeUnlock(hostName);

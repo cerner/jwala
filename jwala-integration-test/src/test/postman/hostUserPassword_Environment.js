@@ -12,6 +12,7 @@ var jdkUrl = args[4];
 var tomcatUrl = args[5];
 var apacheHttpdUrl = args[6];
 var binariesDest = args[7];
+var mediaRemoteDir = args[8];
 
 var download = function(url, dest, cb) {
   var file = fs.createWriteStream(dest);
@@ -113,6 +114,13 @@ var runPostman = function() {
       "key": "apacheHttpdMediaSrc",
       "type": "text",
       "value": apacheHttpdDest,
+      "enabled": true,
+      "warning": ""
+    });
+    myEnvironment.values.push({
+      "key": "mediaRemoteDir",
+      "type": "text",
+      "value": mediaRemoteDir,
       "enabled": true,
       "warning": ""
     });

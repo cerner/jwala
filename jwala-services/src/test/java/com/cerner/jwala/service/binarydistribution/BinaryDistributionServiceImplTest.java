@@ -1,12 +1,10 @@
 package com.cerner.jwala.service.binarydistribution;
 
 import com.cerner.jwala.common.domain.model.group.Group;
-import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
-import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecCommand;
@@ -22,7 +20,6 @@ import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -225,11 +222,7 @@ public class BinaryDistributionServiceImplTest {
         final Group[] groupArray = new Group[1];
         final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
         final CommandOutput unsuccessfulCommandOutout = new CommandOutput(new ExecReturnCode(1), "", "");
-        final Jvm mockJvm = mock(Jvm.class);
         final Media mockJdkMedia = mock(Media.class);
-        when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
-        when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJvm.getJvmName()).thenReturn("jvm1");
         when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getLocalPath()).thenReturn(Paths.get("anyLocalPath"));
         when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
@@ -242,7 +235,7 @@ public class BinaryDistributionServiceImplTest {
 
         when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("anywhere");
 
-        binaryDistributionService.distributeMedia(mockJvm, hostname, groupArray, mockJdkMedia);
+        binaryDistributionService.distributeMedia("jvm1", hostname, groupArray, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService).secureCopyFile(eq(hostname), anyString(), anyString());
     }
 
@@ -250,11 +243,7 @@ public class BinaryDistributionServiceImplTest {
     public void testDistributeJdkOnAnExistingOne() throws CommandFailureException {
         final String hostname = "localhost";
         final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
-        final Jvm mockJvm = mock(Jvm.class);
         final Media mockJdkMedia = mock(Media.class);
-        when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
-        when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJvm.getJvmName()).thenReturn("jvm1");
         when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
@@ -262,7 +251,7 @@ public class BinaryDistributionServiceImplTest {
 
         when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("anywhere");
 
-        binaryDistributionService.distributeMedia(mockJvm, hostname, null, mockJdkMedia);
+        binaryDistributionService.distributeMedia("jvm1", hostname, null, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService, never()).secureCopyFile(eq(hostname), anyString(), anyString());
     }
 
@@ -289,12 +278,9 @@ public class BinaryDistributionServiceImplTest {
                 BinaryDistributionServiceImpl.EXCLUDED_FILES))
                 .thenReturn(success);
 
-        WebServer mockWebServer = mock(WebServer.class);
-        when(mockWebServer.getName()).thenReturn("webserver1");
-
         when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("c:\\ctp");
 
-        binaryDistributionService.distributeMedia(mockWebServer, "localhost", groupArray, media);
+        binaryDistributionService.distributeMedia("webserver1", "localhost", groupArray, media);
         verify(Config.historyFacadeService).write(eq("localhost"), anyCollection(), eq("Distribute Apache HTTPD 2.4.20"),
                 eq(EventType.SYSTEM_INFO), anyString());
     }
