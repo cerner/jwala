@@ -12,7 +12,7 @@ public class JvmNameRuleTest {
 
     @Test
     public void testValidNames() {
-        final String[] validNames = {"abc", "def", "_-", "123j .", "64MycharacterNameIsValidNameShouldPassTest1234567891011213141516"};
+        final String[] validNames = {"abc", "def", "_-", "123j ."};
 
         for (final String name : validNames) {
             final JvmNameRule rule = new JvmNameRule(name);
@@ -23,7 +23,7 @@ public class JvmNameRuleTest {
 
     @Test
     public void testInvalidNames() {
-        final String[] invalidNames = {"", "    ", null, "65charactersNameHereCheckforInvalidity123456789101112131415161718"};
+        final String[] invalidNames = {"", "    ", null};
 
         for (final String name : invalidNames) {
             final JvmNameRule rule = new JvmNameRule(name);
