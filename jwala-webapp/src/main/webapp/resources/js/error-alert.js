@@ -50,7 +50,7 @@ $.extend({ errorAlert: function (message, dlgTitle, modal, content) {
                 if (!Array.isArray(content)) {
                     details = new Array(content.length);
                     for (let key in content) {
-                        details.push(content[key]);
+                        details.push(content[key] +"<br/>");
                     }
                 }
                 content = details;
