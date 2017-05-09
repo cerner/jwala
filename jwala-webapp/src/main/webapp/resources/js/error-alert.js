@@ -46,13 +46,13 @@ $.extend({ errorAlert: function (message, dlgTitle, modal, content) {
 
             var detailsHtml = "";
             if (content && content !== "") {
-            let details = content;
-                 if(!Array.isArray(content)){
-                 details = new Array(content.length);
-                 for(let key in content){
-                 details.push(content[key]);
-                 }
-                 }
+                let details = content;
+                if (!Array.isArray(content)) {
+                    details = new Array(content.length);
+                    for (let key in content) {
+                        details.push(content[key]);
+                    }
+                }
                 content = details;
                 var showErrorDetails = "$('.showErrorDetails').hide();$('.hideErrorDetails').show();$('.stackTrace').show()";
                 var hideErrorDetails = "$('.showErrorDetails').show();$('.hideErrorDetails').hide();$('.stackTrace').hide()";
