@@ -28,9 +28,9 @@ public class JvmNameRule extends ValidNameRule {
     @Override
     protected String getMessage() {
         return name != null && name.length() > MAX_LENGTH ? "Length of JVM should not exceed " + MAX_LENGTH + " " +
-                "characters, however JVM_ROUTE_MAX_LENGTH property can be overriden to allow for longer length." :
+                "characters, however " + PropertyKeys.JVM_ROUTE_MAX_LENGTH.getPropertyName() + " property can be overriden to allow for longer length." :
                 "Invalid Jvm Name : \"" +
-                name + "\"";
+                        name + "\"";
     }
 
 }
