@@ -9,7 +9,7 @@ import com.cerner.jwala.common.rule.ValidNameRule;
 
 public class JvmNameRule extends ValidNameRule {
 
-    public final int MAX_LENGTH = ApplicationProperties.getAsInteger(PropertyKeys.MOD_PROXY_OVERRIDE, 64);
+    public final int MAX_LENGTH = ApplicationProperties.getAsInteger(PropertyKeys.JVM_ROUTE_MAX_LENGTH, 64);
 
     public JvmNameRule(final String theName) {
         super(theName);
@@ -27,7 +27,10 @@ public class JvmNameRule extends ValidNameRule {
 
     @Override
     protected String getMessage() {
-        return name != null && name.length() > MAX_LENGTH ? "Length of JVM should not exceed " + MAX_LENGTH + " characters" : "Invalid Jvm Name : \"" + name + "\"";
+        return name != null && name.length() > MAX_LENGTH ? "Length of JVM should not exceed " + MAX_LENGTH + " " +
+                "characters, however JVM_ROUTE_MAX_LENGTH property can be overriden to allow for longer length." :
+                "Invalid Jvm Name : \"" +
+                name + "\"";
     }
 
 }
