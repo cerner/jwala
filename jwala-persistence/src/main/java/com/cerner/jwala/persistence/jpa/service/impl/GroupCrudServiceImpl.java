@@ -74,7 +74,7 @@ public class GroupCrudServiceImpl extends AbstractCrudServiceImpl<JpaGroup> impl
     @SuppressWarnings("unchecked")
     @Override
     public JpaGroup getGroup(final String name) throws NotFoundException {
-        final Query query = entityManager.createQuery("SELECT g FROM JpaGroup g WHERE g.name = :groupName");
+        final Query query = entityManager.createQuery("SELECT g FROM JpaGroup g WHERE lower(g.name) = lower(:groupName)");
         query.setParameter("groupName", name);
         List<JpaGroup> jpaGroups = query.getResultList();
         if (jpaGroups == null || jpaGroups.isEmpty()) {
