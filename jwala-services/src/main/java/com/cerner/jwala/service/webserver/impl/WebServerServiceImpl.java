@@ -227,14 +227,43 @@ public class WebServerServiceImpl implements WebServerService {
 
         final JpaWebServer updatedWebServer = webServerPersistenceService.updateWebServer(jpaWebServer);
 
-        // associate the web server to the group
-        for (JpaGroup wsGroup : jpaGroupList) {
-            final List<JpaWebServer> webServers = wsGroup.getWebServers();
-            webServers.add(updatedWebServer);
-            wsGroup.setWebServers(webServers);
-        }
+        updateWebServerGroups(updatedWebServer);
 
         return new JpaWebServerBuilder(updatedWebServer).build();
+    }
+
+    private void updateWebServerGroups(final JpaWebServer updatedWebServer) {
+
+        // get all the group IDs in order to get all the groups as JPA objects
+        List<Group> groups = groupPersistenceService.getGroups();
+        ArrayList<Long> groupIds = new ArrayList<>();
+        for (Group group : groups) {
+            groupIds.add(group.getId().getId());
+        }
+
+        // get all the groups as JPA objects
+        List<JpaGroup> jpaAllGroups = groupPersistenceService.findGroups(groupIds);
+        final List<JpaGroup> jpaWsGroups = updatedWebServer.getGroups();
+
+        // add the web servers to the group
+        for (JpaGroup jpaGroup : jpaWsGroups) {
+            List<JpaWebServer> webServers = jpaGroup.getWebServers();
+            if (!webServers.contains(updatedWebServer)) {
+                webServers.add(updatedWebServer);
+                jpaGroup.setWebServers(webServers);
+            }
+        }
+
+        // remove any web servers from the rest of the groups
+        for (JpaGroup jpaGroup : jpaAllGroups) {
+            if (!jpaWsGroups.contains(jpaGroup)) {
+                List<JpaWebServer> webServers = jpaGroup.getWebServers();
+                if (webServers.contains(updatedWebServer)) {
+                    webServers.remove(updatedWebServer);
+                    jpaGroup.setWebServers(webServers);
+                }
+            }
+        }
     }
 
     private void validateUpdateWebServer(UpdateWebServerRequest anUpdateWebServerCommand) {
@@ -428,9 +457,9 @@ public class WebServerServiceImpl implements WebServerService {
         final String metaDataStr = resourceService.getResourceContent(resourceIdentifier).getMetaData();
         ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceIdentifier.resourceName, webServer, metaDataStr);
         if (isStarted(webServer) && !metaData.isHotDeploy()) {
-                String errorMsg = MessageFormat.format("The target Web Server {0} must be stopped or the resource must be configured to be hotDeploy=true before attempting to deploy the resource {1}", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
-                LOGGER.error(errorMsg);
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMsg);
+            String errorMsg = MessageFormat.format("The target Web Server {0} must be stopped or the resource must be configured to be hotDeploy=true before attempting to deploy the resource {1}", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
+            LOGGER.error(errorMsg);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMsg);
         }
         LOGGER.info("Web Server {} is started, but resource {} is configured to be hot deployed. Continuing with deploy ...", resourceIdentifier.webServerName, resourceIdentifier.resourceName);
     }
