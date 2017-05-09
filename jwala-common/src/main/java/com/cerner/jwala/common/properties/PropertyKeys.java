@@ -32,7 +32,8 @@ public enum PropertyKeys {
     PORT("ssh.port"),
     PRIVATE_KEY_FILE("ssh.privateKeyFile"),
     KNOWN_HOSTS_FILE("ssh.knownHostsFile"),
-    ENCRYPTED_PASSWORD("ssh.encrypted.password");
+    ENCRYPTED_PASSWORD("ssh.encrypted.password"),
+    JVM_ROUTE_MAX_LENGTH("jvm.route.max.length");
 
     private String propertyName;
 
