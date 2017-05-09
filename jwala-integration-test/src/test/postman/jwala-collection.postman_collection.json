@@ -5631,20 +5631,6 @@
 					"response": []
 				},
 				{
-					"name": "delete media",
-					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media",
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "download external properties error No external properties uploaded",
 					"event": [
 						{
@@ -5704,7 +5690,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm-delete\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatVersion\":\"\"}"
+							"raw": "{\"jvmName\":\"Postman-test-jvm-delete\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
 						"description": ""
 					},
@@ -5906,6 +5892,20 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/webservers/{{WebserverId}}?hardDelete=true",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete media",
+					"request": {
+						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media",
 						"method": "DELETE",
 						"header": [],
 						"body": {
