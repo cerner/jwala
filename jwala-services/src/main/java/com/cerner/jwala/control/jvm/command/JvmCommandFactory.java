@@ -27,7 +27,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.cerner.jwala.control.AemControl.Properties.*;
 
@@ -254,12 +256,11 @@ public class JvmCommandFactory {
         }
         final String decryptedPassword = encryptedPassword != null && encryptedPassword.length() > 0 ? new DecryptPassword().decrypt(encryptedPassword) : "";
 
-        return new ShellCommand(
-                getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
-                jvm.getJvmName(),
-                remotePathsInstancesDir,
-                jvm.getTomcatMedia().getMediaDir().toString(),
-                quotedUsername, decryptedPassword);
+        List<String> formatStrings = Arrays.asList(getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
+                jvm.getJvmName(), remotePathsInstancesDir, jvm.getTomcatMedia().getMediaDir().toString());
+        List<String> unformatStrings = Arrays.asList(quotedUsername, decryptedPassword);
+
+        return new ExecCommand(formatStrings, unformatStrings);
     }
 
     private ExecCommand getExecCommandForDeleteService(Jvm jvm) {
