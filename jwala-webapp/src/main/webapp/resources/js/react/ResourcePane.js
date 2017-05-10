@@ -166,7 +166,7 @@ var ResourcePane = React.createClass({
         }
     },
     displayDeployErrorMessage: function(response){
-        $.errorAlert(ResourcePane.parseDetailedErrorMsg(response, ResourcePane.DEFAULT_DEPLOY_ERR_MSG), "", undefined, response.responseJSON.content);
+        $.errorAlert(ResourcePane.parseDetailedErrorMsg(response, ResourcePane.DEFAULT_DEPLOY_ERR_MSG), "");
     },
     deployResourceCallback: function() {
         var data = this.state.data;

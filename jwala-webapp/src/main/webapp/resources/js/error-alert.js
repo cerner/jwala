@@ -45,15 +45,7 @@ $.extend({ errorAlert: function (message, dlgTitle, modal, content) {
             }
 
             var detailsHtml = "";
-            if (content && content !== "") {
-                let details = content;
-                if (!Array.isArray(content)) {
-                    details = new Array(content.length);
-                    for (let key in content) {
-                        details.push(content[key] +"<br/>");
-                    }
-                }
-                content = details;
+            if (content && content !== "" && Array.isArray(content)) {
                 var showErrorDetails = "$('.showErrorDetails').hide();$('.hideErrorDetails').show();$('.stackTrace').show()";
                 var hideErrorDetails = "$('.showErrorDetails').show();$('.hideErrorDetails').hide();$('.stackTrace').hide()";
                 detailsHtml = "<br><br><div style='width:100%;text-align:left'><button class='showErrorDetails' onClick="
