@@ -12,6 +12,7 @@ import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.ApplicationException;
 import com.cerner.jwala.common.exception.InternalErrorException;
+import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.*;
@@ -34,6 +35,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
@@ -65,8 +67,15 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group createGroup(final CreateGroupRequest createGroupRequest,
                              final User aCreatingUser) {
-
         createGroupRequest.validate();
+        try {
+            groupPersistenceService.getGroup(createGroupRequest.getGroupName());
+            String message = MessageFormat.format("Group Name already exists: {0} ", createGroupRequest.getGroupName());
+            LOGGER.error(message);
+            throw new EntityExistsException(message);
+        } catch (NotFoundException e) {
+            LOGGER.debug("No group name conflict, ignoring not found exception for creating group ", e);
+        }
 
         return groupPersistenceService.createGroup(createGroupRequest);
     }
@@ -113,6 +122,16 @@ public class GroupServiceImpl implements GroupService {
     public Group updateGroup(final UpdateGroupRequest anUpdateGroupRequest,
                              final User anUpdatingUser) {
         anUpdateGroupRequest.validate();
+        Group orginalGroup = getGroup(anUpdateGroupRequest.getId());
+        try {
+            if (!orginalGroup.getName().equalsIgnoreCase(anUpdateGroupRequest.getNewName()) && null != groupPersistenceService.getGroup(anUpdateGroupRequest.getNewName())) {
+                String message = MessageFormat.format("Group Name already exists: {0}", anUpdateGroupRequest.getNewName());
+                LOGGER.error(message);
+                throw new EntityExistsException(message);
+            }
+        } catch (NotFoundException e) {
+            LOGGER.debug("No group name conflict, ignoring not found exception for creating group ", e);
+        }
         return groupPersistenceService.updateGroup(anUpdateGroupRequest);
     }
 

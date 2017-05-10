@@ -27,7 +27,8 @@ public enum PropertyKeys {
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
     SCRIPTS_PATH("commands.scripts-path"),
     TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
-    USER_NAME("ssh.userName");
+    USER_NAME("ssh.userName"),
+    JVM_ROUTE_MAX_LENGTH("jvm.route.max.length");
 
     private String propertyName;
 
