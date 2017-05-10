@@ -22,6 +22,7 @@ import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,12 +115,16 @@ public class MediaServiceImpl implements MediaService {
      */
     private void checkForJvmAssociation(String name) {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
+        List<String> existingAssosiations = new ArrayList<>();
         for (Jvm jvm : jvmList) {
             if (jvm.getJdkMedia() != null && name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
-                final String msg = MessageFormat.format("The media {0} cannot be deleted because it is associated with a JVM or JVMs", name);
-                LOGGER.error(msg);
-                throw new MediaServiceException(msg);
+                existingAssosiations.add(jvm.getJvmName());
             }
+        }
+        if (!existingAssosiations.isEmpty()) {
+            final String msg = MessageFormat.format("The media {0} cannot be deleted because it is still associated with following JVMs {1}", name, existingAssosiations);
+            LOGGER.error(msg);
+            throw new MediaServiceException(msg);
         }
     }
 
