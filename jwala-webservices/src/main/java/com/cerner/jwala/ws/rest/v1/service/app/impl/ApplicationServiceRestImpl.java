@@ -34,8 +34,6 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
     private ApplicationService service;
     private ResourceService resourceService;
     private final GroupService groupService;
-    @Autowired
-    private HistoryFacadeService historyFacadeService;
 
     public ApplicationServiceRestImpl(ApplicationService applicationService,
                                       ResourceService resourceService,

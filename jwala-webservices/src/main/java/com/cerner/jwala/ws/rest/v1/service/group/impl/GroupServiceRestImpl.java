@@ -700,8 +700,8 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             // cannot call getTokenizedMetaData here - the app resource could be associated to a JVM and use JVM attributes
             metaData = resourceService.getMetaData(groupAppMetaData);
             if (metaData.getEntity().getDeployToJvms()) {
-                // deploy to all jvms in group
-                historyFacadeService.write(hostName, group, "Deploying " + fileName + " to all JVMS in the group ", EventType.USER_ACTION_INFO, aUser.getUser().getId());
+                historyFacadeService.write(hostName, group, "Deploying " + fileName + " to "+hostName, EventType
+                        .USER_ACTION_INFO, aUser.getUser().getId());
                 performGroupAppDeployToJvms(groupName, fileName, aUser, group, appName, applicationServiceRest, hostName, metaData.isHotDeploy());
             } else {
                 ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
