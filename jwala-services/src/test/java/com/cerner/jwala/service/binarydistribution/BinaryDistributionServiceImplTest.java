@@ -1,7 +1,9 @@
 package com.cerner.jwala.service.binarydistribution;
 
-import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.media.Media;
+import com.cerner.jwala.common.domain.model.media.MediaType;
+import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
@@ -10,12 +12,14 @@ import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.impl.BinaryDistributionServiceImpl;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
 import static org.mockito.Matchers.anyString;
@@ -201,7 +206,7 @@ public class BinaryDistributionServiceImplTest {
     }
 
     @Test(expected = InternalErrorException.class)
-    public void testChangeFileModeException() throws CommandFailureException{
+    public void testChangeFileModeException() throws CommandFailureException {
         final String hostname = "localhost";
         final String mode = "testMode";
         final String targetDir = "~/test";
@@ -212,23 +217,25 @@ public class BinaryDistributionServiceImplTest {
     }
 
     @Test
-    @Ignore
     public void testDistributeJdk() throws CommandFailureException {
         final String hostname = "localhost";
+        final Group[] groupArray = new Group[1];
         final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
         final CommandOutput unsuccessfulCommandOutout = new CommandOutput(new ExecReturnCode(1), "", "");
-        final Jvm mockJvm = mock(Jvm.class);
         final Media mockJdkMedia = mock(Media.class);
-        when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
-        when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJdkMedia.getRemoteHostPath()).thenReturn("anywhere");
-        when(mockJdkMedia.getMediaDir()).thenReturn("anywhere");
+        when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getLocalPath()).thenReturn(Paths.get("anyLocalPath"));
+        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(unsuccessfulCommandOutout);
         when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
         when(Config.mockBinaryDistributionControlService.secureCopyFile(eq(hostname), anyString(), anyString())).thenReturn(successfulCommandOutput);
         when(Config.mockBinaryDistributionControlService.unzipBinary(eq(hostname), anyString(), anyString(), anyString())).thenReturn(successfulCommandOutput);
         when(Config.mockBinaryDistributionControlService.deleteBinary(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
-        binaryDistributionService.distributeJdk(mockJvm);
+
+        when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("anywhere");
+
+        binaryDistributionService.distributeMedia("jvm1", hostname, groupArray, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService).secureCopyFile(eq(hostname), anyString(), anyString());
     }
 
@@ -236,32 +243,46 @@ public class BinaryDistributionServiceImplTest {
     public void testDistributeJdkOnAnExistingOne() throws CommandFailureException {
         final String hostname = "localhost";
         final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
-        final Jvm mockJvm = mock(Jvm.class);
         final Media mockJdkMedia = mock(Media.class);
-        when(mockJvm.getJdkMedia()).thenReturn(mockJdkMedia);
-        when(mockJvm.getHostName()).thenReturn(hostname);
-        when(mockJdkMedia.getRemoteHostPath()).thenReturn("anywhere");
-        when(mockJdkMedia.getMediaDir()).thenReturn("anywhere");
+        when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(successfulCommandOutput);
-        binaryDistributionService.distributeJdk(mockJvm);
+
+        when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("anywhere");
+
+        binaryDistributionService.distributeMedia("jvm1", hostname, null, mockJdkMedia);
         verify(Config.mockBinaryDistributionControlService, never()).secureCopyFile(eq(hostname), anyString(), anyString());
     }
 
     @Test
-    @Ignore
-    public void testDistributeWebServer() throws CommandFailureException {
-        final File apache = new File(ApplicationProperties.get("remote.paths.apache.httpd"));
-        final String webServerDir = apache.getName();
-        final String webServerBinaryDeployDir = apache.getParentFile().getAbsolutePath().replaceAll("\\\\", "/");
-        final String hostname = "localhost";
-        final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
-        when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.secureCopyFile(eq(hostname), anyString(), anyString())).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.deleteBinary(eq(hostname), eq(webServerBinaryDeployDir + "/" + webServerDir + ".zip"))).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.unzipBinary(eq(hostname), anyString(), anyString(), anyString())).thenReturn(successfulCommandOutput);
-        when(Config.mockBinaryDistributionControlService.deleteBinary(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
-        binaryDistributionService.distributeWebServer(hostname);
-        verify(Config.mockBinaryDistributionControlService).secureCopyFile(eq(hostname), anyString(), anyString());
+    @SuppressWarnings("unchecked")
+    public void testDistributeMedia() {
+        final Media media = new Media();
+        media.setName("Apache HTTPD 2.4.20");
+        media.setRemoteDir(Paths.get("c:\\ctp"));
+        media.setMediaDir(Paths.get("apache-httpd-2.4.20"));
+        media.setLocalPath(Paths.get("c:\\downloads\\apache-httpd-2.4.20.zip"));
+        media.setType(MediaType.APACHE);
+        final Group[] groupArray = new Group[1];
+        final CommandOutput success = new CommandOutput(new ExecReturnCode(0), null, null);
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "/apache-httpd-2.4.20"))
+                .thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", "c:\\ctp"))
+                .thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "c:\\ctp/apache-httpd-2.4.20"))
+                .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
+        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:\\downloads\\apache-httpd-2.4.20.zip", "c:\\ctp"))
+                .thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:\\ctp/apache-httpd-2.4.20.zip", "c:\\ctp",
+                BinaryDistributionServiceImpl.EXCLUDED_FILES))
+                .thenReturn(success);
+
+        when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("c:\\ctp");
+
+        binaryDistributionService.distributeMedia("webserver1", "localhost", groupArray, media);
+        verify(Config.historyFacadeService).write(eq("localhost"), anyCollection(), eq("Distribute Apache HTTPD 2.4.20"),
+                eq(EventType.SYSTEM_INFO), anyString());
     }
 
     @Test
@@ -299,6 +320,8 @@ public class BinaryDistributionServiceImplTest {
         @Mock
         static RemoteCommandExecutorService mockRemoteCommandExecutorService;
 
+        @Mock
+        static ResourceContentGeneratorService mockResourceContentGeneratorService;
 
         public Config() {
             initMocks(this);
@@ -336,6 +359,13 @@ public class BinaryDistributionServiceImplTest {
         public static SshConfiguration getMockSshConfiguration() {
             return mockSshConfiguration;
         }
+
+        @Bean
+        public static ResourceContentGeneratorService getMockResourceContentGeneratorService() {
+            return mockResourceContentGeneratorService;
+        }
+
+        ;
 
     }
 

@@ -26,21 +26,8 @@
         json["groupIds"] = groupIdArray;
         return JSON.stringify(json);
     },
-    insertNewJvm: function(jvmName,
-                           groupIds,
-                           hostName,
-                           statusPath,
-                           sysProps,
-                           httpPort,
-                           httpsPort,
-                           redirectPort,
-                           shutdownPort,
-                           ajpPort,
-                           userName,
-                           encryptedPassword,
-                           jdkMediaId,
-                           tomcatVersion,
-                           successCallback,
+    insertNewJvm: function(jvmName, groupIds, hostName, statusPath, sysProps, httpPort, httpsPort, redirectPort,
+                           shutdownPort, ajpPort, userName, encryptedPassword, jdkMediaId, tomcatMediaId, successCallback,
                            errorCallback) {
         return serviceFoundation.post("v1.0/jvms",
                                       "json",
@@ -57,7 +44,7 @@
                                                       userName: userName,
                                                       encryptedPassword: encryptedPassword,
                                                       jdkMediaId: jdkMediaId,
-                                                      tomcatVersion: tomcatVersion}),
+                                                      tomcatMediaId: tomcatMediaId}),
                                                       successCallback,
                                                       errorCallback);
     },

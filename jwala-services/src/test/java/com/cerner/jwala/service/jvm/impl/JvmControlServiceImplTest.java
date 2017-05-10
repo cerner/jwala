@@ -30,6 +30,7 @@ import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlServ
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.jvm.exception.JvmControlServiceException;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -342,6 +343,9 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         @Mock
         static JvmPersistenceService mockJvmPersistenceService;
 
+        @Mock
+        static ResourceContentGeneratorService mockResourceContentGeneratorService;
+
         public Config() {
             initMocks(this);
         }
@@ -389,6 +393,11 @@ public class JvmControlServiceImplTest extends VerificationBehaviorSupport {
         @Bean
         public JvmPersistenceService getJvmPersistenceService() {
             return mockJvmPersistenceService;
+        }
+
+        @Bean
+        public ResourceContentGeneratorService getMockResourceContentGeneratorService() {
+            return mockResourceContentGeneratorService;
         }
 
         @Bean

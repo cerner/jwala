@@ -40,15 +40,8 @@ public abstract class AbstractWebServerPersistenceServiceTest {
         Group groupResult = groupPersistenceService.createGroup(createGroupRequest);
         groupCollection.add(groupResult);
 
-        WebServer webServer = new WebServer(
-                null,
-                groupCollection,
-                "test-ws",
-                "test-host",
-                80,
-                443,
-                new Path("./apache_pb.png"),
-                WebServerReachableState.WS_NEW);
+        WebServer webServer = new WebServer(null, groupCollection, "test-ws", "test-host", 80, 443, new Path("./apache_pb.png"),
+                WebServerReachableState.WS_NEW, null);
         WebServer result = webServerPersistenceService.createWebServer(webServer, "test-user");
 
         assertNotNull(result);
@@ -62,15 +55,9 @@ public abstract class AbstractWebServerPersistenceServiceTest {
     public void testUpdateWebServer() {
         testCreateWebServer();
         WebServer oldWebServer = webServerPersistenceService.findWebServerByName("test-ws");
-        WebServer updatedWebServer = new WebServer(
-                oldWebServer.getId(),
-                oldWebServer.getGroups(),
-                "test-ws-updated",
-                oldWebServer.getHost(),
-                oldWebServer.getPort(),
-                oldWebServer.getHttpsPort(),
-                oldWebServer.getStatusPath(),
-                oldWebServer.getState());
+        WebServer updatedWebServer = new WebServer(oldWebServer.getId(), oldWebServer.getGroups(), "test-ws-updated",
+                oldWebServer.getHost(), oldWebServer.getPort(), oldWebServer.getHttpsPort(), oldWebServer.getStatusPath(),
+                oldWebServer.getState(), oldWebServer.getApacheHttpdMedia());
         WebServer result = webServerPersistenceService.updateWebServer(updatedWebServer, "test-user");
         assertEquals(updatedWebServer, result);
         assertEquals(1, webServerPersistenceService.getWebServers().size());

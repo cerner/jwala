@@ -307,4 +307,11 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
         q.setParameter(JpaGroup.QUERY_PARAM_NAME, groupName);
         return q.getResultList();
     }
+
+    @Override
+    public List<JpaGroup> findGroups(List<Long> idList) {
+        final Query q = entityManager.createNamedQuery(JpaGroup.QUERY_GET_GROUPS_BY_ID_LIST);
+        q.setParameter(JpaGroup.QUERY_PARAM_ID_LIST, idList);
+        return q.getResultList();
+    }
 }
