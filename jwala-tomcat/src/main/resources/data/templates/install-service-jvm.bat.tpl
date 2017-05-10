@@ -4,7 +4,7 @@ set svc_username=%1
 set svc_password=%2
 
 SET JAVA_HOME=${jvm.javaHome}
-SET CATALINA_HOME=${vars['remote.paths.instances']}\\${jvm.jvmName}\\${vars['remote.tomcat.dir.name']}
+SET CATALINA_HOME=${vars['remote.paths.instances']}\\${jvm.jvmName}\\${jvm.tomcatMedia.mediaDir}
 SET TOMCAT_BIN_DIR=%CATALINA_HOME%\bin
 
 if exist %TOMCAT_BIN_DIR%\setenv.bat CALL %TOMCAT_BIN_DIR%\setenv.bat
@@ -26,7 +26,7 @@ IF "%JAVA_SERVICE_OPTS%" NEQ "" SET SERVICE_OPTS=++JvmOptions %JAVA_SERVICE_OPTS
 IF "%START_PATH%" NEQ "" SET SERVICE_OPTS=%SERVICE_OPTS% --StartPath %START_PATH%
 
 ECHO Update Java Options
-CMD /C  %TOMCAT_BIN_DIR%\\${vars['remote.tomcat.service.exe']} //US//${jvm.jvmName} --JavaHome ${jvm.javaHome} %SERVICE_OPTS% --StdOutput "" --StdError ""
+CMD /C  %TOMCAT_BIN_DIR%\\tomcat${jvm.tomcatMedia.mediaDir.toString().minus('apache-tomcat-').tokenize('.')[0]}.exe //US//${jvm.jvmName} --JavaHome ${jvm.javaHome} %SERVICE_OPTS% --StdOutput "" --StdError ""
 
 ECHO Change the service to automatically start
 SC CONFIG ${jvm.jvmName} start= auto

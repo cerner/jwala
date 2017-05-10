@@ -2,9 +2,9 @@ package com.cerner.jwala.service.media.impl;
 
 import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
@@ -71,7 +71,10 @@ public class MediaServiceImpl implements MediaService {
         final ObjectMapper objectMapper = new ObjectMapper();
         final JpaMedia media = objectMapper.convertValue(mediaDataMap, JpaMedia.class);
 
-        final String filename = (String) mediaFileDataMap.get("filename");
+        // filename can be the full path or just the name that is why we need to convert it to Paths
+        // to extract the base name e.g. c:/jdk.zip -> jdk.zip or jdk.zip -> jdk.zip
+        final String filename = Paths.get((String) mediaFileDataMap.get("filename")).getFileName().toString();
+
         final String dest = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);

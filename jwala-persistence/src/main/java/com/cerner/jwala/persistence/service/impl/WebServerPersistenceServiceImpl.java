@@ -8,6 +8,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaWebServerConfigTemplate;
 import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
 import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
@@ -97,15 +98,9 @@ public class WebServerPersistenceServiceImpl implements WebServerPersistenceServ
             // check for an existing httpd.conf
             WebServer webServer = uploadWebServerTemplateRequest.getWebServer();
             final String webServerName = webServer.getName();
-            WebServer updateWebServer = new WebServer(
-                    webServer.getId(),
-                    webServer.getGroups(),
-                    webServerName,
-                    webServer.getHost(),
-                    webServer.getPort(),
-                    webServer.getHttpsPort(),
-                    webServer.getStatusPath(),
-                    webServer.getState());
+            WebServer updateWebServer = new WebServer(webServer.getId(), webServer.getGroups(), webServerName,
+                    webServer.getHost(), webServer.getPort(), webServer.getHttpsPort(), webServer.getStatusPath(),
+                    webServer.getState(), webServer.getApacheHttpdMedia());
             updateWebServer(updateWebServer, userId);
         }
 
@@ -162,4 +157,20 @@ public class WebServerPersistenceServiceImpl implements WebServerPersistenceServ
     public boolean checkWebServerResourceFileName(final String groupName, final String webServerName, final String fileName) {
         return webServerCrudService.checkWebServerResourceFileName(groupName, webServerName, fileName);
     }
+
+    @Override
+    public JpaWebServer createWebServer(JpaWebServer jpaWebServer) {
+        return webServerCrudService.create(jpaWebServer);
+    }
+
+    @Override
+    public JpaWebServer updateWebServer(final JpaWebServer jpaWebServer) {
+        return webServerCrudService.update(jpaWebServer);
+    }
+
+    @Override
+    public JpaWebServer findWebServer(final Long id) {
+        return webServerCrudService.findById(id);
+    }
+
 }

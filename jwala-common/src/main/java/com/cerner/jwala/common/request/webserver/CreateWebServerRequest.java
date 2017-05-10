@@ -22,6 +22,7 @@ public class CreateWebServerRequest implements Serializable, Request {
     private final Integer httpsPort;
     private final Path statusPath;
     private final WebServerReachableState state;
+    private final String apacheHttpdMediaId;
 
     public CreateWebServerRequest(final Collection<Identifier<Group>> theGroupIds,
                                   final String theName,
@@ -29,7 +30,8 @@ public class CreateWebServerRequest implements Serializable, Request {
                                   final Integer thePort,
                                   final Integer theHttpsPort,
                                   final Path theStatusPath,
-                                  final WebServerReachableState state) {
+                                  final WebServerReachableState state,
+                                  final String apacheHttpdMediaId) {
         host = theHost;
         port = thePort;
         httpsPort = theHttpsPort;
@@ -37,6 +39,7 @@ public class CreateWebServerRequest implements Serializable, Request {
         groupIds = theGroupIds;
         this.state = state;
         statusPath = theStatusPath;
+        this.apacheHttpdMediaId = apacheHttpdMediaId;
     }
 
     public Collection<Identifier<Group>> getGroups() {
@@ -65,6 +68,10 @@ public class CreateWebServerRequest implements Serializable, Request {
 
     public WebServerReachableState getState() {
         return state;
+    }
+
+    public String getApacheHttpdMediaId() {
+        return apacheHttpdMediaId;
     }
 
     @Override

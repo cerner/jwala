@@ -2,11 +2,18 @@ package com.cerner.jwala.common.domain.model.webserver;
 
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.uri.UriBuilder;
+import com.cerner.jwala.common.exception.ApplicationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +28,9 @@ public class WebServer implements Serializable {
     private final Integer httpsPort;
     private final Path statusPath;
     private final WebServerReachableState state;
+    private final Media apacheHttpdMedia;
+
+    final static private Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
 
     /**
      * Constructor for a bare minimum web server with group details.
@@ -38,6 +48,7 @@ public class WebServer implements Serializable {
         name = theName;
         httpsPort = null;
         statusPath = null;
+        apacheHttpdMedia = null;
         for (final Group grp : theGroups) {
             groups.put(grp.getId(), grp);
         }
@@ -51,13 +62,15 @@ public class WebServer implements Serializable {
                      final Integer thePort,
                      final Integer theHttpsPort,
                      final Path theStatusPath,
-                     final WebServerReachableState state) {
+                     final WebServerReachableState state,
+                     final Media apacheHttpdMedia) {
         id = theId;
         host = theHost;
         port = thePort;
         name = theName;
         httpsPort = theHttpsPort;
         statusPath = theStatusPath;
+        this.apacheHttpdMedia = apacheHttpdMedia;
         for (final Group grp : theGroups) {
             groups.put(grp.getId(), grp);
         }
@@ -70,7 +83,8 @@ public class WebServer implements Serializable {
                      final Integer port,
                      final Integer httpsPort,
                      final Path statusPath,
-                     final WebServerReachableState state) {
+                     final WebServerReachableState state,
+                     final Media apacheHttpdMedia) {
         this.id = id;
         this.host = host;
         this.name = name;
@@ -78,6 +92,7 @@ public class WebServer implements Serializable {
         this.httpsPort = httpsPort;
         this.statusPath = statusPath;
         this.state = state;
+        this.apacheHttpdMedia = apacheHttpdMedia;
     }
 
     public Identifier<WebServer> getId() {
@@ -121,7 +136,22 @@ public class WebServer implements Serializable {
                 .setPort(getPort())
                 .setHttpsPort(getHttpsPort())
                 .setPath(getStatusPath());
-        return builder.buildUnchecked();
+
+        try {
+            return builder.buildUnchecked();
+        } catch (final ApplicationException e) {
+            LOGGER.error("Failed to build the web server status URI! Status path = {}. Generating a default URI...", getStatusPath(), e);
+            return getDefaultUri();
+        }
+    }
+
+    private URI getDefaultUri() {
+        try {
+            return new URL("http://" + host + ":" + port + "/apache_pb.png").toURI();
+        } catch (final URISyntaxException | MalformedURLException e) {
+            LOGGER.error("Failed to generate default URI!", e);
+        }
+        return null;
     }
 
     public WebServerReachableState getState() {
@@ -137,6 +167,10 @@ public class WebServer implements Serializable {
             return state.toStateLabel();
         else
             return "";
+    }
+
+    public Media getApacheHttpdMedia() {
+        return apacheHttpdMedia;
     }
 
     @Override

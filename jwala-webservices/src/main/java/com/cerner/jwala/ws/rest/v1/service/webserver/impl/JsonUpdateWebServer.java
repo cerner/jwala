@@ -30,6 +30,7 @@ public class JsonUpdateWebServer {
     private final String httpsPort;
     private final String hostName;
     private final String statusPath;
+    private final String apacheHttpdMediaId;
 
     public JsonUpdateWebServer(final String aWebServerId,
                                final String aWebServerName,
@@ -37,7 +38,8 @@ public class JsonUpdateWebServer {
                                final String aPortNumber,
                                final String aHttpsPort,
                                final Set<String> someGroupIds,
-                               final String aStatusPath) {
+                               final String aStatusPath,
+                               final String apacheHttpdMediaId) {
 
         webServerName = aWebServerName;
         hostName = aHostName;
@@ -46,12 +48,13 @@ public class JsonUpdateWebServer {
         webServerId = aWebServerId;
         groupIds = someGroupIds;
         statusPath = aStatusPath;
+        this.apacheHttpdMediaId = apacheHttpdMediaId;
     }
 
     public UpdateWebServerRequest toUpdateWebServerRequest() {
         final Set<Identifier<Group>> groups = new IdentifierSetBuilder(groupIds).build();
         return new UpdateWebServerRequest(convertWebServerId(), groups, webServerName, hostName, convertPortNumber(),
-                convertHttpsPortNumber(), new Path(statusPath), WebServerReachableState.WS_UNREACHABLE);
+                convertHttpsPortNumber(), new Path(statusPath), WebServerReachableState.WS_UNREACHABLE, apacheHttpdMediaId);
     }
 
     protected Identifier<WebServer> convertWebServerId() {
@@ -112,7 +115,8 @@ public class JsonUpdateWebServer {
                                            node.get("portNumber").getValueAsText(),
                                            node.get("httpsPort").getValueAsText(),
                                            groupIds,
-                                           node.get("statusPath").getTextValue());
+                                           node.get("statusPath").getTextValue(),
+                                           node.get("apacheHttpdMediaId").getTextValue());
         }
     }
 }

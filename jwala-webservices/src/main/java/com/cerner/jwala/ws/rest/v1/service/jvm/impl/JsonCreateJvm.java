@@ -31,6 +31,7 @@ public class JsonCreateJvm {
     private String encryptedPassword;
 
     private String jdkMediaId;
+    private String tomcatMediaId;
 
     private List<GroupIdWrapper> groupIds;
 
@@ -48,7 +49,8 @@ public class JsonCreateJvm {
                          final String theSystemProperties,
                          final String theUsername,
                          final String theEncryptedPassword,
-                         final String jdkMediaId) {
+                         final String jdkMediaId,
+                         final String tomcatMediaId) {
         this(theJvmName,
              theHostName,
              Collections.<String>emptySet(),
@@ -61,7 +63,8 @@ public class JsonCreateJvm {
              theSystemProperties,
              theUsername,
              theEncryptedPassword,
-             jdkMediaId);
+             jdkMediaId,
+             tomcatMediaId);
     }
 
     public JsonCreateJvm(final String theJvmName,
@@ -76,7 +79,8 @@ public class JsonCreateJvm {
                          final String theSystemProperties,
                          final String theUsername,
                          final String theEncrypedPassword,
-                         final String theJdkMediaId) {
+                         final String theJdkMediaId,
+                         final String tomcatMediaId) {
         jvmName = theJvmName;
         hostName = theHostName;
         httpPort = theHttpPort;
@@ -97,6 +101,7 @@ public class JsonCreateJvm {
         userName = theUsername;
         encryptedPassword = theEncrypedPassword;
         jdkMediaId = theJdkMediaId;
+        this.tomcatMediaId = tomcatMediaId;
     }
 
     public CreateJvmAndAddToGroupsRequest toCreateAndAddRequest() {
@@ -114,7 +119,8 @@ public class JsonCreateJvm {
                 systemProperties,
                 userName,
                 encryptedPassword,
-                jdkMediaId == null ? null : new Identifier<>(Long.parseLong(jdkMediaId)));
+                jdkMediaId == null ? null : new Identifier<>(Long.parseLong(jdkMediaId)),
+                tomcatMediaId == null ? null : new Identifier<>(Long.parseLong(tomcatMediaId)));
     }
 
     @SuppressWarnings("unchecked")
@@ -224,6 +230,14 @@ public class JsonCreateJvm {
         this.jdkMediaId = jdkMediaId;
     }
 
+    public String getTomcatMediaId() {
+        return tomcatMediaId;
+    }
+
+    public void setTomcatMediaId(String tomcatMediaId) {
+        this.tomcatMediaId = tomcatMediaId;
+    }
+
     public List<GroupIdWrapper> getGroupIds() {
         return groupIds;
     }
@@ -247,9 +261,10 @@ public class JsonCreateJvm {
                 ", statusPath='" + statusPath + '\'' +
                 ", systemProperties='" + systemProperties + '\'' +
                 ", userName='" + userName + '\'' +
+                ", encryptedPassword='" + encryptedPassword + '\'' +
                 ", jdkMediaId='" + jdkMediaId + '\'' +
+                ", tomcatMediaId='" + tomcatMediaId + '\'' +
                 ", groupIds=" + groupIds +
                 '}';
     }
-
 }

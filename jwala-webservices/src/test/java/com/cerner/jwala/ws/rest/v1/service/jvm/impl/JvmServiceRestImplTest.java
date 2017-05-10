@@ -144,7 +144,7 @@ public class JvmServiceRestImplTest {
         when(jvmService.createJvm(any(CreateJvmAndAddToGroupsRequest.class), any(User.class))).thenReturn(jvm);
 
         final JsonCreateJvm jsonCreateJvm = new JsonCreateJvm(name, hostName, httpPort, httpsPort, redirectPort,
-                shutdownPort, ajpPort, statusPath.getUriPath(), systemProperties, userName, clearTextPassword, JDK_1_7_TEST_VERSION/*, APACHE_TOMCAT_7_0_55_TEST_VERSION*/);
+                shutdownPort, ajpPort, statusPath.getUriPath(), systemProperties, userName, clearTextPassword, JDK_1_7_TEST_VERSION, APACHE_TOMCAT_7_0_55_TEST_VERSION);
         final Response response = jvmServiceRest.createJvm(jsonCreateJvm, authenticatedUser);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
@@ -174,8 +174,8 @@ public class JvmServiceRestImplTest {
                 systemProperties,
                 userName,
                 clearTextPassword,
-                JDK_1_7_TEST_VERSION/*,
-                APACHE_TOMCAT_7_0_55_TEST_VERSION*/);
+                JDK_1_7_TEST_VERSION,
+                APACHE_TOMCAT_7_0_55_TEST_VERSION);
         final Response response = jvmServiceRest.createJvm(jsonCreateJvm, authenticatedUser);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
@@ -192,7 +192,7 @@ public class JvmServiceRestImplTest {
         final Set<String> groupIds = new HashSet<>();
         groupIds.add("111");
         final JsonUpdateJvm jsonUpdateJvm = new JsonUpdateJvm("1", name, hostName, groupIds, "5", "4", "3", "2", "1",
-                statusPath.getUriPath(), systemProperties, userName, clearTextPassword, JDK_1_7_TEST_VERSION/*, APACHE_TOMCAT_7_0_55_TEST_VERSION*/);
+                statusPath.getUriPath(), systemProperties, userName, clearTextPassword, JDK_1_7_TEST_VERSION, APACHE_TOMCAT_7_0_55_TEST_VERSION);
         when(jvmService.updateJvm(any(UpdateJvmRequest.class), eq(true))).thenReturn(jvm);
 
         // Check rules for the JVM
@@ -218,7 +218,7 @@ public class JvmServiceRestImplTest {
     public void testNoGroupIdInUpdateRequest() {
         final Set<String> groupIds = new HashSet<>();
         final JsonUpdateJvm jsonUpdateJvm = new JsonUpdateJvm("1", name, hostName, groupIds, "5", "4", "3", "2", "1",
-                statusPath.getUriPath(), systemProperties, userName, clearTextPassword, JDK_1_7_TEST_VERSION/*, APACHE_TOMCAT_7_0_55_TEST_VERSION*/);
+                statusPath.getUriPath(), systemProperties, userName, clearTextPassword, JDK_1_7_TEST_VERSION, APACHE_TOMCAT_7_0_55_TEST_VERSION);
 
         // Check rules for the JVM
         UpdateJvmRequest updateJvmCommand = jsonUpdateJvm.toUpdateJvmRequest();
