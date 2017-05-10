@@ -51,7 +51,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
 
     private void createTestJvmsAndWebServers(HashSet<Group> groupHashSet) {
         webServer = new WebServer(new Identifier<WebServer>(1L), groupHashSet, "Apache2.4", "localhost", 80, 443,
-                new Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                new Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, 11010, 11011, 11012, -1, 11013,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null)
 
@@ -68,7 +68,7 @@ class TestResourceFileGenerator extends GroovyTestCase {
     private void createTestJvmsAndWebServers(HashSet<Group> groupHashSet, Group group) {
         groupHashSet.add(group);
         webServer = new WebServer(new Identifier<WebServer>(1L), "localhost", "Apache2.4", 80, 443,
-                new Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                new Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         jvm = new Jvm(new Identifier<Jvm>(11L), "tc1", "someHostGenerateMe", groupHashSet, 11010, 11011, 11012, -1, 11013,
                 new Path("/statusPath"), "EXAMPLE_OPTS=%someEvn%/someVal", JvmState.JVM_STOPPED, "", null, null, null, null, null, "", null)
 

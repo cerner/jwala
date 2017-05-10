@@ -14,6 +14,7 @@ import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.ExternalProperties;
+import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.common.request.jvm.UploadJvmConfigTemplateRequest;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
@@ -823,7 +824,7 @@ public class ResourceServiceImpl implements ResourceService {
         final String content = resourceContent.getContent();
         final ResourceGroup resourceGroup = generateResourceGroup();
         String fileContent = this.generateResourceFile(extPropertiesResourceName, content, resourceGroup, null, ResourceGeneratorType.TEMPLATE);
-        String jvmResourcesNameDir = ApplicationProperties.get("paths.generated.resource.dir") + "/external-properties-download";
+        String jvmResourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/external-properties-download";
 
         createConfigFile(jvmResourcesNameDir + "/", extPropertiesResourceName, fileContent);
 
@@ -890,7 +891,7 @@ public class ResourceServiceImpl implements ResourceService {
             if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
                     MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
                 String fileContent = generateConfigFile(selectedValue, fileName);
-                String resourcesNameDir = ApplicationProperties.get("paths.generated.resource.dir") + "/" + entity;
+                String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
                 resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
                 createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
             } else {

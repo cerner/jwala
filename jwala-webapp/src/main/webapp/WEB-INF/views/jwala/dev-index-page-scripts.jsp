@@ -57,6 +57,7 @@
 <script type="text/jsx" src="public-resources/js/react/generic-components/data-combobox.js"></script>
 <script type="text/jsx" src="public-resources/js/react/generic-components/data-multi-select-box.js"></script>
 <script type="text/jsx" src="public-resources/js/react/generic-components/RMenu.js"></script>
+<script type="text/jsx" src="public-resources/js/react/generic-components/ScreenOverlay.js"></script>
 <script type="text/jsx" src="public-resources/js/react/RTextPreview.js"></script>
 <script type="text/jsx" src="public-resources/js/react/CodeMirrorComponent.js"></script>
 <script type="text/jsx" src="public-resources/js/react/modal-button.js"></script>

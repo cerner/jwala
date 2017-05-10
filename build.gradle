@@ -32,7 +32,8 @@ ext {
             jackson               : '1.9.13',
             babelcli              : '6.6.4',
             babeltransform        : '6.5.0',
-            tika                  : '1.14'
+            tika                  : '1.14',
+            modelMapper           : '0.7.8'
     ]
 }
 

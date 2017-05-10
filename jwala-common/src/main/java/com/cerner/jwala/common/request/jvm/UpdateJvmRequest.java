@@ -35,7 +35,7 @@ public class UpdateJvmRequest implements Serializable, Request {
     private final String newUserName;
     private final String newEncryptedPassword;
     private final Identifier<Media> newJdkMediaId;
-//    private final Identifier<Media> newTomcatMediaId;
+    private final Identifier<Media> newTomcatMediaId;
 
     private final Set<Identifier<Group>> groupIds;
 
@@ -52,8 +52,8 @@ public class UpdateJvmRequest implements Serializable, Request {
                             final String theNewSystemProperties,
                             final String theUserName,
                             final String theEncryptedPassword,
-                            final Identifier<Media> theJdkMediaId/*,
-                            final Identifier<Media> theTomcatMediaId*/) {
+                            final Identifier<Media> theJdkMediaId,
+                            final Identifier<Media> theTomcatMediaId) {
         id = theId;
         newJvmName = theNewJvmName;
         newHostName = theNewHostName;
@@ -68,7 +68,7 @@ public class UpdateJvmRequest implements Serializable, Request {
         newUserName = theUserName;
         newEncryptedPassword = theEncryptedPassword;
         newJdkMediaId = theJdkMediaId;
-//        newTomcatMediaId = theTomcatMediaId;
+        newTomcatMediaId = theTomcatMediaId;
     }
 
     public Identifier<Jvm> getId() {
@@ -115,9 +115,9 @@ public class UpdateJvmRequest implements Serializable, Request {
         return newJdkMediaId;
     }
 
-//    public Identifier<Media> getNewTomcatMediaId() {
-//        return newTomcatMediaId;
-//    }
+    public Identifier<Media> getNewTomcatMediaId() {
+        return newTomcatMediaId;
+    }
 
     public String getNewSystemProperties() {return newSystemProperties;}
 
@@ -171,7 +171,7 @@ public class UpdateJvmRequest implements Serializable, Request {
                 .append(this.newUserName, rhs.newUserName)
                 .append(this.newEncryptedPassword, rhs.newEncryptedPassword)
                 .append(this.newJdkMediaId, rhs.newJdkMediaId)
-//                .append(this.newTomcatMediaId, rhs.newTomcatMediaId)
+                .append(this.newTomcatMediaId, rhs.newTomcatMediaId)
                 .isEquals();
     }
 
@@ -191,7 +191,7 @@ public class UpdateJvmRequest implements Serializable, Request {
                 .append(newUserName)
                 .append(newEncryptedPassword)
                 .append(newJdkMediaId)
-//                .append(newTomcatMediaId)
+                .append(newTomcatMediaId)
                 .toHashCode();
     }
 
@@ -211,7 +211,7 @@ public class UpdateJvmRequest implements Serializable, Request {
                 ", newUserName='" + newUserName + '\'' +
                 ", newEncryptedPassword='" + newEncryptedPassword + '\'' +
                 ", newJdkMediaId='" + newJdkMediaId + '\'' +
-//                ", newTomcatMediaId='" + newTomcatMediaId + '\'' +
+                ", newTomcatMediaId='" + newTomcatMediaId + '\'' +
                 ", groupIds=" + groupIds +
                 '}';
     }

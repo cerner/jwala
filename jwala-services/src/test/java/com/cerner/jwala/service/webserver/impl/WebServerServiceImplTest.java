@@ -20,9 +20,14 @@ import com.cerner.jwala.common.request.webserver.ControlWebServerRequest;
 import com.cerner.jwala.common.request.webserver.CreateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UpdateWebServerRequest;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
+import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
+import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
+import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
+import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.state.InMemoryStateManagerService;
@@ -46,12 +51,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -185,14 +195,28 @@ public class WebServerServiceImplTest {
                                                                 mockWebServer.getPort(),
                                                                 mockWebServer.getHttpsPort(),
                                                                 mockWebServer.getStatusPath(),
-                                                                mockWebServer.getState());
+                                                                mockWebServer.getState(),
+                                                                "321");
+
+        final JpaGroup jpaGroup = new JpaGroup();
+        jpaGroup.setId(115L);
+        final List<JpaGroup> jpaGroupList = new ArrayList<>();
+        jpaGroupList.add(jpaGroup);
+        when(Config.mockGroupPersistenceService.findGroups(anyList())).thenReturn(jpaGroupList);
+
+        final JpaMedia mockJpaMedia = mock(JpaMedia.class);
+        when(Config.mockMediaService.find(anyLong())).thenReturn(mockJpaMedia);
+
+        final JpaWebServer createdMockJpaWebServer = mock(JpaWebServer.class);
+        when(createdMockJpaWebServer.getId()).thenReturn(1L);
+        when(createdMockJpaWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
+        when(createdMockJpaWebServer.getGroups()).thenReturn(jpaGroupList);
+        when(Config.mockWebServerPersistenceService.createWebServer(any(JpaWebServer.class))).thenReturn(createdMockJpaWebServer);
+
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
-        assertEquals(group.getId(), webServer.getGroups().iterator().next().getId());
-        assertEquals("the-ws-name", webServer.getName());
-        assertEquals("the-ws-group-name", webServer.getGroups().iterator().next().getName());
-        assertEquals("the-ws-hostname", webServer.getHost());
+        assertEquals(new Identifier<WebServer>(115L), webServer.getGroups().iterator().next().getId());
         assertEquals(WebServerReachableState.WS_NEW, Config.inMemService.get(webServer.getId()));
 
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
@@ -211,7 +235,8 @@ public class WebServerServiceImplTest {
                 mockWebServer.getPort(),
                 mockWebServer.getHttpsPort(),
                 mockWebServer.getStatusPath(),
-                mockWebServer.getState());
+                mockWebServer.getState(),
+                "apacheHttpdMediaId");
         final WebServer webServer = wsService.createWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(1L), webServer.getId());
@@ -245,7 +270,8 @@ public class WebServerServiceImplTest {
                 mockWebServer2.getPort(),
                 mockWebServer2.getHttpsPort(),
                 mockWebServer2.getStatusPath(),
-                mockWebServer2.getState());
+                mockWebServer2.getState(),
+                mockWebServer2.getApacheHttpdMedia().getName());
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
@@ -267,9 +293,22 @@ public class WebServerServiceImplTest {
         when(Config.mockWebServerPersistenceService.findWebServerByName("newWebServerName")).thenThrow(new NoResultException());
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
+
+        final JpaGroup jpaGroup = new JpaGroup();
+        jpaGroup.setId(1L);
+        final List<JpaGroup> jpaGroupList = new ArrayList<>();
+        jpaGroupList.add(jpaGroup);
+        when(Config.mockGroupPersistenceService.findGroups(anyList())).thenReturn(jpaGroupList);
+
+        final JpaWebServer mockJpaWebServer = mock(JpaWebServer.class);
+        when(mockJpaWebServer.getGroups()).thenReturn(jpaGroupList);
+        when(mockJpaWebServer.getId()).thenReturn(2L);
+        when(Config.mockWebServerPersistenceService.findWebServer(anyLong())).thenReturn(mockJpaWebServer);
+        when(Config.mockWebServerPersistenceService.updateWebServer(mockJpaWebServer)).thenReturn(mockJpaWebServer);
+
         wsService.updateWebServer(req, new User("user"));
-        verify(Config.getMockWebServerPersistenceService()).updateWebServer(any(WebServer.class), anyString());
+        verify(Config.mockWebServerPersistenceService).updateWebServer(mockJpaWebServer);
     }
 
     @Test
@@ -284,7 +323,7 @@ public class WebServerServiceImplTest {
         when(Config.mockWebServerPersistenceService.findWebServerByName("newWebServerName")).thenThrow(new NoResultException());
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         try {
             wsService.updateWebServer(req, new User("user"));
             fail("WebServerServiceException is expected!");
@@ -302,7 +341,7 @@ public class WebServerServiceImplTest {
         when(mockWebServer.getState()).thenReturn(WebServerReachableState.WS_NEW);
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         try {
             wsService.updateWebServer(req, new User("user"));
             fail("WebServerServiceException is expected!");
@@ -322,7 +361,7 @@ public class WebServerServiceImplTest {
         when(Config.mockJvmPersistenceService.findJvmByExactName("newWebServerName")).thenThrow(new NoResultException());
 
         UpdateWebServerRequest req = new UpdateWebServerRequest(new Identifier(1L), groupIds, "newWebServerName",
-                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null);
+                "hostName", 80, 443, new Path("https://localhost:443/apache_pb.png"), null, null);
         try {
             wsService.updateWebServer(req, new User("user"));
             fail("WebServerServiceException is expected!");
@@ -330,7 +369,6 @@ public class WebServerServiceImplTest {
             assertEquals("WebServer already exists with this name newWebServerName", e.getMessage());
         }
     }
-
 
     @Test
     public void testUpdateExistingWebServer() throws IOException {
@@ -351,14 +389,25 @@ public class WebServerServiceImplTest {
                 mockWebServer2.getPort(),
                 mockWebServer2.getHttpsPort(),
                 mockWebServer2.getStatusPath(),
-                mockWebServer2.getState());
+                mockWebServer2.getState(),
+                "321");
+
+        final JpaGroup jpaGroup = new JpaGroup();
+        jpaGroup.setId(1L);
+        final List<JpaGroup> jpaGroupList = new ArrayList<>();
+        jpaGroupList.add(jpaGroup);
+        when(Config.mockGroupPersistenceService.findGroups(anyList())).thenReturn(jpaGroupList);
+
+        final JpaWebServer mockJpaWebServer = mock(JpaWebServer.class);
+        when(mockJpaWebServer.getGroups()).thenReturn(jpaGroupList);
+        when(mockJpaWebServer.getId()).thenReturn(2L);
+        when(Config.mockWebServerPersistenceService.findWebServer(anyLong())).thenReturn(mockJpaWebServer);
+        when(Config.mockWebServerPersistenceService.updateWebServer(mockJpaWebServer)).thenReturn(mockJpaWebServer);
+
         final WebServer webServer = wsService.updateWebServer(cmd, testUser);
 
         assertEquals(new Identifier<WebServer>(2L), webServer.getId());
-        assertEquals(group2.getId(), webServer.getGroups().iterator().next().getId());
-        assertEquals("the-ws-name-2", webServer.getName());
-        assertEquals(group2.getName(), webServer.getGroups().iterator().next().getName());
-        assertEquals("the-ws-hostname", webServer.getHost());
+        assertEquals(new Identifier<Group>(1L), webServer.getGroups().iterator().next().getId());
     }
 
     private final String readReferenceFile(String file) throws IOException {
@@ -700,6 +749,10 @@ public class WebServerServiceImplTest {
 
         private static Jvm mockJvm = mock(Jvm.class);
 
+        private static MediaService mockMediaService = mock(MediaService.class);
+
+        private static GroupPersistenceService mockGroupPersistenceService = mock(GroupPersistenceService.class);
+
         @Bean
         public static WebServerPersistenceService getMockWebServerPersistenceService() {
             return mockWebServerPersistenceService;
@@ -721,15 +774,24 @@ public class WebServerServiceImplTest {
         }
 
         @Bean
-        public WebServerService getWebSereWebServerService() {
-            return new WebServerServiceImpl(mockWebServerPersistenceService, mockResourceService, inMemService, "/any",
-                    mockBinaryDistributionLockManager);
-        }
-
-        @Bean
         public JvmPersistenceService getJvmPersistenceService() {
             return mockJvmPersistenceService;
         }
 
+        @Bean
+        public static MediaService getMockMediaService() {
+            return mockMediaService;
+        }
+
+        @Bean
+        public static GroupPersistenceService getMockGroupPersistenceService() {
+            return mockGroupPersistenceService;
+        }
+
+        @Bean
+        public WebServerService getWebServerService() {
+            return new WebServerServiceImpl(mockWebServerPersistenceService, mockResourceService, inMemService, "/any",
+                    mockBinaryDistributionLockManager);
+        }
     }
 }

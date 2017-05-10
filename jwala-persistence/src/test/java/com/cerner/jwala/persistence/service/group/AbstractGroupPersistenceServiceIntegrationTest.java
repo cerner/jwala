@@ -61,12 +61,8 @@ public abstract class AbstractGroupPersistenceServiceIntegrationTest {
         preCreatedGroup = groupHelper.createGroup("Pre-Created GroupName",
                                                   userId);
 
-        preCreatedJvm = jvmHelper.createJvm("Pre-Created JVM Name",
-                                            "Pre-Created JVM Host Name",
-                                            5, 4, 3, 2, 1,
-                                            userId,
-                                            new Path("/abc"),
-                                            "EXAMPLE_OPTS=%someEnv%/someVal", null, null, null);
+        preCreatedJvm = jvmHelper.createJvm("Pre-Created JVM Name", "Pre-Created JVM Host Name", 5, 4, 3, 2, 1, userId,
+                new Path("/abc"), "EXAMPLE_OPTS=%someEnv%/someVal", null, null, null, null);
 
         application = applicationPersistenceService.createApplication(new CreateApplicationRequest(preCreatedGroup.getId(),
                         "testApp", "", false, false, false));
@@ -279,12 +275,8 @@ public abstract class AbstractGroupPersistenceServiceIntegrationTest {
     @Test (expected = GroupException.class)
     public void testRemoveGroupWithRelationships() {
 
-        final Jvm aSecondJvm = jvmHelper.createJvm("anotherJvmName",
-                                                   "anotherJvmHostName",
-                                                   5, 4, 3, 2, 1,
-                                                   userId,
-                                                   new Path("/abc"),
-                                                   "EXAMPLE_OPTS=%someEnv%/someVal", null, null,  null);
+        final Jvm aSecondJvm = jvmHelper.createJvm("anotherJvmName", "anotherJvmHostName", 5, 4, 3, 2, 1, userId,
+                new Path("/abc"), "EXAMPLE_OPTS=%someEnv%/someVal", null, null,  null, null);
 
         final Identifier<Group> groupId = preCreatedGroup.getId();
 

@@ -1,9 +1,9 @@
 package com.cerner.jwala.dao.impl;
 
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.dao.configuration.TestConfiguration;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
