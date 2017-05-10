@@ -46,6 +46,7 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
+                                         keyTextValue("apacheHttpdMediaId", "321"),
                                          keyValue("groupIds", array(object(keyTextValue("groupId",
                                                                                         firstGroupId)),
                                                                     object(keyTextValue("groupId",
@@ -81,6 +82,7 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
+                                         keyTextValue("apacheHttpdMediaId", "321"),
                                          keyValue("groupIds", array(object(keyTextValue("groupId",
                                                                                         firstGroupId))))));
         final JsonUpdateWebServer update = readValue(json);
@@ -112,6 +114,7 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
+                                         keyTextValue("apacheHttpdMediaId", "321"),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -151,6 +154,7 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
+                                         keyTextValue("apacheHttpdMediaId", "321"),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -174,6 +178,7 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
+                                         keyTextValue("apacheHttpdMediaId", "321"),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -197,6 +202,7 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
+                                         keyTextValue("apacheHttpdMediaId", "321"),
                                          keyTextValue("groupId", firstGroupId)));
 
         final JsonUpdateWebServer update = readValue(json);
@@ -220,7 +226,8 @@ public class JsonUpdateWebServerDeserializerTest {
                                          keyTextValue("portNumber", portNumber),
                                          keyTextValue("httpsPort", httpsPort),
                                          keyTextValue("statusPath", statusPath),
-                                         keyTextValue("groupId", firstGroupId)));
+                                         keyTextValue("groupId", firstGroupId),
+                                         keyTextValue("apacheHttpdMediaId", "321")));
 
         final JsonUpdateWebServer update = readValue(json);
         final UpdateWebServerRequest updateCommand = update.toUpdateWebServerRequest();

@@ -70,6 +70,10 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
     @ManyToMany(mappedBy = "webServers", fetch = FetchType.EAGER)
     private List<JpaGroup> groups = new ArrayList<>();
 
+    @OneToOne (targetEntity = JpaMedia.class)
+    @Column(nullable = true)
+    private JpaMedia apacheHttpdMedia;
+
     public Long getId() {
         return id;
     }
@@ -128,6 +132,14 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
 
     public void setState(WebServerReachableState state) {
         this.state = state;
+    }
+
+    public JpaMedia getApacheHttpdMedia() {
+        return apacheHttpdMedia;
+    }
+
+    public void setApacheHttpdMedia(final JpaMedia apacheHttpdMedia) {
+        this.apacheHttpdMedia = apacheHttpdMedia;
     }
 
     @Override

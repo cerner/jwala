@@ -5,6 +5,7 @@ import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
@@ -24,7 +25,6 @@ import com.cerner.jwala.persistence.jpa.service.impl.ApplicationCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.JvmCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.service.impl.WebServerCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -90,27 +90,15 @@ public class WebServerCrudServiceImplTest {
 
     @Test
     public void testCrud() {
-        final WebServer newWebServer = new WebServer(null,
-                new ArrayList<Group>(),
-                "zWebServer",
-                "zHost",
-                8080,
-                443,
-                new Path("any"),
-                WebServerReachableState.WS_UNREACHABLE);
+        final WebServer newWebServer = new WebServer(null, new ArrayList<Group>(), "zWebServer", "zHost", 8080, 443,
+                new Path("any"), WebServerReachableState.WS_UNREACHABLE, null);
         final WebServer createdWebServer = webServerCrudService.createWebServer(newWebServer, "me");
         assertTrue(createdWebServer.getId() != null);
         assertTrue(createdWebServer.getId().getId() != null);
         assertEquals(newWebServer.getName(), createdWebServer.getName());
 
-        final WebServer editedWebServer = new WebServer(createdWebServer.getId(),
-                new ArrayList<Group>(),
-                "zWebServerx",
-                "zHostx",
-                808,
-                44,
-                new Path("anyx"),
-                WebServerReachableState.WS_UNREACHABLE);
+        final WebServer editedWebServer = new WebServer(createdWebServer.getId(), new ArrayList<Group>(), "zWebServerx",
+                "zHostx", 808, 44, new Path("anyx"), WebServerReachableState.WS_UNREACHABLE, null);
         final WebServer updatedWebServer = webServerCrudService.updateWebServer(editedWebServer, "me");
         assertEquals(editedWebServer.getId().getId(), updatedWebServer.getId().getId());
 
@@ -160,7 +148,7 @@ public class WebServerCrudServiceImplTest {
         assertTrue(webServersBelongingTo.size() == 0);
 
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         List<JpaWebServer> wsList = new ArrayList<>();
         wsList.add(webServerCrudService.findById(webServer.getId().getId()));
@@ -172,7 +160,7 @@ public class WebServerCrudServiceImplTest {
     @Test(expected = EntityExistsException.class)
     public void testCreateWebServerThrowsException() {
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer", "testHost",
-                101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         webServerCrudService.createWebServer(webServer, "testUser");
         // causes problems
         webServerCrudService.createWebServer(webServer, "testUser");
@@ -181,7 +169,7 @@ public class WebServerCrudServiceImplTest {
     @Test
     public void testFindApplications() {
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer", "testHost",
-                101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         List<Application> applications = webServerCrudService.findApplications("testWebServer");
         assertTrue(applications.size() == 0);
@@ -193,14 +181,18 @@ public class WebServerCrudServiceImplTest {
         List<JpaWebServer> wsList = new ArrayList<>();
         wsList.add(webServerCrudService.findById(webServer.getId().getId()));
         group.setWebServers(wsList);
-        CreateJvmRequest createJvmReq = new CreateJvmRequest("testJvmName", "testHostName", 1212, 1213, 1214, -1, 1215, new Path("./statusPath"), "", null, null, null);
+        CreateJvmRequest createJvmReq = new CreateJvmRequest("testJvmName", "testHostName", 1212, 1213, 1214, -1, 1215,
+                new Path("./statusPath"), "", null, null, null, null);
         final JpaMedia media = new JpaMedia();
         media.setName("test-media");
         media.setType(MediaType.JDK);
         media.setLocalPath(new File("d:/not/a/real/path.zip").toPath());
         media.setRemoteDir(new File("d:/fake/remote/path").toPath());
         media.setMediaDir(new File("test-media").toPath());
-        final JpaJvm jvm = jvmCrudService.createJvm(createJvmReq, mediaDao.create(media));
+
+        final JpaMedia someJpaMedia = mediaDao.create(media);
+        final JpaJvm jvm = jvmCrudService.createJvm(createJvmReq, mediaDao.create(media), someJpaMedia);
+
         List<JpaJvm> jvmsList = new ArrayList<>();
         jvmsList.add(jvm);
         group.setJvms(jvmsList);
@@ -217,7 +209,7 @@ public class WebServerCrudServiceImplTest {
     @Test
     public void testFindJvms() {
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         webServerCrudService.createWebServer(webServer, "testUser");
         List<Jvm> jvms = webServerCrudService.findJvms("testWebServer");
         assertTrue(jvms.size() == 0);
@@ -241,7 +233,7 @@ public class WebServerCrudServiceImplTest {
         String templateContent = scanner.hasNext() ? scanner.next() : "";
 
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         UploadWebServerTemplateRequest uploadWsTemplateRequest = new UploadWebServerTemplateRequest(webServer,
                 "HttpdSslConfTemplate.tpl", HTTPD_CONF_META_DATA, templateContent) {
@@ -278,7 +270,7 @@ public class WebServerCrudServiceImplTest {
         String templateContent = scanner.hasNext() ? scanner.next() : "";
 
         WebServer webServer = new WebServer(new Identifier<WebServer>(1111L), new HashSet<Group>(), "testWebServer",
-                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE);
+                "testHost", 101, 102, new Path("./statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
         webServer = webServerCrudService.createWebServer(webServer, "testUser");
         UploadWebServerTemplateRequest uploadWsTemplateRequest = new UploadWebServerTemplateRequest(webServer,
                 "HttpdSslConfTemplate.tpl", StringUtils.EMPTY, templateContent) {

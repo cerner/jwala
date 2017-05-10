@@ -11,11 +11,11 @@ public interface RepositoryService {
 
     /**
      * uploads a file to the resource repository
-     * @param fileName contains info about the upload request
-     * @param resource
+     * @param baseFilename the file name without the path
+     * @param resource an inputstream that is the source of data to be uploaded
      * @return absolute location of the file in the repository
      */
-    String upload(String fileName, InputStream resource);
+    String upload(String baseFilename, InputStream resource);
 
     /**
      * removes a file from the resource repository

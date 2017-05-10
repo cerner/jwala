@@ -1,35 +1,42 @@
 package com.cerner.jwala.common.domain.model.media;
 
-import java.io.Serializable;
+import com.cerner.jwala.common.domain.model.PathToStringSerializer;
+import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import java.nio.file.Path;
 
 /**
- * Created by RS045609 on 12/2/2016.
+ * Created by Rahul Sayini on 12/2/2016
  */
-public class Media implements Serializable {
+public class Media {
 
-    private static final long serialVersionUID = 1L;
-    private Integer id;
+    private Long id;
     private String name;
-    private String path;
-    private String type;
-    private String remoteHostPath;
-    private String mediaDir;
+    private MediaType type;
+    private Path localPath;
+    private Path remoteDir;
+    private Path mediaDir;
 
-    public Media(Integer id, String name, String path, String type, String remoteHostPath, String mediaDir) {
+    public Media() {
+    }
+
+    public Media(final Long id, final String name, final MediaType type, final Path path, final Path remoteDir,
+                 final Path mediaDir) {
         this.id = id;
         this.name = name;
-        this.path = path;
         this.type = type;
-        this.remoteHostPath = remoteHostPath;
+        this.localPath = path;
+        this.remoteDir = remoteDir;
         this.mediaDir = mediaDir;
     }
 
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -41,63 +48,42 @@ public class Media implements Serializable {
         this.name = name;
     }
 
-    public String getPath() {
-        return path;
+    @JsonSerialize(using = PathToStringSerializer.class)
+    public Path getLocalPath() {
+        return localPath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    @JsonDeserialize(using = StringToPathDeserializer.class)
+    public void setLocalPath(Path localPath) {
+        this.localPath = localPath;
     }
 
-    public String getType() {
+    public MediaType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MediaType type) {
         this.type = type;
     }
 
-    public String getRemoteHostPath() {
-        return remoteHostPath;
+    @JsonSerialize(using = PathToStringSerializer.class)
+    public Path getRemoteDir() {
+        return remoteDir;
     }
 
-    public void setRemoteHostPath(String remoteHostPath) {
-        this.remoteHostPath = remoteHostPath;
+    @JsonDeserialize(using = StringToPathDeserializer.class)
+    public void setRemoteDir(Path remoteDir) {
+        this.remoteDir = remoteDir;
     }
 
-    public String getMediaDir() {
+    @JsonSerialize(using = PathToStringSerializer.class)
+    public Path getMediaDir() {
         return mediaDir;
     }
 
-    public void setMediaDir(String mediaDir) {
+    @JsonDeserialize(using = StringToPathDeserializer.class)
+    public void setMediaDir(Path mediaDir) {
         this.mediaDir = mediaDir;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Media media = (Media) o;
-
-        if (id != null ? !id.equals(media.id) : media.id != null) return false;
-        if (name != null ? !name.equals(media.name) : media.name != null) return false;
-        if (path != null ? !path.equals(media.path) : media.path != null) return false;
-        if (type != null ? !type.equals(media.type) : media.type != null) return false;
-        if (remoteHostPath != null ? !remoteHostPath.equals(media.remoteHostPath) : media.remoteHostPath != null)
-            return false;
-        return mediaDir != null ? mediaDir.equals(media.mediaDir) : media.mediaDir == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (path != null ? path.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (remoteHostPath != null ? remoteHostPath.hashCode() : 0);
-        result = 31 * result + (mediaDir != null ? mediaDir.hashCode() : 0);
-        return result;
-    }
 }

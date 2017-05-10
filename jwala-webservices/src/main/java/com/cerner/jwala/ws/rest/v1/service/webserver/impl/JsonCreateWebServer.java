@@ -30,19 +30,22 @@ public class JsonCreateWebServer {
     private final String hostName;
     private final String httpsPort;
     private final String statusPath;
+    private final String apacheHttpdMediaId;
 
     public JsonCreateWebServer(final String theName,
                                final String theHostName,
                                final String thePortNumber,
                                final String theHttpsPort,
                                final Set<String> theGroupIds,
-                               final String theStatusPath) {
+                               final String theStatusPath,
+                               final String apacheHttpdMediaId) {
         webserverName = theName;
         hostName = theHostName;
         portNumber = thePortNumber;
         httpsPort = theHttpsPort;
         groupIds = Collections.unmodifiableSet(new HashSet<>(theGroupIds));
         statusPath = theStatusPath;
+        this.apacheHttpdMediaId = apacheHttpdMediaId;
     }
 
     public CreateWebServerRequest toCreateWebServerRequest() {
@@ -55,7 +58,7 @@ public class JsonCreateWebServer {
                 null);
 
         return new CreateWebServerRequest(ids, webserverName, hostName, port, securePort, new Path(statusPath),
-                WebServerReachableState.WS_NEW);
+                WebServerReachableState.WS_NEW, apacheHttpdMediaId);
     }
 
     private Integer convertFrom(final String aValue,
@@ -89,6 +92,7 @@ public class JsonCreateWebServer {
                 ", hostName='" + hostName + '\'' +
                 ", httpsPort='" + httpsPort + '\'' +
                 ", statusPath='" + statusPath + '\'' +
+                ", apacheHttpdMediaId='" + apacheHttpdMediaId + '\'' +
                 '}';
     }
 
@@ -103,12 +107,14 @@ public class JsonCreateWebServer {
             final ObjectCodec obj = jp.getCodec();
             final JsonNode node = obj.readTree(jp).get(0);
 
+            final JsonNode apacheHttpdMediaId = node.get("apacheHttpdMediaId");
             final JsonCreateWebServer jcws = new JsonCreateWebServer(node.get("webserverName").getTextValue(),
                     node.get("hostName").getTextValue(),
-                    node.get("portNumber").getValueAsText(),
-                    node.get("httpsPort").getValueAsText(),
+                    node.get("portNumber").asText(),
+                    node.get("httpsPort").asText(),
                        deserializeGroupIdentifiers(node),
-                    node.get("statusPath").getTextValue());
+                    node.get("statusPath").getTextValue(),
+                    apacheHttpdMediaId == null ? null : apacheHttpdMediaId.asText());
             return jcws;
         }
     }

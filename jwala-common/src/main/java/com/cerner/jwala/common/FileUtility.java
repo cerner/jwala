@@ -50,8 +50,8 @@ public class FileUtility {
                 final JarEntry jarEntry = (JarEntry) entries.nextElement();
                 final File f = new File(destination + File.separator + jarEntry.getName());
                 if (jarEntry.isDirectory()) {
-                    if (!f.mkdir()) {
-                        throw new ApplicationException("Failed to create directory " + jarEntry.getName());
+                    if (!f.mkdirs()) {
+                        throw new ApplicationException("Failed to create directory " + f.getAbsoluteFile());
                     }
                     continue;
                 }

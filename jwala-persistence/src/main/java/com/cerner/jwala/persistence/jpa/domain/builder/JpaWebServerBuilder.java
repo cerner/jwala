@@ -2,10 +2,12 @@ package com.cerner.jwala.persistence.jpa.domain.builder;
 
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
+import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
+import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,14 +35,13 @@ public class JpaWebServerBuilder {
         } else {
             groups = Collections.emptyList();
         }
-        return new WebServer(new Identifier<WebServer>(webServer.getId()),
-                groups,
-                webServer.getName(),
-                webServer.getHost(),
-                webServer.getPort(),
-                webServer.getHttpsPort(),
-                new Path(webServer.getStatusPath()),
-                webServer.getState());
+
+        final Media apacheHttpdMedia = webServer.getApacheHttpdMedia() == null ? null :
+                new ModelMapper().map(webServer.getApacheHttpdMedia(), Media.class);
+
+        return new WebServer(new Identifier<WebServer>(webServer.getId()), groups, webServer.getName(), webServer.getHost(),
+                webServer.getPort(), webServer.getHttpsPort(), new Path(webServer.getStatusPath()), webServer.getState(),
+                apacheHttpdMedia );
     }
 
 }

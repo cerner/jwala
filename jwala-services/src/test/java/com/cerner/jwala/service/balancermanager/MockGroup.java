@@ -6,10 +6,12 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.media.Media;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.path.Path;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 
+import java.nio.file.Paths;
 import java.util.*;
 
 import static com.cerner.jwala.common.domain.model.id.Identifier.id;
@@ -37,8 +39,10 @@ public class MockGroup {
                 Calendar.getInstance(),
                 "username",
                 "encryptedpassword",
-                new Media(1, "JDK 1.7-test", "/local/archive/path.zip", "JDK", "/remote/host/path", "unzipped-root-deploy-dir"),
-                new Media(2, "Apache Tomcat 7.0.55-test", "/local/archive/path.zip", "Tomcat", "/remote/host/path", "unzipped-root-deploy-dir"),
+                new Media(1L, "JDK 1.7-test", MediaType.JDK, Paths.get("/local/archive/path.zip", "JDK"),
+                          Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
+                new Media(2L, "Apache Tomcat 7.0.55-test", MediaType.TOMCAT, Paths.get("/local/archive/path.zip"),
+                        Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
                 "d:/java/home", null);
         this.jvms.add(jvm);
         jvms.add(jvm);
@@ -62,31 +66,23 @@ public class MockGroup {
                 Calendar.getInstance(),
                 "username",
                 "encryptedpassword",
-                new Media(1, "JDK 1.7-test", "/local/archive/path", "JDK", "/remote/host/path", "unzipped-root-deploy-dir"),
-                new Media(1, "Apache Tomcat 7.0.55-test", "/local/archive/path", "Tomcat", "/remote/host/path", "unzipped-root-deploy-dir"),
+                new Media(1L, "JDK 1.7-test", MediaType.JDK, Paths.get("/local/archive/path.zip", "JDK"),
+                        Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
+                new Media(2L, "Apache Tomcat 7.0.55-test", MediaType.TOMCAT, Paths.get("/local/archive/path.zip"),
+                        Paths.get("/remote/host/path"), Paths.get("unzipped-root-deploy-dir")),
                 "d:/java/home", null);
         return jvm;
     }
 
     public void getWebServers() {
-        WebServer webServer = new WebServer(id(1L, WebServer.class),
-                "localhost",
-                "myWebServerName",
-                80,
-                443,
-                new Path("path"),
-                WebServerReachableState.WS_REACHABLE);
+        WebServer webServer = new WebServer(id(1L, WebServer.class), "localhost", "myWebServerName", 80, 443,
+                new Path("path"), WebServerReachableState.WS_REACHABLE, null);
         webServers.add(webServer);
     }
 
     public WebServer getWebServer(final String webServerName) {
-        WebServer webServer = new WebServer(id(1L, WebServer.class),
-                "localhost",
-                "myWebSererName",
-                80,
-                443,
-                new Path("path"),
-                WebServerReachableState.WS_REACHABLE);
+        WebServer webServer = new WebServer(id(1L, WebServer.class), "localhost", "myWebSererName", 80, 443,
+                new Path("path"), WebServerReachableState.WS_REACHABLE, null);
         return webServer;
     }
 
@@ -151,20 +147,10 @@ public class MockGroup {
 
     public List<WebServer> findWebServers() {
         List<WebServer> webservers = new LinkedList<>();
-        WebServer webServer = new WebServer(id(1L, WebServer.class),
-                "localhost",
-                "myWebServerName",
-                80,
-                443,
-                new Path("path"),
-                WebServerReachableState.WS_REACHABLE);
-        WebServer webServer2 = new WebServer(id(1L, WebServer.class),
-                "localhost2",
-                "myWebServerName2",
-                80,
-                443,
-                new Path("path"),
-                WebServerReachableState.WS_REACHABLE);
+        WebServer webServer = new WebServer(id(1L, WebServer.class), "localhost", "myWebServerName", 80, 443,
+                new Path("path"), WebServerReachableState.WS_REACHABLE, null);
+        WebServer webServer2 = new WebServer(id(1L, WebServer.class), "localhost2", "myWebServerName2", 80, 443,
+                new Path("path"), WebServerReachableState.WS_REACHABLE, null);
         webservers.add(webServer);
         webservers.add(webServer2);
         return webservers;
