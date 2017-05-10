@@ -24,7 +24,7 @@ import java.nio.file.Paths;
  * Created by Jedd Cuison on 12/6/2016
  */
 @Entity(name = "media")
-@NamedQueries({@NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME, query = "SELECT m FROM media m WHERE m.name = :name")})
+@NamedQueries({@NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME, query = "SELECT m FROM media m WHERE lower(m.name) = lower(:name)")})
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -54,6 +55,7 @@ public class MediaServiceImplTest {
     public void setUp() {
         initMocks(this);
         when(mockMedia.getName()).thenReturn("tomcat");
+        reset(Config.MOCK_MEDIA_DAO);
     }
 
     @Test
@@ -86,12 +88,44 @@ public class MediaServiceImplTest {
         rootDirSet.add("apache-tomcat-8.5.9");
         when(Config.MOCK_FILE_UTILITY.getZipRootDirs(eq("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip")))
                 .thenReturn(rootDirSet);
+        when(Config.MOCK_MEDIA_DAO.find(anyString())).thenThrow(NoResultException.class);
+        mediaService.create(dataMap, mediaFileDataMap);
+        verify(Config.MOCK_MEDIA_DAO).create(any(JpaMedia.class));
+    }
+
+    @Test(expected = MediaServiceException.class)
+    public void testCreateException() {
+        final Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("name", "tomcat");
+        dataMap.put("type", "TOMCAT");
+        dataMap.put("remoteDir", "c:/tomcat");
+
+        final Map<String, Object> mediaFileDataMap = new HashMap<>();
+        mediaFileDataMap.put("filename", "apache-tomcat-8.5.9.zip");
+        mediaFileDataMap.put("content", new BufferedInputStream(new ByteArrayInputStream("the content".getBytes())));
+
+        when(Config.MOCK_MEDIA_REPOSITORY_SERVICE.upload(anyString(), any(InputStream.class)))
+                .thenReturn("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip");
+        final Set<String> rootDirSet = new HashSet<>();
+        rootDirSet.add("apache-tomcat-8.5.9");
+        when(Config.MOCK_FILE_UTILITY.getZipRootDirs(eq("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip")))
+                .thenReturn(rootDirSet);
         mediaService.create(dataMap, mediaFileDataMap);
         verify(Config.MOCK_MEDIA_DAO).create(any(JpaMedia.class));
     }
 
     @Test
     public void testUpdate() {
+        when(Config.MOCK_MEDIA_DAO.find(anyString())).thenThrow(NoResultException.class);
+        mediaService.update(mockMedia);
+        verify(Config.MOCK_MEDIA_DAO).update(any(JpaMedia.class));
+    }
+
+    @Test(expected = MediaServiceException.class)
+    public void testUpdateException() {
+        JpaMedia media = new JpaMedia();
+        media.setName("testMedia");
+        when(Config.MOCK_MEDIA_DAO.findById(anyLong())).thenReturn(media);
         mediaService.update(mockMedia);
         verify(Config.MOCK_MEDIA_DAO).update(any(JpaMedia.class));
     }

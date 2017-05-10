@@ -154,7 +154,9 @@ public enum FaultType implements MessageResponseStatus {
 
     NAME_TOO_LONG("AEM75","NameTooLong"),
 
-    NAME_INVALID_SPECIAL_CHARACTERS("AEM76", "NameInvalidSpecialCharacters");
+    NAME_INVALID_SPECIAL_CHARACTERS("AEM76", "NameInvalidSpecialCharacters"),
+
+    MEDIA_NOT_FOUND("AEM77", "MediaNotFound");
 
     private final String faultCode;
     private final String faultMessage;

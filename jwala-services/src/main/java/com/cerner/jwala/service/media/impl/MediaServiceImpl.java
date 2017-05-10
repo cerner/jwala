@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -75,6 +76,14 @@ public class MediaServiceImpl implements MediaService {
         // to extract the base name e.g. c:/jdk.zip -> jdk.zip or jdk.zip -> jdk.zip
         final String filename = Paths.get((String) mediaFileDataMap.get("filename")).getFileName().toString();
 
+        try {
+            mediaDao.find(media.getName());
+            final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
+            LOGGER.error(msg);
+            throw new MediaServiceException(msg);
+        } catch (NoResultException e) {
+            LOGGER.debug("No Media name conflict, ignoring not found exception for creating media ", e);
+        }
         final String dest = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);
@@ -100,12 +109,13 @@ public class MediaServiceImpl implements MediaService {
 
     /**
      * This method will check for the existing jvm associations for the media
+     *
      * @param name media name
      */
     private void checkForJvmAssociation(String name) {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         for (Jvm jvm : jvmList) {
-            if (name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
+            if (jvm.getJdkMedia() != null && name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
                 final String msg = MessageFormat.format("The media {0} cannot be deleted because it is associated with a JVM or JVMs", name);
                 LOGGER.error(msg);
                 throw new MediaServiceException(msg);
@@ -121,6 +131,17 @@ public class MediaServiceImpl implements MediaService {
     @Override
     @Transactional
     public JpaMedia update(final JpaMedia media) {
+        JpaMedia originalMedia = mediaDao.findById(media.getId());
+        try {
+            mediaDao.find(media.getName());
+            if (!originalMedia.getName().equalsIgnoreCase(media.getName())) {
+                final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
+                LOGGER.error(msg);
+                throw new MediaServiceException(msg);
+            }
+        } catch (NoResultException e) {
+            LOGGER.debug("No media name conflict, ignore no result exception for creating media", e);
+        }
         return mediaDao.update(media);
     }
 
