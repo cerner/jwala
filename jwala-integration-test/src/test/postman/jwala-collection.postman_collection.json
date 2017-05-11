@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "6c486119-a384-f2f9-12ee-b598d6a00488",
+		"_postman_id": "f1116734-74a4-a44e-147e-8b22e2280522",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -6155,26 +6155,45 @@
 					"response": []
 				},
 				{
-					"name": "deploy httpd",
+					"name": "delete postman test tomcat media",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
 								]
 							}
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/CTO-N9SF-LTST-HTTP-{{host}}/conf/httpd.conf",
-						"method": "PUT",
+						"url": "{{url}}/v1.0/media/Postman-Test-Tomcat-Media",
+						"method": "DELETE",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete postman test apache httpd media",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/media/Postman-Test-Apache-HTTPD-Media",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []
