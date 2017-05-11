@@ -35,7 +35,7 @@
 # least PidFile.
 #
 #ServerRoot ./
-ServerRoot ${vars['remote.jwala.data.dir']}/../../apache-httpd-2.4.20/
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -208,7 +208,7 @@ Header edit Location ^http://(.*)$  https://$1
 </Directory>
 
 
-<Files "stp.png">
+<Files "apache_pb.png">
     Order Deny,Allow
     Deny from all
     Allow from all
@@ -253,7 +253,7 @@ SSLRequireSSL
 </Directory>
 
 # Apply rewrite rules to 443 virtual host
-IncludeOptional ../app/data/httpd/*urlrewriterules.conf
+IncludeOptional  ${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}/*urlrewriterules.conf
 
 # TLS1 is supported because corporate group policy currently disables TLS1.2 and TLS1.1 in IE
 SSLProtocol -all +TLSv1.2 +TLSv1
@@ -267,9 +267,8 @@ SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
 #SSLCipherSuite SHA1 preferred over MD5
 
 SSLSessionCacheTimeout 300
-
-SSLCertificateFile ../app/data/security/id/${webServer.host}.cer
-SSLCertificateKeyFile ../app/data/security/id/${webServer.host}.key
+SSLCertificateFile ${vars.'remote.jwala.data.dir'}/security/id/${webServer.host}.cer
+SSLCertificateKeyFile ${vars.'remote.jwala.data.dir'}/security/id/${webServer.host}.key
 
 SSLVerifyClient none
 
@@ -280,7 +279,7 @@ SSLProxyVerifyDepth 2
 
 # Do not check expiration, to avoid outages
 SSLProxyCheckPeerExpire off
-SSLProxyCACertificatePath ../app/data/security/openssl/
+SSLProxyCACertificatePath ${vars.'remote.jwala.data.dir'}/security/openssl/
 
 #The following option must be set if you have a locally signed certificate
 SSLProxyVerify optional_no_ca
@@ -307,12 +306,12 @@ ProxyPassReverse ${it.webAppContext.replaceAll(" ", "")} balancer://lb-${it.name
 
 </VirtualHost>
 
-<VirtualHost *:80>
+<VirtualHost *:${webServer.port}>
 DocumentRoot "htdocs"
 
 #IPINS
 RewriteEngine on      
-IncludeOptional ../app/data/httpd/*urlrewriterules.conf
+IncludeOptional ${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}/*urlrewriterules.conf
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)      
 RewriteRule .* - [F]    
 
