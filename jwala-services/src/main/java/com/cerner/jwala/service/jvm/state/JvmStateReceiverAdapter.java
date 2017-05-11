@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.NoResultException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.apache.cxf.interceptor.LoggingMessage.ID_KEY;
+import java.util.Set;
 
 /**
  * The listener for JGroup messages
@@ -26,8 +26,9 @@ import static org.apache.cxf.interceptor.LoggingMessage.ID_KEY;
 public class JvmStateReceiverAdapter extends ReceiverAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmStateReceiverAdapter.class);
-    public static final String STATE_KEY = "STATE";
-    public static final String NAME_KEY = "NAME";
+    static final String STATE_KEY = "STATE";
+    static final String NAME_KEY = "NAME";
+    private static final String ID_KEY = "ID";
 
     private final JvmStateService jvmStateService;
     private final JvmPersistenceService jvmPersistenceService;
@@ -60,7 +61,7 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
     public void receive(final Message jGroupMsg) {
         final Map serverInfoMap = (Map) jGroupMsg.getObject();
         final Jvm jvm = getJvm(serverInfoMap);
-        final JvmState jvmState = LIFECYCLE_JWALA_JVM_STATE_REF_MAP.get(serverInfoMap.get(STATE_KEY));
+        final JvmState jvmState = getJvmState(serverInfoMap);
 
         if (jvm != null && !JvmState.JVM_STOPPED.equals(jvmState)) {
             jvmStateService.updateState(jvm, jvmState, StringUtils.EMPTY);
@@ -69,18 +70,73 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
         }
     }
 
+    private JvmState getJvmState(final Map serverInfoMap) {
+
+        // first check if the key types are string
+        final Set keys = serverInfoMap.keySet();
+        if (keys.isEmpty()) {
+            return null;
+        }
+
+        final Object initialKey = keys.iterator().next();
+        if (initialKey instanceof String) {
+            // convert the LifecycleState to the JvmState
+            return LIFECYCLE_JWALA_JVM_STATE_REF_MAP.get(serverInfoMap.get(STATE_KEY));
+        }
+
+        // assume the key is ReportingJmsMessageKey, in which case the value is already returned as a string JvmState
+        try {
+            final Field idKey = initialKey.getClass().getDeclaredField(STATE_KEY);
+            final String jvmStateString = (String) serverInfoMap.get(idKey.get(initialKey));
+            return JvmState.valueOf(jvmStateString);
+        } catch (NoSuchFieldException e) {
+            LOGGER.error("Failed to find STATE key as ReportingJmsMessageKey in message: {}", serverInfoMap, e);
+            return null;
+        } catch (IllegalAccessException e) {
+            LOGGER.error("Failed to convert STATE key to ReportingJmsMessageKey in message: {}", serverInfoMap, e);
+            return null;
+        }
+
+    }
+
     /**
      * Get the JVM with parameters provided in a map
      * @param serverInfoMap the map that contains the JVM id or name
      * @return {@link Jvm}
      */
     private Jvm getJvm(final Map serverInfoMap) {
-        final String id = serverInfoMap.get(ID_KEY) instanceof String ? (String) serverInfoMap.get(ID_KEY) : null;
+        final String id = getStringFromMessageMap(serverInfoMap, ID_KEY);
         if (id != null && NumberUtils.isNumber(id)) {
             return getJvmById(Long.parseLong(id));
         }
         // try to get the JVM by name instead
-        return serverInfoMap.get(NAME_KEY) instanceof String ? getJvmByName((String) serverInfoMap.get(NAME_KEY)) : null;
+        return getJvmByName(getStringFromMessageMap(serverInfoMap, NAME_KEY));
+    }
+
+    private String getStringFromMessageMap(final Map serverInfoMap, final String key) {
+
+        // first check if the key types are string
+        final Set keys = serverInfoMap.keySet();
+        if (keys.isEmpty()) {
+            return null;
+        }
+
+        final Object initialKey = keys.iterator().next();
+        if (initialKey instanceof String) {
+            return (String) serverInfoMap.get(key);
+        }
+
+        // assume the key is ReportingJmsMessageKey
+        try {
+            final Field idKey = initialKey.getClass().getDeclaredField(key);
+            return (String) serverInfoMap.get(idKey.get(initialKey));
+        } catch (NoSuchFieldException e) {
+            LOGGER.error("Failed to find key " + key +" as ReportingJmsMessageKey in message: {}", serverInfoMap, e);
+            return null;
+        } catch (IllegalAccessException e) {
+            LOGGER.error("Failed to convert " + key + " key to ReportingJmsMessageKey in message: {}", serverInfoMap, e);
+            return null;
+        }
     }
 
     /**
