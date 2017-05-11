@@ -16,7 +16,11 @@ public class DeleteExternalProperty extends JwalaTest {
     public void delExternalProperties() {
         clickTab("Configuration");
         clickTab("Resources");
-        driver.findElement(By.xpath("//li/span[text()='ext.properties']/preceding-sibling::input[@type='checkbox']")).click();
+
+        // If not coming from add ext property, this code makes sure ext properties is the currently selected
+        // Topology node
+        driver.findElement(By.xpath("//span[text()='Ext Properties']")).click();
+        waitClick(By.xpath("//li/span[text()='ext.properties']/preceding-sibling::input[@type='checkbox']"));
         driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-trash') and @title='delete']")).click();
         new WebDriverWait(driver, 10).until(ExpectedConditions.numberOfElementsToBe(By.xpath("//b[text()='Are you sure you want to delete the property file ?']"), 1));
         driver.switchTo().activeElement().sendKeys(Keys.ENTER);
