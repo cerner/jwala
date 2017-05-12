@@ -79,14 +79,14 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
             return null;
         }
 
-        final Object initialKey = keys.iterator().next();
-        if (initialKey instanceof String) {
+        if (serverInfoMap.containsKey(STATE_KEY)) {
             // convert the LifecycleState to the JvmState
             return LIFECYCLE_JWALA_JVM_STATE_REF_MAP.get(serverInfoMap.get(STATE_KEY));
         }
 
         // assume the key is ReportingJmsMessageKey, in which case the value is already returned as a string JvmState
         try {
+            final Object initialKey = keys.iterator().next();
             final Field idKey = initialKey.getClass().getDeclaredField(STATE_KEY);
             final String jvmStateString = (String) serverInfoMap.get(idKey.get(initialKey));
             return JvmState.valueOf(jvmStateString);
@@ -122,13 +122,13 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
             return null;
         }
 
-        final Object initialKey = keys.iterator().next();
-        if (initialKey instanceof String) {
+        if (serverInfoMap.containsKey(key)) {
             return (String) serverInfoMap.get(key);
         }
 
         // assume the key is ReportingJmsMessageKey
         try {
+            final Object initialKey = keys.iterator().next();
             final Field idKey = initialKey.getClass().getDeclaredField(key);
             return (String) serverInfoMap.get(idKey.get(initialKey));
         } catch (NoSuchFieldException e) {
