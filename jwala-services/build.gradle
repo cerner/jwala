@@ -15,6 +15,7 @@ dependencies {
     compile group: "org.springframework", name: "spring-websocket", version: "$project.versions.spring"
     compile group: "org.springframework", name: "spring-messaging", version: "$project.versions.spring"
     compile group: "org.jgroups", name: "jgroups", version: "$project.versions.jgroups"
+    compile group: "org.modelmapper", name: "modelmapper", version: "$project.versions.modelMapper"
 
     compile group: 'org.apache.commons', name: 'commons-lang3', version: "$project.versions.commons_lang"
     compile group: 'commons-logging', name: 'commons-logging', version: "$project.versions.commons_logging"

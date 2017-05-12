@@ -1,7 +1,6 @@
 var mediaService = {
     getAllMedia: function(responseCallback) {
         return serviceFoundation.promisedGet("v1.0/media", "json");
-
     },
     getMediaById: function(id) {
         return serviceFoundation.promisedGet("v1.0/media;id=" + id, "json");

@@ -12,7 +12,8 @@ import java.util.List;
         @NamedQuery(name = JpaGroup.QUERY_GET_GROUP, query = "SELECT g FROM JpaGroup g WHERE g.id = :groupId"),
         @NamedQuery(name = JpaGroup.QUERY_GET_GROUPS_WITH_WEBSERVER, query = "SELECT g FROM JpaGroup g WHERE :webServer MEMBER OF g.webServers"),
         @NamedQuery(name = JpaGroup.QUERY_UPDATE_STATE_BY_ID, query = "UPDATE JpaGroup g SET g.stateName = :state WHERE g.id = :id"),
-        @NamedQuery(name = JpaGroup.QUERY_GET_HOSTS_OF_A_GROUP, query="SELECT DISTINCT j.hostName FROM JpaGroup g JOIN g.jvms j WHERE g.name = :name")
+        @NamedQuery(name = JpaGroup.QUERY_GET_HOSTS_OF_A_GROUP, query="SELECT DISTINCT j.hostName FROM JpaGroup g JOIN g.jvms j WHERE g.name = :name"),
+        @NamedQuery(name = JpaGroup.QUERY_GET_GROUPS_BY_ID_LIST, query = "SELECT g FROM JpaGroup g WHERE g.id IN (:idList)")
 })
 public class JpaGroup extends AbstractEntity<JpaGroup> {
 
@@ -21,10 +22,12 @@ public class JpaGroup extends AbstractEntity<JpaGroup> {
     public static final String QUERY_GET_GROUPS_WITH_WEBSERVER = "getGroupWithWebServer";
     public static final String QUERY_UPDATE_STATE_BY_ID = "updateStateById";
     public static final String QUERY_GET_HOSTS_OF_A_GROUP = "getHostsOfAGroup";
+    public static final String QUERY_GET_GROUPS_BY_ID_LIST = "getGroupsByIdList";
 
     public static final String QUERY_PARAM_ID = "id";
     public static final String QUERY_PARAM_STATE = "state";
     public static final String QUERY_PARAM_NAME = "name";
+    public static final String QUERY_PARAM_ID_LIST = "idList";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

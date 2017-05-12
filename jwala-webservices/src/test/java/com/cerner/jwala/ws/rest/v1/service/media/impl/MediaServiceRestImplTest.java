@@ -1,13 +1,14 @@
 package com.cerner.jwala.ws.rest.v1.service.media.impl;
 
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
-import com.cerner.jwala.persistence.jpa.type.MediaType;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -147,6 +148,5 @@ public class MediaServiceRestImplTest {
         Response response = mediaServiceRest.updateMedia(media, authenticatedUser);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
-
 
 }

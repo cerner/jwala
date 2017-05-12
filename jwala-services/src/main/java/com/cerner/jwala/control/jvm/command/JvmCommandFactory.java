@@ -27,7 +27,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.cerner.jwala.control.AemControl.Properties.*;
 
@@ -45,11 +47,10 @@ public class JvmCommandFactory {
     protected SshConfiguration sshConfig;
 
     @Autowired
-    protected RemoteCommandExecutorService remoteCommandExecutorService;
+    private RemoteCommandExecutorService remoteCommandExecutorService;
 
     @Autowired
-    protected BinaryDistributionControlService binaryDistributionControlService;
-
+    private BinaryDistributionControlService binaryDistributionControlService;
 
     /**
      * @param jvm
@@ -175,9 +176,9 @@ public class JvmCommandFactory {
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
         String dumpFile = "heapDump." + StringUtils.replace(jvm.getJvmName(), " ", "") + "." + fmt.print(DateTime.now());
         String dumpLiveStr = ApplicationProperties.getAsBoolean(PropertyKeys.JMAP_DUMP_LIVE_ENABLED.name()) ? "live," : "\"\"";
-        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR) + "/" +
+        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
-                ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
+                jvm.getTomcatMedia().getMediaDir();
         return new ExecCommand(getFullPathScript(jvm, scriptName),
                 jvm.getJavaHome(),
                 ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR),
@@ -193,12 +194,14 @@ public class JvmCommandFactory {
      * @return
      */
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
-        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR) + "/" +
+        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
                 StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
-                ApplicationProperties.get(PropertyKeys.REMOTE_TOMCAT_DIR_NAME);
+                jvm.getTomcatMedia().getMediaDir();
 
         return new ExecCommand(getFullPathScript(jvm, scriptName),
-                jvm.getJavaHome(), jvmInstanceDir, jvm.getJvmName());
+                jvm.getJavaHome(),
+                jvmInstanceDir,
+                jvm.getJvmName());
     }
 
     /**
@@ -218,12 +221,11 @@ public class JvmCommandFactory {
      */
     private ExecCommand getExecCommandForDeploy(Jvm jvm) {
         final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
-        final String remoteJavaHome = jvm.getJavaHome();
-        final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATH_INSTANCES_DIR);
+        final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
         return new ExecCommand(remoteScriptDir + "/" + jvm.getJvmName() + "/" + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME,
                 remoteScriptDir + "/" + jvm.getJvmName() + ".jar",
                 remotePathsInstancesDir + "/" + jvm.getJvmName(),
-                remoteJavaHome + "/bin/jar");
+                jvm.getJavaHome() + "/bin/jar");
     }
 
     /**
@@ -244,7 +246,7 @@ public class JvmCommandFactory {
             encryptedPassword = null;
         }
 
-        String remotePathsInstancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATH_INSTANCES_DIR);
+        String remotePathsInstancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
 
         final String quotedUsername;
         if (userName != null && userName.length() > 0) {
@@ -254,12 +256,11 @@ public class JvmCommandFactory {
         }
         final String decryptedPassword = encryptedPassword != null && encryptedPassword.length() > 0 ? new DecryptPassword().decrypt(encryptedPassword) : "";
 
-        return new ShellCommand(
-                getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
-                jvm.getJvmName(),
-                remotePathsInstancesDir,
-                ApplicationProperties.getRequired(PropertyKeys.REMOTE_TOMCAT_DIR_NAME),
-                quotedUsername, decryptedPassword);
+        List<String> formatStrings = Arrays.asList(getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
+                jvm.getJvmName(), remotePathsInstancesDir, jvm.getTomcatMedia().getMediaDir().toString());
+        List<String> unformatStrings = Arrays.asList(quotedUsername, decryptedPassword);
+
+        return new ExecCommand(formatStrings, unformatStrings);
     }
 
     private ExecCommand getExecCommandForDeleteService(Jvm jvm) {

@@ -1,5 +1,7 @@
 package com.cerner.jwala.control.webserver.command;
 
+import com.cerner.jwala.common.domain.model.media.Media;
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
@@ -29,6 +31,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -130,6 +133,14 @@ public class WebServerCommandFactoryTest {
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
 
+        final Media apacheHttpdMedia = new Media();
+        apacheHttpdMedia.setRemoteDir(Paths.get("c:/ctp"));
+        apacheHttpdMedia.setMediaDir(Paths.get("Apache24"));
+        apacheHttpdMedia.setType(MediaType.APACHE);
+        when(mockWebServer.getApacheHttpdMedia()).thenReturn(apacheHttpdMedia);
+
+        when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("C:/ctp");
+
         RemoteCommandReturnInfo startResult = webServerCommandFactory.executeCommand(mockWebServer, WebServerControlOperation.INSTALL_SERVICE);
 
         assertEquals(0, startResult.retCode);
@@ -185,6 +196,14 @@ public class WebServerCommandFactoryTest {
         when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("/fake/deploy/path");
         when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(mockResourceContent);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockResourceTemplateMetaData);
+
+        final Media apacheHttpdMedia = new Media();
+        apacheHttpdMedia.setRemoteDir(Paths.get("c:/ctp"));
+        apacheHttpdMedia.setMediaDir(Paths.get("Apache24"));
+        apacheHttpdMedia.setType(MediaType.APACHE);
+        when(mockWebServer.getApacheHttpdMedia()).thenReturn(apacheHttpdMedia);
+
+        when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("C:/ctp");
 
         RemoteCommandReturnInfo startResult = webServerCommandFactory.executeCommand(mockWebServer, WebServerControlOperation.INSTALL_SERVICE);
 

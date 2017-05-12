@@ -31,7 +31,7 @@ public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implemen
     private EntityManager entityManager;
 
     @Override
-    public JpaJvm createJvm(CreateJvmRequest createJvmRequest, JpaMedia jdkMedia) {
+    public JpaJvm createJvm(CreateJvmRequest createJvmRequest, JpaMedia jdkMedia, JpaMedia tomcatMedia) {
 
         try {
             final JpaJvm jpaJvm = new JpaJvm();
@@ -48,7 +48,7 @@ public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implemen
             jpaJvm.setUserName(createJvmRequest.getUserName());
             jpaJvm.setEncryptedPassword(createJvmRequest.getEncryptedPassword());
             jpaJvm.setJdkMedia(jdkMedia);
-//            jpaJvm.setTomcatMedia(createJvmRequest.getTomcatMediaId());
+            jpaJvm.setTomcatMedia(tomcatMedia);
 
             return create(jpaJvm);
         } catch (final EntityExistsException eee) {
@@ -58,7 +58,8 @@ public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implemen
     }
 
     @Override
-    public JpaJvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword, final JpaMedia jdkMedia) {
+    public JpaJvm updateJvm(final UpdateJvmRequest updateJvmRequest, final boolean updateJvmPassword,
+                            final JpaMedia jdkMedia, JpaMedia tomcatMedia) {
 
         try {
             final Identifier<Jvm> jvmId = updateJvmRequest.getId();
@@ -80,7 +81,7 @@ public class JvmCrudServiceImpl extends AbstractCrudServiceImpl<JpaJvm> implemen
             }
 
             jpaJvm.setJdkMedia(jdkMedia);
-//            jpaJvm.setTomcatMedia(updateJvmRequest.getNewTomcatMediaId());
+            jpaJvm.setTomcatMedia(tomcatMedia);
 
             return update(jpaJvm);
         } catch (final EntityExistsException eee) {
