@@ -42,31 +42,35 @@ public class JvmCreateTest extends JwalaTest {
 
         // check https port
         assertEquals("322", driver.switchTo().activeElement().getAttribute("value"));
-        driver.switchTo().activeElement().sendKeys(Keys.TAB);
 
         // redirect port
-        assertEquals("323", driver.switchTo().activeElement().getAttribute("value"));
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
+        assertEquals("323", driver.switchTo().activeElement().getAttribute("value"));
 
         // shutdown port
-        assertEquals("324", driver.switchTo().activeElement().getAttribute("value"));
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
+        assertEquals("324", driver.switchTo().activeElement().getAttribute("value"));
 
         // ajp port
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
         assertEquals("325", driver.switchTo().activeElement().getAttribute("value"));
-        driver.switchTo().activeElement().sendKeys(Keys.TAB);
 
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
         assertEquals("https://" + JVM_NAME + "-host:322/tomcat-power.gif", driver.switchTo().activeElement().getAttribute("value"));
-        driver.switchTo().activeElement().sendKeys(Keys.TAB);
 
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
         driver.switchTo().activeElement().sendKeys("zUser");
-        driver.switchTo().activeElement().sendKeys(Keys.TAB);
 
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
         driver.switchTo().activeElement().sendKeys("zPassw0rd");
-        driver.switchTo().activeElement().sendKeys(Keys.TAB);
 
-        Select jdkDropDown = new Select(driver.switchTo().activeElement());
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
+        final Select jdkDropDown = new Select(driver.switchTo().activeElement());
         jdkDropDown.selectByIndex(1);
+
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
+        final Select tomcatDropDown = new Select(driver.switchTo().activeElement());
+        tomcatDropDown.selectByIndex(1);
 
         driver.findElement(By.xpath("//div[contains(text(), '" + GROUP_NAME_1 + "')]/input")).click();
         driver.findElement(By.xpath("//div[contains(text(), '" + GROUP_NAME_2 + "')]/input")).click();
