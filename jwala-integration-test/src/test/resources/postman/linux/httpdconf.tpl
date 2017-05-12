@@ -35,10 +35,10 @@
 # least PidFile.
 #
 # Allow multiple httpd instances to run on the same host
-PidFile /opt/ctp/apache-httpd-2.4.20/logs/httpd-${webServer.name}.pid
+PidFile ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/logs/httpd-${webServer.name}.pid
 #
 #ServerRoot ./
-ServerRoot /opt/ctp/apache-httpd-2.4.20/
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -272,8 +272,8 @@ SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
 
 SSLSessionCacheTimeout 300
 
-SSLCertificateFile ../app/data/security/id/${webServer.host}.cer
-SSLCertificateKeyFile ../app/data/security/id/${webServer.host}.key
+SSLCertificateFile ../app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.cer
+SSLCertificateKeyFile ../app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.key
 
 SSLVerifyClient none
 
@@ -311,7 +311,7 @@ ProxyPassReverse ${it.webAppContext.replaceAll(" ", "")} balancer://lb-${it.name
 
 </VirtualHost>
 
-<VirtualHost *:80>
+<VirtualHost *:${webServer.port}>
 DocumentRoot "htdocs"
 
 #IPINS
@@ -520,7 +520,7 @@ DocumentRoot htdocs
 # ErrorLog "logs/error.log"
 # Use log file rotation:
 
-  ErrorLog "|${vars['remote.paths.apache.httpd']}/bin/rotatelogs -n 10 -l ${vars['remote.paths.apache.httpd']}/logs/error-log-${webServer.name} 10M"
+ErrorLog "|${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/bin/rotatelogs -n 10 -l ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/logs/error-log-${webServer.name} 10M"
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -551,7 +551,7 @@ LogLevel warn
     #
     # CustomLog "logs/access.log" common
     # Use log file rotation:
-      CustomLog "|${vars['remote.paths.apache.httpd']}/bin/rotatelogs -n 10 -l ${vars['remote.paths.apache.httpd']}/logs/access-log-${webServer.name} 10M" common
+     CustomLog "|${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/bin/rotatelogs -n 10 -l ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/logs/access-log-${webServer.name} 10M" common
 
     #
     # If you prefer a logfile with access, agent, and referer information
