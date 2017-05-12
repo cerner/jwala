@@ -2,8 +2,10 @@ package com.cerner.jwala.ui.selenium.testsuite;
 
 import com.cerner.jwala.ui.selenium.TestSuite;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -67,6 +69,20 @@ public class JwalaTest {
         new WebDriverWait(driver, hideTimeout)
                 .until(ExpectedConditions.numberOfElementsToBe(
                         By.xpath("//div[contains(@class, 'AppBusyScreen') and contains(@class, 'show')]"), 0));
+    }
+
+    protected void rightClick(final By by) {
+        final Actions action = new Actions(driver).contextClick(driver.findElement(by));
+        action.build().perform();
+    }
+
+    protected boolean isElementExists(final String xPath) {
+        try {
+            driver.findElement(By.xpath(xPath));
+        } catch (final NoSuchElementException e) {
+            return false;
+        }
+        return true;
     }
 
 }
