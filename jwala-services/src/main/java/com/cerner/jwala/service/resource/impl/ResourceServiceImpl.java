@@ -193,7 +193,9 @@ public class ResourceServiceImpl implements ResourceService {
                     responseWrapper = createGroupedApplicationsTemplate(resourceTemplateMetaData, templateContent, targetName);
                     break;
                 default:
-                    throw new ResourceServiceException("Invalid entity type '" + resourceTemplateMetaData.getEntity().getType() + "'");
+                    String errMsg = MessageFormat.format("Invalid entity type: {0}", resourceTemplateMetaData.getEntity().getType());
+                    LOGGER.error(errMsg);
+                    throw new ResourceServiceException(errMsg);
             }
         } catch (final IOException ioe) {
             LOGGER.error("Error creating template for target {}", targetName, ioe);
