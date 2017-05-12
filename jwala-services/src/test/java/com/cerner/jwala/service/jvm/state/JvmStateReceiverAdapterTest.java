@@ -61,6 +61,23 @@ public class JvmStateReceiverAdapterTest {
         verify(mockJvmStateService).updateState(eq(jvm), eq(JvmState.JVM_STOPPING), eq(StringUtils.EMPTY));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testReceiveReportingJmsMessageKey() throws Exception {
+        final Identifier<Jvm> jvmId = new Identifier<>("1");
+        Jvm jvm = new Jvm(jvmId, "jvm-name");
+
+        final Map<Object, Object> serverInfoMap = new HashMap();
+        serverInfoMap.put(ReportingJmsMessageTestKey.ID, "1");
+        serverInfoMap.put(ReportingJmsMessageTestKey.STATE, "JVM_STOPPING");
+
+        msg = new Message();
+        msg.setObject(serverInfoMap);
+
+        when (mockJvmPersistenceService.getJvm(jvmId)).thenReturn(jvm);
+        jvmStateReceiverAdapter.receive(msg);
+        verify(mockJvmStateService).updateState(eq(jvm), eq(JvmState.JVM_STOPPING), eq(StringUtils.EMPTY));
+    }
 
     @Test
     @SuppressWarnings("unchecked")
@@ -100,4 +117,19 @@ public class JvmStateReceiverAdapterTest {
         verify(mockJvmStateService, never()).updateState(eq(jvm), eq(JvmState.JVM_STOPPING), eq(StringUtils.EMPTY));
     }
 
+    private enum ReportingJmsMessageTestKey {
+        ID("id"),
+        STATE("state"),
+        NAME("name");
+
+        private final String key;
+
+        private ReportingJmsMessageTestKey(final String theKey) {
+            key = theKey;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
 }
