@@ -73,18 +73,19 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
 
     private JvmState getJvmState(final Map serverInfoMap) {
 
-        // first check if the key types are string
+        // first check if the key types are String to support the latest version
         final Set keys = serverInfoMap.keySet();
         if (CollectionUtils.isEmpty(keys)) {
             return null;
         }
 
         if (serverInfoMap.containsKey(STATE_KEY)) {
-            // convert the LifecycleState to the JvmState
+            // the latest version sends the Tomcat Lifecycle State
+            // so we need to convert the Tomcat Lifecycle State to the JvmState
             return LIFECYCLE_JWALA_JVM_STATE_REF_MAP.get(serverInfoMap.get(STATE_KEY));
         }
 
-        // assume the key is ReportingJmsMessageKey, in which case the value is already returned as a string JvmState
+        // assume the message is from the initial version of the Jvm state reporter, in which case the value is already returned as a string JvmState
         try {
             final Object initialKey = keys.iterator().next();
             final Field idKey = initialKey.getClass().getDeclaredField(STATE_KEY);
@@ -116,7 +117,7 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
 
     private String getStringFromMessageMap(final Map serverInfoMap, final String key) {
 
-        // first check if the key types are string
+        // check for a String key first to support the latest version
         final Set keys = serverInfoMap.keySet();
         if (CollectionUtils.isEmpty(keys)) {
             return null;
@@ -126,7 +127,7 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
             return (String) serverInfoMap.get(key);
         }
 
-        // assume the key is ReportingJmsMessageKey
+        // assume the message is from the initial version of the JVM state reporter
         try {
             final Object initialKey = keys.iterator().next();
             final Field idKey = initialKey.getClass().getDeclaredField(key);
