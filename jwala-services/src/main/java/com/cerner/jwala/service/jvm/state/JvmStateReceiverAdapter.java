@@ -6,6 +6,7 @@ import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import org.apache.catalina.LifecycleState;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jgroups.Message;
@@ -74,7 +75,7 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
 
         // first check if the key types are string
         final Set keys = serverInfoMap.keySet();
-        if (keys.isEmpty()) {
+        if (CollectionUtils.isEmpty(keys)) {
             return null;
         }
 
@@ -117,7 +118,7 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
 
         // first check if the key types are string
         final Set keys = serverInfoMap.keySet();
-        if (keys.isEmpty()) {
+        if (CollectionUtils.isEmpty(keys)) {
             return null;
         }
 
@@ -131,10 +132,10 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
             final Field idKey = initialKey.getClass().getDeclaredField(key);
             return (String) serverInfoMap.get(idKey.get(initialKey));
         } catch (NoSuchFieldException e) {
-            LOGGER.error("Failed to find key " + key +" as ReportingJmsMessageKey in message: {}", serverInfoMap, e);
+            LOGGER.error("Failed to find key {} as ReportingJmsMessageKey in message: {}", key, serverInfoMap, e);
             return null;
         } catch (IllegalAccessException e) {
-            LOGGER.error("Failed to convert " + key + " key to ReportingJmsMessageKey in message: {}", serverInfoMap, e);
+            LOGGER.error("Failed to convert {} key to ReportingJmsMessageKey in message: {}", key, serverInfoMap, e);
             return null;
         }
     }
