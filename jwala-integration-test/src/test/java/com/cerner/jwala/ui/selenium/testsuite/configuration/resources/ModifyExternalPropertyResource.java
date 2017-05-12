@@ -17,8 +17,11 @@ public class ModifyExternalPropertyResource extends JwalaTest {
     public void testModifyExtPropResource() {
         clickTab("Configuration");
         clickTab("Resources");
+
+        // Loads ext properties, screen is disable momentarily while loading so we need a waitClick (waits for element
+        // to be clickable before clicking) for the next click action
         driver.findElement(By.xpath("//span[text()='Ext Properties']")).click();
-        driver.findElement(By.xpath("//li/span[text()='ext.properties']")).click();
+        waitClick(By.xpath("//li/span[text()='ext.properties']"));
         driver.findElement(By.xpath("//div[contains(@class, 'CodeMirror') and contains(@class, 'cm-s-default')]")).click();
         driver.switchTo().activeElement().sendKeys(TEST_STR);
         driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-disk') and @title='Save']")).click();
@@ -28,7 +31,7 @@ public class ModifyExternalPropertyResource extends JwalaTest {
         driver.findElement(By.xpath("//span[text()='Ext Properties']")).click();
         new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.numberOfElementsToBe(By.xpath("//div[contains(@class, 'CodeMirror') and contains(@class, 'cm-s-default')]"), 0));
-        driver.findElement(By.xpath("//li/span[text()='ext.properties']")).click();
+        waitClick(By.xpath("//li/span[text()='ext.properties']"));
         new WebDriverWait(driver, 10).until(ExpectedConditions.numberOfElementsToBeMoreThan(By.xpath("//div[contains(.,'" + TEST_STR + "')]"), 0));
     }
 
