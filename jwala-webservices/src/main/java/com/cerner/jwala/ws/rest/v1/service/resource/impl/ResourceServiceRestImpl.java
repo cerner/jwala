@@ -8,7 +8,6 @@ import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
 import com.cerner.jwala.common.exception.FaultCodeException;
 import com.cerner.jwala.common.properties.ExternalProperties;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateMetaDataUpdateException;
-import com.cerner.jwala.service.exception.ResourceServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
@@ -62,42 +61,36 @@ public class ResourceServiceRestImpl implements ResourceServiceRest {
 
     public Response createTemplate(final List<Attachment> attachments, final String targetName, final AuthenticatedUser user) {
         LOGGER.info("create template for target {} by user {}", targetName, user.getUser().getId());
-        try {
-            // TODO check for a max file size
-            List<Attachment> filteredAttachments = new ArrayList<>();
-            for (Attachment attachment : attachments) {
-                if (attachment.getDataHandler().getName() != null) {
-                    filteredAttachments.add(attachment);
-                }
+        // TODO check for a max file size
+        List<Attachment> filteredAttachments = new ArrayList<>();
+        for (Attachment attachment : attachments) {
+            if (attachment.getDataHandler().getName() != null) {
+                filteredAttachments.add(attachment);
             }
-            if (filteredAttachments.size() == CREATE_TEMPLATE_EXPECTED_NUM_OF_ATTACHMENTS) {
-                InputStream metadataInputStream = null;
-                InputStream templateInputStream = null;
-                for (Attachment attachment : filteredAttachments) {
-                    final DataHandler handler = attachment.getDataHandler();
-                    try {
-                        LOGGER.debug("filename is {}", handler.getName());
-                        if (handler.getName().toLowerCase(Locale.US).endsWith(JSON_FILE_EXTENSION)) {
-                            metadataInputStream = attachment.getDataHandler().getInputStream();
-                        } else {
-                            templateInputStream = attachment.getDataHandler().getInputStream();
-                        }
-                    } catch (final IOException ioe) {
-                        LOGGER.error("Create template failed!", ioe);
-                        return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
-                                new FaultCodeException(FaultType.IO_EXCEPTION, ioe.getMessage()));
+        }
+        if (filteredAttachments.size() == CREATE_TEMPLATE_EXPECTED_NUM_OF_ATTACHMENTS) {
+            InputStream metadataInputStream = null;
+            InputStream templateInputStream = null;
+            for (Attachment attachment : filteredAttachments) {
+                final DataHandler handler = attachment.getDataHandler();
+                try {
+                    LOGGER.debug("filename is {}", handler.getName());
+                    if (handler.getName().toLowerCase(Locale.US).endsWith(JSON_FILE_EXTENSION)) {
+                        metadataInputStream = attachment.getDataHandler().getInputStream();
+                    } else {
+                        templateInputStream = attachment.getDataHandler().getInputStream();
                     }
+                } catch (final IOException ioe) {
+                    LOGGER.error("Create template failed!", ioe);
+                    return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
+                            new FaultCodeException(FaultType.IO_EXCEPTION, ioe.getMessage()));
                 }
-                return ResponseBuilder.created(resourceService.createTemplate(metadataInputStream, templateInputStream, targetName, user.getUser()));
-            } else {
-                return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR, new FaultCodeException(
-                        FaultType.INVALID_NUMBER_OF_ATTACHMENTS,
-                        "Invalid number of attachments! 2 attachments is expected by the service."));
             }
-        } catch (final ResourceServiceException rse) {
-            LOGGER.error("Remove template failed!", rse);
-            return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
-                    new FaultCodeException(FaultType.SERVICE_EXCEPTION, rse.getMessage()));
+            return ResponseBuilder.created(resourceService.createTemplate(metadataInputStream, templateInputStream, targetName, user.getUser()));
+        } else {
+            return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR, new FaultCodeException(
+                    FaultType.INVALID_NUMBER_OF_ATTACHMENTS,
+                    "Invalid number of attachments! 2 attachments is expected by the service."));
         }
     }
 
