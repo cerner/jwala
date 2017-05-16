@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +22,7 @@ public class WebServerCreateTest extends JwalaTest {
     private static final String WS_NAME = "zWS-" + CURRENT_TIME_MILLIS;
 
     @Test
-    public void testCreateJvm() throws InterruptedException {
+    public void testCreateWebServer() throws InterruptedException {
         clickTab("Configuration");
         clickTab("Web Servers");
 
@@ -39,7 +40,12 @@ public class WebServerCreateTest extends JwalaTest {
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
         driver.switchTo().activeElement().sendKeys("443");
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
-        assertEquals("https://" + WS_NAME + "-host:443/apache_pb.png", driver.switchTo().activeElement().getAttribute("value"));
+        assertEquals("http://" + WS_NAME + "-host:80/index.html", driver.switchTo().activeElement().getAttribute("value"));
+
+        driver.switchTo().activeElement().sendKeys(Keys.TAB);
+        final Select httpdDropDown = new Select(driver.switchTo().activeElement());
+        httpdDropDown.selectByIndex(1);
+
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
         driver.findElement(By.xpath("//div[contains(text(), '" + GROUP_NAME_1 + "')]/input")).click();
         driver.findElement(By.xpath("//div[contains(text(), '" + GROUP_NAME_2 + "')]/input")).click();
