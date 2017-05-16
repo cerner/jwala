@@ -39,7 +39,7 @@
             serverName="${jvm.jvmName}"
             jgroupsPreferIpv4Stack="true"
             jgroupsConfigXml="tcp.xml"
-            jgroupsCoordinatorIp="${vars['jgroups.coordinator.hostname']}"
+            jgroupsCoordinatorHostname="${vars['jgroups.coordinator.hostname']}"
             jgroupsCoordinatorPort="30000"
             jgroupsClusterName="jwala_jgroups"
   	        schedulerDelayInitial="30"
