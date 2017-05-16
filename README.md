@@ -9,7 +9,46 @@ Jwala utilizes the defined file system structure and SSH agents on each machine 
 
 # _Building_
 
-Jwala can be build by using gradle. To build the jwala project run the "gradle build" command. This runs the build and test tasks. This task creates the jwala-tomcat.war file, which can be run by dropping it in Apache Tomcat application server. 
+Jwala can be build by using gradle. To build the jwala project run the "gradle build" command. This runs the build and test tasks. This task creates the jwala-tomcat.war file in jwala-webapp module, which can be run by dropping it in Apache Tomcat application server. 
+
+1. [Install Git](https://git-scm.com/) 
+2. [Install JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+3. [Install Gradle](https://docs.gradle.org/current/userguide/installation.html)
+4. 	Clone jwala as follows
+git clone https://github.com/cerner/jwala.git
+5. Build jwala bundle using gradle
+      `gradle clean zipJwalaTomcat`
+6. Set JAVA_HOME and run apache tomcat
+       set JAVA_HOME=jdk1.8.0_66
+7. Run jwala on tomcat
+
+cd /jwala/jwala-tomcat/build/apache-tomcat-7.0.55/bin
+
+Start Tomcat as follows
+
+`catalina.bat run`
+
+# Run Jwala
+Jwala can run by using the war file build in the the above step 
+
+unzip jwala-tomcat-0.0.22.zip to a location
+
+Example
+c:/apache-tomcat-7.0.55
+
+Run tomcat
+
+c:/apache-tomcat-7.0.55/bin/catalina.bat start
+
+Jwala will be accessible from 
+
+[Jwala](https://localhost:8001/jwala/) https://localhost:8001/jwala/
+
+You can login using default credentials as, 
+
+username: jwala 
+
+password: jwala 
 
 # _Availability_
 
@@ -37,3 +76,9 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 &nbsp;&nbsp;&nbsp;&nbsp;http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+
+
+
+
+
