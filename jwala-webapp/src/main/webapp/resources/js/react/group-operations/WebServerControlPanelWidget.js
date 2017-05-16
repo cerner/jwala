@@ -108,7 +108,10 @@ var WebServerControlPanelWidget = React.createClass({
     },
 
     onClickStatusLink: function(e) {
-        let statusUrl = "https://" + this.props.data.host + ":" + this.props.data.httpsPort + jwalaVars.loadBalancerStatusMount
+        let locationProtocol =  WebServerControlPanelWidget.parseUrlProtocol(this.props.data.statusPath.path);
+        let port = locationProtocol === WebServerControlPanelWidget.HTTP_PROTOCOL ? this.props.data.port :
+                                                                                    this.props.data.httpsPort;
+        let statusUrl = locationProtocol + "//" + this.props.data.host + ":" + port + jwalaVars.loadBalancerStatusMount;
         window.open(statusUrl);
     },
 
@@ -134,7 +137,23 @@ var WebServerControlPanelWidget = React.createClass({
     statics: {
         getReactId: function(dom) {
             return $(dom).attr("data-reactid");
-        }
+        },
+        parseUrlProtocol: function(url) {
+            try {
+                let protocol = url.split("/")[0].toLowerCase();
+                if (protocol.indexOf(WebServerControlPanelWidget.HTTP_PROTOCOL) > -1) {
+                    return protocol;
+                }
+                console.warn('URL "%s" does not have a location protocol. ' +
+                             'The current url\'s (%s) location protocol (%s) will be used instead.',
+                    url, location.href, location.protocol);
+            } catch (e) {
+                console.error('Due to the following errors the current location\'s protocol (%s) will be used instead.',
+                    location.protocol, e);
+            }
+            return location.protocol;
+        },
+        HTTP_PROTOCOL: "http:"
     }
 
 });
