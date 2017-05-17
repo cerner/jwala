@@ -41,7 +41,7 @@
             jgroupsConfigXml="tcp.xml"
             jgroupsCoordinatorHostname="${vars['jgroups.coordinator.hostname']}"
             jgroupsCoordinatorPort="30000"
-            jgroupsClusterName="jwala_jgroups"
+            jgroupsClusterName="${vars['jgroups.cluster.name']}"
   	        schedulerDelayInitial="30"
   	        schedulerDelaySubsequent="30"
   	        schedulerDelayUnit="SECONDS"
