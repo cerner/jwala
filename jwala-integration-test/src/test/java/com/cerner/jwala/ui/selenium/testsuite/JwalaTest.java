@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class JwalaTest {
 
     protected final WebDriver driver = TestSuite.driver;
-    protected final WebDriverWait webDriverWait = new WebDriverWait(driver, 10);
+    protected final WebDriverWait webDriverWait = new WebDriverWait(driver, 20);
     protected final Properties properties = TestSuite.properties;
     protected final static long CURRENT_TIME_MILLIS = TestSuite.CURRENT_TIME_MILLIS;
 
@@ -35,8 +35,18 @@ public class JwalaTest {
     /**
      * Wait until element is clickable before clicking
      * @param by
+     * Note: This was deprecated due to a similar method "clickWhenReady" which is more descriptive
      */
+    @Deprecated
     protected void waitClick(By by) {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
+    }
+
+    /**
+     * Wait until element is clickable before clicking
+     * @param by {@link By}
+     */
+    protected void clickWhenReady(final By by) {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
     }
 
@@ -83,6 +93,26 @@ public class JwalaTest {
             return false;
         }
         return true;
+    }
+
+    protected void sendKeys(final CharSequence val) {
+        driver.switchTo().activeElement().sendKeys(val);
+    }
+
+    protected void sendKeys(final By by, final CharSequence val) {
+        driver.findElement(by).sendKeys(val);
+    }
+
+    protected void click(final By by) {
+        driver.findElement(by).click();
+    }
+
+    protected void waitUntilElementIsVisible(final By by) {
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
+    }
+
+    protected void waitUntilElementIsNotVisible(final By by) {
+        webDriverWait.until(ExpectedConditions.numberOfElementsToBe(by, 0));
     }
 
 }
