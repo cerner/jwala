@@ -3,9 +3,11 @@ package com.cerner.jwala.service.media.impl;
 import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.media.MediaType;
+import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
@@ -44,6 +46,9 @@ public class MediaServiceImpl implements MediaService {
     private JvmPersistenceService jvmPersistenceService;
 
     @Autowired
+    private WebServerPersistenceService webServerPersistenceService;
+
+    @Autowired
     private FileUtility fileUtility;
 
     @Autowired
@@ -78,10 +83,12 @@ public class MediaServiceImpl implements MediaService {
         final String filename = Paths.get((String) mediaFileDataMap.get("filename")).getFileName().toString();
 
         try {
-            mediaDao.find(media.getName());
-            final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
-            LOGGER.error(msg);
-            throw new MediaServiceException(msg);
+            JpaMedia media1 = mediaDao.find(media.getName());
+            if (media.getType().equals(media1.getType())) {
+                final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
+                LOGGER.error(msg);
+                throw new MediaServiceException(msg);
+            }
         } catch (NoResultException e) {
             LOGGER.debug("No Media name conflict, ignoring not found exception for creating media ", e);
         }
@@ -101,9 +108,9 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     @Transactional
-    public void remove(final String name) {
-        final JpaMedia jpaMedia = mediaDao.find(name);
-        checkForJvmAssociation(name);
+    public void remove(final String name, final MediaType type) {
+        final JpaMedia jpaMedia = mediaDao.findByNameAndType(name, type);
+        checkForAssociation(name, type);
         mediaDao.remove(jpaMedia);
         repositoryService.delete(jpaMedia.getLocalPath().getFileName().toString());
     }
@@ -113,16 +120,28 @@ public class MediaServiceImpl implements MediaService {
      *
      * @param name media name
      */
-    private void checkForJvmAssociation(String name) {
+    private void checkForAssociation(String name, MediaType type) {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
+        List<WebServer> webServerList = webServerPersistenceService.getWebServers();
         List<String> existingAssosiations = new ArrayList<>();
         for (Jvm jvm : jvmList) {
-            if (jvm.getJdkMedia() != null && name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
-                existingAssosiations.add(jvm.getJvmName());
+            if (jvm.getJdkMedia().getType() == type || jvm.getTomcatMedia().getType() == type) {
+                if (jvm.getJdkMedia() != null && name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
+                    existingAssosiations.add(jvm.getJvmName());
+                }
+                if (jvm.getTomcatMedia() != null && name.equalsIgnoreCase(jvm.getTomcatMedia().getName())) {
+                    existingAssosiations.add(jvm.getJvmName());
+                }
+            }
+        }
+        for (WebServer webServer : webServerList) {
+            if (webServer.getApacheHttpdMedia() != null && name.equalsIgnoreCase(webServer.getApacheHttpdMedia().getName()) &&
+                    webServer.getApacheHttpdMedia().getType() == type) {
+                existingAssosiations.add(webServer.getName());
             }
         }
         if (!existingAssosiations.isEmpty()) {
-            final String msg = MessageFormat.format("The media {0} cannot be deleted because it is still associated with following JVMs {1}", name, existingAssosiations);
+            final String msg = MessageFormat.format("The media {0} cannot be deleted because it is still associated with following {1}", name, existingAssosiations);
             LOGGER.error(msg);
             throw new MediaServiceException(msg);
         }
@@ -138,8 +157,7 @@ public class MediaServiceImpl implements MediaService {
     public JpaMedia update(final JpaMedia media) {
         JpaMedia originalMedia = mediaDao.findById(media.getId());
         try {
-            mediaDao.find(media.getName());
-            if (!originalMedia.getName().equalsIgnoreCase(media.getName())) {
+            if (!originalMedia.getName().equalsIgnoreCase(media.getName()) && !originalMedia.getType().equals(media.getType())) {
                 final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
                 LOGGER.error(msg);
                 throw new MediaServiceException(msg);

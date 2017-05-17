@@ -8,7 +8,6 @@ import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -105,7 +104,7 @@ public class MediaServiceRestImplTest {
 
     @Test
     public void testRemoveMedia() {
-        Response response = mediaServiceRest.removeMedia("jdk 1.8", authenticatedUser);
+        Response response = mediaServiceRest.removeMedia("jdk 1.8", "JDK", authenticatedUser);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 

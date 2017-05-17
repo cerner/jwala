@@ -9,6 +9,7 @@ import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.dao.MediaDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.media.impl.MediaServiceImpl;
@@ -103,7 +104,8 @@ public class MediaServiceImplTest {
         final Map<String, Object> mediaFileDataMap = new HashMap<>();
         mediaFileDataMap.put("filename", "apache-tomcat-8.5.9.zip");
         mediaFileDataMap.put("content", new BufferedInputStream(new ByteArrayInputStream("the content".getBytes())));
-
+        when(Config.MOCK_MEDIA_DAO.find(anyString())).thenReturn(mockMedia);
+        when(mockMedia.getType()).thenReturn(MediaType.TOMCAT);
         when(Config.MOCK_MEDIA_REPOSITORY_SERVICE.upload(anyString(), any(InputStream.class)))
                 .thenReturn("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip");
         final Set<String> rootDirSet = new HashSet<>();
@@ -117,6 +119,7 @@ public class MediaServiceImplTest {
     @Test
     public void testUpdate() {
         when(Config.MOCK_MEDIA_DAO.find(anyString())).thenThrow(NoResultException.class);
+        when(Config.MOCK_MEDIA_DAO.findById(anyLong())).thenReturn(mockMedia);
         mediaService.update(mockMedia);
         verify(Config.MOCK_MEDIA_DAO).update(any(JpaMedia.class));
     }
@@ -125,6 +128,7 @@ public class MediaServiceImplTest {
     public void testUpdateException() {
         JpaMedia media = new JpaMedia();
         media.setName("testMedia");
+        media.setType(MediaType.APACHE);
         when(Config.MOCK_MEDIA_DAO.findById(anyLong())).thenReturn(media);
         mediaService.update(mockMedia);
         verify(Config.MOCK_MEDIA_DAO).update(any(JpaMedia.class));
@@ -133,8 +137,10 @@ public class MediaServiceImplTest {
     @Test
     public void testRemove() {
         when(Config.MOCK_MEDIA_DAO.find(eq("tomcat"))).thenReturn(mockMedia);
+        when(Config.MOCK_MEDIA_DAO.findByNameAndType(anyString(), any())).thenReturn(mockMedia);
         when(mockMedia.getLocalPath()).thenReturn(Paths.get("/apache/tomcat.zip"));
-        mediaService.remove("tomcat");
+
+        mediaService.remove("tomcat", MediaType.TOMCAT);
         verify(Config.MOCK_MEDIA_REPOSITORY_SERVICE).delete(eq("tomcat.zip"));
         verify(Config.MOCK_MEDIA_DAO).remove(any(JpaMedia.class));
     }
@@ -145,33 +151,34 @@ public class MediaServiceImplTest {
 
         Set<Group> groupSet = new HashSet<>();
         groupSet.add(mockGroup);
-        Media media = new Media(1L,"jdk", MediaType.JDK, null, null, null);
+        Media media = new Media(1L, "jdk", MediaType.JDK, null, null, null);
+        Media tomcatMedia = new Media(1L, "jdk", MediaType.TOMCAT, null, null, null);
         List<Jvm> jvmList = new ArrayList<Jvm>();
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L),
-                                "testJvm",
-                                "testHostName",
-                                groupSet,
-                                8001,
-                                8002,
-                                8003,
-                                8004,
-                                -1,
-                                null,
-                                "testSystemProperties",
-                                null,
-                                "testerrorstatus",
-                                null,
-                                "testUserName",
-                                "testEncryptedPassword",
-                                media,
-                                null,
-                                "testJavaHome",
-                                null);
+                "testJvm",
+                "testHostName",
+                groupSet,
+                8001,
+                8002,
+                8003,
+                8004,
+                -1,
+                null,
+                "testSystemProperties",
+                null,
+                "testerrorstatus",
+                null,
+                "testUserName",
+                "testEncryptedPassword",
+                media,
+                tomcatMedia,
+                "testJavaHome",
+                null);
         jvmList.add(jvm);
         when(Config.MOCK_JVM_PERSISTENCE_SERVICE.getJvms()).thenReturn(jvmList);
         when(Config.MOCK_MEDIA_DAO.find(eq("tomcat"))).thenReturn(mockMedia);
         when(mockMedia.getLocalPath()).thenReturn(Paths.get("/apache/tomcat.zip"));
-        mediaService.remove("jdk");
+        mediaService.remove("jdk", MediaType.JDK);
         verify(Config.MOCK_MEDIA_REPOSITORY_SERVICE).delete(eq("tomcat.zip"));
         verify(Config.MOCK_MEDIA_DAO).remove(any(JpaMedia.class));
     }
@@ -197,6 +204,7 @@ public class MediaServiceImplTest {
         private static final RepositoryService MOCK_MEDIA_REPOSITORY_SERVICE = mock(RepositoryService.class);
         private static final FileUtility MOCK_FILE_UTILITY = mock(FileUtility.class);
         private static final JvmPersistenceService MOCK_JVM_PERSISTENCE_SERVICE = mock(JvmPersistenceService.class);
+        private static final WebServerPersistenceService MOCK_WEBSERVER_PERSISTENCE_SERVICE = mock(WebServerPersistenceService.class);
 
         @Bean
         public MediaDao getMediaDao() {
@@ -221,6 +229,11 @@ public class MediaServiceImplTest {
         @Bean
         public JvmPersistenceService getJvmPersistenceService() {
             return MOCK_JVM_PERSISTENCE_SERVICE;
+        }
+
+        @Bean
+        public WebServerPersistenceService getWebServerPersistenceService() {
+            return MOCK_WEBSERVER_PERSISTENCE_SERVICE;
         }
 
     }

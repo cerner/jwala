@@ -1,5 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.media.impl;
 
+import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
@@ -71,9 +72,22 @@ public class MediaServiceRestImpl implements MediaServiceRest {
     }
 
     @Override
-    public Response removeMedia(final String name, final AuthenticatedUser aUser) {
+    public Response removeMedia(final String name, String type, final AuthenticatedUser aUser) {
+        MediaType mediaType = null;
+        if (type == null) {
+            mediaType = MediaType.JDK;
+        }
+        if (type.contains("JDK")) {
+            mediaType = MediaType.JDK;
+        }
+        if (type.contains("HTTPD")) {
+            mediaType = MediaType.APACHE;
+        }
+        if (type.contains("Tomcat")) {
+            mediaType = MediaType.TOMCAT;
+        }
         LOGGER.info("removeMedia {} by user {}", name, aUser.getUser().getId());
-        mediaService.remove(name);
+        mediaService.remove(name, mediaType);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
@@ -94,8 +108,7 @@ public class MediaServiceRestImpl implements MediaServiceRest {
         return ResponseBuilder.ok(mediaService.getMediaTypes());
     }
 
-    public void setMediaService(MediaService mediaService)
-    {
+    public void setMediaService(MediaService mediaService) {
         LOGGER.debug("setMediaService");
         this.mediaService = mediaService;
     }
