@@ -8,6 +8,8 @@ import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.exception.FaultCodeException;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
+import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.group.GroupService;
@@ -32,6 +34,8 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
     private ApplicationService service;
     private ResourceService resourceService;
     private final GroupService groupService;
+    @Autowired
+    private HistoryFacadeService historyFacadeService;
 
     public ApplicationServiceRestImpl(ApplicationService applicationService,
                                       ResourceService resourceService,
@@ -169,6 +173,7 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
     public Response deployConf(final String appName, final String groupName, final String jvmName,
                                final String resourceTemplateName, final AuthenticatedUser authUser) {
         LOGGER.info("Deploying the application conf file {} for app {} to JVM {} in group {} by ", resourceTemplateName, appName, jvmName, groupName, authUser.getUser().getId());
+        historyFacadeService.write("", groupService.getGroup(groupName), "Deploying application resource " + resourceTemplateName + " via resources tab", EventType.USER_ACTION_INFO, authUser.getUser().getId());
         return ResponseBuilder.ok(service.deployConf(appName, groupName, jvmName, resourceTemplateName, resourceService.generateResourceGroup(), authUser.getUser()));
     }
 

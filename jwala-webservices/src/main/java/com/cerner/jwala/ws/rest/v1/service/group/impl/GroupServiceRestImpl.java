@@ -20,6 +20,8 @@ import com.cerner.jwala.common.request.group.*;
 import com.cerner.jwala.common.request.webserver.ControlGroupWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
+import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.exception.GroupServiceException;
 import com.cerner.jwala.service.group.*;
@@ -63,6 +65,9 @@ public class GroupServiceRestImpl implements GroupServiceRest {
 
     @Autowired
     private GroupStateNotificationService groupStateNotificationService;
+
+    @Autowired
+    private HistoryFacadeService historyFacadeService;
 
     private final GroupService groupService;
     private final ResourceService resourceService;
@@ -695,6 +700,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             metaData = resourceService.getMetaData(groupAppMetaData);
             if (metaData.getEntity().getDeployToJvms()) {
                 // deploy to all jvms in group
+                historyFacadeService.write(hostName, group, "Deploying " + fileName + " to all JVMS in the group ", EventType.USER_ACTION_INFO, aUser.getUser().getId());
                 performGroupAppDeployToJvms(groupName, fileName, aUser, group, appName, applicationServiceRest, hostName, metaData.isHotDeploy());
             } else {
                 ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
@@ -705,9 +711,11 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                 resourceService.validateSingleResourceForGeneration(resourceIdentifier);
                 if (hostName != null && !hostName.isEmpty()) {
                     // deploy to particular host
+                    historyFacadeService.write(hostName, group, "Deploying application resource "+resourceIdentifier.resourceName+" via operations", EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     performGroupAppDeployToHost(groupName, fileName, appName, hostName, metaData.isHotDeploy());
                 } else {
                     // deploy to all hosts in group
+                    historyFacadeService.write("", group, "Deploying application resource "+resourceIdentifier.resourceName+" via operations to all hosts", EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     performGroupAppDeployToHosts(groupName, fileName, appName, metaData.isHotDeploy());
                 }
             }
