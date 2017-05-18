@@ -39,7 +39,11 @@ IF "%ERRORLEVEL%" NEQ "0" (
 
 if %svc_username%=="" goto :no_user
 
-SC CONFIG ${jvm.jvmName} obj=%svc_username% password=%svc_password%
+if %svc_password%=="" (
+	SC CONFIG ${jvm.jvmName} obj= %svc_username%
+) else (
+	SC CONFIG ${jvm.jvmName} obj= %svc_username% password= %svc_password%
+)
 
 :no_user
 
