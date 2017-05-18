@@ -6117,7 +6117,7 @@
 				{
 					"name": "delete media",
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media",
+						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media-update",
 						"method": "DELETE",
 						"header": [],
 						"body": {
