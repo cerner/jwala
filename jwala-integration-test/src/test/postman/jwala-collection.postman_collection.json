@@ -2191,7 +2191,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":{{JdkMediaId}},\"localPath\":\"{{jdkMediaSrc}}\",\"mediaDir\":\"test\",\"name\":\"Postman-Test-JDK-Media\",\"type\":\"JDK\",\"remoteDir\":\"{{mediaRemoteDir}}\"}"
+							"raw": "{\"id\":{{JdkMediaId}},\"name\":\"Postman-Test-JDK-Media-update\",\"type\":\"JDK\",\"remoteDir\":\"{{mediaRemoteDir}}\"}"
 						},
 						"description": ""
 					},
@@ -6117,7 +6117,7 @@
 				{
 					"name": "delete media",
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media",
+						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media-update",
 						"method": "DELETE",
 						"header": [],
 						"body": {
