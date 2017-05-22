@@ -104,9 +104,4 @@ public class MediaServiceRestImpl implements MediaServiceRest {
         LOGGER.debug("getMediaTypes");
         return ResponseBuilder.ok(mediaService.getMediaTypes());
     }
-
-    public void setMediaService(MediaService mediaService) {
-        LOGGER.debug("setMediaService");
-        this.mediaService = mediaService;
-    }
 }
