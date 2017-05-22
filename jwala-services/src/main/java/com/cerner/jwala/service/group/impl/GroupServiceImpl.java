@@ -349,10 +349,14 @@ public class GroupServiceImpl implements GroupService {
             ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceTemplateName, jvm, metaDataStr);
             Application app = applicationPersistenceService.getApplication(metaData.getEntity().getTarget());
             app.setParentJvm(jvm);
-            return resourceService.generateResourceFile(resourceTemplateName, template, resourceGroup, app, ResourceGeneratorType.TEMPLATE);
-        } catch (Exception x) {
-            LOGGER.error("Failed to generate preview for template {} in  group {}", resourceTemplateName, groupName, x);
-            throw new ApplicationException("Template token replacement failed.", x);
+            return resourceService.generateResourceFile(resourceTemplateName, template, resourceGroup, app,
+                    ResourceGeneratorType.PREVIEW);
+        } catch (ResourceFileGeneratorException resourceFileGeneratorException) {
+            throw resourceFileGeneratorException;
+        } catch (Exception exception) {
+            LOGGER.error("Failed to generate preview for template {} in  group {}", resourceTemplateName, groupName,
+                    exception);
+            throw new ApplicationException("Template token replacement failed.", exception);
         }
     }
 
