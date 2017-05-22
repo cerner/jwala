@@ -31,9 +31,15 @@ import java.util.concurrent.TimeUnit;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, WebServerCreateTest.class,
         AppCreateTest.class, AppSearchTest.class, ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class,
+<<<<<<< HEAD
         ModifyExternalPropertyResource.class, DeleteExternalProperty.class, ResourceDeployTest.class, HistoryTablePopupTest.class,
         AppDeleteTest.class, JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class,
         WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, LogoutTest.class})
+=======
+        ModifyExternalPropertyResource.class, DeleteExternalProperty.class, HistoryTablePopupTest.class, AppDeleteTest.class,
+        JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class, WebServerDeleteTest.class,
+        JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, LogoutTest.class})
+>>>>>>> c7a0c3ed9a5989b3f20fa575a62595107ae8dea9
 public class JwalaChromeTestSuite extends TestSuite {
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
