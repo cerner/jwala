@@ -64,7 +64,7 @@ public class ResourceServiceRestImpl implements ResourceServiceRest {
         // TODO check for a max file size
         List<Attachment> filteredAttachments = new ArrayList<>();
         for (Attachment attachment : attachments) {
-            if (attachment.getDataHandler().getName() != null) {
+            if (null != attachment.getDataHandler() && null != attachment.getDataHandler().getName()) {
                 filteredAttachments.add(attachment);
             }
         }

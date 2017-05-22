@@ -169,7 +169,7 @@ public class ResourceServiceImpl implements ResourceService {
 
             if (StringUtil.isEmpty(targetName)) {
                 if (null == resourceTemplateMetaData.getEntity()) {
-                    String errMsg = "No entity data found in the meta data. Unable to continue with resource upload.";
+                    String errMsg = MessageFormat.format("No entity data found in the meta data when attempting to upload {0}. Unable to continue with resource upload.", resourceTemplateMetaData.getDeployFileName());
                     LOGGER.error(errMsg);
                     throw new ResourceServiceException(errMsg);
                 }
