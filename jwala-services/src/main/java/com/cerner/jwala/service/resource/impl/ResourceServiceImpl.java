@@ -168,6 +168,11 @@ public class ResourceServiceImpl implements ResourceService {
             }
 
             if (StringUtil.isEmpty(targetName)) {
+                if (null == resourceTemplateMetaData.getEntity()) {
+                    String errMsg = MessageFormat.format("No entity data found in the meta data when attempting to upload {0}. Unable to continue with resource upload.", resourceTemplateMetaData.getDeployFileName());
+                    LOGGER.error(errMsg);
+                    throw new ResourceServiceException(errMsg);
+                }
                 targetName = resourceTemplateMetaData.getEntity().getTarget();
             }
 
@@ -193,7 +198,9 @@ public class ResourceServiceImpl implements ResourceService {
                     responseWrapper = createGroupedApplicationsTemplate(resourceTemplateMetaData, templateContent, targetName);
                     break;
                 default:
-                    throw new ResourceServiceException("Invalid entity type '" + resourceTemplateMetaData.getEntity().getType() + "'");
+                    String errMsg = MessageFormat.format("Invalid entity type: {0}", resourceTemplateMetaData.getEntity().getType());
+                    LOGGER.error(errMsg);
+                    throw new ResourceServiceException(errMsg);
             }
         } catch (final IOException ioe) {
             LOGGER.error("Error creating template for target {}", targetName, ioe);
