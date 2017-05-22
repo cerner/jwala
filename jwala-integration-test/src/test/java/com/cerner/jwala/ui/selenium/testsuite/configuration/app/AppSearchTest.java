@@ -12,8 +12,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class AppSearchTest extends JwalaTest {
     private static final String GROUP_NAME_1 = "zGroup1-" + CURRENT_TIME_MILLIS;
-    private static final String APP_NAME1 = "zApp1-" + CURRENT_TIME_MILLIS;
-    private static final String APP_NAME2 = "zApp2-" + CURRENT_TIME_MILLIS;
+    private static final String APP_NAME1 = "zAppSearch1-" + CURRENT_TIME_MILLIS;
+    private static final String APP_NAME2 = "zAppSearch2-" + CURRENT_TIME_MILLIS;
+
+    private static final String searchApp1 = "Search1-" + CURRENT_TIME_MILLIS;
+    private static final String searchApp2 = "Search2-" + CURRENT_TIME_MILLIS;
+
 
     @Test
     public void testSearchApp() throws InterruptedException {
@@ -30,7 +34,7 @@ public class AppSearchTest extends JwalaTest {
         driver.findElement(By.xpath("//button[span[text()='Ok']]")).click();
         Thread.sleep(300);
         driver.findElement(By.xpath("//button[span[text()='Add']]")).click();
-        Thread.sleep(1000); // give a little time for the first element to get into focus as required by how
+        Thread.sleep(300); // give a little time for the first element to get into focus as required by how
         // "focus on the first element" was implemented here
         driver.switchTo().activeElement().sendKeys(APP_NAME2);
         driver.switchTo().activeElement().sendKeys(Keys.TAB);
@@ -38,14 +42,17 @@ public class AppSearchTest extends JwalaTest {
         driver.findElement(By.xpath("//div[contains(text(), '" + GROUP_NAME_1 + "')]/input")).click();
         driver.findElement(By.xpath("//button[span[text()='Ok']]")).click();
 
-        Thread.sleep(1000);
         driver.findElement(By.xpath("//span[contains(text(), 'Search')]/following-sibling::input")).click();
-        driver.switchTo().activeElement().sendKeys("zApp1");
-        Thread.sleep(1000);
+        driver.switchTo().activeElement().sendKeys(searchApp1);
+        driver.findElement(By.xpath("//button[text()='" + APP_NAME1 + "']"));
+        isElementExists("//div[contains(text(),'Showing 1 to 1 of 1')]");
+
         driver.findElement(By.xpath("//span[contains(text(), 'Search')]/following-sibling::input")).clear();
-        driver.switchTo().activeElement().sendKeys("zApp2");
+        driver.switchTo().activeElement().sendKeys(searchApp2);
+        driver.findElement(By.xpath("//button[text()='" + APP_NAME2 + "']"));
         driver.findElement(By.xpath("//span[contains(text(), 'Search')]/following-sibling::input")).clear();
-        Thread.sleep(1000);
+        isElementExists("//div[contains(text(),'Showing 1 to 1 of 1')]");
+
         driver.switchTo().activeElement().sendKeys("zApp");
 
         waitClick(By.xpath("//tr[td[button[text()='" + APP_NAME1 + "']]]"));
