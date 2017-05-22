@@ -230,7 +230,7 @@ var MediaTypeDropdown = React.createClass({
     },
     render: function() {
         var self = this;
-        var options = [];
+        var options = [<option  key='no-media-type' value=''>---Select Media Type ---</option>];
         this.state.mediaTypes.forEach(function(mediaType){
             if (self.state.selectedMediaType === mediaType.name) {
                 options.push(<option value={mediaType.name} selected="selected">{mediaType.displayName}</option>);
