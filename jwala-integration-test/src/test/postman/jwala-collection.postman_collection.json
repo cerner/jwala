@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "f1116734-74a4-a44e-147e-8b22e2280522",
+		"_postman_id": "6f0d7dc4-a188-29fb-e043-85d87149cfd8",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -733,7 +733,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"{{WebserverName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\"}]"
+							"raw": "[{\"webserverName\":\"{{WebserverName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"82\",\"httpsPort\":\"445\",\"statusPath\":\"/apache_pb.png\"}]"
 						},
 						"description": ""
 					},
@@ -1606,8 +1606,7 @@
 									"key": "templateFile",
 									"type": "file",
 									"enabled": true,
-									"src": "../resources/postman/httpd.json",
-									"value": ""
+									"src": "../resources/postman/hello.xml.tpl"
 								}
 							]
 						},
@@ -2192,7 +2191,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":{{JdkMediaId}},\"localPath\":\"{{jdkMediaSrc}}\",\"mediaDir\":\"test\",\"name\":\"Postman-Test-JDK-Media\",\"type\":\"JDK\",\"remoteDir\":\"{{mediaRemoteDir}}\"}"
+							"raw": "{\"id\":{{JdkMediaId}},\"name\":\"Postman-Test-JDK-Media-update\",\"type\":\"JDK\",\"remoteDir\":\"{{mediaRemoteDir}}\"}"
 						},
 						"description": ""
 					},
@@ -3019,7 +3018,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -6118,7 +6117,7 @@
 				{
 					"name": "delete media",
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media",
+						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media-update",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6171,7 +6170,10 @@
 						"url": "{{url}}/v1.0/media/Postman-Test-Tomcat-Media",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -6193,7 +6195,10 @@
 						"url": "{{url}}/v1.0/media/Postman-Test-Apache-HTTPD-Media",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
