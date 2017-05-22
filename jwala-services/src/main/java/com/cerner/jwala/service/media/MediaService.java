@@ -44,7 +44,7 @@ public interface MediaService {
      * Remove media
      * @param name the name if the media to remove
      */
-    void remove(String name);
+    void remove(String name, MediaType type);
 
     /**
      * Returns a list of {@link MediaType}
