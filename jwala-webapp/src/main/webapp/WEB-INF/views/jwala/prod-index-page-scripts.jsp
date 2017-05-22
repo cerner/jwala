@@ -20,6 +20,15 @@
 <script src="public-resources/ext/js/codemirror/mode/xml.js"></script>
 <script src="public-resources/ext/js/codemirror/mode/javascript.js"></script>
 
+<!-- codemirror search -->
+<script src="public-resources/ext/js/codemirror/addon/search/jump-to-line.js"></script>
+<script src="public-resources/ext/js/codemirror/addon/search/match-highlighter.js"></script>
+<script src="public-resources/ext/js/codemirror/addon/search/matchesonscrollbar.js"></script>
+<script src="public-resources/ext/js/codemirror/addon/search/search.js"></script>
+<script src="public-resources/ext/js/codemirror/addon/search/searchcursor.js"></script>
+<script src="public-resources/ext/js/codemirror/addon/dialog/dialog.js"></script>
+<script src="public-resources/ext/js/codemirror/addon/scroll/annotatescrollbar.js"></script>
+
 <!-- TODO: Get non beta then minify  -->
 <script src="public-resources/ext/js/moment.js"></script>
 

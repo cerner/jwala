@@ -9,7 +9,11 @@ var CodeMirrorComponent = React.createClass({
     },
     render: function() {
         var metaData = [{ref: "saveBtn", icon: "ui-icon-disk", title: "Save", onClickCallback: this.saveCallback},
-                        {ref: "formatBtn", icon: "ui-icon-shuffle", title: "Format", onClickCallback: this.props.formatCallback}];
+                        {ref: "formatBtn", icon: "ui-icon-shuffle", title: "Format", onClickCallback: this.props.formatCallback},
+                        {ref: "findBtn", icon: "ui-icon-search", title: "Find CTRL+F", onClickCallback: this.findCallback},
+                        {ref: "findPrevBtn", icon: "ui-icon-arrowthick-1-n", title: "Find Previous CTRL+SHIFT+G", onClickCallback: this.findPrevCallback},
+                        {ref: "findNextBtn", icon: "ui-icon-arrowthick-1-s", title: "Find Next CTRL+G", onClickCallback: this.findNextCallback},
+                        {ref: "replaceBtn", icon: "ui-icon-refresh", title: "Replace CTRL+SHIFT+F", onClickCallback: this.replaceCallback}];
         return React.createElement("div", {ref:"theContainer", className: this.props.className},
                    React.createElement(RToolbar, {ref: "theToolbar" , className: "toolbar-container", metaData: metaData}),
                    React.createElement("div", {ref: "codeMirrorHost"}));
@@ -56,5 +60,17 @@ var CodeMirrorComponent = React.createClass({
         this.codeMirror.setValue(data);
         this.codeMirror.on("change", this.onChanged);
         this.state.data = this.codeMirror.getValue();
+    },
+    findCallback: function() {
+        this.codeMirror.execCommand("find");
+    },
+    replaceCallback: function() {
+        this.codeMirror.execCommand("replace");
+    },
+    findPrevCallback: function() {
+        this.codeMirror.execCommand("findPrev");
+    },
+    findNextCallback: function() {
+        this.codeMirror.execCommand("findNext");
     }
 });
