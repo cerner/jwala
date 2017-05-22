@@ -228,6 +228,42 @@ public class ResourceServiceImplTest {
         verify(Config.mockAppPersistenceService).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
     }
 
+    @Test (expected = ResourceServiceException.class)
+    public void testCreateAppTemplateWithNullEntity() {
+        final InputStream metaDataIn = this.getClass().getClassLoader()
+                .getResourceAsStream("resource-service-test-files/create-app-template-test-null-entity-metadata.json");
+        final InputStream templateIn = this.getClass().getClassLoader()
+                .getResourceAsStream("resource-service-test-files/app.xml.tpl");
+        Jvm mockJvm = mock(Jvm.class);
+        JpaJvm mockJpaJvm = mock(JpaJvm.class);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+        when(Config.mockJvmPersistenceService.getJpaJvm(any(Identifier.class), anyBoolean())).thenReturn(mockJpaJvm);
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("user-id");
+        resourceService.createTemplate(metaDataIn, templateIn, "some application", mockUser);
+        verify(Config.mockJvmPersistenceService).findJvmByExactName("some jvm name");
+        verify(Config.mockAppPersistenceService).getApplication("some application");
+        verify(Config.mockAppPersistenceService, never()).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
+    }
+
+    @Test (expected = ResourceServiceException.class)
+    public void testCreateAppTemplateWithEmptyEntity() {
+        final InputStream metaDataIn = this.getClass().getClassLoader()
+                .getResourceAsStream("resource-service-test-files/create-app-template-test-empty-entity-metadata.json");
+        final InputStream templateIn = this.getClass().getClassLoader()
+                .getResourceAsStream("resource-service-test-files/app.xml.tpl");
+        Jvm mockJvm = mock(Jvm.class);
+        JpaJvm mockJpaJvm = mock(JpaJvm.class);
+        when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+        when(Config.mockJvmPersistenceService.getJpaJvm(any(Identifier.class), anyBoolean())).thenReturn(mockJpaJvm);
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("user-id");
+        resourceService.createTemplate(metaDataIn, templateIn, "", mockUser);
+        verify(Config.mockJvmPersistenceService, never()).findJvmByExactName("some jvm name");
+        verify(Config.mockAppPersistenceService, never()).getApplication("");
+        verify(Config.mockAppPersistenceService, never()).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
+    }
+
     @Test
     public void testCreateAppTemplateBinary() {
         final InputStream metaDataIn = this.getClass().getClassLoader()

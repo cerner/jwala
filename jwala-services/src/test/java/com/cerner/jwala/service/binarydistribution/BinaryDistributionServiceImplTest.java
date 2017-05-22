@@ -260,21 +260,21 @@ public class BinaryDistributionServiceImplTest {
     public void testDistributeMedia() {
         final Media media = new Media();
         media.setName("Apache HTTPD 2.4.20");
-        media.setRemoteDir(Paths.get("c:\\ctp"));
+        media.setRemoteDir(Paths.get("c:/ctp"));
         media.setMediaDir(Paths.get("apache-httpd-2.4.20"));
-        media.setLocalPath(Paths.get("c:\\downloads\\apache-httpd-2.4.20.zip"));
+        media.setLocalPath(Paths.get("c:/downloads/apache-httpd-2.4.20.zip"));
         media.setType(MediaType.APACHE);
         final Group[] groupArray = new Group[1];
         final CommandOutput success = new CommandOutput(new ExecReturnCode(0), null, null);
         when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "/apache-httpd-2.4.20"))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", "c:\\ctp"))
+        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", "c:/ctp"))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "c:\\ctp/apache-httpd-2.4.20"))
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "c:/ctp/apache-httpd-2.4.20"))
                 .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
-        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:\\downloads\\apache-httpd-2.4.20.zip", "c:\\ctp"))
+        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:/downloads/apache-httpd-2.4.20.zip", "c:/ctp"))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:\\ctp/apache-httpd-2.4.20.zip", "c:\\ctp",
+        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:/ctp/apache-httpd-2.4.20.zip", "c:/ctp",
                 BinaryDistributionServiceImpl.EXCLUDED_FILES))
                 .thenReturn(success);
 
