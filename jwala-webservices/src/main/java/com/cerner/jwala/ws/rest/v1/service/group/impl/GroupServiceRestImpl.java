@@ -10,6 +10,7 @@ import com.cerner.jwala.common.domain.model.jvm.JvmControlOperation;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.domain.model.webserver.WebServerControlOperation;
 import com.cerner.jwala.common.exception.FaultCodeException;
@@ -20,6 +21,8 @@ import com.cerner.jwala.common.request.group.*;
 import com.cerner.jwala.common.request.webserver.ControlGroupWebServerRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import com.cerner.jwala.persistence.jpa.type.EventType;
+import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.exception.GroupServiceException;
 import com.cerner.jwala.service.group.*;
@@ -63,6 +66,9 @@ public class GroupServiceRestImpl implements GroupServiceRest {
 
     @Autowired
     private GroupStateNotificationService groupStateNotificationService;
+
+    @Autowired
+    private HistoryFacadeService historyFacadeService;
 
     private final GroupService groupService;
     private final ResourceService resourceService;
@@ -694,7 +700,8 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             // cannot call getTokenizedMetaData here - the app resource could be associated to a JVM and use JVM attributes
             metaData = resourceService.getMetaData(groupAppMetaData);
             if (metaData.getEntity().getDeployToJvms()) {
-                // deploy to all jvms in group
+                historyFacadeService.write(hostName, group, "Deploying " + fileName + " to "+hostName, EventType
+                        .USER_ACTION_INFO, aUser.getUser().getId());
                 performGroupAppDeployToJvms(groupName, fileName, aUser, group, appName, applicationServiceRest, hostName, metaData.isHotDeploy());
             } else {
                 ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
@@ -705,10 +712,12 @@ public class GroupServiceRestImpl implements GroupServiceRest {
                 resourceService.validateSingleResourceForGeneration(resourceIdentifier);
                 if (hostName != null && !hostName.isEmpty()) {
                     // deploy to particular host
+                    historyFacadeService.write(hostName, group, "Deploying application resource " +
+                            resourceIdentifier.resourceName, EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     performGroupAppDeployToHost(groupName, fileName, appName, hostName, metaData.isHotDeploy());
                 } else {
                     // deploy to all hosts in group
-                    performGroupAppDeployToHosts(groupName, fileName, appName, metaData.isHotDeploy());
+                    performGroupAppDeployToHosts(groupName, fileName, appName, metaData.isHotDeploy(), aUser);
                 }
             }
         } catch (IOException e) {
@@ -748,7 +757,8 @@ public class GroupServiceRestImpl implements GroupServiceRest {
 
     }
 
-    private void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName, boolean hotDeploy) {
+    private void performGroupAppDeployToHosts(final String groupName, final String fileName, final String appName,
+                                              boolean hotDeploy, AuthenticatedUser aUser) {
         Map<String, Future<Response>> futureMap = new HashMap<>();
         final Group group = groupService.getGroup(groupName);
         Set<Jvm> jvms = group.getJvms();
@@ -760,6 +770,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
             for (final Jvm jvm : jvms) {
                 final String hostName = jvm.getHostName();
                 if (!deployedHosts.contains(hostName)) {
+                    historyFacadeService.write(hostName, group, "Deploying application resource " + fileName, EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     deployedHosts.add(hostName);
                     Future<Response> response = createFutureResponseForAppDeploy(groupName, fileName, appName, jvm, null);
                     if (response != null)
