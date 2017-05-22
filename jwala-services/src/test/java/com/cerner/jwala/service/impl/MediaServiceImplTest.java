@@ -89,7 +89,7 @@ public class MediaServiceImplTest {
         rootDirSet.add("apache-tomcat-8.5.9");
         when(Config.MOCK_FILE_UTILITY.getZipRootDirs(eq("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip")))
                 .thenReturn(rootDirSet);
-        when(Config.MOCK_MEDIA_DAO.find(anyString())).thenThrow(NoResultException.class);
+        when(Config.MOCK_MEDIA_DAO.findByNameAndType(anyString(), any(MediaType.class))).thenThrow(NoResultException.class);
         mediaService.create(dataMap, mediaFileDataMap);
         verify(Config.MOCK_MEDIA_DAO).create(any(JpaMedia.class));
     }
@@ -130,6 +130,7 @@ public class MediaServiceImplTest {
         media.setName("testMedia");
         media.setType(MediaType.APACHE);
         when(Config.MOCK_MEDIA_DAO.findById(anyLong())).thenReturn(media);
+        when(Config.MOCK_MEDIA_DAO.findByNameAndType(anyString(), any(MediaType.class))).thenReturn(mockMedia);
         mediaService.update(mockMedia);
         verify(Config.MOCK_MEDIA_DAO).update(any(JpaMedia.class));
     }

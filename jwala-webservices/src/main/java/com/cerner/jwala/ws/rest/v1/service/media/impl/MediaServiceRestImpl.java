@@ -74,16 +74,13 @@ public class MediaServiceRestImpl implements MediaServiceRest {
     @Override
     public Response removeMedia(final String name, String type, final AuthenticatedUser aUser) {
         MediaType mediaType = null;
-        if (type == null) {
+        if (MediaType.JDK.getDisplayName().equals(type)) {
             mediaType = MediaType.JDK;
         }
-        if (type.contains("JDK")) {
-            mediaType = MediaType.JDK;
-        }
-        if (type.contains("HTTPD")) {
+        if (MediaType.APACHE.getDisplayName().equals(type)) {
             mediaType = MediaType.APACHE;
         }
-        if (type.contains("Tomcat")) {
+        if (MediaType.TOMCAT.getDisplayName().equals(type)) {
             mediaType = MediaType.TOMCAT;
         }
         LOGGER.info("removeMedia {} by user {}", name, aUser.getUser().getId());

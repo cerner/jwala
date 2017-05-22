@@ -24,10 +24,7 @@ import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implements {@link MediaService}
@@ -83,15 +80,14 @@ public class MediaServiceImpl implements MediaService {
         final String filename = Paths.get((String) mediaFileDataMap.get("filename")).getFileName().toString();
 
         try {
-            JpaMedia media1 = mediaDao.find(media.getName());
-            if (media.getType().equals(media1.getType())) {
-                final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
-                LOGGER.error(msg);
-                throw new MediaServiceException(msg);
-            }
+            mediaDao.findByNameAndType(media.getName(), media.getType());
+            final String msg = MessageFormat.format("Media already exists with name {0} and type {1}", media.getName(), media.getType());
+            LOGGER.error(msg);
+            throw new MediaServiceException(msg);
         } catch (NoResultException e) {
             LOGGER.debug("No Media name conflict, ignoring not found exception for creating media ", e);
         }
+
         final String dest = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);
@@ -100,10 +96,9 @@ public class MediaServiceImpl implements MediaService {
             media.setLocalPath(Paths.get(dest));
             return mediaDao.create(media);
         }
-
         repositoryService.delete(dest);
-        throw new MediaServiceException(MessageFormat
-                .format("{0} does not have any root directories! It may not be a valid media file.", filename));
+        throw new MediaServiceException(MessageFormat.
+                format("{0} does not have any root directories! It may not be a valid media file.", filename));
     }
 
     @Override
@@ -123,15 +118,13 @@ public class MediaServiceImpl implements MediaService {
     private void checkForAssociation(String name, MediaType type) {
         List<Jvm> jvmList = jvmPersistenceService.getJvms();
         List<WebServer> webServerList = webServerPersistenceService.getWebServers();
-        List<String> existingAssosiations = new ArrayList<>();
+        Set<String> existingAssosiations = new HashSet<>();
         for (Jvm jvm : jvmList) {
-            if (jvm.getJdkMedia().getType() == type || jvm.getTomcatMedia().getType() == type) {
-                if (jvm.getJdkMedia() != null && name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
-                    existingAssosiations.add(jvm.getJvmName());
-                }
-                if (jvm.getTomcatMedia() != null && name.equalsIgnoreCase(jvm.getTomcatMedia().getName())) {
-                    existingAssosiations.add(jvm.getJvmName());
-                }
+            if (jvm.getJdkMedia() != null && jvm.getJdkMedia().getType() == type && name.equalsIgnoreCase(jvm.getJdkMedia().getName())) {
+                existingAssosiations.add(jvm.getJvmName());
+            }
+            if (jvm.getTomcatMedia() != null && jvm.getTomcatMedia().getType() == type && name.equalsIgnoreCase(jvm.getTomcatMedia().getName())) {
+                existingAssosiations.add(jvm.getJvmName());
             }
         }
         for (WebServer webServer : webServerList) {
@@ -157,8 +150,8 @@ public class MediaServiceImpl implements MediaService {
     public JpaMedia update(final JpaMedia media) {
         JpaMedia originalMedia = mediaDao.findById(media.getId());
         try {
-            if (!originalMedia.getName().equalsIgnoreCase(media.getName()) && !originalMedia.getType().equals(media.getType())) {
-                final String msg = MessageFormat.format("Media already exists with name {0}", media.getName());
+            if (!originalMedia.getName().equalsIgnoreCase(media.getName()) && null != mediaDao.findByNameAndType(media.getName(), media.getType())) {
+                final String msg = MessageFormat.format("Media already exists with name {0} and type {1}", media.getName(), media.getType());
                 LOGGER.error(msg);
                 throw new MediaServiceException(msg);
             }
