@@ -1,0 +1,12 @@
+{
+  "templateName": "app.xml.tpl",
+  "contentType": "text/xml",
+  "deployFileName":"app.xml",
+  "deployPath":"/conf",
+  "entity": {
+    "type": "null",
+    "group": "null",
+    "target": "null",
+    "parentName": "null"
+  }
+}
