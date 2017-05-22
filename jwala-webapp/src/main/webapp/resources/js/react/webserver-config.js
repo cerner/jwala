@@ -120,6 +120,7 @@ var WebServerConfig = React.createClass({
                                                   this.refs.webServerAddForm.state.port,
                                                   this.refs.webServerAddForm.state.httpsPort,
                                                   this.refs.webServerAddForm.state.statusPath,
+                                                  this.refs.webServerAddForm.state.apacheHttpdMediaId,
                                                   function(){
                                                       self.state.selectedWebServer = null;
                                                       self.refreshData({showModalFormAddDialog:false});
@@ -252,36 +253,24 @@ var WebServerConfig = React.createClass({
  */
 var WebServerConfigForm = React.createClass({
     getInitialState: function() {
-        var id = "";
-        var name = "";
-        var host = "";
-        var port = "";
-        var httpsPort = "";
-        var statusPath = "";
-        var groupIds = [];
+        let initialState = {name: "", host: "", port: "", httpsPort: "", statusPath: "", groupIds: [], apacheHttpdMediaId: null};
 
-        if (this.props.data !== undefined) {
-            id = this.props.data.id;
-            name = this.props.data.name;
-            host = this.props.data.host;
-            port = this.props.data.port;
-            httpsPort = this.props.data.httpsPort;
-            statusPath = this.props.data.statusPath.path;
+        if (this.props.data) {
+            initialState.name = this.props.data.name;
+            initialState.host = this.props.data.host;
+            initialState.port = this.props.data.port;
+            initialState.httpsPort = this.props.data.httpsPort;
+            initialState.statusPath = this.props.data.statusPath ? this.props.data.statusPath.path : "";
+            initialState.apacheHttpdMediaId = this.props.data.apacheHttpdMedia ? this.props.data.apacheHttpdMedia.id : null;
             this.props.data.groups.forEach(function(group) {
-                groupIds.push(group.id);
+                initialState.groupIds.push(group.id);
             });
         }
 
-        return {
-            id: id,
-            name: name,
-            host: host,
-            port: port,
-            httpsPort: httpsPort,
-            statusPath: statusPath,
-            groupIds: groupIds,
-            groupMultiSelectData: [],
-        }
+        initialState["groupMultiSelectData"] = [];
+        initialState["apacheHttpdVersions"] = [];
+
+        return initialState;
     },
     mixins: [React.addons.LinkedStateMixin],
     render: function() {
@@ -352,6 +341,23 @@ var WebServerConfigForm = React.createClass({
                                     <IconBtn title="Generate Status Path" className="ui-icon-refresh" onClick={this.onClickGenerateStatusPath}/>
                                 </td>
                             </tr>
+
+                            <tr>
+                                <td>Apache HTTPD</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label htmlFor="apacheHttpdMediaId" className="error"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                <select name="apacheHttpdMediaId" ref="apacheHttpdMediaDropDown" valueLink={this.linkState("apacheHttpdMediaId")}>
+                                    {this.getApacheHttpdVersions()}
+                                </select>
+                                </td>
+                            </tr>
+
                             <tr>
                                 <td>
                                     *Group
@@ -382,15 +388,40 @@ var WebServerConfigForm = React.createClass({
                     </form>
                 </div>
     },
+    getMedia: function() {
+        let self = this;
+        mediaService.getAllMedia().then((function(response){
+            let allMedia = response.applicationResponseContent;
+            let apacheHttpdVersions = [];
+            for (let i = 0; i < allMedia.length; i++) {
+                if (allMedia[i].type.name === "APACHE") {
+                    apacheHttpdVersions.push(allMedia[i]);
+                }
+            }
+            self.setState({apacheHttpdVersions: apacheHttpdVersions});
+        })).caught(function(response){
+            $.errorAlert(response);
+        });
+    },
+    getApacheHttpdVersions: function() {
+        var items = [<option key='no-apache-httpd-version' value=''>--- Select Apache HTTPD ---</option>];
+        for (var i=0; i < this.state.apacheHttpdVersions.length; i++){
+            var apacheHttpdVersionOption = this.state.apacheHttpdVersions[i];
+            var selected = this.props.data && this.props.data.apacheHttpdMedia && apacheHttpdVersionOption.id === this.props.data.apacheHttpdMedia.id;
+            items.push(<option key={"apache-httpd-version-" + apacheHttpdVersionOption.id} selected={selected}
+                               value={apacheHttpdVersionOption.id}>{apacheHttpdVersionOption.name}</option>);
+        }
+        return items;
+    },
     onStatusPathFocus: function() {
         if (!this.state.statusPath) {
-            this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-            (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+            this.setState({statusPath: "http://" + this.state.host + ":" + this.state.port + "/" +
+                jwalaVars.apacheHttpdStatusPingResource});
         }
     },
     onClickGenerateStatusPath: function() {
-        this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.apacheImageLogoPath});
+        this.setState({statusPath: "http://" + this.state.host + ":" + this.state.port + "/" +
+            jwalaVars.apacheHttpdStatusPingResource});
     },
     onSelectGroups: function(groupIds) {
         this.setState({groupIds:groupIds});
@@ -417,7 +448,8 @@ var WebServerConfigForm = React.createClass({
                                     },
                                     "statusPath": {
                                         pathCheck: true
-                                    }
+                                    },
+                                    "apacheHttpdMediaId": {required: true}
                                 },
                                 messages: {
                                     "groupSelector[]": {
@@ -433,6 +465,7 @@ var WebServerConfigForm = React.createClass({
         });
 
         this.retrieveGroups();
+        this.getMedia();
     },
     isValid: function() {
         this.validator.form();
@@ -463,6 +496,7 @@ var WebServerDataTable = React.createClass({
                         {sTitle:"Port", mData:"port"},
                         {sTitle:"HTTPS Port", mData:"httpsPort"},
                         {sTitle:"Status Path", mData:"statusPath.path", maxDisplayTextLen:20},
+                        {sTitle:"Apache HTTPD", mData:"apacheHttpdMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName},
                         {sTitle:"Group",
                          mData:"groups",
                          jwalaType:"array",
@@ -476,6 +510,12 @@ var WebServerDataTable = React.createClass({
                                editCallback={this.props.editCallback}
                                rowSubComponentContainerClassName="row-sub-component-container"
                                isColResizable={true}/>
+    },
+    renderMediaName:function(dataTable, data, aoColumnDefs, itemIndex) {
+        var self = this;
+        aoColumnDefs[itemIndex].fnCreatedCell = function (nTd, sData, oData, iRow, iCol) {
+            return React.renderComponent(React.createElement("span", {}, sData && sData.name ? sData.name : ""), nTd);
+        }
     },
     renderNameLink:function(dataTable, data, aoColumnDefs, itemIndex) {
         var self = this;

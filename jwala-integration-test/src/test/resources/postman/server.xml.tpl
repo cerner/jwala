@@ -39,9 +39,9 @@
             serverName="${jvm.jvmName}"
             jgroupsPreferIpv4Stack="true"
             jgroupsConfigXml="tcp.xml"
-            jgroupsCoordinatorIp="${vars['jgroups.coordinator.hostname']}"
+            jgroupsCoordinatorHostname="${vars['jgroups.coordinator.hostname']}"
             jgroupsCoordinatorPort="30000"
-            jgroupsClusterName="jwala_jgroups"
+            jgroupsClusterName="${vars['jgroups.cluster.name']}"
   	        schedulerDelayInitial="30"
   	        schedulerDelaySubsequent="30"
   	        schedulerDelayUnit="SECONDS"
@@ -91,8 +91,8 @@
 
     <Connector 
       port="${jvm.httpsPort}" 
-	  SSLCertificateFile="${vars['remote.paths.deploy.dir']}/app/data/security/id/${jvm.hostName}.cer"
-      SSLCertificateKeyFile="${vars['remote.paths.deploy.dir']}/app/data/security/id/${jvm.hostName}.key"
+	  SSLCertificateFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.cer"
+      SSLCertificateKeyFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.key"
       SSLEnabled="true"
       SSLPassword="" 
       acceptCount="100" 

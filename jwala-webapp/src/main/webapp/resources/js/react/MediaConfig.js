@@ -1,10 +1,11 @@
 /** @jsx React.DOM */
 var MediaConfig = React.createClass({
     getInitialState: function() {
-        return {selectedMedia: null};
+        return {selectedMedia: null, showScreenOverlay: false};
     },
     render: function() {
         return <div className="MediaConfig">
+                   <ScreenOverlay show={this.state.showScreenOverlay} />
                    <div className="btnContainer">
                        <GenericButton label="Delete" accessKey="d" callback={this.delBtnCallback}/>
                        <GenericButton label="Add" accessKey="a" callback={this.addBtnCallback}/>
@@ -14,7 +15,7 @@ var MediaConfig = React.createClass({
                                tableIndex="id"
                                colDefinitions={[{key: "id", isVisible: false},
                                                 {title: "Name", key: "name", renderCallback: this.mediaNameRenderCallback},
-                                                {title: "Type", key: "type"},
+                                                {title: "Type", key: "type.displayName"},
                                                 {title: "Remote Target Directory", key: "remoteDir"},
                                                 {title: "Media Directory Name", key: "mediaDir"}]}
                                selectItemCallback={this.selectItemCallback}
@@ -56,16 +57,20 @@ var MediaConfig = React.createClass({
     okAddCallback: function() {
         var self = this;
         if (this.refs.mediaAddForm.isValid()) {
-            this.refs.modalAddMediaDlg.setEnabled(false);
+            this.refs.mediaAddForm.setBusy(true);
+            this.setState({showScreenOverlay: true});
             ServiceFactory.getMediaService().createMedia(new FormData(this.refs.mediaAddForm.refs.form.getDOMNode()))
             .then(function(response){
                 self.refs.modalAddMediaDlg.close();
                 self.loadTableData();
             }).caught(function(response){
-                self.refs.modalAddMediaDlg.setEnabled(true);
-                self.refs.mediaAddForm.setBusy(false);
                 $.errorAlert(JSON.parse(response.responseText).message);
-            });
+            }).lastly(function(){
+                if (self.refs.mediaAddForm) {
+                    self.refs.mediaAddForm.setBusy(false);
+                }
+                self.setState({showScreenOverlay: false});
+             });
         }
     },
     okEditCallback: function() {
@@ -132,7 +137,7 @@ var MediaConfigForm = React.createClass({
     ],
     getInitialState: function() {
         var name = this.props.formData && this.props.formData.name ? this.props.formData.name : null;
-        var type = this.props.formData && this.props.formData.type ? this.props.formData.type : null;
+        var type = this.props.formData && this.props.formData.type ? this.props.formData.type.name : null;
         var localPath = this.props.formData && this.props.formData.localPath ? this.props.formData.localPath : null;
         var remoteDir = this.props.formData && this.props.formData.remoteDir ? this.props.formData.remoteDir : null;
         var mediaDir = this.props.formData && this.props.formData.mediaDir ? this.props.formData.mediaDir : null;
@@ -143,7 +148,8 @@ var MediaConfigForm = React.createClass({
         var localPathTextHidden = null;
         var mediaDirTextHidden = null;
         var mediaArchiveFileInput = null;
-        var uploadBusyImg = this.state.showUploadBusy ? <span>Uploading {this.state.mediaArchiveFile.name} ... <img className="uploadMediaBusyIcon" src="public-resources/img/busy-circular.gif"/></span>: null;
+        var uploadBusyImg = this.state.showUploadBusy ? <span>Uploading {this.state.mediaArchiveFile.name} ...
+                    <img className="uploadMediaBusyIcon" src="public-resources/img/busy-circular.gif"/></span>: null;
 
         if (this.props.formData && this.props.formData.id) {
             idTextHidden = <input type="hidden" name="id" value={this.props.formData.id}/>;
@@ -190,7 +196,6 @@ var MediaConfigForm = React.createClass({
         if (this.validator !== null) {
             this.validator.form();
             if (this.validator.numberOfInvalids() === 0) {
-                this.setState({showUploadBusy:true})
                 return true;
             }
         } else {
@@ -218,26 +223,27 @@ var MediaTypeDropdown = React.createClass({
         return {selectedMediaType: this.props.selectedMediaType, mediaTypes: []}
     },
     componentDidMount: function() {
-        // TODO uncomment to support Apache and Tomcat media
-        /*var self = this;
+        var self = this;
         ServiceFactory.getMediaService().getMediaTypes().then(function(response){
             self.setState({mediaTypes: response.applicationResponseContent});
-        });*/
-        this.setState({mediaTypes:["JDK"]});
+        });
     },
     render: function() {
         var self = this;
         var options = [];
         this.state.mediaTypes.forEach(function(mediaType){
-            if (self.state.selectedMediaType === mediaType) {
-                options.push(<option value={mediaType} selected="selected">{mediaType}</option>);
+            if (self.state.selectedMediaType === mediaType.name) {
+                options.push(<option value={mediaType.name} selected="selected">{mediaType.displayName}</option>);
             } else {
-                options.push(<option value={mediaType}>{mediaType}</option>);
+                options.push(<option value={mediaType.name}>{mediaType.displayName}</option>);
             }
         });
 
         if (options.length > 0) {
-            return <select className="mediaTypeSelect" name="type" refs="mediaTypeSelect" onChange={this.onChangeSelect} value={this.state.selectedMediaType}>{options}</select>
+            return <select className="mediaTypeSelect" name="type" refs="mediaTypeSelect" onChange={this.onChangeSelect}
+                           value={this.state.selectedMediaType}>
+                       {options}
+                   </select>;
         }
         return <div>Loading Media Types...</div>
     },

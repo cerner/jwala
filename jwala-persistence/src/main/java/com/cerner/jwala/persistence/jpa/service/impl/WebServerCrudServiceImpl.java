@@ -10,10 +10,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.request.webserver.UploadWebServerTemplateRequest;
-import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
-import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
-import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
-import com.cerner.jwala.persistence.jpa.domain.JpaWebServer;
+import com.cerner.jwala.persistence.jpa.domain.*;
 import com.cerner.jwala.persistence.jpa.domain.builder.JpaAppBuilder;
 import com.cerner.jwala.persistence.jpa.domain.builder.JpaWebServerBuilder;
 import com.cerner.jwala.persistence.jpa.domain.builder.JvmBuilder;
@@ -22,6 +19,7 @@ import com.cerner.jwala.persistence.jpa.service.WebServerCrudService;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateMetaDataUpdateException;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +49,8 @@ public class WebServerCrudServiceImpl extends AbstractCrudServiceImpl<JpaWebServ
             jpaWebServer.setStatusPath(webServer.getStatusPath().getPath());
             jpaWebServer.setCreateBy(createdBy);
             jpaWebServer.setState(webServer.getState());
+            jpaWebServer.setApacheHttpdMedia(webServer.getApacheHttpdMedia() == null ? null : new ModelMapper()
+                    .map(webServer.getApacheHttpdMedia(), JpaMedia.class));
 
             return webServerFrom(create(jpaWebServer));
         } catch (final EntityExistsException eee) {

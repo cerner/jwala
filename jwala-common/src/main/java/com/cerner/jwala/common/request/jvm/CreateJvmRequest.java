@@ -30,7 +30,7 @@ public class CreateJvmRequest implements Serializable, Request {
     private final String userName;
     private final String encryptedPassword;
     private final Identifier<Media> jdkMediaId;
-//    private final Identifier<Media> tomcatMediaId;
+    private final Identifier<Media> tomcatMediaId;
 
     public CreateJvmRequest(final String theName,
                             final String theHostName,
@@ -43,8 +43,8 @@ public class CreateJvmRequest implements Serializable, Request {
                             final String theSystemProperties,
                             final String theUserName,
                             final String theEncryptedPassword,
-                            final Identifier<Media> jdkMediaId/*,
-                            final Identifier<Media> tomcatMediaId*/) {
+                            final Identifier<Media> jdkMediaId,
+                            final Identifier<Media> tomcatMediaId) {
         jvmName = theName;
         hostName = theHostName;
         httpPort = theHttpPort;
@@ -57,7 +57,7 @@ public class CreateJvmRequest implements Serializable, Request {
         userName = theUserName;
         encryptedPassword = theEncryptedPassword;
         this.jdkMediaId = jdkMediaId;
-//        this.tomcatMediaId = tomcatMediaId;
+        this.tomcatMediaId = tomcatMediaId;
     }
 
     public String getJvmName() {
@@ -120,9 +120,9 @@ public class CreateJvmRequest implements Serializable, Request {
         return jdkMediaId;
     }
 
-//    public Identifier<Media> getTomcatMediaId() {
-//        return tomcatMediaId;
-//    }
+    public Identifier<Media> getTomcatMediaId() {
+        return tomcatMediaId;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -145,7 +145,7 @@ public class CreateJvmRequest implements Serializable, Request {
                 .append(userName, that.userName)
                 .append(encryptedPassword, that.encryptedPassword)
                 .append(jdkMediaId, that.jdkMediaId)
-//                .append(tomcatMediaId, that.tomcatMediaId)
+                .append(tomcatMediaId, that.tomcatMediaId)
                 .isEquals();
     }
 
@@ -164,7 +164,7 @@ public class CreateJvmRequest implements Serializable, Request {
                 .append(userName)
                 .append(encryptedPassword)
                 .append(jdkMediaId)
-//                .append(tomcatMediaId)
+                .append(tomcatMediaId)
                 .toHashCode();
     }
 
@@ -183,7 +183,7 @@ public class CreateJvmRequest implements Serializable, Request {
                 ", userName='" + userName + '\'' +
                 ", encryptedPassword='" + encryptedPassword + '\'' +
                 ", jdkMediaId='" + jdkMediaId + '\'' +
-//                ", tomcatMediaId='" + tomcatMediaId + '\'' +
+                ", tomcatMediaId='" + tomcatMediaId + '\'' +
                 '}';
     }
 }
