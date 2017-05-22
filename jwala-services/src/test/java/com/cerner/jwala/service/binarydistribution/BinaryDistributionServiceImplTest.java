@@ -268,16 +268,17 @@ public class BinaryDistributionServiceImplTest {
         final CommandOutput success = new CommandOutput(new ExecReturnCode(0), null, null);
         when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "/apache-httpd-2.4.20"))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", "c:/ctp"))
+
+        final String ctpDir = Paths.get("c:/ctp").toString();
+        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", ctpDir))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "c:/ctp/apache-httpd-2.4.20"))
-                .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
-        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:/downloads/apache-httpd-2.4.20.zip", "c:/ctp"))
-                .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:/ctp/apache-httpd-2.4.20.zip", "c:/ctp",
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", ctpDir + "/apache-httpd-2.4.20"))
+            .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
+        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", Paths.get("c:/downloads/apache-httpd-2.4.20.zip").toString(),
+                ctpDir)).thenReturn(success);
+        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", ctpDir + "/apache-httpd-2.4.20.zip", ctpDir,
                 BinaryDistributionServiceImpl.EXCLUDED_FILES))
                 .thenReturn(success);
-
         when(Config.mockResourceContentGeneratorService.generateContent(anyString(), anyString(), any(ResourceGroup.class), anyObject(), any(ResourceGeneratorType.class))).thenReturn("c:\\ctp");
 
         binaryDistributionService.distributeMedia("webserver1", "localhost", groupArray, media);
