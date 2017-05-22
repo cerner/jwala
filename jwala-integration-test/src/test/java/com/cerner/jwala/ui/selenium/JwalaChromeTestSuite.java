@@ -12,6 +12,7 @@ import com.cerner.jwala.ui.selenium.testsuite.configuration.jvm.JvmDeleteTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.resources.*;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.webServer.WebServerCreateTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.webServer.WebServerDeleteTest;
+import com.cerner.jwala.ui.selenium.testsuite.operations.BalancerManagerTest;
 import com.cerner.jwala.ui.selenium.testsuite.operations.HistoryTablePopupTest;
 import com.cerner.jwala.ui.selenium.testsuite.operations.JvmOperationsPageDeleteTest;
 import com.cerner.jwala.ui.selenium.testsuite.operations.WebServerOperationsPageDelete;
@@ -32,7 +33,8 @@ import java.util.concurrent.TimeUnit;
         AppCreateTest.class, ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class,
         ModifyExternalPropertyResource.class, DeleteExternalProperty.class, ResourceDeployTest.class, HistoryTablePopupTest.class,
         AppDeleteTest.class, JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class,
-        WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, LogoutTest.class})
+        WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, BalancerManagerTest.class,
+        LogoutTest.class})
 public class JwalaChromeTestSuite extends TestSuite {
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";

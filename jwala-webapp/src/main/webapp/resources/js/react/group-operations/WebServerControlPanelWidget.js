@@ -141,7 +141,8 @@ var WebServerControlPanelWidget = React.createClass({
         parseUrlProtocol: function(url) {
             try {
                 let protocol = url.split("/")[0].toLowerCase();
-                if (protocol.indexOf(WebServerControlPanelWidget.HTTP_PROTOCOL) > -1) {
+                if (protocol.indexOf(WebServerControlPanelWidget.HTTP_PROTOCOL) > -1 ||
+                    protocol.indexOf(WebServerControlPanelWidget.HTTPS_PROTOCOL) > -1) {
                     return protocol;
                 }
                 console.warn('URL "%s" does not have a location protocol. ' +
@@ -151,9 +152,10 @@ var WebServerControlPanelWidget = React.createClass({
                 console.error('Due to the following errors the current location\'s protocol (%s) will be used instead.',
                     location.protocol, e);
             }
-            return location.protocol;
+            return WebServerControlPanelWidget.HTTP_PROTOCOL;
         },
-        HTTP_PROTOCOL: "http:"
+        HTTP_PROTOCOL: "http:",
+        HTTPS_PROTOCOL: "https:"
     }
 
 });
