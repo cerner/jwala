@@ -134,3 +134,12 @@ INSERT INTO VERSION (RELEASE_VERSION, LAST_UPDATED) VALUES ('0.0.185', NOW());
 -- =================================================== --
 -- === END : UPGRADE FROM Jwala 0.0.38 to Jwala 0.0.185 === --
 -- =================================================== --
+
+-- =================================================== --
+-- === BEGIN: UPGRADE FROM Jwala 0.0.38 to Jwala 0.0.216 === --
+-- =================================================== --
+ALTER TABLE media DROP CONSTRAINT U_MEDIA_NAME;
+ALTER TABLE media ADD CONSTRAINT uq_media UNIQUE(NAME, TYPE);
+-- =================================================== --
+-- === END : UPGRADE FROM Jwala 0.0.38 to Jwala 0.0.216 === --
+-- =================================================== --
