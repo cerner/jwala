@@ -32,7 +32,7 @@ public class BalancerManagerTest extends JwalaTest {
         createWebServer(BAL_MGR_TEST + "https-" + CURRENT_TIME_MILLIS, "localhost", groupNameArray,
                 "https://localhost:444/index.html", "81", "444");
         createWebServer(BAL_MGR_TEST + "relative-" + CURRENT_TIME_MILLIS, "localhost", groupNameArray,
-                "http://localhost:86/index.html", "22", "333");
+                "/index.html", "22", "333");
     }
 
     @Test
