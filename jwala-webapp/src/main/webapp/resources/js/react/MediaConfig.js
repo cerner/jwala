@@ -189,7 +189,7 @@ var MediaConfigForm = React.createClass({
     componentDidMount: function() {
         var self = this;
         if (self.validator === null) {
-            self.validator = $(self.refs.form.getDOMNode()).validate();
+            self.validator = $(self.refs.form.getDOMNode()).validate({rules:{"type":{"required":true}}});
         }
     },
     isValid: function() {
@@ -230,7 +230,7 @@ var MediaTypeDropdown = React.createClass({
     },
     render: function() {
         var self = this;
-        var options = [];
+        var options = [<option key="no-media" value="">--- Select Media Type ---</option>];
         this.state.mediaTypes.forEach(function(mediaType){
             if (self.state.selectedMediaType === mediaType.name) {
                 options.push(<option value={mediaType.name} selected="selected">{mediaType.displayName}</option>);
