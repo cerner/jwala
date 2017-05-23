@@ -4,6 +4,7 @@ import com.cerner.jwala.ui.selenium.testsuite.LoginTest;
 import com.cerner.jwala.ui.selenium.testsuite.LogoutTest;
 import com.cerner.jwala.ui.selenium.testsuite.PreFlightTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.app.AppCreateTest;
+import com.cerner.jwala.ui.selenium.testsuite.configuration.app.AppSearchTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.app.AppDeleteTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupCreateTest;
 import com.cerner.jwala.ui.selenium.testsuite.configuration.group.GroupDeleteTest;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, WebServerCreateTest.class,
-        AppCreateTest.class, ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class,
+        AppCreateTest.class, AppSearchTest.class, ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class,
         ModifyExternalPropertyResource.class, DeleteExternalProperty.class, ResourceDeployTest.class, HistoryTablePopupTest.class,
         AppDeleteTest.class, JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class,
         WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, BalancerManagerTest.class,
