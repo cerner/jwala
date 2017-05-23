@@ -138,11 +138,12 @@ var RDataTable = React.createClass({
                 }
 
                 // Filter process A
-                if (col.isVisible !== false) {
-                    var tmpStr = $.isNumeric(tmpVal) ? tmpVal.toString() : tmpVal;
+                if (tmpVal && (col.isVisible === undefined || col.isVisible)) {
+                    var tmpStr = tmpVal.toString();
                     if (!hasMatch) {
                         if (self.state.filterVal === "" ||
                             (self.state.filterVal !== "" &&
+                            tmpStr !== undefined &&
                             tmpStr !== null &&
                             tmpStr.toLowerCase().indexOf(self.state.filterVal.toLowerCase()) > -1)) {
                             hasMatch = true;
