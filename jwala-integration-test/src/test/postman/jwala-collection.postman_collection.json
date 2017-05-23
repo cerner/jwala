@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "6f0d7dc4-a188-29fb-e043-85d87149cfd8",
+		"_postman_id": "201c3ea2-6433-1479-13e3-b98e35ecdb2b",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1606,7 +1606,8 @@
 									"key": "templateFile",
 									"type": "file",
 									"enabled": true,
-									"src": "../resources/postman/hello.xml.tpl"
+									"src": "../resources/postman/hello.xml.tpl",
+									"value": ""
 								}
 							]
 						},
@@ -6116,8 +6117,19 @@
 				},
 				{
 					"name": "delete media",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media-update",
+						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media-update/JDK",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6167,7 +6179,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-Tomcat-Media",
+						"url": "{{url}}/v1.0/media/Postman-Test-Tomcat-Media/Apache%20Tomcat",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6192,7 +6204,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-Apache-HTTPD-Media",
+						"url": "{{url}}/v1.0/media/Postman-Test-Apache-HTTPD-Media/Apache%20HTTPD",
 						"method": "DELETE",
 						"header": [],
 						"body": {
