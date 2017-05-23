@@ -101,7 +101,7 @@ public class JvmCommandFactoryTest {
 
         Media mockTomcatMedia = mock(Media.class);
         Path mockPath = mock(Path.class);
-        when(mockTomcatMedia.getMediaDir()).thenReturn(mockPath);
+        when(mockTomcatMedia.getRootDir()).thenReturn(mockPath);
         when(mockTomcatMedia.getRemoteDir()).thenReturn(Paths.get("d:/ctp/app/instance"));
         when(mockPath.toString()).thenReturn("test-tomcat-7");
         when(mockJvm.getTomcatMedia()).thenReturn(mockTomcatMedia);
@@ -127,7 +127,7 @@ public class JvmCommandFactoryTest {
 
         Media mockTomcatMedia = mock(Media.class);
         Path mockPath = mock(Path.class);
-        when(mockTomcatMedia.getMediaDir()).thenReturn(mockPath);
+        when(mockTomcatMedia.getRootDir()).thenReturn(mockPath);
         when(mockTomcatMedia.getRemoteDir()).thenReturn(Paths.get("d:/ctp/app/instance"));
         when(mockPath.toString()).thenReturn("test-tomcat-7");
         when(mockJvm.getTomcatMedia()).thenReturn(mockTomcatMedia);
@@ -173,7 +173,7 @@ public class JvmCommandFactoryTest {
 
         Media mockTomcatMedia = mock(Media.class);
         Path mockPath = mock(Path.class);
-        when(mockTomcatMedia.getMediaDir()).thenReturn(mockPath);
+        when(mockTomcatMedia.getRootDir()).thenReturn(mockPath);
         when(mockTomcatMedia.getRemoteDir()).thenReturn(Paths.get("d:/ctp/app/instance"));
         when(mockPath.toString()).thenReturn("test-tomcat-7");
 

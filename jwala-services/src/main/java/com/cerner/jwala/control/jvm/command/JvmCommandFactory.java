@@ -177,7 +177,7 @@ public class JvmCommandFactory {
         final String trimmedJvmName = StringUtils.deleteWhitespace(jvm.getJvmName());
 
         final String jvmRootDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' + trimmedJvmName + '/' +
-                jvm.getTomcatMedia().getMediaDir()).normalize().toString();
+                jvm.getTomcatMedia().getRootDir()).normalize().toString();
 
         final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
         final String dumpFile = "heapDump." + trimmedJvmName + "." + formatter.print(DateTime.now());
@@ -198,7 +198,7 @@ public class JvmCommandFactory {
      */
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
         final String jvmRootDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' +
-                StringUtils.deleteWhitespace(jvm.getJvmName()) + '/' + jvm.getTomcatMedia().getMediaDir())
+                StringUtils.deleteWhitespace(jvm.getJvmName()) + '/' + jvm.getTomcatMedia().getRootDir())
                 .normalize().toString();
         return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), jvmRootDir, jvm.getJvmName());
     }
@@ -260,7 +260,7 @@ public class JvmCommandFactory {
 
         List<String> formatStrings = Arrays.asList(getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
                 jvm.getJvmName(), jvm.getTomcatMedia().getRemoteDir().normalize().toString(),
-                jvm.getTomcatMedia().getMediaDir().toString());
+                jvm.getTomcatMedia().getRootDir().toString());
         List<String> unformatStrings = Arrays.asList(quotedUsername, decryptedPassword);
 
         return new ExecCommand(formatStrings, unformatStrings);

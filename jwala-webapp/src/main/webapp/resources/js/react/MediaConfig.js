@@ -17,7 +17,7 @@ var MediaConfig = React.createClass({
                                                 {title: "Name", key: "name", renderCallback: this.mediaNameRenderCallback},
                                                 {title: "Type", key: "type.displayName"},
                                                 {title: "Remote Target Directory", key: "remoteDir"},
-                                                {title: "Media Directory Name", key: "mediaDir"}]}
+                                                {title: "Media Directory Name", key: "rootDir"}]}
                                selectItemCallback={this.selectItemCallback}
                                deselectAllRowsCallback={this.deselectAllRowsCallback}/>
 
@@ -123,7 +123,7 @@ var MediaConfig = React.createClass({
                                                 formData["localPath"] = response.applicationResponseContent.localPath;
                                                 formData["type"] = response.applicationResponseContent.type;
                                                 formData["remoteDir"] = response.applicationResponseContent.remoteDir;
-                                                formData["mediaDir"] = response.applicationResponseContent.mediaDir;
+                                                formData["rootDir"] = response.applicationResponseContent.mediaDir;
                                                 self.refs.modalEditMediaDlg.show("Edit Media", <MediaConfigForm formData={formData}/>);
                                            })).caught(
                                                 function(response){$.errorAlert(response)
@@ -140,13 +140,13 @@ var MediaConfigForm = React.createClass({
         var type = this.props.formData && this.props.formData.type ? this.props.formData.type.name : null;
         var localPath = this.props.formData && this.props.formData.localPath ? this.props.formData.localPath : null;
         var remoteDir = this.props.formData && this.props.formData.remoteDir ? this.props.formData.remoteDir : null;
-        var mediaDir = this.props.formData && this.props.formData.mediaDir ? this.props.formData.mediaDir : null;
-        return {name: name, type: type, mediaArchiveFilename: "", mediaArchiveFile: null, remoteDir: remoteDir, mediaDir: mediaDir, showUploadBusy: false};
+        var rootDir = this.props.formData && this.props.formData.rootDir ? this.props.formData.rootDir : null;
+        return {name: name, type: type, mediaArchiveFilename: "", mediaArchiveFile: null, remoteDir: remoteDir, rootDir: rootDir, showUploadBusy: false};
     },
     render: function() {
         var idTextHidden = null;
         var localPathTextHidden = null;
-        var mediaDirTextHidden = null;
+        var rootDirTextHidden = null;
         var mediaArchiveFileInput = null;
         var uploadBusyImg = this.state.showUploadBusy ? <span>Uploading {this.state.mediaArchiveFile.name} ...
                     <img className="uploadMediaBusyIcon" src="public-resources/img/busy-circular.gif"/></span>: null;
@@ -154,7 +154,7 @@ var MediaConfigForm = React.createClass({
         if (this.props.formData && this.props.formData.id) {
             idTextHidden = <input type="hidden" name="id" value={this.props.formData.id}/>;
             localPathTextHidden = <input type="hidden" name="localPath" value={this.props.formData.localPath}/>;
-            mediaDirTextHidden = <input type="hidden" name="mediaDir" value={this.props.formData.mediaDir}/>;
+            rootDirTextHidden = <input type="hidden" name="mediaDir" value={this.props.formData.mediaDir}/>;
         } else {
             mediaArchiveFileInput = <div>
                                         <label>Media Archive File</label>
@@ -168,7 +168,7 @@ var MediaConfigForm = React.createClass({
                    <form ref="form" enctype="multipart/form-data">
                        {idTextHidden}
                        {localPathTextHidden}
-                       {mediaDirTextHidden}
+                       {rootDirTextHidden}
                        <label>Name</label>
                        <label htmlFor="name" className="error"/>
                        <input name="name" type="text" valueLink={this.linkState("name")} maxLength="255" required autoFocus/>

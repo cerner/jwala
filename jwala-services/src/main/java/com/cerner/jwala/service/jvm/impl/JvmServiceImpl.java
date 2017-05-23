@@ -726,7 +726,7 @@ public class JvmServiceImpl implements JvmService {
 
         final String targetAbsoluteDir =
                 Paths.get(jvm.getJdkMedia().getRemoteDir().toString() + '/' + jvm.getJvmName() + '/' +
-                        jvm.getTomcatMedia().getMediaDir().toString() + "/bin").normalize().toString();
+                        jvm.getTomcatMedia().getRootDir().toString() + "/bin").normalize().toString();
 
         if (!jvmControlService.executeCheckFileExistsCommand(jvm, targetAbsoluteDir).getReturnCode().wasSuccessful()) {
             LOGGER.debug("JVM not generated yet.. ");
