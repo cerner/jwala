@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
@@ -120,7 +121,8 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     @Override
     public void remoteUnzipBinary(final String hostname, final String zipFileName, final String destination, final String exclude) {
         try {
-            if (binaryDistributionControlService.unzipBinary(hostname, zipFileName, destination, exclude).getReturnCode().wasSuccessful()) {
+            if (binaryDistributionControlService.unzipBinary(hostname, Paths.get(zipFileName).normalize().toString(),
+                    destination, exclude).getReturnCode().wasSuccessful()) {
                 LOGGER.info("successfully unzipped the binary {}", zipFileName);
             } else {
                 final String message = "cannot unzip from " + zipFileName + " to " + destination;
@@ -228,7 +230,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
      */
     private boolean checkIfMediaDirExists(final String[] mediaDirs, final String hostName, final String binaryDeployDir) {
         for (final String mediaDir : mediaDirs) {
-            if (!remoteFileCheck(hostName, binaryDeployDir + "/" + mediaDir)) {
+            if (!remoteFileCheck(hostName, Paths.get(binaryDeployDir + "/" + mediaDir).normalize().toString())) {
                 return false;
             }
         }
