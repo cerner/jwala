@@ -156,7 +156,7 @@ public class BalancerManagerTest extends JwalaTest {
         clickWhenReady(By.xpath("//tr[td[button[text()='" + name + "']]]"));
         click(By.xpath("//button[span[text()='Delete']]"));
         click(By.xpath("//button[span[text()='Yes']]"));
-        waitUntilElementIsVisible(By.xpath("//button[text()='" + name + "']"));
+        waitUntilElementIsNotVisible(By.xpath("//button[text()='" + name + "']"));
     }
 
 }
