@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class JwalaTest {
 
     protected final WebDriver driver = TestSuite.driver;
-    protected final WebDriverWait webDriverWait = new WebDriverWait(driver, 20);
+    protected final WebDriverWait webDriverWait = new WebDriverWait(driver, 20, 100);
     protected final Properties properties = TestSuite.properties;
     protected final static long CURRENT_TIME_MILLIS = TestSuite.CURRENT_TIME_MILLIS;
 
@@ -47,6 +47,7 @@ public class JwalaTest {
      * @param by {@link By}
      */
     protected void clickWhenReady(final By by) {
+        webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".AppBusyScreen")));
         webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
     }
 
