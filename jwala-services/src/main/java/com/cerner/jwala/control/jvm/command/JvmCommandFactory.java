@@ -17,6 +17,7 @@ import com.cerner.jwala.service.RemoteCommandExecutorService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
 import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.jvm.exception.JvmServiceException;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -173,17 +174,19 @@ public class JvmCommandFactory {
      * @return
      */
     private ExecCommand getExecCommandForHeapDump(String scriptName, Jvm jvm) {
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
-        String dumpFile = "heapDump." + StringUtils.replace(jvm.getJvmName(), " ", "") + "." + fmt.print(DateTime.now());
-        String dumpLiveStr = ApplicationProperties.getAsBoolean(PropertyKeys.JMAP_DUMP_LIVE_ENABLED.name()) ? "live," : "\"\"";
-        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
-                StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
-                jvm.getTomcatMedia().getMediaDir();
-        return new ExecCommand(getFullPathScript(jvm, scriptName),
-                jvm.getJavaHome(),
-                ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR),
-                dumpFile, dumpLiveStr, jvmInstanceDir, jvm.getJvmName());
-        //Windows " | grep PID | awk '{ print $3 }'`
+        final String trimmedJvmName = StringUtils.deleteWhitespace(jvm.getJvmName());
+
+        final String jvmRootDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' + trimmedJvmName + '/' +
+                jvm.getTomcatMedia().getMediaDir()).normalize().toString();
+
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
+        final String dumpFile = "heapDump." + trimmedJvmName + "." + formatter.print(DateTime.now());
+
+        final String dumpLiveStr = ApplicationProperties.getAsBoolean(PropertyKeys.JMAP_DUMP_LIVE_ENABLED.name()) ? "live," : "\"\"";
+
+        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(),
+                ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR), dumpFile, dumpLiveStr, jvmRootDir,
+                jvm.getJvmName());
     }
 
     /**
@@ -194,14 +197,10 @@ public class JvmCommandFactory {
      * @return
      */
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
-        String jvmInstanceDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR) + "/" +
-                StringUtils.replace(jvm.getJvmName(), " ", "") + "/" +
-                jvm.getTomcatMedia().getMediaDir();
-
-        return new ExecCommand(getFullPathScript(jvm, scriptName),
-                jvm.getJavaHome(),
-                jvmInstanceDir,
-                jvm.getJvmName());
+        final String jvmRootDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' +
+                StringUtils.deleteWhitespace(jvm.getJvmName()) + '/' + jvm.getTomcatMedia().getMediaDir())
+                .normalize().toString();
+        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), jvmRootDir, jvm.getJvmName());
     }
 
     /**
@@ -221,11 +220,16 @@ public class JvmCommandFactory {
      */
     private ExecCommand getExecCommandForDeploy(Jvm jvm) {
         final String remoteScriptDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_SCRIPT_DIR);
-        final String remotePathsInstancesDir = ApplicationProperties.get(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
-        return new ExecCommand(remoteScriptDir + "/" + jvm.getJvmName() + "/" + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME,
-                remoteScriptDir + "/" + jvm.getJvmName() + ".jar",
-                remotePathsInstancesDir + "/" + jvm.getJvmName(),
-                jvm.getJavaHome() + "/bin/jar");
+
+        final String trimmedJvmName = StringUtils.deleteWhitespace(jvm.getJvmName());
+        final String archivePath = Paths.get(remoteScriptDir + '/' + trimmedJvmName + '/'
+                + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME).normalize().toString();
+        final String jvmJarFile = Paths.get(remoteScriptDir + '/' + trimmedJvmName + ".jar").normalize().toString();
+        final String jvmInstanceDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' + trimmedJvmName)
+                .normalize().toString();
+        final String jdkJarDir = Paths.get(jvm.getJavaHome() + "/bin/jar").normalize().toString();
+
+        return new ExecCommand(archivePath, jvmJarFile, jvmInstanceDir, jdkJarDir);
     }
 
     /**
@@ -246,8 +250,6 @@ public class JvmCommandFactory {
             encryptedPassword = null;
         }
 
-        String remotePathsInstancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
-
         final String quotedUsername;
         if (userName != null && userName.length() > 0) {
             quotedUsername = "\"" + userName + "\"";
@@ -257,7 +259,8 @@ public class JvmCommandFactory {
         final String decryptedPassword = encryptedPassword != null && encryptedPassword.length() > 0 ? new DecryptPassword().decrypt(encryptedPassword) : "";
 
         List<String> formatStrings = Arrays.asList(getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
-                jvm.getJvmName(), remotePathsInstancesDir, jvm.getTomcatMedia().getMediaDir().toString());
+                jvm.getJvmName(), jvm.getTomcatMedia().getRemoteDir().normalize().toString(),
+                jvm.getTomcatMedia().getMediaDir().toString());
         List<String> unformatStrings = Arrays.asList(quotedUsername, decryptedPassword);
 
         return new ExecCommand(formatStrings, unformatStrings);

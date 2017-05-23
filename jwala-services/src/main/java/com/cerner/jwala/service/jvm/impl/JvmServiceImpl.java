@@ -61,6 +61,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -414,7 +415,7 @@ public class JvmServiceImpl implements JvmService {
             //
             final String jvmConfigJar = generateJvmConfigJar(jvm);
 
-            // copy the jar file
+            // copy the jar file to the staging area
             secureCopyJvmConfigJar(jvm, jvmConfigJar, user);
 
             // call script to backup and tar the current directory and
@@ -723,14 +724,15 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, standardError.isEmpty() ? CommandOutputReturnCode.fromReturnCode(execData.getReturnCode().getReturnCode()).getDesc() : standardError);
         }
 
-        // make sure the start/stop scripts are executable
-        String instancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
-        String tomcatDirName = jvm.getTomcatMedia().getMediaDir().toString();
+        final String targetAbsoluteDir =
+                Paths.get(jvm.getJdkMedia().getRemoteDir().toString() + '/' + jvm.getJvmName() + '/' +
+                        jvm.getTomcatMedia().getMediaDir().toString() + "/bin").normalize().toString();
 
-        final String targetAbsoluteDir = instancesDir + '/' + jvm.getJvmName() + '/' + tomcatDirName + "/bin";
         if (!jvmControlService.executeCheckFileExistsCommand(jvm, targetAbsoluteDir).getReturnCode().wasSuccessful()) {
             LOGGER.debug("JVM not generated yet.. ");
         }
+
+        // make sure the start/stop scripts are executable
         if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", targetAbsoluteDir, "*.sh").getReturnCode().wasSuccessful()) {
             String message = "Failed to change the file permissions in " + targetAbsoluteDir + " for jvm " + jvm.getJvmName();
             LOGGER.error(message);
