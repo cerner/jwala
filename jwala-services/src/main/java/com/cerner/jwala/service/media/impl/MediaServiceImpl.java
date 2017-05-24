@@ -11,7 +11,9 @@ import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
+import com.uwyn.jhighlight.tools.FileUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -106,15 +108,15 @@ public class MediaServiceImpl implements MediaService {
                 format("{0} does not have any root directories! It may not be a valid media file.", filename));
     }
 
-    private String checkForExistingBinary(String filename, String initialDestHash) {
-        List<String> binariesAbsPath = repositoryService.getBinariesByBasename(filename);
+    private String checkForExistingBinary(final String filename, final String initialDestHash) {
+        List<String> binariesAbsPath = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
         if (!binariesAbsPath.isEmpty()) {
             String initialDestCheckSum = getCheckSum(initialDestHash);
             for (String existingBinaryAbsPath : binariesAbsPath) {
                 if (getCheckSum(existingBinaryAbsPath).equals(initialDestCheckSum)) {
                     LOGGER.warn("Uploading {}, but found existing binary {} so using that one instead.");
                     LOGGER.warn("Deleting uploaded file {}", initialDestHash);
-                    repositoryService.delete(new File(initialDestHash).getName());
+                    repositoryService.delete(initialDestHash);
                     return existingBinaryAbsPath;
                 }
             }
