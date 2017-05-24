@@ -33,13 +33,8 @@ public class JwalaUtilsTest {
     /**
      * Test IP from IP
      */
-    public void testIPv4Address(){
-        String host = null;
-        try {
-            host = Inet4Address.getLocalHost().getHostAddress();
-           assertEquals(host,JwalaUtils.getHostAddress(host));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+    public void testIPv4Address() throws UnknownHostException{
+        String host = Inet4Address.getLocalHost().getHostAddress();
+        assertEquals(host,JwalaUtils.getHostAddress(host));
     }
 }
