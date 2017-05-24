@@ -188,7 +188,7 @@ public class WebServerCrudServiceImplTest {
         media.setType(MediaType.JDK);
         media.setLocalPath(new File("d:/not/a/real/path.zip").toPath());
         media.setRemoteDir(new File("d:/fake/remote/path").toPath());
-        media.setMediaDir(new File("test-media").toPath());
+        media.setRootDir(new File("test-media").toPath());
 
         final JpaMedia someJpaMedia = mediaDao.create(media);
         final JpaJvm jvm = jvmCrudService.createJvm(createJvmReq, mediaDao.create(media), someJpaMedia);

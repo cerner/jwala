@@ -71,7 +71,7 @@ public class JvmCrudServiceImplTest {
         media.setType(MediaType.JDK);
         media.setLocalPath(new File("d:/not/a/real/path.zip").toPath());
         media.setRemoteDir(new File("d:/fake/remote/path").toPath());
-        media.setMediaDir(new File("test-media").toPath());
+        media.setRootDir(new File("test-media").toPath());
         jpaMedia = mediaDao.create(media);
         CreateJvmRequest createJvmRequest = new CreateJvmRequest(testJvmName, "testHostName", 100, 101, 102, 103, 104,
                 new Path("./jwala.png"), "", null, null, null, null);

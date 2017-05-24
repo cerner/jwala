@@ -35,10 +35,10 @@
 # least PidFile.
 #
 # Allow multiple httpd instances to run on the same host
-PidFile ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/logs/httpd-${webServer.name}.pid
+PidFile ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/logs/httpd-${webServer.name}.pid
 #
 #ServerRoot ./
-ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}"
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -520,7 +520,7 @@ DocumentRoot htdocs
 # ErrorLog "logs/error.log"
 # Use log file rotation:
 
-ErrorLog "|${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/bin/rotatelogs -n 10 -l ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/logs/error-log-${webServer.name} 10M"
+ErrorLog "|${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/bin/rotatelogs -n 10 -l ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/logs/error-log-${webServer.name} 10M"
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -551,7 +551,7 @@ LogLevel warn
     #
     # CustomLog "logs/access.log" common
     # Use log file rotation:
-     CustomLog "|${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/bin/rotatelogs -n 10 -l ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/logs/access-log-${webServer.name} 10M" common
+     CustomLog "|${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/bin/rotatelogs -n 10 -l ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/logs/access-log-${webServer.name} 10M" common
 
     #
     # If you prefer a logfile with access, agent, and referer information

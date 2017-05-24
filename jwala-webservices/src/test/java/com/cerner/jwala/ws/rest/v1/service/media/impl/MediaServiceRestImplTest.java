@@ -52,7 +52,7 @@ public class MediaServiceRestImplTest {
         ms.setType(MediaType.JDK);
         ms.setLocalPath(Paths.get("c:/java/jdk.zip"));
         ms.setRemoteDir(Paths.get("c:/ctp"));
-        ms.setMediaDir(Paths.get("jdk-1.8"));
+        ms.setRootDir(Paths.get("jdk-1.8"));
         final List<JpaMedia> result = new ArrayList<>();
         result.add(ms);
 
@@ -72,7 +72,7 @@ public class MediaServiceRestImplTest {
         media.setType(MediaType.JDK);
         media.setLocalPath(Paths.get("c:/java/jdk.zip"));
         media.setRemoteDir(Paths.get("c:/ctp"));
-        media.setMediaDir(Paths.get("jdk-1.8"));
+        media.setRootDir(Paths.get("jdk-1.8"));
 
         reset(Config.mediaService);
     }
