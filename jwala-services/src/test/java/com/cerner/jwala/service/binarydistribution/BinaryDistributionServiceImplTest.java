@@ -226,7 +226,7 @@ public class BinaryDistributionServiceImplTest {
         final Media mockJdkMedia = mock(Media.class);
         when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getLocalPath()).thenReturn(Paths.get("anyLocalPath"));
-        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getRootDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(unsuccessfulCommandOutout);
         when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
@@ -246,7 +246,7 @@ public class BinaryDistributionServiceImplTest {
         final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
         final Media mockJdkMedia = mock(Media.class);
         when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
-        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getRootDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(successfulCommandOutput);
 
@@ -270,7 +270,7 @@ public class BinaryDistributionServiceImplTest {
         Path binaryPath = Paths.get(remoteDir.normalize().toString() + File.separator + apacheZipName);
 
         media.setRemoteDir(remoteDir);
-        media.setMediaDir(mediaDir);
+        media.setRootDir(mediaDir);
         media.setLocalPath(localPath);
         media.setType(MediaType.APACHE);
         final Group[] groupArray = new Group[1];

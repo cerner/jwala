@@ -1,7 +1,7 @@
 {
     "templateName":"CatalinaProperties.tpl",
     "contentType":"text/plain",
-    "deployPath":"${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf",
+    "deployPath":"${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf",
     "deployFileName":"catalina.properties",
     "entity":{
         "type":"GROUPED_JVMS",

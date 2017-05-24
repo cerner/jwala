@@ -60,7 +60,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
 
         try {
             binaryDistributionLockManager.writeLock(hostName);
-            if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
+            if (!checkIfMediaDirExists(media.getRootDir().toString().split(","), hostName, installPath)) {
                 historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
                         getUserNameFromSecurityContext());
                 distributeBinary(hostName, media.getLocalPath().toString(), installPath, EXCLUDED_FILES);

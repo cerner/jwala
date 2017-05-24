@@ -35,7 +35,7 @@
 # least PidFile.
 #
 #ServerRoot ./
-ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/"
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory

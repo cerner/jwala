@@ -23,7 +23,7 @@ public class MediaEntityToMediaDtoTest {
         jpaMedia.setName("JDK Lite");
         jpaMedia.setType(MediaType.JDK);
         jpaMedia.setLocalPath(Paths.get("localPath"));
-        jpaMedia.setMediaDir(Paths.get("mediaDir"));
+        jpaMedia.setRootDir(Paths.get("mediaDir"));
         jpaMedia.setRemoteDir(Paths.get("remoteDir"));
         final Media media = new ModelMapper().map(jpaMedia, Media.class);
 
@@ -31,7 +31,7 @@ public class MediaEntityToMediaDtoTest {
         assertEquals("JDK Lite", media.getName());
         assertEquals(MediaType.JDK, media.getType());
         assertEquals("localPath", media.getLocalPath().toString());
-        assertEquals("mediaDir", media.getMediaDir().toString());
+        assertEquals("mediaDir", media.getRootDir().toString());
         assertEquals("remoteDir", media.getRemoteDir().toString());
     }
 

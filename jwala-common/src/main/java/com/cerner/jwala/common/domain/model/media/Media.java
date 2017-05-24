@@ -17,19 +17,19 @@ public class Media {
     private MediaType type;
     private Path localPath;
     private Path remoteDir;
-    private Path mediaDir;
+    private Path rootDir;
 
     public Media() {
     }
 
     public Media(final Long id, final String name, final MediaType type, final Path path, final Path remoteDir,
-                 final Path mediaDir) {
+                 final Path rootDir) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.localPath = path;
         this.remoteDir = remoteDir;
-        this.mediaDir = mediaDir;
+        this.rootDir = rootDir;
     }
 
     public Long getId() {
@@ -77,13 +77,13 @@ public class Media {
     }
 
     @JsonSerialize(using = PathToStringSerializer.class)
-    public Path getMediaDir() {
-        return mediaDir;
+    public Path getRootDir() {
+        return rootDir;
     }
 
     @JsonDeserialize(using = StringToPathDeserializer.class)
-    public void setMediaDir(Path mediaDir) {
-        this.mediaDir = mediaDir;
+    public void setRootDir(Path rootDir) {
+        this.rootDir = rootDir;
     }
 
 }
