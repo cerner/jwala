@@ -8,7 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Defines general repository related operations
@@ -45,6 +49,17 @@ public abstract class AbstractRepositoryService implements RepositoryService {
         final File file = new File(filename);
         if (file.delete()) {
             throw new RepositoryServiceException(MessageFormat.format("Failed to delete {0}!", filename));
+        }
+    }
+
+    @Override
+    public List<String> getBinariesByBasename(String filename) {
+        File binariesDir = new File(getRepositoryPath().toAbsolutePath().normalize().toString());
+        File[] foundFiles = binariesDir.listFiles((dir, name) -> name.contains(filename));
+        if (null != foundFiles) {
+            return Arrays.stream(foundFiles).map(File::getAbsolutePath).collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
         }
     }
 
