@@ -13,24 +13,35 @@ import javax.persistence.*;
 @Table(name = "JVM_CONFIG_TEMPLATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"JVM_ID", "TEMPLATE_NAME"})})
 @NamedQueries({
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_RESOURCE_TEMPLATE_NAMES,
-                query = "SELECT t.templateName FROM JpaJvmConfigTemplate t WHERE t.jvm.name = :jvmName"),
+                query = "SELECT t.templateName FROM JpaJvmConfigTemplate t WHERE LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_TEMPLATE_CONTENT,
-                query = "SELECT t.templateContent FROM JpaJvmConfigTemplate t where t.jvm.name = :jvmName and t.templateName = :templateName"),
+                query = "SELECT t.templateContent FROM JpaJvmConfigTemplate t where LOWER(t.jvm.name) = LOWER" +
+                        "(:jvmName) and t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_TEMPLATE_META_DATA,
-                query = "SELECT t.metaData FROM JpaJvmConfigTemplate t where t.jvm.name = :jvmName and t.templateName = :templateName"),
+                query = "SELECT t.metaData FROM JpaJvmConfigTemplate t where LOWER(t.jvm.name) = LOWER(:jvmName) and " +
+                        "t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.UPDATE_JVM_TEMPLATE_META_DATA,
-                query = "UPDATE JpaJvmConfigTemplate t SET t.metaData= :metaData WHERE t.jvm.name = :jvmName AND t.templateName = :templateName"),
+                query = "UPDATE JpaJvmConfigTemplate t SET t.metaData= :metaData WHERE LOWER(t.jvm.name) = " +
+                        "LOWER(:jvmName) AND " +
+                        "t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.UPDATE_JVM_TEMPLATE_CONTENT,
-                query = "UPDATE JpaJvmConfigTemplate t SET t.templateContent = :templateContent WHERE t.jvm.name = :jvmName AND t.templateName = :templateName"),
+                query = "UPDATE JpaJvmConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(t.jvm" +
+                        ".name) = LOWER(:jvmName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_TEMPLATE, query = "DELETE FROM JpaJvmConfigTemplate t WHERE t.templateName = :templateName"),
-        @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_RESOURCE_BY_TEMPLATE_JVM_NAME, query = "DELETE FROM JpaJvmConfigTemplate t WHERE t.templateName = :templateName AND t.jvm.name = :jvmName"),
-        @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_RESOURCES_BY_TEMPLATE_NAME_LIST_JVM_NAME, query = "DELETE FROM JpaJvmConfigTemplate t WHERE t.templateName IN :templateNameList AND t.jvm.name = :jvmName"),
+        @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_RESOURCE_BY_TEMPLATE_JVM_NAME, query = "DELETE FROM " +
+                "JpaJvmConfigTemplate t WHERE t.templateName = :templateName AND LOWER(t.jvm.name) = LOWER(:jvmName)"),
+        @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_RESOURCES_BY_TEMPLATE_NAME_LIST_JVM_NAME, query =
+                "DELETE FROM JpaJvmConfigTemplate t WHERE t.templateName IN :templateNameList AND LOWER(t.jvm.name) =" +
+                        " LOWER(:jvmName)"),
         @NamedQuery(name = JpaJvmConfigTemplate.QUERY_GET_JVM_RESOURCE_TEMPLATES,
-                query = "SELECT t FROM JpaJvmConfigTemplate t WHERE t.jvm.name = :jvmName"),
+                query = "SELECT t FROM JpaJvmConfigTemplate t WHERE LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_TEMPLATE_RESOURCE_NAME,
-                query = "SELECT t.templateName FROM JpaJvmConfigTemplate t WHERE t.jvm.name = :jvmName AND t.templateName = :templateName"),
+                query = "SELECT t.templateName FROM JpaJvmConfigTemplate t WHERE LOWER(t.jvm.name) = LOWER(:jvmName) " +
+                        "AND t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.QUERY_GET_JVM_RESOURCE,
-                query = "SELECT t FROM JpaJvmConfigTemplate t WHERE t.jvm.name = :jvmName AND t.templateName = :templateName")
+                query = "SELECT t FROM JpaJvmConfigTemplate t WHERE LOWER(t.jvm.name) = LOWER(:jvmName) AND t" +
+                        ".templateName =" +
+                        " :templateName")
 })
 public class JpaJvmConfigTemplate extends ConfigTemplate {
     public static final String GET_JVM_RESOURCE_TEMPLATE_NAMES = "getJvmResourceTemplateNames";

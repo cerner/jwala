@@ -11,23 +11,33 @@ import javax.persistence.*;
 @Table(name = "GRP_JVM_CONFIG_TEMPLATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"GRP_ID", "TEMPLATE_NAME"})})
 @NamedQueries({
         @NamedQuery(name = JpaGroupJvmConfigTemplate.GET_GROUP_JVM_TEMPLATE_RESOURCE_NAMES,
-                query = "SELECT t.templateName FROM JpaGroupJvmConfigTemplate t WHERE t.grp.name = :grpName"),
+                query = "SELECT t.templateName FROM JpaGroupJvmConfigTemplate t WHERE LOWER(t.grp.name) = " +
+                        "LOWER(:grpName)"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.GET_GROUP_JVM_TEMPLATE_CONTENT,
-                query = "SELECT t.templateContent FROM JpaGroupJvmConfigTemplate t where t.grp.name = :grpName and t.templateName = :templateName"),
+                query = "SELECT t.templateContent FROM JpaGroupJvmConfigTemplate t where LOWER(t.grp.name) = " +
+                        "LOWER(:grpName) and t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.GET_GROUP_JVM_TEMPLATE_META_DATA,
-                query = "SELECT t.metaData FROM JpaGroupJvmConfigTemplate t where t.grp.name = :grpName and t.templateName = :templateName"),
+                query = "SELECT t.metaData FROM JpaGroupJvmConfigTemplate t where LOWER(t.grp.name) = LOWER(:grpName)" +
+                        " and t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.UPDATE_GROUP_JVM_TEMPLATE_CONTENT,
-                query = "UPDATE JpaGroupJvmConfigTemplate t SET t.templateContent = :templateContent WHERE t.grp.name = :grpName AND t.templateName = :templateName"),
+                query = "UPDATE JpaGroupJvmConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(t" +
+                        ".grp.name) = LOWER(:grpName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.UPDATE_GROUP_JVM_TEMPLATE_META_DATA,
-                query = "UPDATE JpaGroupJvmConfigTemplate t SET t.metaData = :metaData WHERE t.grp.name = :grpName AND t.templateName = :templateName"),
+                query = "UPDATE JpaGroupJvmConfigTemplate t SET t.metaData = :metaData WHERE LOWER(t.grp.name) = " +
+                        "LOWER(:grpName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.QUERY_DELETE_GRP_JVM_TEMPLATE, query = "DELETE FROM JpaGroupJvmConfigTemplate t WHERE t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.GET_GROUP_JVM_TEMPLATE_RESOURCE_NAME,
-                query = "SELECT t.templateName FROM JpaGroupJvmConfigTemplate t WHERE t.grp.name = :grpName AND t.templateName = :templateName"),
-        @NamedQuery(name = JpaGroupJvmConfigTemplate.QUERY_DELETE_GROUP_LEVEL_JVM_RESOURCE_BY_TEMPLATE_GROUP_NAME, query = "DELETE FROM JpaGroupJvmConfigTemplate t WHERE t.templateName = :templateName AND t.grp.name = :grpName"),
+                query = "SELECT t.templateName FROM JpaGroupJvmConfigTemplate t WHERE LOWER(t.grp.name) = " +
+                        "LOWER(:grpName) AND t.templateName = :templateName"),
+        @NamedQuery(name = JpaGroupJvmConfigTemplate.QUERY_DELETE_GROUP_LEVEL_JVM_RESOURCE_BY_TEMPLATE_GROUP_NAME,
+                query = "DELETE FROM JpaGroupJvmConfigTemplate t WHERE t.templateName = :templateName AND LOWER(t.grp" +
+                        ".name) = LOWER(:grpName)"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.QUERY_DELETE_GROUP_LEVEL_JVM_RESOURCES_BY_TEMPLATE_NAME_LIST_GROUP_NAME,
-                    query = "DELETE FROM JpaGroupJvmConfigTemplate t WHERE t.templateName IN :templateNameList AND t.grp.name = :grpName"),
+                    query = "DELETE FROM JpaGroupJvmConfigTemplate t WHERE t.templateName IN :templateNameList AND " +
+                            "LOWER(t.grp.name) = LOWER(:grpName)"),
         @NamedQuery(name = JpaGroupJvmConfigTemplate.QUERY_GET_GROUP_LEVEL_JVM_RESOURCE,
-                query = "SELECT t FROM JpaGroupJvmConfigTemplate t where t.grp.name = :grpName and t.templateName = :templateName")
+                query = "SELECT t FROM JpaGroupJvmConfigTemplate t where LOWER(t.grp.name) = LOWER(:grpName) and t" +
+                        ".templateName = :templateName")
 })
 public class JpaGroupJvmConfigTemplate extends ConfigTemplate {
     public static final String GET_GROUP_JVM_TEMPLATE_RESOURCE_NAMES = "getGroupJvmTemplateResourceNames";
