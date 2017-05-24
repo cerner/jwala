@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.jvm.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -529,12 +530,12 @@ public class JvmServiceImpl implements JvmService {
     private void distributeBinaries(Jvm jvm) {
         final String hostName = jvm.getHostName();
         try {
-            binaryDistributionLockManager.writeLock(hostName);
+            binaryDistributionLockManager.writeLock(JwalaUtils.getHostAddress(hostName));
             binaryDistributionService.distributeUnzip(hostName);
-            binaryDistributionService.distributeMedia(jvm.getJvmName(), jvm.getHostName(), jvm.getGroups()
+            binaryDistributionService.distributeMedia(jvm.getJvmName(), hostName, jvm.getGroups()
                     .toArray(new Group[jvm.getGroups().size()]), jvm.getJdkMedia());
         } finally {
-            binaryDistributionLockManager.writeUnlock(hostName);
+            binaryDistributionLockManager.writeUnlock(JwalaUtils.getHostAddress(hostName));
         }
     }
 
