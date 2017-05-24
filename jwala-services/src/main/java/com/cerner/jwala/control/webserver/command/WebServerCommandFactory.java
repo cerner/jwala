@@ -107,7 +107,7 @@ public class WebServerCommandFactory {
             final String installServiceWsScriptName = INSTALL_WS_SERVICE_SCRIPT_NAME.getValue();
             checkExistsAndCopy(webServer, installServiceWsScriptName);
 
-            final String apacheHttpdDir = webServer.getApacheHttpdMedia().getRemoteDir().toString() + "/" + webServer.getApacheHttpdMedia().getMediaDir().normalize().toString();
+            final String apacheHttpdDir = webServer.getApacheHttpdMedia().getRemoteDir().toString() + "/" + webServer.getApacheHttpdMedia().getRootDir().normalize().toString();
 
             return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(webServer),
                     getShellCommand(installServiceWsScriptName, webServer, getHttpdConfPath(webServer), apacheHttpdDir)));

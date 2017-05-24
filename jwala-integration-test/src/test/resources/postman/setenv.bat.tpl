@@ -1,7 +1,7 @@
 SET JAVA_HOME=${jvm.javaHome}
 SET JRE_HOME=%JAVA_HOME%\jre
 
-SET CATALINA_HOME=${vars['remote.paths.instances']}/${jvm.jvmName}/apache-tomcat-7.0.55
+SET CATALINA_HOME=${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}
 SET CATALINA_OPTS=-XX:PermSize=512m -XX:MaxPermSize=512m 
 
 SET PROPERTIES_ROOT_PATH=${vars['remote.jwala.data.dir']}\..\..\app\properties
@@ -10,7 +10,7 @@ SET STP_OPTS=-DPROPERTIES_ROOT_PATH=%PROPERTIES_ROOT_PATH%
 SET STP_PROPERTIES_DIR=${vars['remote.jwala.data.dir']}\..\..\app\properties
 SET STP_OPTS=%STP_OPTS% -DSTP_PROPERTIES_DIR=%STP_PROPERTIES_DIR%
 
-SET LOG_ROOT_DIR=${vars['remote.paths.instances']}/${jvm.jvmName}/apache-tomcat-7.0.55/logs
+SET LOG_ROOT_DIR=${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/logs
 SET LOG_OPTS=-Dlog.root.dir=%LOG_ROOT_DIR%
 SET LOG_OPTS=%LOG_OPTS% -Dlog4j.configuration=log4j.xml -Dlog4j.debug=true
 
