@@ -135,7 +135,7 @@ public class WebServerCommandFactoryTest {
 
         final Media apacheHttpdMedia = new Media();
         apacheHttpdMedia.setRemoteDir(Paths.get("c:/ctp"));
-        apacheHttpdMedia.setMediaDir(Paths.get("Apache24"));
+        apacheHttpdMedia.setRootDir(Paths.get("Apache24"));
         apacheHttpdMedia.setType(MediaType.APACHE);
         when(mockWebServer.getApacheHttpdMedia()).thenReturn(apacheHttpdMedia);
 
@@ -199,7 +199,7 @@ public class WebServerCommandFactoryTest {
 
         final Media apacheHttpdMedia = new Media();
         apacheHttpdMedia.setRemoteDir(Paths.get("c:/ctp"));
-        apacheHttpdMedia.setMediaDir(Paths.get("Apache24"));
+        apacheHttpdMedia.setRootDir(Paths.get("Apache24"));
         apacheHttpdMedia.setType(MediaType.APACHE);
         when(mockWebServer.getApacheHttpdMedia()).thenReturn(apacheHttpdMedia);
 

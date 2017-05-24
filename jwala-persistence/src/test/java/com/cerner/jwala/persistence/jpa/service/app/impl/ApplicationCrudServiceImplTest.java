@@ -163,7 +163,7 @@ public class ApplicationCrudServiceImplTest {
         media.setType(MediaType.JDK);
         media.setLocalPath(new File("d:/not/a/real/path.zip").toPath());
         media.setRemoteDir(new File("d:/fake/remote/path").toPath());
-        media.setMediaDir(new File("test-media").toPath());
+        media.setRootDir(new File("test-media").toPath());
         jpaMedia = mediaDao.create(media);
         expGroupId = Identifier.id(jpaGroup.getId());
     }
