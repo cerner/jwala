@@ -1,6 +1,7 @@
 package com.cerner.jwala.common;
 
 import com.cerner.jwala.common.exception.ApplicationException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.Inet4Address;
@@ -16,6 +17,7 @@ public class JwalaUtilsTest {
     /**
      * Test unknown host exception
      */
+    @Ignore
     @Test(expected = ApplicationException.class)
     public void getHostAddress() {
         String host = "someunknownhost";
