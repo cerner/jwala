@@ -27,10 +27,11 @@ public abstract class AbstractRepositoryService implements RepositoryService {
 
     @Override
     public String upload(final String baseFilename, final InputStream resource) {
+        FileOutputStream out = null;
         try {
             final String absoluteFilename = getRepositoryPath().toAbsolutePath().normalize().toString() + "/" +
                     getResourceNameUniqueName(baseFilename);
-            final FileOutputStream out = new FileOutputStream(absoluteFilename);
+            out = new FileOutputStream(absoluteFilename);
             final byte [] bytes = new byte[BYTE_ARRAY_SIZE];
             int byteCount;
             while ((byteCount = resource.read(bytes)) != -1) {
@@ -41,6 +42,7 @@ public abstract class AbstractRepositoryService implements RepositoryService {
             throw new RepositoryServiceException("Resource upload failed!", e);
         } finally {
             IOUtils.closeQuietly(resource);
+            IOUtils.closeQuietly(out);
         }
     }
 

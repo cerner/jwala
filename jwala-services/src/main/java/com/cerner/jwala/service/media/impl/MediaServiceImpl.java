@@ -11,8 +11,8 @@ import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
-import com.uwyn.jhighlight.tools.FileUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -94,8 +94,8 @@ public class MediaServiceImpl implements MediaService {
             LOGGER.debug("No Media name conflict, ignoring not found exception for creating media ", e);
         }
 
-        final String initialDestHash = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
-        final String dest = checkForExistingBinary(filename, initialDestHash);
+        final String uploadedFilePath = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
+        final String dest = checkForExistingBinary(filename, uploadedFilePath);
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);
         if (!zipRootDirSet.isEmpty()) {
@@ -108,20 +108,26 @@ public class MediaServiceImpl implements MediaService {
                 format("{0} does not have any root directories! It may not be a valid media file.", filename));
     }
 
-    private String checkForExistingBinary(final String filename, final String initialDestHash) {
+    private String checkForExistingBinary(final String filename, final String uploadedFilePath) {
         List<String> binariesAbsPath = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
         if (!binariesAbsPath.isEmpty()) {
-            String initialDestCheckSum = getCheckSum(initialDestHash);
+            String initialDestCheckSum = getCheckSum(uploadedFilePath);
             for (String existingBinaryAbsPath : binariesAbsPath) {
-                if (getCheckSum(existingBinaryAbsPath).equals(initialDestCheckSum)) {
-                    LOGGER.warn("Uploading {}, but found existing binary {} so using that one instead.");
-                    LOGGER.warn("Deleting uploaded file {}", initialDestHash);
-                    repositoryService.delete(initialDestHash);
+                File existingBinaryFile = new File(existingBinaryAbsPath);
+                File uploadedFile = new File(uploadedFilePath);
+                if (!existingBinaryFile.equals(uploadedFile) && getCheckSum(existingBinaryAbsPath).equals(initialDestCheckSum)) {
+                    LOGGER.warn("Uploading {}, but found existing binary {} so using that one instead.", uploadedFilePath, existingBinaryAbsPath);
+                    LOGGER.warn("Deleting uploaded file {}", uploadedFilePath);
+                    try {
+                        FileUtils.forceDelete(new File(uploadedFilePath));
+                    } catch (IOException e) {
+                        LOGGER.warn("Failed to delete uploaded file {}", uploadedFilePath, e);
+                    }
                     return existingBinaryAbsPath;
                 }
             }
         }
-        return initialDestHash;
+        return uploadedFilePath;
     }
 
     private String getCheckSum(final String fileAbsolutePath) {
