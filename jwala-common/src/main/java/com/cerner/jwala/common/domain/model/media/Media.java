@@ -1,11 +1,14 @@
 package com.cerner.jwala.common.domain.model.media;
 
-import com.cerner.jwala.common.domain.model.PathToStringSerializer;
-import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
+import java.nio.file.Path;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.nio.file.Path;
+import com.cerner.jwala.common.domain.model.PathToStringSerializer;
+import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
 
 /**
  * Created by Rahul Sayini on 12/2/2016
@@ -85,5 +88,34 @@ public class Media {
     public void setRootDir(Path rootDir) {
         this.rootDir = rootDir;
     }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(type)
+                .append(localPath)
+                .append(remoteDir)
+                .append(rootDir)
+                .toHashCode();    
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Media media = (Media) o;
+
+        return new EqualsBuilder()
+                .append(id, media.id)
+                .append(name, media.name)
+                .append(type, media.type)
+                .append(localPath, media.localPath)
+                .append(remoteDir, media.remoteDir)
+                .append(rootDir, media.rootDir)
+                .isEquals();
+    }
 }
