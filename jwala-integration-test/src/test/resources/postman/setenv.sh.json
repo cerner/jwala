@@ -1,5 +1,5 @@
 {
-  "deployPath" : "${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.mediaDir}/conf",
+  "deployPath" : "${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/bin",
   "templateName" : "SetenvShTemplate.tpl",
   "deployFileName" : "setenv.sh",
   "contentType" : "text/plain",
