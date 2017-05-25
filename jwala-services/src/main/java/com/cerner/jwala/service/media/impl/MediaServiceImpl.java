@@ -92,7 +92,7 @@ public class MediaServiceImpl implements MediaService {
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);
         if (!zipRootDirSet.isEmpty()) {
-            media.setMediaDir(Paths.get(StringUtils.join(zipRootDirSet, ",")));
+            media.setRootDir(Paths.get(StringUtils.join(zipRootDirSet, ",")));
             media.setLocalPath(Paths.get(dest));
             return mediaDao.create(media);
         }

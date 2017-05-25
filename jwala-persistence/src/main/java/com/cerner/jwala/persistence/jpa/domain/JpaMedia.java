@@ -53,7 +53,7 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
     @ValidPath
     private String remoteDir; // e.g. c:/ctp
 
-    private String mediaDir;  // e.g. tomcat-7.0
+    private String rootDir;  // e.g. tomcat-7.0
 
     public Long getId() {
         return id;
@@ -100,13 +100,13 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
     }
 
     @JsonSerialize(using = PathToStringSerializer.class)
-    public Path getMediaDir() {
-        return StringUtils.isEmpty(mediaDir) ? null : Paths.get(mediaDir);
+    public Path getRootDir() {
+        return StringUtils.isEmpty(rootDir) ? null : Paths.get(rootDir);
     }
 
     @JsonDeserialize(using = StringToPathDeserializer.class)
-    public void setMediaDir(final Path mediaDir) {
-        this.mediaDir = mediaDir.toString();
+    public void setRootDir(final Path rootDir) {
+        this.rootDir = rootDir.toString();
     }
 
     @Override
@@ -136,7 +136,7 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
                 ", type=" + type +
                 ", localPath='" + localPath + '\'' +
                 ", remoteDir='" + remoteDir + '\'' +
-                ", mediaDir='" + mediaDir + '\'' +
+                ", rootDir='" + rootDir + '\'' +
                 '}';
     }
 

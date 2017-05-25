@@ -88,7 +88,6 @@ public class Media {
     public void setRootDir(Path rootDir) {
         this.rootDir = rootDir;
     }
-
     
     @Override
     public int hashCode() {
@@ -119,5 +118,4 @@ public class Media {
                 .append(rootDir, media.rootDir)
                 .isEquals();
     }
-
 }

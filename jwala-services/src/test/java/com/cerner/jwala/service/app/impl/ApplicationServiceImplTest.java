@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.app.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
@@ -38,6 +39,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,6 +52,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -56,8 +63,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationServiceImplTest.Config.class})
+@PrepareForTest(JwalaUtils.class )
 public class ApplicationServiceImplTest {
 
     static final String META_DATA_TEST_VALUES = "{\"deployPath\":\"./test/deploy-path/conf/CatalinaSSL/localhost\",\"contentType\":\"text/xml\",\"entity\":{\"type\":\"APPLICATION\",\"target\":\"soarcom-hct\",\"group\":\"soarcom-616\",\"parentName\":null,\"deployToJvms\":true},\"templateName\":\"hctXmlTemplate.tpl\",\"deployFileName\":\"hct.xml\"}";
@@ -91,7 +100,13 @@ public class ApplicationServiceImplTest {
         groupId2 = new Identifier<Group>(2L);
         group = new Group(groupId, "the-ws-group-name");
         group2 = new Group(groupId2, "the-ws-group-name-2");
-
+        try {
+            PowerMockito.mockStatic(JwalaUtils.class);
+            PowerMockito.when(JwalaUtils.getHostAddress("testServer")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
+            PowerMockito.when(JwalaUtils.getHostAddress("testServer2")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
+        }catch (UnknownHostException ex){
+            ex.printStackTrace();
+        }
         when(Config.mockApplication.getId()).thenReturn(new Identifier<Application>(1L));
         when(Config.mockApplication.getWarPath()).thenReturn("the-ws-group-name/jwala-1.0.war");
         when(Config.mockApplication.getName()).thenReturn("jwala 1.0");
