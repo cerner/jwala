@@ -1308,7 +1308,7 @@
 							"formdata": [
 								{
 									"key": "deployPath",
-									"value": "${jvm.tomcatMedia.rootDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost",
+									"value": "${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost",
 									"type": "text",
 									"enabled": true
 								},
@@ -2994,7 +2994,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.rootDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3139,7 +3139,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.rootDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -5240,7 +5240,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"hctXmlTemplate.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.rootDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hct.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"HEALTH CHECK 4.0\",\r\n                \"target\":\"HEALTH-CHECK-4.0\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"hctXmlTemplate.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hct.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"HEALTH CHECK 4.0\",\r\n                \"target\":\"HEALTH-CHECK-4.0\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5279,7 +5279,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"hctXmlTemplate.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.rootDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hct.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"HEALTH CHECK 4.0\",\r\n                \"target\":\"HEALTH-CHECK-4.0\"\r\n        }\r\n}\r\n\r\n"
+							"raw": "{\r\n        \"templateName\":\"hctXmlTemplate.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hct.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"HEALTH CHECK 4.0\",\r\n                \"target\":\"HEALTH-CHECK-4.0\"\r\n        }\r\n}\r\n\r\n"
 						},
 						"description": ""
 					},
@@ -5363,7 +5363,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"templateName\":\"CatalinaProperties.tpl\",\r\n    \"contentType\":\"text/plain\",\r\n    \"deployPath\":\"${jvm.tomcatMedia.rootDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n    \"deployFileName\":\"catalina.properties\",\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_JVMS\", \r\n        \"group\":\"HEALTH CHECK 4.0\",\r\n        \"target\":\"HEALTH CHECK 4.0\"\r\n    }\r\n}\r\n"
+							"raw": "{\r\n    \"templateName\":\"CatalinaProperties.tpl\",\r\n    \"contentType\":\"text/plain\",\r\n    \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n    \"deployFileName\":\"catalina.properties\",\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_JVMS\", \r\n        \"group\":\"HEALTH CHECK 4.0\",\r\n        \"target\":\"HEALTH CHECK 4.0\"\r\n    }\r\n}\r\n"
 						},
 						"description": ""
 					},
