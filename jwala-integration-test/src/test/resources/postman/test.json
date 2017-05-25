@@ -1,7 +1,7 @@
 {
     "templateName":"CatalinaProperties.tpl",
     "contentType":"text/plain",
-    "deployPath":"${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf",
+    "deployPath" : "${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.mediaDir}/conf",
     "deployFileName":"catalina.properties",
     "entity":{
         "type":"GROUPED_JVMS",
