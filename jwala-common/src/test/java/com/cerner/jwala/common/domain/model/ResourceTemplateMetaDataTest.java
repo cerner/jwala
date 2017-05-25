@@ -19,7 +19,7 @@ public class ResourceTemplateMetaDataTest {
             "    \"templateName\": \"SetenvBatTemplate.tpl\",\n" +
             "    \"contentType\": \"text/plain\",\n" +
             "    \"deployFileName\": \"setenv.bat\",\n" +
-            "    \"deployPath\": \"${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/bin\",\n" +
+            "    \"deployPath\": \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/bin\",\n" +
             "    \"entity\": {\n" +
             "        \"type\": \"GROUPED_JVMS\",\n" +
             "        \"group\": \"HEALTH CHECK 4.0\",\n" +
@@ -31,7 +31,7 @@ public class ResourceTemplateMetaDataTest {
             "}";
 
     private static final String EXPECTED_META_DATA_STR = "ResourceTemplateMetaData{templateName='SetenvBatTemplate.tpl', " +
-            "contentType=text/plain, deployFileName='setenv.bat', deployPath='${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/bin', " +
+            "contentType=text/plain, deployFileName='setenv.bat', deployPath='${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/bin', " +
             "entity=Entity{type='GROUPED_JVMS', group='HEALTH CHECK 4.0', target='HEALTH CHECK 4.0', parentName='null', deployToJvms=true}, " +
             "unpack=false, overwrite=true, hotDeploy=false}";
 
