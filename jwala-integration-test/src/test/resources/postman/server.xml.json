@@ -1,7 +1,7 @@
 {
         "templateName":"server.xml.tpl",
         "contentType":"text/xml",
-        "deployPath" : "${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.mediaDir}/conf",
+        "deployPath":"${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf",
         "deployFileName":"server.xml",
         "entity":{
            "type":"GROUPED_JVMS",

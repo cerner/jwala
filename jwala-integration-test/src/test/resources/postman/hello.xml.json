@@ -1,6 +1,6 @@
 {
     "deployFileName":"hello.xml",
-    "deployPath" : "${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.mediaDir}/conf/stp/localhost",
+    "deployPath":"${jvm.tomcatMedia.mediaDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost",
     "templateName":"hello.xml.tpl",
     "contentType":"text/xml",
     "entity":{
