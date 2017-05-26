@@ -14,6 +14,7 @@ import com.cerner.jwala.service.repository.RepositoryService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -112,14 +113,14 @@ public class MediaServiceImpl implements MediaService {
         List<String> binariesAbsPath = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
         if (!binariesAbsPath.isEmpty()) {
             String initialDestCheckSum = getCheckSum(uploadedFilePath);
+            File uploadedFile = new File(uploadedFilePath);
             for (String existingBinaryAbsPath : binariesAbsPath) {
                 File existingBinaryFile = new File(existingBinaryAbsPath);
-                File uploadedFile = new File(uploadedFilePath);
                 if (!existingBinaryFile.equals(uploadedFile) && getCheckSum(existingBinaryAbsPath).equals(initialDestCheckSum)) {
                     LOGGER.warn("Uploading {}, but found existing binary {} so using that one instead.", uploadedFilePath, existingBinaryAbsPath);
                     LOGGER.warn("Deleting uploaded file {}", uploadedFilePath);
                     try {
-                        FileUtils.forceDelete(new File(uploadedFilePath));
+                        FileUtils.forceDelete(uploadedFile);
                     } catch (IOException e) {
                         LOGGER.warn("Failed to delete uploaded file {}", uploadedFilePath, e);
                     }
@@ -131,8 +132,9 @@ public class MediaServiceImpl implements MediaService {
     }
 
     private String getCheckSum(final String fileAbsolutePath) {
+        FileInputStream fileInputStream = null;
         try {
-            final FileInputStream fileInputStream = new FileInputStream(new File(fileAbsolutePath));
+            fileInputStream = new FileInputStream(new File(fileAbsolutePath));
             return DigestUtils.sha256Hex(fileInputStream);
         } catch (FileNotFoundException e) {
             final String errMsg = MessageFormat.format("Failed to get the checksum for non-existent file: {0}", fileAbsolutePath);
@@ -142,6 +144,8 @@ public class MediaServiceImpl implements MediaService {
             final String errMsg = MessageFormat.format("Failed to generate the checksum while reading file: {0}", fileAbsolutePath);
             LOGGER.error(errMsg);
             throw new MediaServiceException(errMsg);
+        } finally {
+            IOUtils.closeQuietly(fileInputStream);
         }
     }
 
