@@ -486,6 +486,7 @@ public class WebServerServiceImplTest {
         when(mockMetaData.getDeployFileName()).thenReturn("httpd.conf");
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString()))
                 .thenReturn(mockMetaData);
+        when(Config.mockResourceService.getMetaData(metaData)).thenReturn(mockMetaData);
         wsService.uploadWebServerConfig(mockWebServer, "httpd.conf", "test content", metaData, group.getName(), testUser);
         verify(Config.mockResourceService).createResource(any(ResourceIdentifier.class), any(ResourceTemplateMetaData.class),
                 any(InputStream.class));
@@ -560,19 +561,6 @@ public class WebServerServiceImplTest {
         List<WebServer> webServers = new ArrayList<>();
         when(Config.mockWebServerPersistenceService.getWebServers()).thenReturn(webServers);
         assertEquals(webServers, wsService.getWebServersPropagationNew());
-    }
-
-    @Test (expected = InternalErrorException.class)
-    public void testUploadWebServerConfigFail() throws IOException {
-        UploadWebServerTemplateRequest request = mock(UploadWebServerTemplateRequest.class);
-        final String metaData = "\"deployPath\":\"d:/httpd-data\",\"deployFileName\":\"httpd.conf\"}";
-        when(request.getMetaData()).thenReturn(metaData);
-        when(request.getWebServer()).thenReturn(mockWebServer);
-        when(mockWebServer.getName()).thenReturn("testWebServer");
-        when(request.getConfFileName()).thenReturn("httpd.conf");
-        when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString()))
-                .thenThrow(new IOException("FAIL upload config because of meta data mapping"));
-        wsService.uploadWebServerConfig(mockWebServer, "httpd.conf", "test content", metaData, group.getName(), testUser);
     }
 
     private String removeCarriageReturnsAndNewLines(String s) {

@@ -188,8 +188,7 @@ public class JvmServiceImpl implements JvmService {
             String templateContent = getGroupJvmResourceTemplate(groupName, templateName, resourceService.generateResourceGroup(), false);
             String metaDataStr = groupPersistenceService.getGroupJvmResourceTemplateMetaData(groupName, templateName);
             try {
-                ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(templateName,
-                        jvmPersistenceService.findJvmByExactName(jvmName), metaDataStr);
+                ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
                 final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
                         .setResourceName(metaData.getDeployFileName())
                         .setJvmName(jvmName)
