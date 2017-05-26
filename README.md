@@ -9,11 +9,11 @@ Jwala utilizes the defined file system structure and SSH agents on each machine 
 
 # _Building_
 
-Jwala can be build by using gradle. To build the jwala project run the "gradle build" command. This runs the build and test tasks. This task creates the jwala-tomcat.war file in jwala-webapp module, which can be run by dropping it in Apache Tomcat application server. 
+Jwala can be build by using gradle 2.9. To build the jwala project run the "gradle build" command. This runs the build and test tasks. This task creates the jwala-tomcat.war file in jwala-webapp module, which can be run by dropping it in Apache Tomcat application server. 
 
 1. [Install Git](https://git-scm.com/) 
-2. [Install JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-3. [Install Gradle](https://docs.gradle.org/current/userguide/installation.html)
+2. [Install JDK jdk1.8.0_66](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+3. [Install Gradle verion 2.9](https://services.gradle.org/distributions/gradle-2.9-bin.zip)
 4. 	Clone jwala as follows
 git clone https://github.com/cerner/jwala.git
 5. Build jwala bundle using gradle
