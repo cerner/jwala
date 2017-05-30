@@ -11,10 +11,8 @@ import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -25,13 +23,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.cerner.jwala.common.FileUtility.getCheckSum;
 
 /**
  * Implements {@link MediaService}
@@ -130,25 +132,7 @@ public class MediaServiceImpl implements MediaService {
         }
         return uploadedFilePath;
     }
-
-    private String getCheckSum(final String fileAbsolutePath) {
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(new File(fileAbsolutePath));
-            return DigestUtils.sha256Hex(fileInputStream);
-        } catch (FileNotFoundException e) {
-            final String errMsg = MessageFormat.format("Failed to get the checksum for non-existent file: {0}", fileAbsolutePath);
-            LOGGER.error(errMsg);
-            throw new MediaServiceException(errMsg);
-        } catch (IOException e) {
-            final String errMsg = MessageFormat.format("Failed to generate the checksum while reading file: {0}", fileAbsolutePath);
-            LOGGER.error(errMsg);
-            throw new MediaServiceException(errMsg);
-        } finally {
-            IOUtils.closeQuietly(fileInputStream);
-        }
-    }
-
+    
     @Override
     @Transactional
     public void remove(final String name, final MediaType type) {

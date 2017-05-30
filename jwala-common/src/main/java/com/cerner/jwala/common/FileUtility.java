@@ -1,9 +1,11 @@
 package com.cerner.jwala.common;
 
 import com.cerner.jwala.common.exception.ApplicationException;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -206,6 +208,24 @@ public class FileUtility {
 
         return zipRootDirs;
 
+    }
+
+    public static String getCheckSum(final String fileAbsolutePath) {
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(new File(fileAbsolutePath));
+            return DigestUtils.sha256Hex(fileInputStream);
+        } catch (FileNotFoundException e) {
+            final String errMsg = MessageFormat.format("Failed to get the checksum for non-existent file: {0}", fileAbsolutePath);
+            LOGGER.error(errMsg);
+            throw new FileUtilityException(errMsg);
+        } catch (IOException e) {
+            final String errMsg = MessageFormat.format("Failed to generate the checksum while reading file: {0}", fileAbsolutePath);
+            LOGGER.error(errMsg);
+            throw new FileUtilityException(errMsg);
+        } finally {
+            IOUtils.closeQuietly(fileInputStream);
+        }
     }
 
 }
