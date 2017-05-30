@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.app.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -638,7 +639,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     protected List<String> getKeysAndAcquireWriteLock(String appName, List<String> hostNames) {
         List<String> keys = new ArrayList<>();
         for (final String host : hostNames) {
-            final String key = appName + "/" + host;
+            final String key = appName + "/" + JwalaUtils.getHostAddress(host);
             binaryDistributionLockManager.writeLock(key);
             keys.add(key);
         }

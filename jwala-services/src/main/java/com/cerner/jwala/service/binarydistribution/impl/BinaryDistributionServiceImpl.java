@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.binarydistribution.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.media.Media;
@@ -52,15 +53,15 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     @Override
     public void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media) {
         LOGGER.info("Deploying {}'s {} to {}", jvmOrWebServerName,  media.getName(), hostName);
-
+        String hostAddressLockKey = JwalaUtils.getHostAddress(hostName);
         final String installPath = media.getRemoteDir().toString();
         if (StringUtils.isEmpty(installPath)) {
             throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }
 
         try {
-            binaryDistributionLockManager.writeLock(hostName);
-            if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
+            binaryDistributionLockManager.writeLock(hostAddressLockKey);
+            if (!checkIfMediaDirExists(media.getRootDir().toString().split(","), hostName, installPath)) {
                 historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
                         getUserNameFromSecurityContext());
                 distributeBinary(hostName, media.getLocalPath().toString(), installPath, EXCLUDED_FILES);
@@ -69,7 +70,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
             }
             LOGGER.info("{}'s {} successfully deployed to {}", jvmOrWebServerName, media.getName(), hostName);
         } finally {
-            binaryDistributionLockManager.writeUnlock(hostName);
+            binaryDistributionLockManager.writeUnlock(hostAddressLockKey);
         }
     }
 
@@ -252,5 +253,4 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
 
         return authentication.getName();
     }
-
 }

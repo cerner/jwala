@@ -65,8 +65,8 @@ public class JvmBuilder {
             return "";
         }
 
-        if (jdkMedia.getRemoteDir() != null && jdkMedia.getMediaDir() != null){
-            return jdkMedia.getRemoteDir() + "/" + jdkMedia.getMediaDir();
+        if (jdkMedia.getRemoteDir() != null && jdkMedia.getRootDir() != null){
+            return jdkMedia.getRemoteDir() + "/" + jdkMedia.getRootDir();
         } else {
             return "";
         }
