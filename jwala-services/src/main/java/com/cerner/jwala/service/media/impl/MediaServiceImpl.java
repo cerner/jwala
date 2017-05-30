@@ -132,7 +132,7 @@ public class MediaServiceImpl implements MediaService {
         }
         return uploadedFilePath;
     }
-    
+
     @Override
     @Transactional
     public void remove(final String name, final MediaType type) {

@@ -57,7 +57,7 @@ public abstract class AbstractRepositoryService implements RepositoryService {
     @Override
     public List<String> getBinariesByBasename(String filename) {
         File binariesDir = new File(getRepositoryPath().toAbsolutePath().normalize().toString());
-        File[] foundFiles = binariesDir.listFiles((dir, name) -> name.contains(filename));
+        File[] foundFiles = binariesDir.listFiles((dir, name) -> name.toLowerCase().contains(filename.toLowerCase()));
         if (null != foundFiles) {
             return Arrays.stream(foundFiles).map(File::getAbsolutePath).collect(Collectors.toList());
         } else {
