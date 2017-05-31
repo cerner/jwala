@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.FileUtilityException;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
@@ -123,7 +124,7 @@ public class MediaServiceImplTest {
     }
 
 
-    @Test (expected = MediaServiceException.class)
+    @Test (expected = FileUtilityException.class)
     public void testCreateWithExistingBinaryFailsForNonExistentFile() throws IOException {
         final Map<String, String> dataMap = new HashMap<>();
         dataMap.put("name", "tomcat");
@@ -139,7 +140,6 @@ public class MediaServiceImplTest {
         when(Config.mockMediaRepositoryService.getBinariesByBasename(anyString())).thenReturn(Collections.singletonList("./src/test/resources/binaries/apache-tomcat-test.zip"));
         when(Config.mockMediaDao.findByNameAndType(anyString(), any(MediaType.class))).thenThrow(NoResultException.class);
         mediaService.create(dataMap, mediaFileDataMap);
-        verify(Config.mockMediaDao).create(any(JpaMedia.class));
     }
 
     @Test(expected = MediaServiceException.class)

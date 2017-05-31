@@ -11,7 +11,6 @@ import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -24,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.HashSet;
@@ -33,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.cerner.jwala.common.FileUtility.getCheckSum;
+import static com.cerner.jwala.common.JwalaUtils.getPathForExistingBinary;
 
 /**
  * Implements {@link MediaService}
@@ -98,7 +95,8 @@ public class MediaServiceImpl implements MediaService {
         }
 
         final String uploadedFilePath = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
-        final String dest = checkForExistingBinary(filename, uploadedFilePath);
+        final List<String> binariesByBasename = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
+        final String dest = getPathForExistingBinary(uploadedFilePath, binariesByBasename);
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);
         if (!zipRootDirSet.isEmpty()) {
@@ -109,28 +107,6 @@ public class MediaServiceImpl implements MediaService {
         repositoryService.delete(dest);
         throw new MediaServiceException(MessageFormat.
                 format("{0} does not have any root directories! It may not be a valid media file.", filename));
-    }
-
-    private String checkForExistingBinary(final String filename, final String uploadedFilePath) {
-        List<String> binariesAbsPath = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
-        if (!binariesAbsPath.isEmpty()) {
-            String initialDestCheckSum = getCheckSum(uploadedFilePath);
-            File uploadedFile = new File(uploadedFilePath);
-            for (String existingBinaryAbsPath : binariesAbsPath) {
-                File existingBinaryFile = new File(existingBinaryAbsPath);
-                if (!existingBinaryFile.equals(uploadedFile) && getCheckSum(existingBinaryAbsPath).equals(initialDestCheckSum)) {
-                    LOGGER.warn("Uploading {}, but found existing binary {} so using that one instead.", uploadedFilePath, existingBinaryAbsPath);
-                    LOGGER.warn("Deleting uploaded file {}", uploadedFilePath);
-                    try {
-                        FileUtils.forceDelete(uploadedFile);
-                    } catch (IOException e) {
-                        LOGGER.warn("Failed to delete uploaded file {}", uploadedFilePath, e);
-                    }
-                    return existingBinaryAbsPath;
-                }
-            }
-        }
-        return uploadedFilePath;
     }
 
     @Override
