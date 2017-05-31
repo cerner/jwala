@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.FileUtilityException;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
@@ -14,6 +15,7 @@ import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.media.impl.MediaServiceImpl;
 import com.cerner.jwala.service.repository.RepositoryService;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,9 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.persistence.NoResultException;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -36,6 +36,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -84,14 +85,61 @@ public class MediaServiceImplTest {
         mediaFileDataMap.put("content", new BufferedInputStream(new ByteArrayInputStream("the content".getBytes())));
 
         when(Config.mockMediaRepositoryService.upload(anyString(), any(InputStream.class)))
-                .thenReturn("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip");
+                .thenReturn("./src/test/resources/binaries/apache-tomcat-test.zip");
         final Set<String> rootDirSet = new HashSet<>();
         rootDirSet.add("apache-tomcat-8.5.9");
-        when(Config.MOCK_FILE_UTILITY.getZipRootDirs(eq("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip")))
+        when(Config.mockFileUtility.getZipRootDirs(eq("./src/test/resources/binaries/apache-tomcat-test.zip")))
                 .thenReturn(rootDirSet);
         when(Config.mockMediaDao.findByNameAndType(anyString(), any(MediaType.class))).thenThrow(NoResultException.class);
         mediaService.create(dataMap, mediaFileDataMap);
         verify(Config.mockMediaDao).create(any(JpaMedia.class));
+    }
+
+    @Test
+    public void testCreateWithExistingBinary() throws IOException {
+        // copy the test file to build because the repository service tries to delete it later
+        final String srcFileLocation = "./src/test/resources/binaries/apache-tomcat-test.zip";
+        final String copiedFileLocation = "./build/apache-tomcat-test.zip";
+        FileUtils.copyFile(new File(srcFileLocation), new File(copiedFileLocation));
+
+        final Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("name", "tomcat");
+        dataMap.put("type", "TOMCAT");
+        dataMap.put("remoteDir", "c:/tomcat");
+
+        final Map<String, Object> mediaFileDataMap = new HashMap<>();
+        mediaFileDataMap.put("filename", "apache-tomcat-test.zip");
+        mediaFileDataMap.put("content", new BufferedInputStream(new FileInputStream(new File(copiedFileLocation))));
+
+        when(Config.mockMediaRepositoryService.upload(anyString(), any(InputStream.class)))
+                .thenReturn(copiedFileLocation);
+        when(Config.mockMediaRepositoryService.getBinariesByBasename(anyString())).thenReturn(Collections.singletonList(copiedFileLocation));
+        final Set<String> rootDirSet = new HashSet<>();
+        rootDirSet.add("apache-tomcat-8.5.9");
+        when(Config.mockFileUtility.getZipRootDirs(eq(copiedFileLocation)))
+                .thenReturn(rootDirSet);
+        when(Config.mockMediaDao.findByNameAndType(anyString(), any(MediaType.class))).thenThrow(NoResultException.class);
+        mediaService.create(dataMap, mediaFileDataMap);
+        verify(Config.mockMediaDao).create(any(JpaMedia.class));
+    }
+
+
+    @Test (expected = FileUtilityException.class)
+    public void testCreateWithExistingBinaryFailsForNonExistentFile() throws IOException {
+        final Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("name", "tomcat");
+        dataMap.put("type", "TOMCAT");
+        dataMap.put("remoteDir", "c:/tomcat");
+
+        final Map<String, Object> mediaFileDataMap = new HashMap<>();
+        mediaFileDataMap.put("filename", "apache-tomcat-test.zip");
+        mediaFileDataMap.put("content", new BufferedInputStream(new FileInputStream(new File("./src/test/resources/binaries/apache-tomcat-test.zip"))));
+
+        when(Config.mockMediaRepositoryService.upload(anyString(), any(InputStream.class)))
+                .thenReturn("/does/not.exist");
+        when(Config.mockMediaRepositoryService.getBinariesByBasename(anyString())).thenReturn(Collections.singletonList("./src/test/resources/binaries/apache-tomcat-test.zip"));
+        when(Config.mockMediaDao.findByNameAndType(anyString(), any(MediaType.class))).thenThrow(NoResultException.class);
+        mediaService.create(dataMap, mediaFileDataMap);
     }
 
     @Test(expected = MediaServiceException.class)
@@ -110,7 +158,7 @@ public class MediaServiceImplTest {
                 .thenReturn("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip");
         final Set<String> rootDirSet = new HashSet<>();
         rootDirSet.add("apache-tomcat-8.5.9");
-        when(Config.MOCK_FILE_UTILITY.getZipRootDirs(eq("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip")))
+        when(Config.mockFileUtility.getZipRootDirs(eq("c:/jwala/toc/data/bin/apache-tomcat-8.5.9-89876567321.zip")))
                 .thenReturn(rootDirSet);
         mediaService.create(dataMap, mediaFileDataMap);
         verify(Config.mockMediaDao).create(any(JpaMedia.class));
@@ -176,7 +224,7 @@ public class MediaServiceImplTest {
                 "testJavaHome",
                 null);
         jvmList.add(jvm);
-        when(Config.MOCK_JVM_PERSISTENCE_SERVICE.getJvms()).thenReturn(jvmList);
+        when(Config.mockJvmPersistenceService.getJvms()).thenReturn(jvmList);
         when(Config.mockMediaDao.find(eq("tomcat"))).thenReturn(mockMedia);
         when(mockMedia.getLocalPath()).thenReturn(Paths.get("/apache/tomcat.zip"));
         mediaService.remove("jdk", MediaType.JDK);
@@ -203,9 +251,9 @@ public class MediaServiceImplTest {
 
         private static final MediaDao mockMediaDao = mock(MediaDao.class);
         private static final RepositoryService mockMediaRepositoryService = mock(RepositoryService.class);
-        private static final FileUtility MOCK_FILE_UTILITY = mock(FileUtility.class);
-        private static final JvmPersistenceService MOCK_JVM_PERSISTENCE_SERVICE = mock(JvmPersistenceService.class);
-        private static final WebServerPersistenceService MOCK_WEBSERVER_PERSISTENCE_SERVICE = mock(WebServerPersistenceService.class);
+        private static final FileUtility mockFileUtility = mock(FileUtility.class);
+        private static final JvmPersistenceService mockJvmPersistenceService = mock(JvmPersistenceService.class);
+        private static final WebServerPersistenceService mockWebServerPersistenceService = mock(WebServerPersistenceService.class);
 
         @Bean
         public MediaDao getMediaDao() {
@@ -219,7 +267,7 @@ public class MediaServiceImplTest {
 
         @Bean
         public FileUtility getFileUtility() {
-            return MOCK_FILE_UTILITY;
+            return mockFileUtility;
         }
 
         @Bean
@@ -229,12 +277,12 @@ public class MediaServiceImplTest {
 
         @Bean
         public JvmPersistenceService getJvmPersistenceService() {
-            return MOCK_JVM_PERSISTENCE_SERVICE;
+            return mockJvmPersistenceService;
         }
 
         @Bean
         public WebServerPersistenceService getWebServerPersistenceService() {
-            return MOCK_WEBSERVER_PERSISTENCE_SERVICE;
+            return mockWebServerPersistenceService;
         }
 
     }
