@@ -11,6 +11,7 @@ import com.cerner.jwala.persistence.service.WebServerPersistenceService;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.media.MediaServiceException;
 import com.cerner.jwala.service.repository.RepositoryService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -24,7 +25,12 @@ import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.cerner.jwala.common.JwalaUtils.getPathForExistingBinary;
 
 /**
  * Implements {@link MediaService}
@@ -88,7 +94,9 @@ public class MediaServiceImpl implements MediaService {
             LOGGER.debug("No Media name conflict, ignoring not found exception for creating media ", e);
         }
 
-        final String dest = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
+        final String uploadedFilePath = repositoryService.upload(filename, (BufferedInputStream) mediaFileDataMap.get("content"));
+        final List<String> binariesByBasename = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
+        final String dest = getPathForExistingBinary(uploadedFilePath, binariesByBasename);
 
         final Set<String> zipRootDirSet = fileUtility.getZipRootDirs(dest);
         if (!zipRootDirSet.isEmpty()) {

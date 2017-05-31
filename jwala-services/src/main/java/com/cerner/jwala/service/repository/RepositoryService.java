@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.repository;
 
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Defines repository related operations on resources
@@ -23,4 +24,10 @@ public interface RepositoryService {
      */
     void delete(String filename);
 
+    /**
+     * Get a list of absolute paths of all the existing binaries that contain the given file name
+     * @param filename the base name to search for
+     * @return the list of matching binaries as absolute paths
+     */
+    List<String> getBinariesByBasename(String filename);
 }
