@@ -26,7 +26,22 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A Chrome based test suite
+ * A generic test suite
+ *
+ * Instructions on how to run this test
+ *
+ * Specify the following VM options:
+ *
+ * 1. web driver
+ *
+ *    Chrome:    -DwebDriver=org.openqa.selenium.chrome.ChromeDriver
+ *    IE:        -DwebDriver=org.openqa.selenium.ie.InternetExplorerDriver
+ *
+ * 2. web driver executable
+ *
+ *    Chrome:    -DwebDriver=org.openqa.selenium.chrome.ChromeDriver
+ *    IE:        -Dwebdriver.chrome.driver=C:/selenium/IEDriverServer.exe
+ *
  * Created by Jedd Cuison on 2/22/2017
  */
 @RunWith(Suite.class)
@@ -36,16 +51,15 @@ import java.util.concurrent.TimeUnit;
         AppDeleteTest.class, JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class,
         WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, BalancerManagerTest.class,
         LogoutTest.class})
-public class JwalaChromeTestSuite extends TestSuite {
+public class JwalaTestSuite extends TestSuite {
 
-    private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
+    public static final String WEB_DRIVER = "webDriver";
 
     @BeforeClass
     public static void setup() throws IOException, InterruptedException {
         properties = SeleniumTestHelper.getProperties();
-        System.setProperty(WEBDRIVER_CHROME_DRIVER, properties.getProperty(WEBDRIVER_CHROME_DRIVER));
-        driver = SeleniumTestHelper.createWebDriver(RemoteWebDriver.CHROME.getClassName());
+        driver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER));
         driver.manage().timeouts().implicitlyWait(Long.parseLong(properties.getProperty(ELEMENT_SEARCH_RENDER_WAIT_TIME)),
                 TimeUnit.SECONDS);
     }
@@ -53,7 +67,6 @@ public class JwalaChromeTestSuite extends TestSuite {
     @AfterClass
     public static void tearDown() {
         driver.close();
-        System.clearProperty(WEBDRIVER_CHROME_DRIVER);
     }
 
 }
