@@ -378,8 +378,7 @@ public class WebServerServiceImpl implements WebServerService {
     @Transactional
     public void uploadWebServerConfig(WebServer webServer, String templateName, String templateContent, String metaDataStr, String groupName, User user) {
         try {
-
-            ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(templateName, webServer, metaDataStr);
+            ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
             ResourceIdentifier resourceId = new ResourceIdentifier.Builder()
                     .setResourceName(metaData.getDeployFileName())
                     .setGroupName(groupName)
