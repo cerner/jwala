@@ -90,7 +90,7 @@ public class MediaServiceRestImpl implements MediaServiceRest {
 
     @Override
     public Response getMedia(final Long id, final String mediaName, final AuthenticatedUser aUser) {
-        LOGGER.debug("getSpringBoot with ID {} and name {} by user", id, mediaName, aUser.getUser().getId());
+        LOGGER.debug("findSpringBoot with ID {} and name {} by user", id, mediaName, aUser.getUser().getId());
         if (id == null && StringUtils.isEmpty(mediaName)) {
             return ResponseBuilder.ok(mediaService.findAll());
         } else if (id != null) {

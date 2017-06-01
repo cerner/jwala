@@ -1049,7 +1049,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
         try {
             jvmService.deleteJvm(id, true, user);
-            fail("Expecting to get a JvmServiceException!");
+            fail("Expecting to find a JvmServiceException!");
         } catch (final JvmServiceException e) {
             assertEquals("Please stop JVM null first before attempting to delete it", e.getMessage());
         }

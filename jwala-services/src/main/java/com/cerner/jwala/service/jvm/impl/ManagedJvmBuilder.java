@@ -252,7 +252,7 @@ public class ManagedJvmBuilder {
     }
 
     protected boolean ifGroupServerXmlExists() {
-        //get the groups
+        //find the groups
         Set<Group> groups = jvm.getGroups();
         if (groups != null) {
             //generate the xml

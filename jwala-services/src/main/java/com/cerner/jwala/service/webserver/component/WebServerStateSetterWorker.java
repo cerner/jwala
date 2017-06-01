@@ -73,7 +73,7 @@ public class WebServerStateSetterWorker {
     }
 
     /**
-     * Ping the web server via http get.
+     * Ping the web server via http find.
      *
      * @param webServer the web server to ping.
      */

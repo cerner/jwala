@@ -121,10 +121,10 @@ public class JvmCommandFactory {
     private void copyScriptToRemoteDestination(Jvm jvm, String scriptName, String destAbsolutePath) {
         LOGGER.info("{} does not exist at remote location. Performing secure copy.", scriptName);
 
-        // Don't use java.io.File here to get the parent directory from getFullPathScript - we need to use the
+        // Don't use java.io.File here to find the parent directory from getFullPathScript - we need to use the
         // path derived from the method in order to support deploying JVMs across platforms (i.e. from a
         // Windows deployed jwala to a Linux remote host and vice versa).
-        // So don't pass the script name here to just get the path of the parent directory
+        // So don't pass the script name here to just find the path of the parent directory
         final String destDir = getFullPathScript(jvm, "");
         CommandOutput createDirResult = binaryDistributionControlService.createDirectory(jvm.getHostName(), destDir);
         if (!createDirResult.getReturnCode().wasSuccessful()) {

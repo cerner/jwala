@@ -207,7 +207,7 @@ public interface GroupServiceRest {
      * Note: The group specified by id will not be included hence the word "Other" in the method name.
      *
      * @param id             the id of the group
-     * @param groupChildType the child type to get details on
+     * @param groupChildType the child type to find details on
      * @return membership details of a group's children
      */
     @GET
