@@ -1,12 +1,18 @@
 package com.cerner.jwala.service.springboot.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.domain.model.springboot.SpringBootApp;
+import com.cerner.jwala.common.properties.ApplicationProperties;
+import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.dao.SpringBootAppDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
 import com.cerner.jwala.service.repository.RepositoryService;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.springboot.SpringBootService;
 import com.cerner.jwala.service.springboot.SpringBootServiceException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
-import java.io.BufferedInputStream;
+import java.io.*;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created on 6/1/2017.
@@ -34,6 +41,9 @@ public class SpringBootServiceImpl implements SpringBootService {
     private RepositoryService repositoryService;
 
     @Autowired
+    ResourceContentGeneratorService resourceContentGeneratorService;
+
+    @Autowired
     private FileUtility fileUtility;
 
 
@@ -47,8 +57,15 @@ public class SpringBootServiceImpl implements SpringBootService {
 
     @Override
     @Transactional
-    public JpaSpringBootApp generateAndDeploy(String name) {
-        return null;
+    public JpaSpringBootApp generateAndDeploy(String name) throws FileNotFoundException {
+        final JpaSpringBootApp springBootApp = springBootAppDao.find(name);
+        InputStream templateData = new FileInputStream(new File(ApplicationProperties.getRequired(PropertyKeys.ROGUE_WINDOWS_XML_TEMPLATE)));
+        Scanner scanner = new Scanner(templateData).useDelimiter("\\A");
+        String springBootXmlTemplateContent = scanner.hasNext() ? scanner.next() : "";
+
+        String templateContent = resourceContentGeneratorService.generateContent("spring-boot.xml.tpl", springBootXmlTemplateContent, null, new ModelMapper().map(springBootApp, SpringBootApp.class), ResourceGeneratorType.TEMPLATE);
+
+        return springBootApp;
     }
 
     @Override

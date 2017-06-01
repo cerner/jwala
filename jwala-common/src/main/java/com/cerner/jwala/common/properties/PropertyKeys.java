@@ -27,7 +27,8 @@ public enum PropertyKeys {
     SCRIPTS_PATH("commands.scripts-path"),
     TOMCAT_MANAGER_XML_SSL_PATH("tomcat.manager.xml.ssl.path"),
     USER_NAME("ssh.userName"),
-    JVM_ROUTE_MAX_LENGTH("jvm.route.max.length");
+    JVM_ROUTE_MAX_LENGTH("jvm.route.max.length"),
+    ROGUE_WINDOWS_XML_TEMPLATE("rogue.windows.xml.template");
 
     private String propertyName;
 
