@@ -34,6 +34,7 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
 
     private String archiveFilename;
 
+    @OneToOne (targetEntity = JpaMedia.class)
     private JpaMedia jdkMedia;
 
     @Override
