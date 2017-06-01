@@ -1,6 +1,7 @@
 package com.cerner.jwala.ws.rest.v1.service.springboot.impl;
 
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
+import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.service.springboot.SpringBootService;
 import com.cerner.jwala.ws.rest.v1.response.ResponseBuilder;
 import com.cerner.jwala.ws.rest.v1.service.springboot.SpringBootServiceRest;
@@ -30,6 +31,9 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
 
     @Autowired
     SpringBootService springBootService;
+
+    @Autowired
+    MediaService mediaService;
 
     @Override
     public Response controlSpringBoot(String name, String command) {
@@ -63,10 +67,13 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
                 }
                 final String fieldName = attachment.getDataHandler().getName();
                 if (attachment.getHeader("Content-Type") == null) {
-                    if (fieldName.equals("hostNames")) {
+                    if (fieldName.equalsIgnoreCase("hostNames")) {
                         String commaSeparatedList = IOUtils.toString(attachment.getDataHandler().getInputStream());
                         List<String> items = Arrays.asList(commaSeparatedList.split("\\s*,\\s*"));
                         springBootDataMap.put(fieldName, items);
+                    } else if (fieldName.equalsIgnoreCase("jdkMedia")) {
+                        String mediaId = IOUtils.toString(attachment.getDataHandler().getInputStream());
+                        springBootDataMap.put(fieldName, mediaService.find(new Long(mediaId)));
                     } else {
                         springBootDataMap.put(fieldName,
                                 IOUtils.toString(attachment.getDataHandler().getInputStream(), Charset.defaultCharset()));
