@@ -110,9 +110,9 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
     }
 
     @Override
-    public Response findSpringBoot(String name) {
-        LOGGER.info("Get Spring Boot {}", name);
-        return ResponseBuilder.ok(springBootService.find(name));
+    public Response findSpringBoot(String springBootAppName) {
+        LOGGER.info("Get Spring Boot {}", springBootAppName);
+        return ResponseBuilder.ok(springBootService.find(springBootAppName));
     }
 
     @Override

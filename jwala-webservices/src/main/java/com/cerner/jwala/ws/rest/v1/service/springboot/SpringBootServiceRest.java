@@ -28,8 +28,8 @@ public interface SpringBootServiceRest {
     Response removeSpringBoot(String name);
 
     @GET
-    @Path("/{springBootName}")
-    Response findSpringBoot(@PathParam("name") String springBootName);
+    @Path("/{springBootAppName}")
+    Response findSpringBoot(@PathParam("springBootAppName") String springBootAppName);
 
     @PUT
     @Path("/control/{springBootName}/{command}")
