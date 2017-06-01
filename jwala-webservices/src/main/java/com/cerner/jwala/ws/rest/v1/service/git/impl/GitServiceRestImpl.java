@@ -14,9 +14,14 @@ public class GitServiceRestImpl implements GitServiceRest {
     @Override
     public Response.Status cloneRepository (@MatrixParam("gitUri") String gitUri) throws GitAPIException {
         Git git = Git.cloneRepository()
-                .setURI("https://github.com/eclipse/jgit.git")
+                .setURI(gitUri)
                 .call();
-        return Response.Status.OK;
+        return Response.Status.ACCEPTED;
+    }
+
+    @Override
+    public Response.Status getSomething() {
+        return Response.Status.ACCEPTED;
     }
 
 }
