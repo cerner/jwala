@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.springboot.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.dao.SpringBootAppDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
 import com.cerner.jwala.service.repository.RepositoryService;
 import com.cerner.jwala.service.springboot.SpringBootService;
@@ -63,7 +64,7 @@ public class SpringBootServiceImpl implements SpringBootService {
         final String filename = Paths.get((String) springBootFileDataMap.get("filename")).getFileName().toString();
 
         try {
-            springBootAppDao.findByName(springBootApp.getName());
+            springBootAppDao.find(springBootApp.getName());
             final String msg = MessageFormat.format("Spring Boot already exists with name {0}", springBootApp.getName());
             LOGGER.error(msg);
             throw new SpringBootServiceException(msg);
@@ -85,9 +86,9 @@ public class SpringBootServiceImpl implements SpringBootService {
     }
 
     @Override
-    public JpaSpringBootApp remove(String name) {
+    public void remove(String name) {
         LOGGER.info("Spring Boot service remove {}", name);
-        return springBootAppDao.remove(name);
+        springBootAppDao.remove(springBootAppDao.find(name));
     }
 
     @Override

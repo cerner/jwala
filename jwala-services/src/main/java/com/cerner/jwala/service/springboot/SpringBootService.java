@@ -17,7 +17,7 @@ public interface SpringBootService {
 
     JpaSpringBootApp update(JpaSpringBootApp springBootApp);
 
-    JpaSpringBootApp remove(String name);
+    void remove(String name);
 
     JpaSpringBootApp find(String name);
 }
