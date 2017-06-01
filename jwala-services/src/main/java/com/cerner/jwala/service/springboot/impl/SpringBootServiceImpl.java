@@ -24,6 +24,7 @@ import javax.persistence.NoResultException;
 import java.io.*;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -75,6 +76,7 @@ public class SpringBootServiceImpl implements SpringBootService {
 
         final JpaSpringBootApp springBootApp = new JpaSpringBootApp();
         springBootApp.setName((String) springBootDataMap.get("name"));
+        springBootApp.setHostNames((List<String>) springBootDataMap.get("hostNames"));
         springBootApp.setJdkMedia((JpaMedia) springBootDataMap.get("jdkMedia"));
 
         // filename can be the full path or just the name that is why we need to convert it to Paths
@@ -114,5 +116,10 @@ public class SpringBootServiceImpl implements SpringBootService {
     public JpaSpringBootApp find(String name) {
         LOGGER.info("Spring Boot find service {}", name);
         return springBootAppDao.find(name);
+    }
+
+    @Override
+    public List<JpaSpringBootApp> findAll() {
+        return springBootAppDao.findAll();
     }
 }
