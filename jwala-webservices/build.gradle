@@ -25,6 +25,7 @@ dependencies {
     compile group: "commons-fileupload", name: "commons-fileupload", version: "$project.versions.commons_fileupload"
     compile group: "commons-io", name: "commons-io", version: "$project.versions.jodaTime"
     compile group: "org.jgroups", name: "jgroups", version: "$project.versions.jgroups"
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '3.5.0.201409260305-r'
 
 	testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
 
