@@ -25,7 +25,7 @@ public interface SpringBootServiceRest {
 
     @DELETE
     @Path("/{springBootName}")
-    Response removeSpringBoot(String name);
+    Response removeSpringBoot(@PathParam("springBootName") String name);
 
     @GET
     @Path("/{springBootAppName}")
