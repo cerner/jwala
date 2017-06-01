@@ -2,12 +2,11 @@ package com.cerner.jwala.service.springboot.impl;
 
 import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.dao.SpringBootAppDao;
+import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
 import com.cerner.jwala.service.repository.RepositoryService;
 import com.cerner.jwala.service.springboot.SpringBootService;
 import com.cerner.jwala.service.springboot.SpringBootServiceException;
-import org.apache.commons.io.FilenameUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,7 @@ import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
-
-import static com.cerner.jwala.common.JwalaUtils.getPathForExistingBinary;
 
 /**
  * Created on 6/1/2017.
@@ -60,8 +56,9 @@ public class SpringBootServiceImpl implements SpringBootService {
     public JpaSpringBootApp createSpringBoot(Map<String, Object> springBootDataMap, Map<String, Object> springBootFileDataMap) {
         LOGGER.info("Create Spring Boot service create spring boot data map {} and file data map {}", springBootDataMap, springBootFileDataMap);
 
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final JpaSpringBootApp springBootApp = objectMapper.convertValue(springBootDataMap, JpaSpringBootApp.class);
+        final JpaSpringBootApp springBootApp = new JpaSpringBootApp();
+        springBootApp.setName((String) springBootDataMap.get("name"));
+        springBootApp.setJdkMedia((JpaMedia) springBootDataMap.get("jdkMedia"));
 
         // filename can be the full path or just the name that is why we need to convert it to Paths
         // to extract the base name e.g. c:/jdk.zip -> jdk.zip or jdk.zip -> jdk.zip
@@ -77,8 +74,7 @@ public class SpringBootServiceImpl implements SpringBootService {
         }
 
         final String uploadedFilePath = repositoryService.upload(filename, (BufferedInputStream) springBootFileDataMap.get("content"));
-        final List<String> binariesByBasename = repositoryService.getBinariesByBasename(FilenameUtils.removeExtension(filename));
-        final String dest = getPathForExistingBinary(uploadedFilePath, binariesByBasename);
+        springBootApp.setArchiveFilename(uploadedFilePath);
 
         return springBootAppDao.create(springBootApp);
     }
