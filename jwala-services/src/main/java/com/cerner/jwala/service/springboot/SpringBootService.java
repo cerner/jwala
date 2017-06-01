@@ -3,6 +3,7 @@ package com.cerner.jwala.service.springboot;
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,4 +22,6 @@ public interface SpringBootService {
     void remove(String name);
 
     JpaSpringBootApp find(String name);
+
+    List<JpaSpringBootApp> findAll();
 }

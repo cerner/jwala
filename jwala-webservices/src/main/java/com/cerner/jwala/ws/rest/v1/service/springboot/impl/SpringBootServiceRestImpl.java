@@ -109,4 +109,9 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
         LOGGER.info("Get Spring Boot {}", name);
         return ResponseBuilder.ok(springBootService.find(name));
     }
+
+    @Override
+    public Response findSpringBootApps() {
+        return ResponseBuilder.ok(springBootService.findAll());
+    }
 }

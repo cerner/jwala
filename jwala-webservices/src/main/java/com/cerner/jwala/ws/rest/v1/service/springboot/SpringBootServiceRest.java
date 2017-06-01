@@ -38,4 +38,7 @@ public interface SpringBootServiceRest {
     @PUT
     @Path("/generate/{springBootName}")
     Response generateAndDeploy(@PathParam("springBootName") String name);
+
+    @GET
+    Response findSpringBootApps();
 }
