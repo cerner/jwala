@@ -35,6 +35,7 @@ import com.cerner.jwala.ws.rest.v1.service.jvm.impl.JvmServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.media.MediaServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.resource.ResourceServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.resource.impl.ResourceServiceRestImpl;
+import com.cerner.jwala.ws.rest.v1.service.springboot.SpringBootServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.user.UserServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.user.impl.UserServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.webserver.WebServerServiceRest;
@@ -63,6 +64,9 @@ public class AemWebServiceConfiguration {
 
     @Autowired
     private MediaServiceRest mediaServiceRest;
+
+    @Autowired
+    private SpringBootServiceRest springBootRestService;
 
     @Autowired
     private FilesConfiguration filesConfiguration;
@@ -132,6 +136,7 @@ public class AemWebServiceConfiguration {
         serviceBeans.add(getV1GroupServiceRest());
         serviceBeans.add(getV1JvmServiceRest());
         serviceBeans.add(mediaServiceRest);
+        serviceBeans.add(springBootRestService);
         serviceBeans.add(getV1WebServerServiceRest());
         serviceBeans.add(getV1ApplicationServiceRest());
         serviceBeans.add(getV1UserServiceRest());

@@ -3,7 +3,7 @@ package com.cerner.jwala.ws.rest.v1.service.springboot.impl;
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
 import com.cerner.jwala.service.springboot.SpringBootService;
 import com.cerner.jwala.ws.rest.v1.response.ResponseBuilder;
-import com.cerner.jwala.ws.rest.v1.service.springboot.SpringBootRestService;
+import com.cerner.jwala.ws.rest.v1.service.springboot.SpringBootServiceRest;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.slf4j.Logger;
@@ -21,9 +21,9 @@ import java.util.Map;
 /**
  * Created on 6/1/2017.
  */
-public class SpringBootRestServiceImpl implements SpringBootRestService {
+public class SpringBootServiceRestImpl implements SpringBootServiceRest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringBootRestServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringBootServiceRestImpl.class);
 
     @Autowired
     SpringBootService springBootService;

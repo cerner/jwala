@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Path("/springboot")
 @Produces(MediaType.APPLICATION_JSON)
-public interface SpringBootRestService {
+public interface SpringBootServiceRest {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
