@@ -19,7 +19,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
 
-    public static final String QUERY_FIND_BY_NAME = "QUERY_FIND_BY_NAME";
+    public static final String QUERY_FIND_BY_NAME = "QUERY_SPRING_BOOT_APP_FIND_BY_NAME";
     public static final String PARAM_NAME = "name";
 
     @Id
