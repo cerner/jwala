@@ -31,7 +31,7 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
     @Size(min = 2, max = 200, message = "{app.name.length.msg}")
     private String name;
 
-    private List<String> hostName;
+    private List<String> hostNames;
 
     private String archiveFilename;
 
@@ -54,12 +54,12 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
         this.name = name;
     }
 
-    public List<String> getHostName() {
-        return hostName;
+    public List<String> getHostNames() {
+        return hostNames;
     }
 
-    public void setHostName(List<String> hostName) {
-        this.hostName = hostName;
+    public void setHostNames(List<String> hostName) {
+        this.hostNames = hostName;
     }
 
     public String getArchiveFilename() {
