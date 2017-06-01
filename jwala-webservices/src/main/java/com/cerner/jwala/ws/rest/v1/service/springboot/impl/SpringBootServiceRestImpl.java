@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        final Map<String, String> springBootDataMap = new HashMap<>();
+        final Map<String, Object> springBootDataMap = new HashMap<>();
         final Map<String, Object> springBootFileDataMap = new HashMap<>();
 
         attachments.forEach(attachment -> {
@@ -60,11 +61,18 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
                 if (attachment.getHeaders().size() < 2) {
                     return;
                 }
+                final String fieldName = attachment.getDataHandler().getName();
                 if (attachment.getHeader("Content-Type") == null) {
-                    springBootDataMap.put(attachment.getDataHandler().getName(),
-                            IOUtils.toString(attachment.getDataHandler().getInputStream(), Charset.defaultCharset()));
+                    if (fieldName.equals("hostNames")) {
+                        String commaSeparatedList = IOUtils.toString(attachment.getDataHandler().getInputStream());
+                        List<String> items = Arrays.asList(commaSeparatedList.split("\\s*,\\s*"));
+                        springBootDataMap.put(fieldName, items);
+                    } else {
+                        springBootDataMap.put(fieldName,
+                                IOUtils.toString(attachment.getDataHandler().getInputStream(), Charset.defaultCharset()));
+                    }
                 } else {
-                    springBootFileDataMap.put("filename", attachment.getDataHandler().getName());
+                    springBootFileDataMap.put("filename", fieldName);
                     springBootFileDataMap.put("content", new BufferedInputStream(attachment.getDataHandler().getInputStream()));
                 }
             } catch (final IOException e) {

@@ -13,7 +13,7 @@ public interface SpringBootService {
 
     JpaSpringBootApp generateAndDeploy(String name);
 
-    JpaSpringBootApp createSpringBoot(Map<String, String> springBootDataMap, Map<String, Object> springBootFileDataMap);
+    JpaSpringBootApp createSpringBoot(Map<String, Object> springBootDataMap, Map<String, Object> springBootFileDataMap);
 
     JpaSpringBootApp update(JpaSpringBootApp springBootApp);
 

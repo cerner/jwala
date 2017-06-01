@@ -57,7 +57,7 @@ public class SpringBootServiceImpl implements SpringBootService {
 
     @Override
     @Transactional
-    public JpaSpringBootApp createSpringBoot(Map<String, String> springBootDataMap, Map<String, Object> springBootFileDataMap) {
+    public JpaSpringBootApp createSpringBoot(Map<String, Object> springBootDataMap, Map<String, Object> springBootFileDataMap) {
         LOGGER.info("Create Spring Boot service create spring boot data map {} and file data map {}", springBootDataMap, springBootFileDataMap);
 
         final ObjectMapper objectMapper = new ObjectMapper();
