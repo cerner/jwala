@@ -331,7 +331,7 @@ public class BalancerManagerServiceImpl implements BalancerManagerService {
                                     StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOGGER.error("io exception", e);
-            throw new ApplicationException("Failed to get the response for Balancer Manager ", e);
+            throw new ApplicationException("Failed to find the response for Balancer Manager ", e);
         }
     }
 

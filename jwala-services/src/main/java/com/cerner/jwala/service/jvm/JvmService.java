@@ -65,7 +65,7 @@ public interface JvmService {
     void deployApplicationContextXMLs(Jvm jvm, User user);
 
     /**
-     * get Get the count of JVM's which are started
+     * find Get the count of JVM's which are started
      * @param groupName
      * @return
      */

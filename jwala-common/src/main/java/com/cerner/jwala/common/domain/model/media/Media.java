@@ -1,14 +1,13 @@
 package com.cerner.jwala.common.domain.model.media;
 
-import java.nio.file.Path;
-
+import com.cerner.jwala.common.domain.model.PathToStringSerializer;
+import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import com.cerner.jwala.common.domain.model.PathToStringSerializer;
-import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
+import java.nio.file.Path;
 
 /**
  * Created by Rahul Sayini on 12/2/2016

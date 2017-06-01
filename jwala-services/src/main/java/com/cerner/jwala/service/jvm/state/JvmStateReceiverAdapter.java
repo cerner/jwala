@@ -111,7 +111,7 @@ public class JvmStateReceiverAdapter extends ReceiverAdapter {
         if (id != null && NumberUtils.isNumber(id)) {
             return getJvmById(Long.parseLong(id));
         }
-        // try to get the JVM by name instead
+        // try to find the JVM by name instead
         return getJvmByName(getStringFromMessageMap(serverInfoMap, NAME_KEY));
     }
 

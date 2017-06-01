@@ -130,7 +130,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
     }
 
     private void createJvmTemplateFromAppResource(ResourceIdentifier resourceIdentifier, String templateContent, ResourceTemplateMetaData metaDataCopy, String groupName, Group group) {
-        // Can't we just get the application using the group name and target app name instead of getting all the applications
+        // Can't we just find the application using the group name and target app name instead of getting all the applications
         // then iterating it to compare with the target app name ???
         // If we can do that then TODO: Refactor this to return only one application and remove the iteration!
         final List<Application> applications = applicationPersistenceService.findApplicationsBelongingTo(groupName);

@@ -18,6 +18,8 @@ import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.ws.rest.RestServiceErrorHandler;
 import com.cerner.jwala.ws.rest.v1.exceptionmapper.*;
+import com.cerner.jwala.ws.rest.v1.service.git.GitServiceRest;
+import com.cerner.jwala.ws.rest.v1.service.git.impl.GitServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.impl.HistoryServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.response.ApplicationResponse;
 import com.cerner.jwala.ws.rest.v1.response.ResponseMessageBodyWriter;
@@ -35,6 +37,7 @@ import com.cerner.jwala.ws.rest.v1.service.jvm.impl.JvmServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.media.MediaServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.resource.ResourceServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.resource.impl.ResourceServiceRestImpl;
+import com.cerner.jwala.ws.rest.v1.service.springboot.SpringBootServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.user.UserServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.user.impl.UserServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.webserver.WebServerServiceRest;
@@ -63,6 +66,9 @@ public class AemWebServiceConfiguration {
 
     @Autowired
     private MediaServiceRest mediaServiceRest;
+
+    @Autowired
+    private SpringBootServiceRest springBootRestService;
 
     @Autowired
     private FilesConfiguration filesConfiguration;
@@ -132,6 +138,7 @@ public class AemWebServiceConfiguration {
         serviceBeans.add(getV1GroupServiceRest());
         serviceBeans.add(getV1JvmServiceRest());
         serviceBeans.add(mediaServiceRest);
+        serviceBeans.add(springBootRestService);
         serviceBeans.add(getV1WebServerServiceRest());
         serviceBeans.add(getV1ApplicationServiceRest());
         serviceBeans.add(getV1UserServiceRest());
@@ -139,6 +146,7 @@ public class AemWebServiceConfiguration {
         serviceBeans.add(getV1ResourceServiceRest());
         serviceBeans.add(getV1HistoryServiceRest());
         serviceBeans.add(getV1BalancermanagerServiceRest());
+        serviceBeans.add(getV1GitServiceRest());
 
         return serviceBeans;
     }
@@ -171,6 +179,11 @@ public class AemWebServiceConfiguration {
                 jvmService,
                 jvmControlService
         );
+    }
+
+    @Bean
+    public GitServiceRest getV1GitServiceRest() {
+        return new GitServiceRestImpl();
     }
 
     @Bean

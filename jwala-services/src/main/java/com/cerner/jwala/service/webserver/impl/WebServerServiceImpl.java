@@ -234,14 +234,14 @@ public class WebServerServiceImpl implements WebServerService {
 
     private void updateWebServerGroups(final JpaWebServer updatedWebServer) {
 
-        // get all the group IDs in order to get all the groups as JPA objects
+        // find all the group IDs in order to find all the groups as JPA objects
         List<Group> groups = groupPersistenceService.getGroups();
         ArrayList<Long> groupIds = new ArrayList<>();
         for (Group group : groups) {
             groupIds.add(group.getId().getId());
         }
 
-        // get all the groups as JPA objects
+        // find all the groups as JPA objects
         List<JpaGroup> jpaAllGroups = groupPersistenceService.findGroups(groupIds);
         final List<JpaGroup> jpaWsGroups = updatedWebServer.getGroups();
 

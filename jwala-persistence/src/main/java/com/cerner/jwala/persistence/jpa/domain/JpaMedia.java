@@ -3,6 +3,8 @@ package com.cerner.jwala.persistence.jpa.domain;
 import com.cerner.jwala.common.domain.model.PathToStringSerializer;
 import com.cerner.jwala.common.domain.model.StringToPathDeserializer;
 import com.cerner.jwala.common.domain.model.media.MediaType;
+import com.cerner.jwala.common.domain.model.media.MediaTypeSerializer;
+import com.cerner.jwala.common.domain.model.media.StringToMediaType;
 import com.cerner.jwala.persistence.jpa.domain.constraint.ValidPath;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -71,10 +73,12 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
         this.name = name;
     }
 
+    @JsonSerialize(using = MediaTypeSerializer.class)
     public MediaType getType() {
         return type;
     }
 
+    @JsonDeserialize(using = StringToMediaType.class)
     public void setType(final MediaType type) {
         this.type = type;
     }

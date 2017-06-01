@@ -139,7 +139,7 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
 
     @Override
     public Response getResourceNames(final String appName, final String jvmName) {
-        LOGGER.debug("get resource names for {}@{}", appName, jvmName);
+        LOGGER.debug("find resource names for {}@{}", appName, jvmName);
         return ResponseBuilder.ok(service.getResourceTemplateNames(appName, jvmName));
     }
 
