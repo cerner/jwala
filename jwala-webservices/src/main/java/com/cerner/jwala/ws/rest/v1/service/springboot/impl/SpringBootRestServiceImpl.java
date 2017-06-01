@@ -81,9 +81,9 @@ public class SpringBootRestServiceImpl implements SpringBootRestService {
     }
 
     @Override
-    public Response removeSpringBoot(JpaSpringBootApp  springBootApp) {
-        LOGGER.info("Remove Spring Boot {}", springBootApp);
-        springBootService.remove(springBootApp);
+    public Response removeSpringBoot(String name) {
+        LOGGER.info("Remove Spring Boot {}", name);
+        springBootService.remove(name);
         return ResponseBuilder.ok();
     }
 
