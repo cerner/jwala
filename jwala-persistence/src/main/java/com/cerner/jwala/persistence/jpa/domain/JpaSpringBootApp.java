@@ -12,15 +12,14 @@ import java.util.List;
 /**
  * Created by Jlkwison on 6/1/2017
  */
-@Entity
-@NamedQueries({@NamedQuery(name = JpaSpringBootApp.QUERY_FIND_BY_NAME, query = "SELECT m FROM media m WHERE lower(m.name) = lower(:name)")})
+@Entity(name = "springBootApp")
+@NamedQueries({@NamedQuery(name = JpaSpringBootApp.QUERY_FIND_BY_NAME, query = "SELECT s FROM springBootApp s WHERE lower(s.name) = lower(:name)")})
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
 
     public static final String QUERY_FIND_BY_NAME = "QUERY_FIND_BY_NAME";
-    public static final String QUERY_FIND_BY_NAME_TYPE = "QUERY_FIND_BY_NAME_TYPE";
     public static final String PARAM_NAME = "name";
 
     @Id
