@@ -93,7 +93,8 @@ public class SpringBootServiceImpl implements SpringBootService {
         }
 
         final String uploadedFilePath = repositoryService.upload(filename, (BufferedInputStream) springBootFileDataMap.get("content"));
-        springBootApp.setArchiveFilename(uploadedFilePath);
+        springBootApp.setArchiveFile(uploadedFilePath);
+        springBootApp.setArchiveFilename(filename);
 
         return springBootAppDao.create(springBootApp);
     }

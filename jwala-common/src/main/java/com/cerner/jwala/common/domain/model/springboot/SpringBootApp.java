@@ -51,18 +51,27 @@ public class SpringBootApp {
     private String name;
     private String hostnames;
     private String archiveFileName;
+    private String archiveFile;
     private Media jdkMedia;
 
     public SpringBootApp() {
 
     }
 
-    public SpringBootApp(Long id, String name, String hostnames, String archiveFileName, Media jdkMedia) {
+    public SpringBootApp(Long id, String name, String hostnames, String archiveFileName, String archiveFile, Media jdkMedia) {
         this.id = id;
         this.name = name;
         this.hostnames = hostnames;
+        this.archiveFile = archiveFile;
         this.archiveFileName = archiveFileName;
         this.jdkMedia = jdkMedia;
     }
 
+    public String getArchiveFile() {
+        return archiveFile;
+    }
+
+    public void setArchiveFile(String archiveFile) {
+        this.archiveFile = archiveFile;
+    }
 }

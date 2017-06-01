@@ -33,6 +33,8 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
 
     private String archiveFilename;
 
+    private String archiveFile;
+
     @OneToOne (targetEntity = JpaMedia.class)
     private JpaMedia jdkMedia;
 
@@ -75,5 +77,13 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
 
     public void setJdkMedia(JpaMedia jdkMedia) {
         this.jdkMedia = jdkMedia;
+    }
+
+    public String getArchiveFile() {
+        return archiveFile;
+    }
+
+    public void setArchiveFile(String archiveFile) {
+        this.archiveFile = archiveFile;
     }
 }
