@@ -1,5 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.group.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -763,13 +764,21 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         final Group group = groupService.getGroup(groupName);
         Set<Jvm> jvms = group.getJvms();
         if (null != jvms && !jvms.isEmpty()) {
-
             checkJvmsStatesBeforeDeployAppResource(fileName, group, hotDeploy, jvms);
-
             List<String> deployedHosts = new ArrayList<>(jvms.size());
             for (final Jvm jvm : jvms) {
                 final String hostName = jvm.getHostName();
-                if (!deployedHosts.contains(hostName)) {
+                String hostIpAddress = JwalaUtils.getHostAddress(hostName);
+                boolean addToDeployedHost = true;
+                //Check by hosts by IP address
+                for(String deployedHost: deployedHosts){
+                    String deployedHostIPAddress = JwalaUtils.getHostAddress(deployedHost);
+                    if(deployedHostIPAddress.equals(hostIpAddress)){
+                        addToDeployedHost = false;
+                        break;
+                    }
+                }
+                if (addToDeployedHost) {
                     historyFacadeService.write(hostName, group, "Deploying application resource " + fileName, EventType.USER_ACTION_INFO, aUser.getUser().getId());
                     deployedHosts.add(hostName);
                     Future<Response> response = createFutureResponseForAppDeploy(groupName, fileName, appName, jvm, null);
@@ -797,10 +806,12 @@ public class GroupServiceRestImpl implements GroupServiceRest {
     private Set<Jvm> getJvmsByHostname(String hostName, Set<Jvm> groupJvms) {
         Set<Jvm> jvms;
         if (hostName != null && !hostName.isEmpty()) {
+            String hostIpAddress = JwalaUtils.getHostAddress(hostName);
             LOGGER.debug("got hostname {} deploying template to host jvms only", hostName);
             jvms = new HashSet<>();
             for (Jvm jvm : groupJvms) {
-                if (jvm.getHostName().equalsIgnoreCase(hostName)) {
+                String jvmHostIpAddress = JwalaUtils.getHostAddress(jvm.getHostName());
+                if (jvmHostIpAddress.equalsIgnoreCase(hostIpAddress)) {
                     jvms.add(jvm);
                 }
             }

@@ -1,5 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.group.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -45,6 +46,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +60,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -62,9 +69,11 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
         classes = {GroupServiceImplDeployTest.Config.class})
+@PrepareForTest(JwalaUtils.class )
 public class GroupServiceImplDeployTest {
 
     @Autowired
@@ -88,9 +97,10 @@ public class GroupServiceImplDeployTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws UnknownHostException{
         when(mockAuthUser.getUser()).thenReturn(mockUser);
-
+        PowerMockito.mockStatic(JwalaUtils.class);
+        PowerMockito.when(JwalaUtils.getHostAddress("TestHost")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
         httpdConfDirPath = ApplicationProperties.get("remote.jwala.data.dir") + "/httpd";
         // assertTrue(new File(httpdConfDirPath).mkdirs());
