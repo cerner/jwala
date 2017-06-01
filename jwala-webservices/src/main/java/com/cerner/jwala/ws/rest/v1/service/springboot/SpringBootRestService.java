@@ -25,7 +25,8 @@ public interface SpringBootRestService {
 
     @DELETE
     @Path("/{springBootName}")
-    Response removeSpringBoot(@PathParam("mediaName") String name);
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response removeSpringBoot(JpaSpringBootApp springBoot);
 
     @GET
     @Path("/{springBootName}")

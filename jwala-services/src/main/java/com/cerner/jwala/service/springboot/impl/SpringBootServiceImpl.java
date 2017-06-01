@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.springboot.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.dao.SpringBootAppDao;
 import com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp;
 import com.cerner.jwala.service.repository.RepositoryService;
 import com.cerner.jwala.service.springboot.SpringBootService;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import java.io.BufferedInputStream;
@@ -42,16 +44,19 @@ public class SpringBootServiceImpl implements SpringBootService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringBootServiceImpl.class);
 
     @Override
+    @Transactional
     public JpaSpringBootApp controlSpringBoot(String name, String command) {
         return null;
     }
 
     @Override
+    @Transactional
     public JpaSpringBootApp generateAndDeploy(String name) {
         return null;
     }
 
     @Override
+    @Transactional
     public JpaSpringBootApp createSpringBoot(Map<String, String> springBootDataMap, Map<String, Object> springBootFileDataMap) {
         LOGGER.info("Create Spring Boot service create spring boot data map {} and file data map {}", springBootDataMap, springBootFileDataMap);
 
@@ -63,7 +68,7 @@ public class SpringBootServiceImpl implements SpringBootService {
         final String filename = Paths.get((String) springBootFileDataMap.get("filename")).getFileName().toString();
 
         try {
-            springBootAppDao.findByName(springBootApp.getName());
+            springBootAppDao.find(springBootApp.getName());
             final String msg = MessageFormat.format("Spring Boot already exists with name {0}", springBootApp.getName());
             LOGGER.error(msg);
             throw new SpringBootServiceException(msg);
@@ -79,18 +84,21 @@ public class SpringBootServiceImpl implements SpringBootService {
     }
 
     @Override
+    @Transactional
     public JpaSpringBootApp update(JpaSpringBootApp springBootApp) {
         LOGGER.info("Update Spring Boot service {}", springBootApp);
         return springBootAppDao.update(springBootApp);
     }
 
     @Override
-    public JpaSpringBootApp remove(String name) {
-        LOGGER.info("Spring Boot service remove {}", name);
-        return springBootAppDao.remove(name);
+    @Transactional
+    public void remove(JpaSpringBootApp springBootApp) {
+        LOGGER.info("Spring Boot service remove {}", springBootApp);
+        springBootAppDao.remove(springBootApp);
     }
 
     @Override
+    @Transactional
     public JpaSpringBootApp find(String name) {
         LOGGER.info("Spring Boot find service {}", name);
         return springBootAppDao.find(name);
