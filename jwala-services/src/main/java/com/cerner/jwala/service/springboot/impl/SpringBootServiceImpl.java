@@ -91,10 +91,9 @@ public class SpringBootServiceImpl implements SpringBootService {
     }
 
     @Override
-    @Transactional
-    public void remove(JpaSpringBootApp springBootApp) {
-        LOGGER.info("Spring Boot service remove {}", springBootApp);
-        springBootAppDao.remove(springBootApp);
+    public void remove(String name) {
+        LOGGER.info("Spring Boot service remove {}", name);
+        springBootAppDao.remove(springBootAppDao.find(name));
     }
 
     @Override
