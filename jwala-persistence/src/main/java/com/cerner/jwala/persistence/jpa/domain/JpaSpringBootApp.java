@@ -1,6 +1,5 @@
 package com.cerner.jwala.persistence.jpa.domain;
 
-import com.cerner.jwala.common.domain.model.media.MediaType;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -36,26 +35,46 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
 
     private String archiveFilename;
 
-    private MediaType jdkMedia;
+    private JpaMedia jdkMedia;
 
+    @Override
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<String> getHostName() {
         return hostName;
+    }
+
+    public void setHostName(List<String> hostName) {
+        this.hostName = hostName;
     }
 
     public String getArchiveFilename() {
         return archiveFilename;
     }
 
-    public MediaType getJdkMedia() {
+    public void setArchiveFilename(String archiveFilename) {
+        this.archiveFilename = archiveFilename;
+    }
+
+    public JpaMedia getJdkMedia() {
         return jdkMedia;
     }
 
+    public void setJdkMedia(JpaMedia jdkMedia) {
+        this.jdkMedia = jdkMedia;
+    }
 }
