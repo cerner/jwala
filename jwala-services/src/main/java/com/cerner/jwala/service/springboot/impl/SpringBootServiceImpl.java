@@ -12,6 +12,7 @@ import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.springboot.SpringBootService;
 import com.cerner.jwala.service.springboot.SpringBootServiceException;
+import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +61,18 @@ public class SpringBootServiceImpl implements SpringBootService {
     @Transactional
     public JpaSpringBootApp generateAndDeploy(String name) throws FileNotFoundException {
         final JpaSpringBootApp springBootApp = springBootAppDao.find(name);
-        InputStream templateData = new FileInputStream(new File(ApplicationProperties.getRequired(PropertyKeys.ROGUE_WINDOWS_XML_TEMPLATE)));
-        Scanner scanner = new Scanner(templateData).useDelimiter("\\A");
-        String springBootXmlTemplateContent = scanner.hasNext() ? scanner.next() : "";
+        InputStream templateData = null;
+        try {
+            templateData = new FileInputStream(new File(ApplicationProperties.getRequired(PropertyKeys.ROGUE_WINDOWS_XML_TEMPLATE)));
+            Scanner scanner = new Scanner(templateData).useDelimiter("\\A");
+            String springBootXmlTemplateContent = scanner.hasNext() ? scanner.next() : "";
 
-        String templateContent = resourceContentGeneratorService.generateContent("spring-boot.xml.tpl", springBootXmlTemplateContent, null, new ModelMapper().map(springBootApp, SpringBootApp.class), ResourceGeneratorType.TEMPLATE);
+            String templateContent = resourceContentGeneratorService.generateContent("spring-boot.xml.tpl", springBootXmlTemplateContent, null, new ModelMapper().map(springBootApp, SpringBootApp.class), ResourceGeneratorType.TEMPLATE);
+            LOGGER.info(templateContent);
 
+        } finally {
+            IOUtils.closeQuietly(templateData);
+        }
         return springBootApp;
     }
 
