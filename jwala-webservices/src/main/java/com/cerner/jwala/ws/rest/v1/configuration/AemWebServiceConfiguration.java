@@ -18,6 +18,8 @@ import com.cerner.jwala.service.webserver.WebServerControlService;
 import com.cerner.jwala.service.webserver.WebServerService;
 import com.cerner.jwala.ws.rest.RestServiceErrorHandler;
 import com.cerner.jwala.ws.rest.v1.exceptionmapper.*;
+import com.cerner.jwala.ws.rest.v1.service.git.GitServiceRest;
+import com.cerner.jwala.ws.rest.v1.service.git.impl.GitServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.impl.HistoryServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.response.ApplicationResponse;
 import com.cerner.jwala.ws.rest.v1.response.ResponseMessageBodyWriter;
@@ -144,6 +146,7 @@ public class AemWebServiceConfiguration {
         serviceBeans.add(getV1ResourceServiceRest());
         serviceBeans.add(getV1HistoryServiceRest());
         serviceBeans.add(getV1BalancermanagerServiceRest());
+        serviceBeans.add(getV1GitServiceRest());
 
         return serviceBeans;
     }
@@ -176,6 +179,11 @@ public class AemWebServiceConfiguration {
                 jvmService,
                 jvmControlService
         );
+    }
+
+    @Bean
+    public GitServiceRest getV1GitServiceRest() {
+        return new GitServiceRestImpl();
     }
 
     @Bean
