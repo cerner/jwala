@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -44,7 +45,11 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
     @Override
     public Response generateAndDeploy(String name) {
         LOGGER.info("Generate and deploy Spring Boot {}", name);
-        return ResponseBuilder.ok(springBootService.generateAndDeploy(name));
+        try {
+            return ResponseBuilder.ok(springBootService.generateAndDeploy(name));
+        } catch (FileNotFoundException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+        }
     }
 
     @Override
