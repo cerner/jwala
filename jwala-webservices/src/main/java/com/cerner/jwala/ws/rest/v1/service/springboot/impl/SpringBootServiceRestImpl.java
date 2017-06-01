@@ -17,7 +17,6 @@ import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,11 +71,7 @@ public class SpringBootServiceRestImpl implements SpringBootServiceRest {
                 }
                 final String fieldName = attachment.getDataHandler().getName();
                 if (attachment.getHeader("Content-Type") == null) {
-                    if (fieldName.equalsIgnoreCase("hostNames")) {
-                        String commaSeparatedList = IOUtils.toString(attachment.getDataHandler().getInputStream());
-                        List<String> items = Arrays.asList(commaSeparatedList.split("\\s*,\\s*"));
-                        springBootDataMap.put(fieldName, items);
-                    } else if (fieldName.equalsIgnoreCase("jdkMedia")) {
+                    if (fieldName.equalsIgnoreCase("jdkMedia")) {
                         String mediaId = IOUtils.toString(attachment.getDataHandler().getInputStream());
                         springBootDataMap.put(fieldName, mediaService.find(new Long(mediaId)));
                     } else {

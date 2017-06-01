@@ -7,7 +7,6 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
 
 /**
  * Created by Jlkwison on 6/1/2017
@@ -30,7 +29,7 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
     @Size(min = 2, max = 200, message = "{app.name.length.msg}")
     private String name;
 
-    private List<String> hostNames;
+    private String hostNames;
 
     private String archiveFilename;
 
@@ -53,11 +52,11 @@ public class JpaSpringBootApp  extends AbstractEntity<JpaSpringBootApp> {
         this.name = name;
     }
 
-    public List<String> getHostNames() {
+    public String getHostNames() {
         return hostNames;
     }
 
-    public void setHostNames(List<String> hostName) {
+    public void setHostNames(String hostName) {
         this.hostNames = hostName;
     }
 

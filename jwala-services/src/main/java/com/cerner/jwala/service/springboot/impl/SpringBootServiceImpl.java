@@ -76,7 +76,7 @@ public class SpringBootServiceImpl implements SpringBootService {
 
         final JpaSpringBootApp springBootApp = new JpaSpringBootApp();
         springBootApp.setName((String) springBootDataMap.get("name"));
-        springBootApp.setHostNames((List<String>) springBootDataMap.get("hostNames"));
+        springBootApp.setHostNames((String) springBootDataMap.get("hostNames"));
         springBootApp.setJdkMedia((JpaMedia) springBootDataMap.get("jdkMedia"));
 
         // filename can be the full path or just the name that is why we need to convert it to Paths
