@@ -9,6 +9,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 import java.io.BufferedInputStream;
@@ -21,6 +22,7 @@ import java.util.Map;
 /**
  * Created on 6/1/2017.
  */
+@Service
 public class SpringBootServiceRestImpl implements SpringBootServiceRest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringBootServiceRestImpl.class);
