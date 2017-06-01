@@ -78,6 +78,7 @@ var MainTabs = React.createClass({
         var items = [{title:"Operations", content:<GroupOperations className="group-config"
                                                                    service={ServiceFactory.getGroupService()}
                                                                    statePollTimeout={jwalaVars.statePollTimeout}/>},
+                     {title: "Spring Boot", content:<div>Under Construction...</div>},
                      {title: "Configuration", content:<ConfigureTabs/>,  disabled: !MainArea.isAdminRole},
                      {title: "Admin", content:<AdminTab/>}]
         this.setState({items: items});
@@ -101,6 +102,8 @@ var ConfigureTabs = React.createClass({
         this.state.items.push({title: "Web Apps", content:<WebAppConfig className="webapp-config"
                                        service={ServiceFactory.getWebAppService()}
                                        groupService={ServiceFactory.getGroupService()}/>});
+
+        this.state.items.push({title:"SpringBoot App", content:<SpringBootAppConfig/>});
 
         if (jwalaVars["resourcesEnabled"] === "true") {
             this.state.items.push({title: "Resources", content:<ResourcesConfig resourceService={ServiceFactory.getResourceService()}

@@ -46,6 +46,7 @@
 <script src="public-resources/js/jwala/v1/service/webAppService.js"></script>
 <script src="public-resources/js/jwala/v1/service/jvmService.js"></script>
 <script src="public-resources/js/jwala/v1/service/mediaService.js"></script>
+<script src="public-resources/js/jwala/v1/service/springBootAppService.js"></script>
 <script src="public-resources/js/jwala/v1/service/historyService.js"></script>
 <script src="public-resources/js/jwala/v1/service/serviceFactory.js"></script>
 <script src="public-resources/js/jwala/v1/service/groupControlService.js"></script>
@@ -97,6 +98,7 @@
 <script src="gen-public-resources/js/react/jvm-config.js"></script>
 <script src="gen-public-resources/js/react/group-config.js"></script>
 <script src="gen-public-resources/js/react/MediaConfig.js"></script>
+<script src="gen-public-resources/js/react/SpringBootAppConfig.js"></script>
 <script src="gen-public-resources/js/react/webserver-config.js"></script>
 <script src="gen-public-resources/js/react/WebAppConfig.js"></script>
 <script src="gen-public-resources/js/react/ResourcesConfig.js"></script>

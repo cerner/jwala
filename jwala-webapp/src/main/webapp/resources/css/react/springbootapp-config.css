@@ -1,0 +1,40 @@
+.SpringBootAppConfig {
+    position: relative;
+}
+
+.SpringBootAppConfig > .btnContainer {
+    float: right;
+    margin-bottom: 2px;
+}
+
+.upArrowIconBtn {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.trashIconBtn {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.SpringBootAppConfig label {
+    display: block;
+}
+
+.SpringBootAppConfig form > select {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.SpringBootAppConfig input {
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.uploadMediaBusyIcon {
+    padding: 0 0 0 4px;
+}
+
+.mediaTypeSelect {
+    width: 100%;
+}

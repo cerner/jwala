@@ -44,6 +44,7 @@
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/webserver-config.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/webapp-config.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/media-config.css">
+<link rel="stylesheet" type="text/css" href="public-resources/css/react/springbootapp-config.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/command-status-widget.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/generic-components/default/data-multi-select-box.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/jquery-ui/accordion.css">

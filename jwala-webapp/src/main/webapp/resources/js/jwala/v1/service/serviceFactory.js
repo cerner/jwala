@@ -25,5 +25,8 @@ var ServiceFactory = {
     },
     getMediaService: function () {
         return mediaService;
+    },
+    getSpringBootAppService: function () {
+        return springBootAppService;
     }
 };
