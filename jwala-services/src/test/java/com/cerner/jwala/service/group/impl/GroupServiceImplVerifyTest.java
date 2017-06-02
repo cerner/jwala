@@ -17,6 +17,7 @@ import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
+import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.resource.ResourceService;
@@ -531,6 +532,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         private static JvmService mockJvmService = mock(JvmService.class);
         private static ExecutorService mockExecutorService = mock(ExecutorService.class);
+        private static BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
         private static ResourceService mockResourceService = mock(ResourceService.class);
         private static ApplicationPersistenceService mockApplicationPersistenceService = mock(ApplicationPersistenceService.class);
         private static GroupPersistenceService mockGroupPersistenceService = mock(GroupPersistenceService.class);
@@ -543,6 +545,11 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         @Bean
         public ExecutorService getExecutorService() {
             return mockExecutorService;
+        }
+
+        @Bean
+        public BinaryDistributionLockManager getBinaryDistributionLockManager() {
+            return mockBinaryDistributionLockManager;
         }
 
         @Bean
