@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.group.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -22,6 +23,7 @@ import com.cerner.jwala.common.rule.NameLengthRule;
 import com.cerner.jwala.common.rule.group.GroupNameRule;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
+import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.exception.GroupServiceException;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.jvm.JvmService;
@@ -54,6 +56,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private JvmService jvmService;
+
+    @Autowired
+    private BinaryDistributionLockManager binaryDistributionLockManager;
 
     public GroupServiceImpl(final GroupPersistenceService groupPersistenceService,
                             final ApplicationPersistenceService applicationPersistenceService,
@@ -411,7 +416,13 @@ public class GroupServiceImpl implements GroupService {
                 .setGroupName(groupName)
                 .setWebAppName(application.getName())
                 .build();
-        return resourceService.generateAndDeployFile(resourceIdentifier, application.getName(), fileName, hostName);
+        String lockKey = groupName + application.getName() + fileName + JwalaUtils.getHostAddress(hostName);
+        try{
+            binaryDistributionLockManager.writeLock(lockKey);
+            return resourceService.generateAndDeployFile(resourceIdentifier, application.getName(), fileName, hostName);
+        }finally {
+            binaryDistributionLockManager.writeUnlock(lockKey);
+        }
     }
 
     @Override

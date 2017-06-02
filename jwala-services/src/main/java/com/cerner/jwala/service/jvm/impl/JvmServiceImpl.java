@@ -528,13 +528,14 @@ public class JvmServiceImpl implements JvmService {
 
     private void distributeBinaries(Jvm jvm) {
         final String hostName = jvm.getHostName();
+        final String hostIPAddress = JwalaUtils.getHostAddress(hostName);
         try {
-            binaryDistributionLockManager.writeLock(JwalaUtils.getHostAddress(hostName));
+            binaryDistributionLockManager.writeLock(hostIPAddress);
             binaryDistributionService.distributeUnzip(hostName);
             binaryDistributionService.distributeMedia(jvm.getJvmName(), hostName, jvm.getGroups()
                     .toArray(new Group[jvm.getGroups().size()]), jvm.getJdkMedia());
         } finally {
-            binaryDistributionLockManager.writeUnlock(JwalaUtils.getHostAddress(hostName));
+            binaryDistributionLockManager.writeUnlock(hostIPAddress);
         }
     }
 
