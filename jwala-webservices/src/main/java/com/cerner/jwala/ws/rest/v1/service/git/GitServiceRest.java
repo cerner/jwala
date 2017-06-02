@@ -13,6 +13,8 @@ public interface GitServiceRest {
 
     @POST
     @Path("/clone")
-    Response.Status cloneRepository(@MatrixParam("gitUri") String gitUri, @MatrixParam("path") String path);
+    Response.Status cloneRepository(@MatrixParam("gitUri") String gitUri,
+                                    @MatrixParam("path") String path,
+                                    @MatrixParam("flag") Boolean flag);
 
 }

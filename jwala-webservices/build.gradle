@@ -27,7 +27,12 @@ dependencies {
     compile group: "org.jgroups", name: "jgroups", version: "$project.versions.jgroups"
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '3.5.0.201409260305-r'
 
-	testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
+    compile group: 'org.apache.maven.shared', name: 'maven-invoker', version: '2.1.1'
+
+    compile group: 'org.apache.maven', name: 'maven-embedder', version: '3.0.4'
+
+
+    testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
 
     testCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
 }
