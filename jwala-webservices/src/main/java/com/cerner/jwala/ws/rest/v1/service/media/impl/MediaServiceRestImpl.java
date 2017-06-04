@@ -83,14 +83,14 @@ public class MediaServiceRestImpl implements MediaServiceRest {
         if (MediaType.TOMCAT.getDisplayName().equals(type)) {
             mediaType = MediaType.TOMCAT;
         }
-        LOGGER.info("removeMedia {} by user {}", name, aUser.getUser().getId());
+        LOGGER.info("removeSpringBoot {} by user {}", name, aUser.getUser().getId());
         mediaService.remove(name, mediaType);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     @Override
     public Response getMedia(final Long id, final String mediaName, final AuthenticatedUser aUser) {
-        LOGGER.debug("getMedia with ID {} and name {} by user", id, mediaName, aUser.getUser().getId());
+        LOGGER.debug("findSpringBoot with ID {} and name {} by user", id, mediaName, aUser.getUser().getId());
         if (id == null && StringUtils.isEmpty(mediaName)) {
             return ResponseBuilder.ok(mediaService.findAll());
         } else if (id != null) {

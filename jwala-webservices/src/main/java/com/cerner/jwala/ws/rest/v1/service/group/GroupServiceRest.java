@@ -101,7 +101,7 @@ public interface GroupServiceRest {
     @PUT
     @Path("/{groupName}/webservers/conf/{resourceFileName}")
     Response generateAndDeployGroupWebServersFile(@PathParam("groupName") final String groupName,
-                                                  @PathParam("resourceFileName") @DefaultValue("httpd.conf")final String resourceFileName,
+                                                  @PathParam("resourceFileName") @DefaultValue("httpd.conf") final String resourceFileName,
                                                   @BeanParam final AuthenticatedUser aUser);
 
     @GET
@@ -177,7 +177,8 @@ public interface GroupServiceRest {
 
     /**
      * Controls all groups.
-     * @param jsonControlGroup contains the actual operation to execute e.g. start/stop. Please see {@link JsonControlGroup}.
+     *
+     * @param jsonControlGroup  contains the actual operation to execute e.g. start/stop. Please see {@link JsonControlGroup}.
      * @param authenticatedUser the user who made this control request
      * @return {@link Response}
      */
@@ -207,7 +208,7 @@ public interface GroupServiceRest {
      * Note: The group specified by id will not be included hence the word "Other" in the method name.
      *
      * @param id             the id of the group
-     * @param groupChildType the child type to get details on
+     * @param groupChildType the child type to find details on
      * @return membership details of a group's children
      */
     @GET
@@ -249,6 +250,7 @@ public interface GroupServiceRest {
 
     /**
      * Get hosts of a group.
+     *
      * @param groupName the group's name
      * @return {@link Response} wrapping all the host names of a group
      */
@@ -258,6 +260,7 @@ public interface GroupServiceRest {
 
     /**
      * Return all the unique host names configured for all the groups
+     *
      * @return a list of all the unique host names
      */
     @GET
@@ -266,6 +269,7 @@ public interface GroupServiceRest {
 
     /**
      * Returns the state of a group
+     *
      * @param groupName the name of the group
      * @return state info of a group
      */
@@ -275,6 +279,7 @@ public interface GroupServiceRest {
 
     /**
      * Gets the state info of all groups
+     *
      * @return state info of all groups
      */
     @GET

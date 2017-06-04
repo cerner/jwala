@@ -107,6 +107,7 @@ import java.util.concurrent.ThreadPoolExecutor;
         "com.cerner.jwala.common",
         "com.cerner.jwala.service.impl",
         "com.cerner.jwala.service.media.impl",
+        "com.cerner.jwala.service.springboot.impl",
         "com.cerner.jwala.common.jsch.impl",
         "com.cerner.jwala.service.jvm.impl",
         "com.cerner.jwala.service.jvm.operation.impl",

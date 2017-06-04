@@ -620,7 +620,7 @@ public class WebServerServiceImplTest {
         when(Config.mockWebServerPersistenceService.getWebServer(id)).thenReturn(mockWebServer);
         try {
             wsService.deleteWebServer(id, true, user);
-            fail("Expecting to get a wsServiceException!");
+            fail("Expecting to find a wsServiceException!");
         } catch (final WebServerServiceException e) {
             assertEquals("Please stop web server the-ws-name first before attempting to delete it", e.getMessage());
         }

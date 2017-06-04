@@ -4,6 +4,7 @@ import com.cerner.jwala.common.domain.model.app.Application
 import com.cerner.jwala.common.domain.model.group.Group
 import com.cerner.jwala.common.domain.model.jvm.Jvm
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup
+import com.cerner.jwala.common.domain.model.springboot.SpringBootApp
 import com.cerner.jwala.common.domain.model.webserver.WebServer
 import com.cerner.jwala.common.properties.ApplicationProperties
 import com.cerner.jwala.common.properties.ExternalProperties
@@ -20,6 +21,7 @@ class ResourceFileGenerator {
         WebServer webServer = null
         Jvm jvm = null
         Application webApp = null
+        SpringBootApp springBootApp = null
         String entityInfo
 
         List<Group> groups = resourceGroup.getGroups();
@@ -37,7 +39,10 @@ class ResourceFileGenerator {
             webApp = selectedValue as Application
             jvm = webApp.getParentJvm()
             entityInfo = "WebApp:" + webApp.getName()
+        } else if (selectedValue instanceof SpringBootApp) {
+            springBootApp = selectedValue;
         }
+
         groups.each {
             if (it.getWebServers() != null) {
                 if (webServers == null) {
@@ -66,6 +71,7 @@ class ResourceFileGenerator {
                        webServer : webServer,
                        jvms      : jvms,
                        jvm       : jvm,
+                       springBootApp : springBootApp,
                        webApps   : webApps,
                        webApp    : webApp,
                        groups    : groups,

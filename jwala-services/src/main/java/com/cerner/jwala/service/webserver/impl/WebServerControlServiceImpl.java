@@ -209,7 +209,7 @@ public class WebServerControlServiceImpl implements WebServerControlService {
                     throw new InternalErrorException(FaultType.SERVICE_EXCEPTION, "JvmCommand: " + webServerControlOperation.toString() + " not supported");
             }
             if (DateTime.now().getMillis() - startTime > waitTimeout) {
-                LOGGER.warn("Timeout reached to get the state for webserver: {}", webServer.getName());
+                LOGGER.warn("Timeout reached to find the state for webserver: {}", webServer.getName());
                 break;
             }
             try {

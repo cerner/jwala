@@ -17,6 +17,7 @@
         <class>com.cerner.jwala.persistence.jpa.domain.JpaHistory</class>
         <class>com.cerner.jwala.persistence.jpa.domain.JpaJvm</class>
         <class>com.cerner.jwala.persistence.jpa.domain.JpaWebServer</class>
+        <class>com.cerner.jwala.persistence.jpa.domain.JpaSpringBootApp</class>
         <class>com.cerner.jwala.persistence.jpa.domain.resource.config.template.ConfigTemplate</class>
         <class>com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupAppConfigTemplate</class>
         <class>com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupJvmConfigTemplate</class>

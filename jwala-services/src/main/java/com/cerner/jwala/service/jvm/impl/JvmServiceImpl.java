@@ -182,7 +182,7 @@ public class JvmServiceImpl implements JvmService {
     @Transactional
     public void createDefaultTemplates(final String jvmName, Group parentGroup) {
         final String groupName = parentGroup.getName();
-        // get the group JVM templates
+        // find the group JVM templates
         List<String> templateNames = groupPersistenceService.getGroupJvmsResourceTemplateNames(groupName);
         for (final String templateName : templateNames) {
             String templateContent = getGroupJvmResourceTemplate(groupName, templateName, resourceService.generateResourceGroup(), false);
@@ -202,7 +202,7 @@ public class JvmServiceImpl implements JvmService {
             }
         }
 
-        // get the group App templates
+        // find the group App templates
         templateNames = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName);
         for (String templateName : templateNames) {
             String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, templateName);
@@ -920,7 +920,7 @@ public class JvmServiceImpl implements JvmService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 jvmStateService.updateState(jvm, jvmState, StringUtils.EMPTY);
             } else {
-                // As long as we get a response even if it's not a 200 it means that the JVM is alive
+                // As long as we find a response even if it's not a 200 it means that the JVM is alive
                 jvmStateService.updateState(jvm, jvmState, StringUtils.EMPTY);
                 responseDetails = MessageFormat.format("Request {0} sent expecting a response code of {1} but got {2} instead",
                         jvm.getStatusUri(), HttpStatus.OK.value(), response.getRawStatusCode());

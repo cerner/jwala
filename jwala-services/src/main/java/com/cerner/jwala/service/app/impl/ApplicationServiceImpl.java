@@ -309,7 +309,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 try {
                     ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceTemplateName, app, metaDataStr);
                     if (jvms != null && !jvms.isEmpty() && !metaData.getEntity().getDeployToJvms()) {
-                        // still need to iterate through the JVMs to get the host names
+                        // still need to iterate through the JVMs to find the host names
                         Set<String> hostNames = new HashSet<>();
                         for (Jvm jvm : jvms) {
                             final String host = jvm.getHostName().toLowerCase(Locale.US);
