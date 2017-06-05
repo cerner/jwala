@@ -34,7 +34,7 @@
 # same ServerRoot for multiple httpd daemons, you will need to change at
 # least PidFile.
 #
-ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}"
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -240,8 +240,8 @@ ServerAdmin admin@example.com
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-DocumentRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/htdocs"
-<Directory "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/htdocs">
+DocumentRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/htdocs"
+<Directory "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/htdocs">
     #
     # Possible values for the Options directive are "None", "All",
     # or any combination of:
@@ -357,7 +357,7 @@ LogLevel warn
     # client.  The same rules about trailing "/" apply to ScriptAlias
     # directives as to Alias.
     #
-    ScriptAlias /cgi-bin/ "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/cgi-bin/"
+    ScriptAlias /cgi-bin/ "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/cgi-bin/"
 
 </IfModule>
 
@@ -370,10 +370,10 @@ LogLevel warn
 </IfModule>
 
 #
-# "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/cgi-bin" should be changed to whatever your ScriptAliased
+# "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/cgi-bin" should be changed to whatever your ScriptAliased
 # CGI directory exists, if you have that configured.
 #
-<Directory "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.mediaDir}/cgi-bin">
+<Directory "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/cgi-bin">
     AllowOverride None
     Options None
     Require all granted

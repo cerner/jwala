@@ -6,13 +6,17 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.service.media.MediaService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
+import com.cerner.jwala.ws.rest.v1.service.media.MediaServiceRest;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.activation.DataHandler;
 import javax.ws.rs.core.MultivaluedMap;
@@ -32,13 +36,12 @@ import static org.mockito.Mockito.*;
  * Created by Rahul Sayini on 12/13/2016.
  */
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {MediaServiceRestImplTest.Config.class})
 public class MediaServiceRestImplTest {
 
-    @Mock
-    private MediaService mediaService;
-    @Mock
-    private AuthenticatedUser authenticatedUser;
+    @Autowired
+    private MediaServiceRest mediaServiceRest;
 
     private static final List<JpaMedia> mediaList = createMediaList();
 
@@ -49,24 +52,19 @@ public class MediaServiceRestImplTest {
         ms.setType(MediaType.JDK);
         ms.setLocalPath(Paths.get("c:/java/jdk.zip"));
         ms.setRemoteDir(Paths.get("c:/ctp"));
-        ms.setMediaDir(Paths.get("jdk-1.8"));
+        ms.setRootDir(Paths.get("jdk-1.8"));
         final List<JpaMedia> result = new ArrayList<>();
         result.add(ms);
 
         return result;
     }
 
-    @Mock
-    private MediaServiceRestImpl mediaServiceRest;
-
     private JpaMedia media;
 
     @Before
     public void setUp() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
-        mediaServiceRest = new MediaServiceRestImpl();
-        mediaServiceRest.setMediaService(mediaService);
-        when(authenticatedUser.getUser()).thenReturn(new User("Unused"));
+        when(Config.authenticatedUser.getUser()).thenReturn(new User("Unused"));
 
         media = new JpaMedia();
         media.setId(1L);
@@ -74,44 +72,44 @@ public class MediaServiceRestImplTest {
         media.setType(MediaType.JDK);
         media.setLocalPath(Paths.get("c:/java/jdk.zip"));
         media.setRemoteDir(Paths.get("c:/ctp"));
-        media.setMediaDir(Paths.get("jdk-1.8"));
+        media.setRootDir(Paths.get("jdk-1.8"));
 
-        mediaService = mock(MediaService.class);
+        reset(Config.mediaService);
     }
 
     @Test
     public void testGetAllMedia() {
-        when(mediaService.findAll()).thenReturn(mediaList);
+        when(Config.mediaService.findAll()).thenReturn(mediaList);
 
-        final Response response = mediaServiceRest.getMedia(null, "", authenticatedUser);
+        final Response response = mediaServiceRest.getMedia(null, "", Config.authenticatedUser);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void testGetMediaById() {
-        when(mediaService.find(anyLong())).thenReturn(media);
+        when(Config.mediaService.find(anyLong())).thenReturn(media);
 
-        final Response response = mediaServiceRest.getMedia(1L, "jdk 1.8", authenticatedUser);
+        final Response response = mediaServiceRest.getMedia(1L, "jdk 1.8", Config.authenticatedUser);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void testGetMediaByName() {
-        when(mediaService.find(anyString())).thenReturn(media);
+        when(Config.mediaService.find(anyString())).thenReturn(media);
 
-        final Response response = mediaServiceRest.getMedia(null, "jdk 1.8", authenticatedUser);
+        final Response response = mediaServiceRest.getMedia(null, "jdk 1.8", Config.authenticatedUser);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void testRemoveMedia() {
-        Response response = mediaServiceRest.removeMedia("jdk 1.8", authenticatedUser);
+        Response response = mediaServiceRest.removeMedia("jdk 1.8", "JDK", Config.authenticatedUser);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void testGetMediaTypes() {
-        when(mediaService.getMediaTypes()).thenReturn(MediaType.values());
+        when(Config.mediaService.getMediaTypes()).thenReturn(MediaType.values());
         Response response = mediaServiceRest.getMediaTypes();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
@@ -144,9 +142,31 @@ public class MediaServiceRestImplTest {
 
     @Test
     public void testUpdateMedia() {
-        when(mediaService.update(any(JpaMedia.class))).thenReturn(media);
-        Response response = mediaServiceRest.updateMedia(media, authenticatedUser);
+        when(Config.mediaService.update(any(JpaMedia.class))).thenReturn(media);
+        Response response = mediaServiceRest.updateMedia(media, Config.authenticatedUser);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
+
+    @Configuration
+    static class Config {
+        private static final MediaService mediaService = mock(MediaService.class);
+        private static final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
+
+        @Bean
+        public MediaService getMediaService() {
+            return mediaService;
+        }
+
+        @Bean
+        public MediaServiceRest getMediaServiceRest() {
+            return new MediaServiceRestImpl();
+        }
+
+        @Bean
+        public AuthenticatedUser getAuthenticatedUser() {
+            return authenticatedUser;
+        }
+    }
+
 
 }

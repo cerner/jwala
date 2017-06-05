@@ -7,6 +7,9 @@ sourceCompatibility = 1.8
 dependencies {
     compile project(":jwala-persistence")
     compile project(":jwala-common")
+    compile group: 'org.powermock', name: 'powermock-core', version: '1.6.6'
+    compile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.6'
+    compile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.6'
 
     compile group: "org.springframework", name: "spring-core", version: "$project.versions.spring"
     compile group: "org.springframework", name: "spring-context", version: "$project.versions.spring"

@@ -1,5 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.group.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.group.GroupControlOperation;
@@ -56,13 +57,23 @@ import org.apache.tika.mime.MediaType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.servlet.ServletInputStream;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Inet4Address;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -77,9 +88,13 @@ import static org.mockito.Mockito.*;
 /**
  * Unit test for {@link GroupServiceRestImpl}.
  *
- * @author meleje00
+ * @author Jeff Mahmood
  */
-
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class,
+        classes = {GroupServiceRestImplTest.Config.class})
+@PrepareForTest(JwalaUtils.class )
 public class GroupServiceRestImplTest {
 
     private static final String GROUP_CONTROL_TEST_USERNAME = "groupControlTest";
@@ -167,7 +182,6 @@ public class GroupServiceRestImplTest {
     @Mock
     private ApplicationServiceRest applicationServiceRest;
 
-
     private static List<Group> createGroupList() {
         final Group ws = new Group(Identifier.id(1L, Group.class), name);
         final List<Group> result = new ArrayList<>();
@@ -184,7 +198,8 @@ public class GroupServiceRestImplTest {
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
         when(mockAuthenticatedUser.getUser()).thenReturn(new User(GROUP_CONTROL_TEST_USERNAME));
-
+        PowerMockito.mockStatic(JwalaUtils.class);
+        PowerMockito.when(JwalaUtils.getHostAddress("testHost")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
         when(mockJvm.getJvmName()).thenReturn("jvm1");
         when(mockLiteGroup.getName()).thenReturn("group1");
         liteGroups = new HashSet<>();
@@ -835,6 +850,11 @@ public class GroupServiceRestImplTest {
         public int read() throws IOException {
             return backingStream.read();
         }
+
+    }
+
+    @Configuration
+    static class Config {
 
     }
 }

@@ -1,0 +1,6 @@
+{
+  "templateName": "app.xml.tpl",
+  "contentType": "text/xml",
+  "deployFileName":"app.xml",
+  "deployPath":"/conf"
+}

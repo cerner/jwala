@@ -45,7 +45,7 @@ $.extend({ errorAlert: function (message, dlgTitle, modal, content) {
             }
 
             var detailsHtml = "";
-            if (content && content !== "") {
+            if (Array.isArray(content)) {
                 var showErrorDetails = "$('.showErrorDetails').hide();$('.hideErrorDetails').show();$('.stackTrace').show()";
                 var hideErrorDetails = "$('.showErrorDetails').show();$('.hideErrorDetails').hide();$('.stackTrace').hide()";
                 detailsHtml = "<br><br><div style='width:100%;text-align:left'><button class='showErrorDetails' onClick="

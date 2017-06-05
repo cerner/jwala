@@ -1,5 +1,5 @@
 {
-  "deployPath" : "${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/conf",
+  "deployPath" : "${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf",
   "templateName" : "tomcatUsers.tpl",
   "deployFileName" : "tomcat-users.xml",
   "contentType" : "application/xml",

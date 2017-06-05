@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.app.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -216,6 +217,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
             checkJvmStateBeforeDeploy(jvm, resourceIdentifier);
+            String hostName = jvm.getHostName();
+            Group group = groupPersistenceService.getGroup(groupName);
+            historyFacadeService.write(hostName, group, "Deploying application resource " +
+                    resourceTemplateName, EventType.USER_ACTION_INFO, user.getId());
             return resourceService.generateAndDeployFile(resourceIdentifier, appName + "-" + jvmName, resourceTemplateName, jvm.getHostName());
         } catch (ResourceFileGeneratorException e) {
             LOGGER.error("Fail to generate the resource file {}", resourceTemplateName, e);
@@ -634,7 +639,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     protected List<String> getKeysAndAcquireWriteLock(String appName, List<String> hostNames) {
         List<String> keys = new ArrayList<>();
         for (final String host : hostNames) {
-            final String key = appName + "/" + host;
+            final String key = appName + "/" + JwalaUtils.getHostAddress(host);
             binaryDistributionLockManager.writeLock(key);
             keys.add(key);
         }

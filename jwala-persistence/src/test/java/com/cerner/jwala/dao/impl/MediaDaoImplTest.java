@@ -44,7 +44,7 @@ public class MediaDaoImplTest {
         media.setType(MediaType.JDK);
         media.setLocalPath(Paths.get("c:/java/jdk.zip"));
         media.setRemoteDir(Paths.get("c:/ctp"));
-        media.setMediaDir(Paths.get("jdk-1.8"));
+        media.setRootDir(Paths.get("jdk-1.8"));
         mediaDao.create(media);
         final JpaMedia foundMedia = mediaDao.find("jdk 1.8");
         assertEquals(media, foundMedia);

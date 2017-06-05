@@ -1,6 +1,7 @@
 package com.cerner.jwala.service.jvm.impl;
 
 import com.cerner.jwala.common.FileUtility;
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -61,6 +62,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -186,8 +188,7 @@ public class JvmServiceImpl implements JvmService {
             String templateContent = getGroupJvmResourceTemplate(groupName, templateName, resourceService.generateResourceGroup(), false);
             String metaDataStr = groupPersistenceService.getGroupJvmResourceTemplateMetaData(groupName, templateName);
             try {
-                ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(templateName,
-                        jvmPersistenceService.findJvmByExactName(jvmName), metaDataStr);
+                ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
                 final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
                         .setResourceName(metaData.getDeployFileName())
                         .setJvmName(jvmName)
@@ -414,7 +415,7 @@ public class JvmServiceImpl implements JvmService {
             //
             final String jvmConfigJar = generateJvmConfigJar(jvm);
 
-            // copy the jar file
+            // copy the jar file to the staging area
             secureCopyJvmConfigJar(jvm, jvmConfigJar, user);
 
             // call script to backup and tar the current directory and
@@ -527,13 +528,14 @@ public class JvmServiceImpl implements JvmService {
 
     private void distributeBinaries(Jvm jvm) {
         final String hostName = jvm.getHostName();
+        final String hostIPAddress = JwalaUtils.getHostAddress(hostName);
         try {
-            binaryDistributionLockManager.writeLock(hostName);
+            binaryDistributionLockManager.writeLock(hostIPAddress);
             binaryDistributionService.distributeUnzip(hostName);
-            binaryDistributionService.distributeMedia(jvm.getJvmName(), jvm.getHostName(), jvm.getGroups()
+            binaryDistributionService.distributeMedia(jvm.getJvmName(), hostName, jvm.getGroups()
                     .toArray(new Group[jvm.getGroups().size()]), jvm.getJdkMedia());
         } finally {
-            binaryDistributionLockManager.writeUnlock(hostName);
+            binaryDistributionLockManager.writeUnlock(hostIPAddress);
         }
     }
 
@@ -723,14 +725,15 @@ public class JvmServiceImpl implements JvmService {
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, standardError.isEmpty() ? CommandOutputReturnCode.fromReturnCode(execData.getReturnCode().getReturnCode()).getDesc() : standardError);
         }
 
-        // make sure the start/stop scripts are executable
-        String instancesDir = ApplicationProperties.getRequired(PropertyKeys.REMOTE_PATHS_INSTANCES_DIR);
-        String tomcatDirName = jvm.getTomcatMedia().getMediaDir().toString();
+        final String targetAbsoluteDir =
+                Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' + jvm.getJvmName() + '/' +
+                        jvm.getTomcatMedia().getRootDir().toString() + "/bin").normalize().toString();
 
-        final String targetAbsoluteDir = instancesDir + '/' + jvm.getJvmName() + '/' + tomcatDirName + "/bin";
         if (!jvmControlService.executeCheckFileExistsCommand(jvm, targetAbsoluteDir).getReturnCode().wasSuccessful()) {
             LOGGER.debug("JVM not generated yet.. ");
         }
+
+        // make sure the start/stop scripts are executable
         if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", targetAbsoluteDir, "*.sh").getReturnCode().wasSuccessful()) {
             String message = "Failed to change the file permissions in " + targetAbsoluteDir + " for jvm " + jvm.getJvmName();
             LOGGER.error(message);

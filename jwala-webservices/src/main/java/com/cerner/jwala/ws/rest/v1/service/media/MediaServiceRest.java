@@ -25,8 +25,8 @@ public interface MediaServiceRest {
     Response updateMedia(JpaMedia media, @BeanParam AuthenticatedUser aUser);
 
     @DELETE
-    @Path("/{mediaName}")
-    Response removeMedia(@PathParam("mediaName") String name, @BeanParam AuthenticatedUser aUser);
+    @Path("/{mediaName}/{mediaType}")
+    Response removeMedia(@PathParam("mediaName") String name, @PathParam("mediaType") String type, @BeanParam AuthenticatedUser aUser);
 
     @GET
     Response getMedia(@MatrixParam("id") Long id, @MatrixParam("name") String mediaName, @BeanParam AuthenticatedUser aUser);

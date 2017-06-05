@@ -1,5 +1,5 @@
 {
-  "deployPath" : "${vars.'remote.paths.instances'}/${jvm.jvmName}/apache-tomcat-7.0.55/bin",
+  "deployPath" : "${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/bin",
   "templateName" : "SetenvShTemplate.tpl",
   "deployFileName" : "setenv.sh",
   "contentType" : "text/plain",
