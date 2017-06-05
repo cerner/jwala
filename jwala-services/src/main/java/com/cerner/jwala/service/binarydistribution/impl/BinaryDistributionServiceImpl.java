@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.binarydistribution.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.media.Media;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
@@ -51,15 +53,15 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     @Override
     public void distributeMedia(final String jvmOrWebServerName, final String hostName, Group[] groups, final Media media) {
         LOGGER.info("Deploying {}'s {} to {}", jvmOrWebServerName,  media.getName(), hostName);
-
+        String hostAddressLockKey = JwalaUtils.getHostAddress(hostName);
         final String installPath = media.getRemoteDir().toString();
         if (StringUtils.isEmpty(installPath)) {
             throw new BinaryDistributionServiceException(media.getName() + " installation path cannot be blank!");
         }
 
         try {
-            binaryDistributionLockManager.writeLock(hostName);
-            if (!checkIfMediaDirExists(media.getMediaDir().toString().split(","), hostName, installPath)) {
+            binaryDistributionLockManager.writeLock(hostAddressLockKey);
+            if (!checkIfMediaDirExists(media.getRootDir().toString().split(","), hostName, installPath)) {
                 historyFacadeService.write(hostName, Arrays.asList(groups), "Distribute " + media.getName(), EventType.SYSTEM_INFO,
                         getUserNameFromSecurityContext());
                 distributeBinary(hostName, media.getLocalPath().toString(), installPath, EXCLUDED_FILES);
@@ -68,7 +70,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
             }
             LOGGER.info("{}'s {} successfully deployed to {}", jvmOrWebServerName, media.getName(), hostName);
         } finally {
-            binaryDistributionLockManager.writeUnlock(hostName);
+            binaryDistributionLockManager.writeUnlock(hostAddressLockKey);
         }
     }
 
@@ -120,7 +122,8 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
     @Override
     public void remoteUnzipBinary(final String hostname, final String zipFileName, final String destination, final String exclude) {
         try {
-            if (binaryDistributionControlService.unzipBinary(hostname, zipFileName, destination, exclude).getReturnCode().wasSuccessful()) {
+            if (binaryDistributionControlService.unzipBinary(hostname, Paths.get(zipFileName).normalize().toString(),
+                    destination, exclude).getReturnCode().wasSuccessful()) {
                 LOGGER.info("successfully unzipped the binary {}", zipFileName);
             } else {
                 final String message = "cannot unzip from " + zipFileName + " to " + destination;
@@ -228,7 +231,7 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
      */
     private boolean checkIfMediaDirExists(final String[] mediaDirs, final String hostName, final String binaryDeployDir) {
         for (final String mediaDir : mediaDirs) {
-            if (!remoteFileCheck(hostName, binaryDeployDir + "/" + mediaDir)) {
+            if (!remoteFileCheck(hostName, Paths.get(binaryDeployDir + "/" + mediaDir).normalize().toString())) {
                 return false;
             }
         }
@@ -250,5 +253,4 @@ public class BinaryDistributionServiceImpl implements BinaryDistributionService 
 
         return authentication.getName();
     }
-
 }

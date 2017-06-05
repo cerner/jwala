@@ -9,7 +9,7 @@ import javax.persistence.*;
  * POJO that describes a db table that holds data about a group of application related resource configuration templates.
  */
 @Entity
-@Table(name = "GRP_APP_CONFIG_TEMPLATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"GRP_ID", "TEMPLATE_NAME"})})
+@Table(name = "GRP_APP_CONFIG_TEMPLATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"GRP_ID", "APP_ID", "TEMPLATE_NAME"})})
 @NamedQueries({
         @NamedQuery(name = JpaGroupAppConfigTemplate.GET_GROUP_APP_TEMPLATE_RESOURCE_NAMES,
                 query = "SELECT t.templateName FROM JpaGroupAppConfigTemplate t WHERE LOWER(t.grp.name) = " +

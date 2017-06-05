@@ -19,26 +19,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * POJO that defines a media such as jdk, tomcat application server, apache web server
- *
- * Created by Jedd Cuison on 12/6/2016
+ * POJO that defines a media such as jdk, tomcat application server,  web srve* Creted by Jedd Cuison on 12/6/2016
  */
 @Entity(name = "media")
-@NamedQueries({@NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME, query = "SELECT m FROM media m WHERE m.name = :name")})
+@NamedQueries({@NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME, query = "SELECT m FROM media m WHERE lower(m.name) = lower(:name)"),
+        @NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME_TYPE, query = "SELECT m FROM media m WHERE lower(m.name) = lower(:name) AND m.type = (:type)")})
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JpaMedia extends AbstractEntity<JpaMedia> {
 
     public static final String QUERY_FIND_BY_NAME = "QUERY_FIND_BY_NAME";
+    public static final String QUERY_FIND_BY_NAME_TYPE = "QUERY_FIND_BY_NAME_TYPE";
     public static final String PARAM_NAME = "name";
+    public static final String PARAM_TYPE = "type";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @Size(min=2, max=200, message = "{media.name.length.msg}")
+    @Size(min = 2, max = 200, message = "{media.name.length.msg}")
     private String name;
 
     @Column(nullable = false)
@@ -52,7 +53,7 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
     @ValidPath
     private String remoteDir; // e.g. c:/ctp
 
-    private String mediaDir;  // e.g. tomcat-7.0
+    private String rootDir;  // e.g. tomcat-7.0
 
     public Long getId() {
         return id;
@@ -99,13 +100,13 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
     }
 
     @JsonSerialize(using = PathToStringSerializer.class)
-    public Path getMediaDir() {
-        return StringUtils.isEmpty(mediaDir) ? null : Paths.get(mediaDir);
+    public Path getRootDir() {
+        return StringUtils.isEmpty(rootDir) ? null : Paths.get(rootDir);
     }
 
     @JsonDeserialize(using = StringToPathDeserializer.class)
-    public void setMediaDir(final Path mediaDir) {
-        this.mediaDir = mediaDir.toString();
+    public void setRootDir(final Path rootDir) {
+        this.rootDir = rootDir.toString();
     }
 
     @Override
@@ -135,7 +136,7 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
                 ", type=" + type +
                 ", localPath='" + localPath + '\'' +
                 ", remoteDir='" + remoteDir + '\'' +
-                ", mediaDir='" + mediaDir + '\'' +
+                ", rootDir='" + rootDir + '\'' +
                 '}';
     }
 

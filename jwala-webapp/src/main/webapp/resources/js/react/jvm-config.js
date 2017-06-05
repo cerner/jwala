@@ -475,12 +475,12 @@ var JvmConfigForm = React.createClass({
     onStatusPathFocus: function() {
             if (!this.state.statusPath) {
                 this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-                (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.tomcatImageLogoPath});
+                (window.location.protocol === "https:" ? this.state.httpsPort : this.state.httpPort) + jwalaVars.tomcatImageLogoPath});
             }
     },
     onClickGenerateStatusPath: function() {
         this.setState({statusPath: window.location.protocol + "//" + this.state.host + ":" +
-                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.port) + jwalaVars.tomcatImageLogoPath});
+                    (window.location.protocol === "https:" ? this.state.httpsPort : this.state.httpPort) + jwalaVars.tomcatImageLogoPath});
     },
     onPasswordTextFocus: function() {
         if (this.props.data) {

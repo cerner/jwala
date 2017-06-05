@@ -18,8 +18,8 @@ var mediaService = {
         });
         return serviceFoundation.promisedPut("v1.0/media", "json", JSON.stringify(jsonData));
     },
-    deleteMedia: function(name) {
-        return serviceFoundation.promisedDel("v1.0/media/" + encodeURIComponent(name), "json");
+    deleteMedia: function(name, type) {
+        return serviceFoundation.promisedDel("v1.0/media/" + encodeURIComponent(name) + "/" + encodeURIComponent(type), "json");
     },
     getMediaTypes: function() {
         return serviceFoundation.promisedGet("v1.0/media/types");

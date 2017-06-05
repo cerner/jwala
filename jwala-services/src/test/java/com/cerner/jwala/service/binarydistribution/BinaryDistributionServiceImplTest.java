@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.cerner.jwala.control.AemControl.Properties.UNZIP_SCRIPT_NAME;
@@ -225,7 +226,7 @@ public class BinaryDistributionServiceImplTest {
         final Media mockJdkMedia = mock(Media.class);
         when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getLocalPath()).thenReturn(Paths.get("anyLocalPath"));
-        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getRootDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(unsuccessfulCommandOutout);
         when(Config.mockBinaryDistributionControlService.createDirectory(eq(hostname), anyString())).thenReturn(successfulCommandOutput);
@@ -245,7 +246,7 @@ public class BinaryDistributionServiceImplTest {
         final CommandOutput successfulCommandOutput = new CommandOutput(new ExecReturnCode(0), "SUCCESS", "");
         final Media mockJdkMedia = mock(Media.class);
         when(mockJdkMedia.getRemoteDir()).thenReturn(Paths.get("anywhere"));
-        when(mockJdkMedia.getMediaDir()).thenReturn(Paths.get("anywhere"));
+        when(mockJdkMedia.getRootDir()).thenReturn(Paths.get("anywhere"));
         when(mockJdkMedia.getType()).thenReturn(MediaType.JDK);
         when(Config.mockBinaryDistributionControlService.checkFileExists(anyString(), anyString())).thenReturn(successfulCommandOutput);
 
@@ -260,21 +261,31 @@ public class BinaryDistributionServiceImplTest {
     public void testDistributeMedia() {
         final Media media = new Media();
         media.setName("Apache HTTPD 2.4.20");
-        media.setRemoteDir(Paths.get("c:\\ctp"));
-        media.setMediaDir(Paths.get("apache-httpd-2.4.20"));
-        media.setLocalPath(Paths.get("c:\\downloads\\apache-httpd-2.4.20.zip"));
+        Path remoteDir = Paths.get("c:/opt");
+        Path mediaDir = Paths.get("/apache-httpd-2.4.20");
+        String apacheZipName = "apache-httpd-2.4.20.zip";
+        Path localPath = Paths.get("c:/downloads/" + apacheZipName);
+        String apacheDirName = "apache-httpd-2.4.20";
+        Path remoteApacheDir = Paths.get(remoteDir.normalize().toString() + File.separator + apacheDirName);
+        Path binaryPath = Paths.get(remoteDir.normalize().toString() + File.separator + apacheZipName);
+
+        media.setRemoteDir(remoteDir);
+        media.setRootDir(mediaDir);
+        media.setLocalPath(localPath);
         media.setType(MediaType.APACHE);
         final Group[] groupArray = new Group[1];
         final CommandOutput success = new CommandOutput(new ExecReturnCode(0), null, null);
-        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "/apache-httpd-2.4.20"))
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", mediaDir.normalize().toString()))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", "c:\\ctp"))
+        when(Config.mockBinaryDistributionControlService.createDirectory("localhost", remoteDir.normalize().toString()))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", "c:\\ctp/apache-httpd-2.4.20"))
+        when(Config.mockBinaryDistributionControlService.checkFileExists("localhost", remoteApacheDir.normalize().toString()))
                 .thenReturn(new CommandOutput(new ExecReturnCode(-1), null, null));
-        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost", "c:\\downloads\\apache-httpd-2.4.20.zip", "c:\\ctp"))
+        when(Config.mockBinaryDistributionControlService.secureCopyFile("localhost",
+                localPath.normalize().toString(),
+                remoteDir.normalize().toString()))
                 .thenReturn(success);
-        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", "c:\\ctp/apache-httpd-2.4.20.zip", "c:\\ctp",
+        when(Config.mockBinaryDistributionControlService.unzipBinary("localhost", binaryPath.normalize().toString(), remoteDir.normalize().toString(),
                 BinaryDistributionServiceImpl.EXCLUDED_FILES))
                 .thenReturn(success);
 
@@ -284,6 +295,7 @@ public class BinaryDistributionServiceImplTest {
         verify(Config.historyFacadeService).write(eq("localhost"), anyCollection(), eq("Distribute Apache HTTPD 2.4.20"),
                 eq(EventType.SYSTEM_INFO), anyString());
     }
+
 
     @Test
     public void testPrepareUnzip() throws CommandFailureException {
@@ -364,8 +376,6 @@ public class BinaryDistributionServiceImplTest {
         public static ResourceContentGeneratorService getMockResourceContentGeneratorService() {
             return mockResourceContentGeneratorService;
         }
-
-        ;
 
     }
 

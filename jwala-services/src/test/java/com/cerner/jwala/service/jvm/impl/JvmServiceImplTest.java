@@ -235,7 +235,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testCreateValidateInheritsDefaultTemplatesFromMultipleGroups() {
+    public void testCreateValidateInheritsDefaultTemplatesFromMultipleGroups() throws IOException {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
 
         final CreateJvmRequest createJvmRequest = mock(CreateJvmRequest.class);
@@ -247,6 +247,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         groupSet.add(mockGroup);
         groupSet.add(mockGroup2);
         List<String> templateNames = new ArrayList<>();
+        templateNames.add("server.xml");
         List<String> appTemplateNames = new ArrayList<>();
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", groupSet);
 
@@ -260,6 +261,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(createJvmRequest.getJvmName()).thenReturn("TestJvm");
         when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mock(ResourceTemplateMetaData.class));
+        when(Config.mockGroupPersistenceService.getGroupJvmResourceTemplate(anyString(), anyString())).thenReturn("<Server></Server>");
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -269,7 +272,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
-    @Test(expected = NoResultException.class)
+    @Test(expected = InternalErrorException.class)
     public void testCreateValidateInheritsDefaultTemplatesJvmTemplateThrowsIOException() throws IOException {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
 
@@ -287,7 +290,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockJvmPersistenceService.createJvm(any(CreateJvmRequest.class))).thenReturn(jvm);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
         when(Config.mockResourceService.generateResourceGroup()).thenReturn(mock(ResourceGroup.class));
-        when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenThrow(new IOException("FAIL converting meta data"));
+        when(Config.mockResourceService.getMetaData(anyString())).thenThrow(new IOException());
         when(mockGroup.getName()).thenReturn("mock-group-name");
         when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), anyBoolean(), eq(ResourceGeneratorType.TEMPLATE))).thenReturn("<server>xml</server>");

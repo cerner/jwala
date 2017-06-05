@@ -257,6 +257,8 @@ public class JpaJvmPersistenceServiceImpl implements JvmPersistenceService {
                                                  .setEncryptedPassword(jvm.getEncryptedPassword())
                                                  .setWebApps(webApps)
                                                  .setJavaHome(jvm.getJavaHome())
+                                                 .setTomcatMedia(jvm.getTomcatMedia())
+                                                 .setJdkMedia(jvm.getJdkMedia())
                                                  .build();
             jvmsWithWebApps.add(jvmWithWebApps);
         }

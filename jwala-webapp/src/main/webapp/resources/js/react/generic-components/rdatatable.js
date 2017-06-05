@@ -138,11 +138,12 @@ var RDataTable = React.createClass({
                 }
 
                 // Filter process A
-                if (col.isVisible !== false) {
-                    var tmpStr = $.isNumeric(tmpVal) ? tmpVal.toString() : tmpVal;
+                if (tmpVal && (col.isVisible === undefined || col.isVisible)) {
+                    var tmpStr = tmpVal.toString();
                     if (!hasMatch) {
                         if (self.state.filterVal === "" ||
                             (self.state.filterVal !== "" &&
+                            tmpStr !== undefined &&
                             tmpStr !== null &&
                             tmpStr.toLowerCase().indexOf(self.state.filterVal.toLowerCase()) > -1)) {
                             hasMatch = true;
@@ -497,11 +498,12 @@ var RDataTableFooter = React.createClass({
         var displayedRowCount;
         if (this.props.filterRowCount === this.props.rowCount) {
             displayedRowCount = (this.props.numberOfRowsToDisplay < this.props.rowCount) ? this.props.numberOfRowsToDisplay : this.props.rowCount;
-            countDetailStr = "Showing 1 to " + displayedRowCount + " of " + this.props.rowCount;
+            countDetailStr = displayedRowCount + " of " + this.props.rowCount;
         } else {
             displayedRowCount = (this.props.numberOfRowsToDisplay < this.props.filterRowCount) ? this.props.numberOfRowsToDisplay : this.props.filterRowCount;
-            countDetailStr = "Showing 1 to " + displayedRowCount + " of " + this.props.filterRowCount + " (filtered from " + this.props.rowCount + " total entries)";
+            countDetailStr = displayedRowCount + " of " + this.props.filterRowCount + " (filtered from " + this.props.rowCount + " total entries)";
         }
+        countDetailStr = (displayedRowCount === 0 ? "Showing 0 to " : "Showing 1 to ") + countDetailStr;
 
         var prevClass = "";
         var nextClass = "";
