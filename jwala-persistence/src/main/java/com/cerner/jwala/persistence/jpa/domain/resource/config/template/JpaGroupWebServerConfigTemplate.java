@@ -27,8 +27,8 @@ import javax.persistence.*;
                         "= LOWER(:grpName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupWebServerConfigTemplate.QUERY_DELETE_GRP_WEBSERVER_TEMPLATE, query = "DELETE FROM JpaGroupWebServerConfigTemplate t WHERE t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupWebServerConfigTemplate.GET_GROUP_WEBSERVER_TEMPLATE_RESOURCE_NAME, query =
-                "SELECT t.templateName FROM JpaGroupWebServerConfigTemplate t WHERE LOWER(t.grp.name) = LOWER" +
-                        "(:grpName) and t.templateName = :templateName"),
+                "SELECT t.templateName FROM JpaGroupWebServerConfigTemplate t WHERE LOWER(t.grp.name) = " +
+                        "LOWER(:grpName) and t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupWebServerConfigTemplate.QUERY_DELETE_GROUP_LEVEL_WEBSERVER_RESOURCE_BY_TEMPLATE_GROUP_NAME,
                 query = "DELETE FROM JpaGroupWebServerConfigTemplate t WHERE t.templateName = :templateName AND " +
                         "LOWER(t.grp.name) = LOWER(:grpName)"),

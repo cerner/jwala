@@ -42,8 +42,8 @@ import javax.persistence.*;
                 query = "DELETE FROM JpaApplicationConfigTemplate t WHERE t.templateName IN :templateNameList AND " +
                         "LOWER(t.app.name) = LOWER(:appName) AND LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaApplicationConfigTemplate.QUERY_GET_APP_RESOURCE,
-                query = "SELECT t FROM JpaApplicationConfigTemplate t where LOWER(t.app.name) = LOWER(:appName) and t" +
-                        ".templateName = :templateName and LOWER(t.jvm.name) = LOWER(:jvmName)"),
+                query = "SELECT t FROM JpaApplicationConfigTemplate t where LOWER(t.app.name) = LOWER(:appName) and " +
+                        "t.templateName = :templateName and LOWER(t.jvm.name) = LOWER(:jvmName)"),
 })
 public class JpaApplicationConfigTemplate extends ConfigTemplate {
 

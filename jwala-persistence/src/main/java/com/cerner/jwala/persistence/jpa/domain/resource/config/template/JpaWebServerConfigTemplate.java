@@ -22,8 +22,8 @@ import javax.persistence.*;
                 query = "SELECT t.metaData FROM JpaWebServerConfigTemplate t where LOWER(t.webServer.name) = " +
                         "LOWER(:webServerName) and t.templateName = :templateName"),
         @NamedQuery(name = JpaWebServerConfigTemplate.UPDATE_WEBSERVER_TEMPLATE_CONTENT,
-                query = "UPDATE JpaWebServerConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(t" +
-                        ".webServer.name) = LOWER(:webServerName) AND t.templateName = :templateName"),
+                query = "UPDATE JpaWebServerConfigTemplate t SET t.templateContent = :templateContent WHERE " +
+                        "LOWER(t.webServer.name) = LOWER(:webServerName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaWebServerConfigTemplate.UPDATE_WEBSERVER_TEMPLATE_META_DATA,
                 query = "UPDATE JpaWebServerConfigTemplate t SET t.metaData= :metaData WHERE LOWER(t.webServer.name) " +
                         "= LOWER(:webServerName) AND t.templateName = :templateName"),
@@ -32,8 +32,8 @@ import javax.persistence.*;
                 " t.templateName = :templateName"),
         @NamedQuery(name = JpaWebServerConfigTemplate.QUERY_DELETE_WEB_SERVER_TEMPLATE, query="DELETE FROM JpaWebServerConfigTemplate t WHERE t.templateName = :templateName"),
         @NamedQuery(name = JpaWebServerConfigTemplate.QUERY_DELETE_WEBSERVER_RESOURCE_BY_TEMPLATE_WEBSERVER_NAME,
-                    query="DELETE FROM JpaWebServerConfigTemplate t WHERE t.templateName = :templateName AND LOWER(t" +
-                            ".webServer.name) = LOWER(:webServerName)"),
+                    query="DELETE FROM JpaWebServerConfigTemplate t WHERE t.templateName = :templateName AND " +
+                            "LOWER(t.webServer.name) = LOWER(:webServerName)"),
         @NamedQuery(name = JpaWebServerConfigTemplate.QUERY_GET_WEBSERVER_RESOURCE_TEMPLATES,
                 query = "SELECT t FROM JpaWebServerConfigTemplate t WHERE LOWER(t.webServer.name) = " +
                         "LOWER(:webServerName)"),
@@ -42,11 +42,11 @@ import javax.persistence.*;
                 "LOWER(:webServerName)"),
 
         @NamedQuery(name = JpaWebServerConfigTemplate.QUERY_DELETE_WEBSERVER_RESOURCES_BY_TEMPLATE_NAME_LIST_WEBSERVER_NAME,
-                query="DELETE FROM JpaWebServerConfigTemplate t WHERE t.templateName IN :templateNameList AND LOWER(t" +
-                        ".webServer.name)= LOWER(:webServerName)"),
+                query="DELETE FROM JpaWebServerConfigTemplate t WHERE t.templateName IN :templateNameList AND " +
+                        "LOWER(t.webServer.name)= LOWER(:webServerName)"),
         @NamedQuery(name = JpaWebServerConfigTemplate.QUERY_GET_WEBSERVER_RESOURCE,
-                query = "SELECT t FROM JpaWebServerConfigTemplate t WHERE t.templateName = :templateName AND LOWER(t" +
-                        ".webServer.name) = LOWER(:webServerName)")
+                query = "SELECT t FROM JpaWebServerConfigTemplate t WHERE t.templateName = :templateName AND " +
+                        "LOWER(t.webServer.name) = LOWER(:webServerName)")
         })
 public class JpaWebServerConfigTemplate extends ConfigTemplate {
     public static final String GET_WEBSERVER_RESOURCE_TEMPLATE_NAMES = "getWebServerResourceTemplateNames";

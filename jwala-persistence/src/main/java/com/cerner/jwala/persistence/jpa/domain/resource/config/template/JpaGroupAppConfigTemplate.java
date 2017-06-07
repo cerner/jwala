@@ -21,8 +21,8 @@ import javax.persistence.*;
                 query = "SELECT t.metaData FROM JpaGroupAppConfigTemplate t where LOWER(t.grp.name) = LOWER(:grpName)" +
                         " and t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupAppConfigTemplate.UPDATE_GROUP_APP_TEMPLATE_CONTENT,
-                query = "UPDATE JpaGroupAppConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(t" +
-                        ".grp.name) = LOWER(:grpName) AND LOWER(t.app.name) = LOWER(:appName) AND t.templateName = " +
+                query = "UPDATE JpaGroupAppConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(" +
+                        "t.grp.name) = LOWER(:grpName) AND LOWER(t.app.name) = LOWER(:appName) AND t.templateName = " +
                         ":templateName"),
         @NamedQuery(name = JpaGroupAppConfigTemplate.UPDATE_GROUP_APP_TEMPLATE_META_DATA,
                 query = "UPDATE JpaGroupAppConfigTemplate t SET t.metaData = :metaData WHERE LOWER(t.grp.name) = " +
