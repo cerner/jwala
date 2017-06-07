@@ -15,8 +15,8 @@ import javax.persistence.*;
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_RESOURCE_TEMPLATE_NAMES,
                 query = "SELECT t.templateName FROM JpaJvmConfigTemplate t WHERE LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_TEMPLATE_CONTENT,
-                query = "SELECT t.templateContent FROM JpaJvmConfigTemplate t where LOWER(t.jvm.name) = LOWER" +
-                        "(:jvmName) and t.templateName = :templateName"),
+                query = "SELECT t.templateContent FROM JpaJvmConfigTemplate t where LOWER(t.jvm.name) = " +
+                        "LOWER(:jvmName) and t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.GET_JVM_TEMPLATE_META_DATA,
                 query = "SELECT t.metaData FROM JpaJvmConfigTemplate t where LOWER(t.jvm.name) = LOWER(:jvmName) and " +
                         "t.templateName = :templateName"),
@@ -25,8 +25,8 @@ import javax.persistence.*;
                         "LOWER(:jvmName) AND " +
                         "t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.UPDATE_JVM_TEMPLATE_CONTENT,
-                query = "UPDATE JpaJvmConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(" +
-                        "t.jvm.name) = LOWER(:jvmName) AND t.templateName = :templateName"),
+                query = "UPDATE JpaJvmConfigTemplate t SET t.templateContent = :templateContent WHERE " +
+                        "LOWER(t.jvm.name) = LOWER(:jvmName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_TEMPLATE, query = "DELETE FROM JpaJvmConfigTemplate t WHERE t.templateName = :templateName"),
         @NamedQuery(name = JpaJvmConfigTemplate.QUERY_DELETE_JVM_RESOURCE_BY_TEMPLATE_JVM_NAME, query = "DELETE FROM " +
                 "JpaJvmConfigTemplate t WHERE t.templateName = :templateName AND LOWER(t.jvm.name) = LOWER(:jvmName)"),
