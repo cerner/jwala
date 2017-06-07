@@ -37,8 +37,7 @@ import javax.persistence.*;
                         "LOWER(t.grp.name) = LOWER(:grpName)"),
         @NamedQuery(name = JpaGroupWebServerConfigTemplate.QUERY_GET_GROUP_LEVEL_WEBSERVER_RESOURCE,
                 query = "SELECT t FROM JpaGroupWebServerConfigTemplate t where LOWER(t.grp.name) = LOWER(:grpName) " +
-                        "and t" +
-                        ".templateName = :templateName"),
+                        "and t.templateName = :templateName"),
 })
 public class JpaGroupWebServerConfigTemplate extends ConfigTemplate {
     public static final String GET_GROUP_WEBSERVER_TEMPLATE_RESOURCE_NAMES = "getGroupWebServerTemplateResourcesName";
