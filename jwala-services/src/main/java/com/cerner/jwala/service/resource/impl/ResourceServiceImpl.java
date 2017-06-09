@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.resource.impl;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
@@ -26,6 +27,7 @@ import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.*;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.binarydistribution.DistributionService;
 import com.cerner.jwala.service.exception.ResourceServiceException;
@@ -71,6 +73,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     private BinaryDistributionControlService distributionControlService;
+
+    @Autowired
+    private BinaryDistributionLockManager binaryDistributionLockManager;
 
     @Autowired
     private HistoryFacadeService historyFacadeService;
@@ -884,6 +889,8 @@ public class ResourceServiceImpl implements ResourceService {
         final String badStreamMessage = "Bad Stream: ";
         String metaDataStr;
         ResourceTemplateMetaData resourceTemplateMetaData;
+        String resourceDestPath = null;
+        String hostIPAddress = JwalaUtils.getHostAddress(hostName);
         try {
             validateSingleResourceForGeneration(resourceIdentifier);
             ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
@@ -893,7 +900,10 @@ public class ResourceServiceImpl implements ResourceService {
             String resourceSourceCopy;
             final String deployFileName = resourceTemplateMetaData.getDeployFileName();
             final String deployPath = resourceTemplateMetaData.getDeployPath();
-            String resourceDestPath = deployPath + "/" + deployFileName;
+            resourceDestPath = deployPath + "/" + deployFileName;
+            if(resourceDestPath != null) {
+                binaryDistributionLockManager.writeLock(hostIPAddress + ":" + resourceDestPath);
+            }
 
             if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
                     MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
@@ -923,6 +933,10 @@ public class ResourceServiceImpl implements ResourceService {
             String message = "Failed to copy file " + fileName + ". " + ce.getMessage();
             LOGGER.error(badStreamMessage + message, ce);
             throw new InternalErrorException(FaultType.BAD_STREAM, message, ce);
+        }finally{
+            if(resourceDestPath != null) {
+                binaryDistributionLockManager.writeUnlock(hostIPAddress + ":" + resourceDestPath);
+            }
         }
         return commandOutput;
     }
