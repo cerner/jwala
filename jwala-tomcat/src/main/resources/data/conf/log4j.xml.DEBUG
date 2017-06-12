@@ -7,6 +7,10 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="${log4jproperties.CommonConversionPattern}\t%c{3}\t%m%n" />
         </layout>
+        <layout class="com.cerner.jwala.service.custom.logging.WinSvcPasswordMaskingLayout">
+            <param name="ForClass" value="com.cerner.jwala.common.jsch.impl.JschServiceImpl"/>
+            <param name="ForMethods" value="runExecCommand,getExecRemoteCommandReturnInfo"/>
+        </layout>
     </appender>
 
     <appender name="TRACE_JWALA" class="org.apache.log4j.DailyRollingFileAppender">
@@ -19,6 +23,11 @@
         <!-- specify the layout -->
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%p] [%t] [%c{1}:%L] %m%n" />
+        </layout>
+
+        <layout class="com.cerner.jwala.service.custom.logging.WinSvcPasswordMaskingLayout">
+            <param name="ForClass" value="com.cerner.jwala.common.jsch.impl.JschServiceImpl"/>
+            <param name="ForMethods" value="runExecCommand,getExecRemoteCommandReturnInfo"/>
         </layout>
     </appender>
 
@@ -42,7 +51,6 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="TRACE_JWALA" />
     </root>
-
 
 </log4j:configuration>
 
