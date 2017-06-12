@@ -1,5 +1,6 @@
 package com.cerner.jwala.service.resource;
 
+import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.group.History;
@@ -23,6 +24,7 @@ import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.*;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.binarydistribution.DistributionService;
 import com.cerner.jwala.service.exception.ResourceServiceException;
@@ -43,6 +45,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.verification.Times;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +59,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.*;
+import java.net.Inet4Address;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -68,16 +75,21 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for {@link ResourceService}.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ResourceServiceImplTest.Config.class})
+@PrepareForTest(JwalaUtils.class )
 public class ResourceServiceImplTest {
 
     @Autowired
     private ResourceService resourceService;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception{
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources");
+        PowerMockito.mockStatic(JwalaUtils.class);
+        PowerMockito.when(JwalaUtils.getHostAddress("testServer")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
+        PowerMockito.when(JwalaUtils.getHostAddress("testServer2")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
 
         // It is good practice to start with a clean sheet of paper before each test that is why resourceService is
         // initialized here. This makes sure that unrelated tests don't affect each other.
@@ -1081,6 +1093,7 @@ public class ResourceServiceImplTest {
     static class Config {
         private static final DistributionService mockDistributionService = mock(DistributionService.class);
         private static final BinaryDistributionControlService mockBinaryDistributionControlService = mock(BinaryDistributionControlService.class);
+        private static final BinaryDistributionLockManager mockBinaryDistributionLockManager= mock(BinaryDistributionLockManager.class);
         private static final ResourcePersistenceService mockResourcePersistenceService = mock(ResourcePersistenceService.class);
         private static final GroupPersistenceService mockGroupPesistenceService = mock(GroupPersistenceService.class);
         private static final ApplicationPersistenceService mockAppPersistenceService = mock(ApplicationPersistenceService.class);
@@ -1119,5 +1132,9 @@ public class ResourceServiceImplTest {
             return mockHistoryFacadeService;
         }
 
+        @Bean
+        public BinaryDistributionLockManager getMockBinaryDistributionLockManager(){
+            return mockBinaryDistributionLockManager;
+        }
     }
 }
