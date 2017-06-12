@@ -900,30 +900,29 @@ public class ResourceServiceImpl implements ResourceService {
             String resourceSourceCopy;
             final String deployFileName = resourceTemplateMetaData.getDeployFileName();
             final String deployPath = resourceTemplateMetaData.getDeployPath();
-            resourceDestPath = deployPath + "/" + deployFileName;
-            if(resourceDestPath != null) {
+            if (deployPath != null && deployFileName != null) {
+                resourceDestPath = deployPath + "/" + deployFileName;
                 binaryDistributionLockManager.writeLock(hostIPAddress + ":" + resourceDestPath);
-            }
-
-            if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
-                    MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-                String fileContent = generateConfigFile(selectedValue, fileName);
-                String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
-                resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
-                createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
-            } else {
-                resourceSourceCopy = generateTemplateForNotText(selectedValue, fileName);
-            }
-            //Create resource dir
-            commandOutput = distributionControlService.createDirectory(hostName, deployPath);
-            if (!commandOutput.getReturnCode().wasSuccessful()) {
-                String errorMessage = MessageFormat.format("Failed to create directory {0} while deploying {1} to host {2}", deployPath, fileName, hostName);
-                LOGGER.error(errorMessage);
-                throw new ResourceServiceException(errorMessage);
-            }
-            commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData, selectedValue);
-            if (resourceTemplateMetaData.isUnpack()) {
-                doUnpack(hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
+                if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
+                        MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
+                    String fileContent = generateConfigFile(selectedValue, fileName);
+                    String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
+                    resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
+                    createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
+                } else {
+                    resourceSourceCopy = generateTemplateForNotText(selectedValue, fileName);
+                }
+                //Create resource dir
+                commandOutput = distributionControlService.createDirectory(hostName, deployPath);
+                if (!commandOutput.getReturnCode().wasSuccessful()) {
+                    String errorMessage = MessageFormat.format("Failed to create directory {0} while deploying {1} to host {2}", deployPath, fileName, hostName);
+                    LOGGER.error(errorMessage);
+                    throw new ResourceServiceException(errorMessage);
+                }
+                commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData, selectedValue);
+                if (resourceTemplateMetaData.isUnpack()) {
+                    doUnpack(hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
+                }
             }
         } catch (IOException e) {
             String message = "Failed to write file " + fileName + ". " + e.toString();
@@ -934,7 +933,7 @@ public class ResourceServiceImpl implements ResourceService {
             LOGGER.error(badStreamMessage + message, ce);
             throw new InternalErrorException(FaultType.BAD_STREAM, message, ce);
         }finally{
-            if(resourceDestPath != null) {
+            if (resourceDestPath != null) {
                 binaryDistributionLockManager.writeUnlock(hostIPAddress + ":" + resourceDestPath);
             }
         }
