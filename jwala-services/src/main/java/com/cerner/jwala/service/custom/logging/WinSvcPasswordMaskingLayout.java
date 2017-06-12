@@ -14,6 +14,11 @@ import java.util.*;
  */
 public class WinSvcPasswordMaskingLayout extends PatternLayout {
 
+    private static final String INSTALL_SERVICE_SH = "install-service.sh";
+    private static final String SET_SVC_PASSWORD = "set svc_password=";
+    private static final String MASKED_PWD_1 = " ******** \"";
+    private static final String MASKED_PWD_2 = "set svc_password=********";
+
     private String forClass;
     private Set<String> forMethods; // Search is faster for Set
 
@@ -31,11 +36,11 @@ public class WinSvcPasswordMaskingLayout extends PatternLayout {
         String maskedMsg = StringUtils.EMPTY;
 
         // This layout is specific for svc_password masking therefore the code is straight forward and not generic
-        if (StringUtils.indexOf(msg, "install-service.sh") > 0) {
+        if (StringUtils.indexOf(msg, INSTALL_SERVICE_SH) > 0) {
             int index = msg.lastIndexOf(' ', msg.lastIndexOf(' ') - 1);
-            maskedMsg = msg.substring(0, index) + " ******** \"";
-        } else if (StringUtils.contains(msg, "set svc_password=")) {
-            maskedMsg = "set svc_password=********";
+            maskedMsg = msg.substring(0, index) + MASKED_PWD_1;
+        } else if (StringUtils.contains(msg, SET_SVC_PASSWORD)) {
+            maskedMsg = MASKED_PWD_2;
         }
 
         if (StringUtils.isNotEmpty(maskedMsg)) {
