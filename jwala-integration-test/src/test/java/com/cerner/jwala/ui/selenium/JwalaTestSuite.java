@@ -34,13 +34,13 @@ import java.util.concurrent.TimeUnit;
  *
  * 1. web driver
  *
- *    Chrome:    -DwebDriver=org.openqa.selenium.chrome.ChromeDriver
- *    IE:        -DwebDriver=org.openqa.selenium.ie.InternetExplorerDriver
+ *    Chrome:    -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver
+ *    IE:        -Dwebdriver.class=org.openqa.selenium.ie.InternetExplorerDriver
  *
  * 2. web driver executable
  *
- *    Chrome:    -DwebDriver=org.openqa.selenium.chrome.ChromeDriver
- *    IE:        -Dwebdriver.chrome.driver=C:/selenium/IEDriverServer.exe
+ *    Chrome:    -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+ *    IE:        -Dwebdriver.ie.driver=C:/selenium/IEDriverServer.exe
  *
  * Created by Jedd Cuison on 2/22/2017
  */
@@ -54,12 +54,12 @@ import java.util.concurrent.TimeUnit;
 public class JwalaTestSuite extends TestSuite {
 
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
-    public static final String WEB_DRIVER = "webDriver";
+    public static final String WEB_DRIVER_CLASS = "webdriver.class";
 
     @BeforeClass
     public static void setup() throws IOException, InterruptedException {
         properties = SeleniumTestHelper.getProperties();
-        driver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER));
+        driver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS));
         driver.manage().timeouts().implicitlyWait(Long.parseLong(properties.getProperty(ELEMENT_SEARCH_RENDER_WAIT_TIME)),
                 TimeUnit.SECONDS);
     }
