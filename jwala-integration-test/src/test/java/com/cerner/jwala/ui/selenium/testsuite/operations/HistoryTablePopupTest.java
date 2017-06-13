@@ -21,13 +21,8 @@ public class HistoryTablePopupTest extends JwalaTest {
         clickTab("Configuration");
         clickTab("Operations");
         webDriverWait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//span[text()='Connecting to a web socket...']"), 0));
-        final By openRowBtnLocator = By.xpath("//td[text()='" + GROUP_NAME_1 + "']/preceding-sibling::td");
-        final WebElement openRowBtn = webDriverWait.until(ExpectedConditions.elementToBeClickable(openRowBtnLocator));
-        openRowBtn.click();
-        final By historyPopupBtnLocator =
-                By.xpath("//td[text()='" + GROUP_NAME_1 + "']/parent::tr/following-sibling::tr/td//span[contains(@class, 'ui-icon-newwin')]");
-        final WebElement historyPopupBtn = webDriverWait.until(ExpectedConditions.elementToBeClickable(historyPopupBtnLocator));
-        historyPopupBtn.click();
+        clickWhenReady(By.xpath("//td[text()='" + GROUP_NAME_1 + "']/preceding-sibling::td"));
+        clickWhenReady(By.xpath("//td[text()='" + GROUP_NAME_1 + "']/parent::tr/following-sibling::tr/td//span[contains(@class, 'ui-icon-newwin')]"));
         webDriverWait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//span[contains(@class, 'ui-dialog-title') and text()='Preview']"), 1));
         driver.findElement(By.xpath("//button[@title='close']")).click();
     }

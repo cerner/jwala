@@ -13,26 +13,37 @@ import javax.persistence.*;
 @Table(name = "APP_CONFIG_TEMPLATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"APP_ID", "TEMPLATE_NAME", "JVM_ID"})})
 @NamedQueries({
         @NamedQuery(name = JpaApplicationConfigTemplate.GET_APP_RESOURCE_TEMPLATE_NAMES,
-                query = "SELECT DISTINCT t.templateName FROM JpaApplicationConfigTemplate t WHERE t.app.name = :appName and t.jvm.name = :jvmName"),
+                query = "SELECT DISTINCT t.templateName FROM JpaApplicationConfigTemplate t WHERE LOWER(t.app.name) =" +
+                        " LOWER(:appName) and LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaApplicationConfigTemplate.GET_APP_TEMPLATE_CONTENT,
-                query = "SELECT t.templateContent FROM JpaApplicationConfigTemplate t where t.app.name = :appName and t.templateName = :templateName and t.jvm = :templateJvm"),
+                query = "SELECT t.templateContent FROM JpaApplicationConfigTemplate t where LOWER(t.app.name) = " +
+                        "LOWER(:appName) and t.templateName = :templateName and t.jvm = :templateJvm"),
         @NamedQuery(name = JpaApplicationConfigTemplate.GET_APP_TEMPLATE_META_DATA,
-                query = "SELECT t.metaData FROM JpaApplicationConfigTemplate t where t.app.name = :appName and t.templateName = :templateName and t.jvm = :templateJvm"),
+                query = "SELECT t.metaData FROM JpaApplicationConfigTemplate t where LOWER(t.app.name) = " +
+                        "LOWER(:appName) and t.templateName = :templateName and t.jvm = :templateJvm"),
         @NamedQuery(name = JpaApplicationConfigTemplate.UPDATE_APP_TEMPLATE_CONTENT,
-                query = "UPDATE JpaApplicationConfigTemplate t SET t.templateContent = :templateContent WHERE t.app.name = :appName AND t.templateName = :templateName and t.jvm = :templateJvm"),
+                query = "UPDATE JpaApplicationConfigTemplate t SET t.templateContent = :templateContent WHERE LOWER(" +
+                        "t.app.name) = LOWER(:appName) AND t.templateName = :templateName and t.jvm = " +
+                        ":templateJvm"),
         @NamedQuery(name = JpaApplicationConfigTemplate.UPDATE_APP_TEMPLATE_META_DATA,
-                query = "UPDATE JpaApplicationConfigTemplate t SET t.metaData = :metaData WHERE t.app.name = :appName AND t.templateName = :templateName and t.jvm = :templateJvm"),
+                query = "UPDATE JpaApplicationConfigTemplate t SET t.metaData = :metaData WHERE LOWER(t.app.name) = " +
+                        "LOWER(:appName) AND t.templateName = :templateName and t.jvm = :templateJvm"),
         @NamedQuery(name = JpaApplicationConfigTemplate.GET_APP_TEMPLATE,
-                query = "SELECT t FROM JpaApplicationConfigTemplate t where t.templateName = :tempName and t.app.name = :appName and t.jvm.name = :jvmName"),
+                query = "SELECT t FROM JpaApplicationConfigTemplate t where t.templateName = :tempName and LOWER(" +
+                        "t.app.name) = LOWER(:appName) and LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaApplicationConfigTemplate.QUERY_DELETE_APP_TEMPLATE, query = "DELETE FROM JpaApplicationConfigTemplate t WHERE t.templateName = :templateName"),
         @NamedQuery(name = JpaApplicationConfigTemplate.GET_APP_TEMPLATE_RESOURCE_NAME,
-                query = "SELECT t.templateName FROM JpaApplicationConfigTemplate t WHERE t.app.name = :appName AND t.templateName = :templateName"),
+                query = "SELECT t.templateName FROM JpaApplicationConfigTemplate t WHERE LOWER(t.app.name) = " +
+                        "LOWER(:appName) AND t.templateName = :templateName"),
         @NamedQuery(name = JpaApplicationConfigTemplate.QUERY_DELETE_APP_RESOURCE_BY_TEMPLATE_APP_JVM_NAME,
-                query = "DELETE FROM JpaApplicationConfigTemplate t WHERE t.templateName = :templateName AND t.app.name = :appName AND t.jvm.name = :jvmName"),
+                query = "DELETE FROM JpaApplicationConfigTemplate t WHERE t.templateName = :templateName AND LOWER(" +
+                        "t.app.name) = LOWER(:appName) AND LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaApplicationConfigTemplate.QUERY_DELETE_APP_RESOURCES_BY_TEMPLATE_NAME_LIST_APP_JVM_NAME,
-                query = "DELETE FROM JpaApplicationConfigTemplate t WHERE t.templateName IN :templateNameList AND t.app.name = :appName AND t.jvm.name = :jvmName"),
+                query = "DELETE FROM JpaApplicationConfigTemplate t WHERE t.templateName IN :templateNameList AND " +
+                        "LOWER(t.app.name) = LOWER(:appName) AND LOWER(t.jvm.name) = LOWER(:jvmName)"),
         @NamedQuery(name = JpaApplicationConfigTemplate.QUERY_GET_APP_RESOURCE,
-                query = "SELECT t FROM JpaApplicationConfigTemplate t where t.app.name = :appName and t.templateName = :templateName and t.jvm.name = :jvmName"),
+                query = "SELECT t FROM JpaApplicationConfigTemplate t where LOWER(t.app.name) = LOWER(:appName) and " +
+                        "t.templateName = :templateName and LOWER(t.jvm.name) = LOWER(:jvmName)"),
 })
 public class JpaApplicationConfigTemplate extends ConfigTemplate {
 
