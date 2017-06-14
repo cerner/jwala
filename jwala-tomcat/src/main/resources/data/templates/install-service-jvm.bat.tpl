@@ -1,8 +1,5 @@
 @ECHO ON
 
-set svc_username=%1
-set svc_password=%2
-
 SET JAVA_HOME=${jvm.javaHome}
 SET CATALINA_HOME=${jvm.tomcatMedia.remoteDir}\\${jvm.jvmName}\\${jvm.tomcatMedia.rootDir}
 SET TOMCAT_BIN_DIR=%CATALINA_HOME%\bin
@@ -37,12 +34,12 @@ IF "%ERRORLEVEL%" NEQ "0" (
     EXIT %ERRORLEVEL%"
 )
 
-if %svc_username%=="" goto :no_user
+if %1=="" goto :no_user
 
-if %svc_password%=="" (
-	SC CONFIG ${jvm.jvmName} obj= "%svc_username%"
+if "%2"=="""" (
+	SC CONFIG ${jvm.jvmName} obj= "%1"
 ) else (
-	SC CONFIG ${jvm.jvmName} obj= "%svc_username%" password= "%svc_password%"
+	SC CONFIG ${jvm.jvmName} obj= "%1" password= "%2:^&=&%"
 )
 
 :no_user
