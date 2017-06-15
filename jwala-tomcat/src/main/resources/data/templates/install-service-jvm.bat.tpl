@@ -37,9 +37,9 @@ IF "%ERRORLEVEL%" NEQ "0" (
 if %1=="" goto :no_user
 
 if "%2"=="""" (
-	SC CONFIG ${jvm.jvmName} obj= "%1"
+	SC CONFIG ${jvm.jvmName} obj= "%~1"
 ) else (
-	SC CONFIG ${jvm.jvmName} obj= "%1" password= "%2"
+	SC CONFIG ${jvm.jvmName} obj= "%~1" password= "%2"
 )
 
 :no_user
