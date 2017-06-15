@@ -82,7 +82,6 @@ task deleteDownloadedZip(dependsOn: downloadAndUnzipTomcat, type: Delete) {
 
 task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
     from('src/main/resources') {
-        exclude '**/*.jks'
         filter { it.replaceAll('@@buildVersion@@', "$buildVersion") }
     }
     from('src/main/resources'){
