@@ -84,6 +84,9 @@ task copyConfigurationOverrides(dependsOn: deleteDownloadedZip, type: Copy) {
     from('src/main/resources') {
         filter { it.replaceAll('@@buildVersion@@', "$buildVersion") }
     }
+    from('src/main/resources'){
+        include '**/*.jks'
+    }
 
     from('src/main/resources') {
         include '**/*.sh'
