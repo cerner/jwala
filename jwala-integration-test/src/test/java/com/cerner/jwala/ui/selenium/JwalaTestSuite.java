@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({PreFlightTest.class, LoginTest.class, GroupCreateTest.class, JvmCreateTest.class, WebServerCreateTest.class,
-        AppCreateTest.class, AppSearchTest.class, ResourceTopologyTest.class, UploadResourceTest.class, AddExternalProperty.class,
+        AppCreateTest.class, AppSearchTest.class, ResourceTopologyTest.class, ResourceTest.class, AddExternalProperty.class,
         ModifyExternalPropertyResource.class, DeleteExternalProperty.class, ResourceDeployTest.class, HistoryTablePopupTest.class,
         AppDeleteTest.class, JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class,
         WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, BalancerManagerTest.class,
