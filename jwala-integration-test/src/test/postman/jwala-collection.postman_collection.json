@@ -5970,7 +5970,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/applications/fileExists?filePath=D:\\stp\\app\\webapps\\healthcheck-webapp-1.0.1&hostName={{host}}",
+						"url": "{{url}}/v1.0/applications/fileExists?filePath=D:\\stp\\app\\webapps\\{{HealthCheckWar}}&hostName={{host}}",
 						"method": "GET",
 						"header": [],
 						"body": {
