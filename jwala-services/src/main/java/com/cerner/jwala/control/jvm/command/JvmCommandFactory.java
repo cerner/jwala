@@ -250,20 +250,26 @@ public class JvmCommandFactory {
             encryptedPassword = null;
         }
 
-        final String quotedUsername;
-        if (userName != null && userName.length() > 0) {
-            quotedUsername = "\"" + userName + "\"";
-        } else {
-            quotedUsername = "";
-        }
+        final String quotedUsername = addQuotes(userName);
         final String decryptedPassword = encryptedPassword != null && encryptedPassword.length() > 0 ? new DecryptPassword().decrypt(encryptedPassword) : "";
+        final String quotedPassword = addQuotes(decryptedPassword);
 
         List<String> formatStrings = Arrays.asList(getFullPathScript(jvm, INSTALL_SERVICE_SCRIPT_NAME.getValue()),
                 jvm.getJvmName(), jvm.getTomcatMedia().getRemoteDir().normalize().toString(),
                 jvm.getTomcatMedia().getRootDir().toString());
-        List<String> unformatStrings = Arrays.asList(quotedUsername, decryptedPassword);
+        List<String> unformatStrings = Arrays.asList(quotedUsername, quotedPassword);
 
         return new ExecCommand(formatStrings, unformatStrings);
+    }
+
+    private String addQuotes(String value) {
+        final String quotedValue;
+        if (value != null && value.length() > 0) {
+            quotedValue = "\"" + value + "\"";
+        } else {
+            quotedValue = "";
+        }
+        return quotedValue;
     }
 
     private ExecCommand getExecCommandForDeleteService(Jvm jvm) {
