@@ -31,15 +31,13 @@ import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.WebServerPersistenceService;
-import com.cerner.jwala.service.HistoryFacadeService;
-import com.cerner.jwala.service.HistoryService;
-import com.cerner.jwala.service.MessagingService;
-import com.cerner.jwala.service.VerificationBehaviorSupport;
+import com.cerner.jwala.service.*;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionService;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.group.GroupStateNotificationService;
+import com.cerner.jwala.service.impl.spring.component.JvmWinSvcPwdCollectionServiceImpl;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.jvm.JvmStateService;
@@ -359,7 +357,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(updateJvmRequest.getNewJvmName()).thenReturn("TestJvm");
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
         when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
-
+        when(Config.mockJvmPersistenceService.updateJvm(updateJvmRequest, true)).thenReturn(mockJvm);
         jvmService.updateJvm(updateJvmRequest, true);
 
         verify(updateJvmRequest, times(1)).validate();
@@ -422,6 +420,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(updateJvmRequest.getNewJvmName()).thenReturn(newjvmName);
         when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockJvmPersistenceService.updateJvm(updateJvmRequest, true)).thenReturn(mockJvm);
         jvmService.updateJvm(updateJvmRequest, true);
         verify(updateJvmRequest, times(1)).validate();
         verify(Config.mockJvmPersistenceService, times(1)).updateJvm(updateJvmRequest, true);
@@ -1189,6 +1188,11 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         @Bean
         public static HistoryFacadeService getMockHistoryFacadeService() {
             return mockHistoryFacadeService;
+        }
+
+        @Bean
+        public static CollectionService<String> getJvmWinSvcPwdCollectionService() {
+            return new JvmWinSvcPwdCollectionServiceImpl();
         }
 
         @Bean

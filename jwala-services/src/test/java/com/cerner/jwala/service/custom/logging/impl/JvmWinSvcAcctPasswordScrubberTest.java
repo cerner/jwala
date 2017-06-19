@@ -4,6 +4,7 @@ import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmBuilder;
 import com.cerner.jwala.common.domain.model.ssh.DecryptPassword;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.service.impl.spring.component.JvmWinSvcPwdCollectionServiceImpl;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
@@ -55,7 +56,8 @@ public class JvmWinSvcAcctPasswordScrubberTest {
         when(mockLoggingEvent.getMessage()).thenReturn("install_service user password");
         when(mockLoggingEvent.getLoggerName()).thenReturn("loggerName");
 
-        jvmWinSvcAcctPasswordScrubber = new JvmWinSvcAcctPasswordScrubber(mockJvmPersistenceService, mockDecryptPassword);
+        jvmWinSvcAcctPasswordScrubber = new JvmWinSvcAcctPasswordScrubber(mockJvmPersistenceService, mockDecryptPassword,
+                new JvmWinSvcPwdCollectionServiceImpl());
     }
 
     @Test

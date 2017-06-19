@@ -3,12 +3,14 @@ package com.cerner.jwala.service.custom.logging.impl;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.ssh.DecryptPassword;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.service.CollectionService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -22,19 +24,22 @@ import java.util.*;
 public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
 
     public static final String REPLACEMENT = "********";
-    private final Set<String> toRemove = new HashSet<>();
+    private final CollectionService<String> pwdCollectionService;
     private DecryptPassword decryptor;
     private final String [] includedMethodsArray = {"getExecRemoteCommandReturnInfo", "runExecCommand"};
     private final Set<String> includedMethods = new HashSet<>(Arrays.asList(includedMethodsArray));
 
-    public JvmWinSvcAcctPasswordScrubber(final JvmPersistenceService jvmPersistenceService, final DecryptPassword decryptor) {
+    public JvmWinSvcAcctPasswordScrubber(final JvmPersistenceService jvmPersistenceService,
+                                         final DecryptPassword decryptor,
+                                         final CollectionService pwdCollectionService) {
         this.decryptor = decryptor;
+        this.pwdCollectionService = pwdCollectionService;
 
         // Populate the map of items to remove in the logs
         final List<Jvm> jvms = jvmPersistenceService.getJvms();
         for (final Jvm jvm: jvms) {
             if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
-                toRemove.add(jvm.getEncryptedPassword());
+                this.pwdCollectionService.add(jvm.getEncryptedPassword());
             }
         }
 
@@ -56,7 +61,7 @@ public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
         }
 
         final String msg = event.getMessage().toString();
-        for (final String password : toRemove) {
+        for (final String password : pwdCollectionService.getIterable()) {
             if (StringUtils.isNotEmpty(msg)) {
                 final Throwable throwable =
                         event.getThrowableInformation() != null ? event.getThrowableInformation().getThrowable() : null;
