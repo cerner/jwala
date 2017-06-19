@@ -10,7 +10,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -23,11 +22,13 @@ import java.util.*;
 @Component
 public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
 
-    public static final String REPLACEMENT = "********";
+    private static final String REPLACEMENT = "********";
+    private static final String APPLICABLE_CLASS = "JschServiceImpl";
+    private static final String [] APPLICABLE_METHODS = {"getExecRemoteCommandReturnInfo", "runExecCommand"};
+
     private final CollectionService<String> pwdCollectionService;
-    private DecryptPassword decryptor;
-    private final String [] includedMethodsArray = {"getExecRemoteCommandReturnInfo", "runExecCommand"};
-    private final Set<String> includedMethods = new HashSet<>(Arrays.asList(includedMethodsArray));
+    private final DecryptPassword decryptor;
+    private final Set<String> includedMethods = new HashSet<>(Arrays.asList(APPLICABLE_METHODS));
 
     public JvmWinSvcAcctPasswordScrubber(final JvmPersistenceService jvmPersistenceService,
                                          final DecryptPassword decryptor,
@@ -86,7 +87,7 @@ public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
      * @return true if the event class is excluded from processing
      */
     private boolean isClassExcluded(final LoggingEvent event) {
-        return !"JschServiceImpl".equalsIgnoreCase(event.getLocationInformation().getClassName());
+        return !APPLICABLE_CLASS.equalsIgnoreCase(event.getLocationInformation().getClassName());
     }
 
     /**
