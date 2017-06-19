@@ -31,7 +31,7 @@ public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
 
     public JvmWinSvcAcctPasswordScrubber(final JvmPersistenceService jvmPersistenceService,
                                          final DecryptPassword decryptor,
-                                         final CollectionService pwdCollectionService) {
+                                         final CollectionService<String> pwdCollectionService) {
         this.decryptor = decryptor;
         this.pwdCollectionService = pwdCollectionService;
 
@@ -61,21 +61,24 @@ public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
         }
 
         final String msg = event.getMessage().toString();
-        for (final String password : pwdCollectionService.getIterable()) {
-            if (StringUtils.isNotEmpty(msg)) {
-                final Throwable throwable =
-                        event.getThrowableInformation() != null ? event.getThrowableInformation().getThrowable() : null;
+        synchronized (pwdCollectionService.getIterable()) {
+            for (final String password : pwdCollectionService.getIterable()) {
+                if (StringUtils.isNotEmpty(msg)) {
+                    final Throwable throwable =
+                            event.getThrowableInformation() != null ? event.getThrowableInformation().getThrowable() : null;
 
-                final LoggingEvent scrubbedEvent = new LoggingEvent(event.fqnOfCategoryClass, Logger.getLogger(
-                        event.getLoggerName()), event.timeStamp, event.getLevel(), msg.replaceAll(
-                        decryptor.decrypt(password), REPLACEMENT), throwable);
+                    final LoggingEvent scrubbedEvent = new LoggingEvent(event.fqnOfCategoryClass, Logger.getLogger(
+                            event.getLoggerName()), event.timeStamp, event.getLevel(), msg.replaceAll(
+                            decryptor.decrypt(password), REPLACEMENT), throwable);
 
-                // This scrubber was intended for JVM Windows service installation therefore we can assume that
-                // an event only contains 1 sensitive item to be scrubbed
-                // NOTE: Making this class generic was avoided for performance considerations
-                return super.format(scrubbedEvent);
+                    // This scrubber was intended for JVM Windows service installation therefore we can assume that
+                    // an event only contains 1 sensitive item to be scrubbed
+                    // NOTE: Making this class generic was avoided for performance considerations
+                    return super.format(scrubbedEvent);
+                }
             }
         }
+
         return super.format(event);
     }
 

@@ -1,7 +1,5 @@
 package com.cerner.jwala.service;
 
-import java.util.Iterator;
-
 /**
  * Created by Jedd Cuison on 6/16/2017
  */
