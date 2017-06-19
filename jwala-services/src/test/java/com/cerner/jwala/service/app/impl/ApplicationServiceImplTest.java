@@ -34,7 +34,6 @@ import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.apache.tika.mime.MediaType;
-import org.jgroups.stack.GossipRouter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
