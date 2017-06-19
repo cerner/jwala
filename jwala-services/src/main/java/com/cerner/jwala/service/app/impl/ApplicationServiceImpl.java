@@ -132,18 +132,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser) {
         updateApplicationRequest.validate();
-
+        Application oldApplication = applicationPersistenceService.getApplication(updateApplicationRequest.getId());
         final Application application = applicationPersistenceService.updateApplication(updateApplicationRequest);
-        updateApplicationWarMetaData(updateApplicationRequest, application);
+        updateApplicationWarMetaData(updateApplicationRequest, application, oldApplication);
         return application;
     }
 
-    private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application application) {
+    private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application
+            application, Application oldApplication) {
         final String appWarName = application.getWarName();
         if (!StringUtils.isEmpty(appWarName)) {
             final String appName = application.getName();
             try {
-                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup().getName(), appWarName);
+                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(oldApplication.getGroup
+                        ().getName(), appWarName);
                 ResourceTemplateMetaData originalMetaData = resourceService.getMetaData(originalJsonMetaData);
                 ResourceTemplateMetaData updateMetaData = new ResourceTemplateMetaData(
                         originalMetaData.getTemplateName(),

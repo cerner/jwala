@@ -34,6 +34,7 @@ import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.apache.tika.mime.MediaType;
+import org.jgroups.stack.GossipRouter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -222,11 +223,16 @@ public class ApplicationServiceImplTest {
     @Test
     public void testUpdate() throws IOException {
         when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class))).thenReturn(Config.mockApplication2);
+        Group group =mock(Group.class);
 
         when(Config.mockApplication2.getName()).thenReturn("test-app-name");
         when(Config.mockApplication2.getWarName()).thenReturn("test-war-name");
+        when(Config.mockApplication2.getGroup()).thenReturn(group);
+        when(group.getName()).thenReturn("group1");
 
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData("group1", "test-war-name"))
+                .thenReturn
+                ("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
 
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false, null));
 
