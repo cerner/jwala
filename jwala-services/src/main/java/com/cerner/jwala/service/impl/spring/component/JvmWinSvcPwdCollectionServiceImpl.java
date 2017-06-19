@@ -3,9 +3,8 @@ package com.cerner.jwala.service.impl.spring.component;
 import com.cerner.jwala.service.CollectionService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Created by Jedd Cuison on 6/19/2017
@@ -13,7 +12,7 @@ import java.util.Set;
 @Service
 public class JvmWinSvcPwdCollectionServiceImpl implements CollectionService<String> {
 
-    private Set<String> passwords = Collections.synchronizedSet(new HashSet<>());
+    private Set<String> passwords = new CopyOnWriteArraySet<>();
 
     @Override
     public void add(final String password) {
