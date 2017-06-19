@@ -23,6 +23,8 @@ import java.util.*;
 public class JvmWinSvcAcctPasswordScrubber extends PatternLayout {
 
     private static final String REPLACEMENT = "********";
+
+    // TODO: Make this configurable and applicable to many classes
     private static final String APPLICABLE_CLASS = "JschServiceImpl";
     private static final String [] APPLICABLE_METHODS = {"getExecRemoteCommandReturnInfo", "runExecCommand"};
 
