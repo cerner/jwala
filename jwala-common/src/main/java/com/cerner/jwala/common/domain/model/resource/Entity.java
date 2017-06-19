@@ -2,12 +2,14 @@ package com.cerner.jwala.common.domain.model.resource;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Resource entity that wraps type, group and target
  *
  * Created by Jedd Cuison on 3/30/2016
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Entity {
     private final String type;
     private final String group;
