@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
+import com.cerner.jwala.common.scrubber.ScrubberService;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,9 @@ public class JschServiceImpl implements JschService {
 
     @Autowired
     private GenericKeyedObjectPool<ChannelSessionKey, Channel> channelPool;
+
+    @Autowired
+    private ScrubberService scrubberService;
 
     @Override
     public RemoteCommandReturnInfo runShellCommand(RemoteSystemConnection remoteSystemConnection, String command, long timeout) {
@@ -126,7 +130,7 @@ public class JschServiceImpl implements JschService {
             LOGGER.debug("session connected");
             channel = (ChannelExec) session.openChannel(ChannelType.EXEC.getChannelType());
 
-            LOGGER.debug("Executing command \"{}\"", command);
+            LOGGER.debug("Executing command \"{}\"", scrubberService.scrub(command));
             channel.setCommand(command.getBytes(StandardCharsets.UTF_8));
 
             LOGGER.debug("channel {} connecting...", channel.getId());
@@ -167,7 +171,7 @@ public class JschServiceImpl implements JschService {
     private RemoteCommandReturnInfo getExecRemoteCommandReturnInfo(final ChannelExec channelExec, final long timeout)
             throws IOException, JSchException {
 
-        final String output = readExecRemoteOutput(channelExec, timeout);
+        final String output = scrubberService.scrub(readExecRemoteOutput(channelExec, timeout));
         LOGGER.debug("remote output = {}", output);
 
         String errorOutput = null;
