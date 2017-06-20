@@ -9,7 +9,5 @@ public interface CollectionService<T> {
 
     void remove(T obj);
 
-    Iterable<T> getIterable();
-
     void clear();
 }

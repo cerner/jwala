@@ -181,6 +181,7 @@ public class JvmServiceImpl implements JvmService {
 
         if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
             jvmWinSvcPwdCollectionService.add(jvm.getEncryptedPassword());
+            LOGGER.debug("Added jvm win svc password from password store");
         }
 
         return jvm;
@@ -295,11 +296,13 @@ public class JvmServiceImpl implements JvmService {
         // Remove the jvm Windows service password from the password store
         if (StringUtils.isNotEmpty(originalJvm.getEncryptedPassword())) {
             jvmWinSvcPwdCollectionService.remove(originalJvm.getEncryptedPassword());
+            LOGGER.debug("Removed jvm win svc password from password store");
         }
 
         // Add the jvm Windows service password to the password store
         if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
             jvmWinSvcPwdCollectionService.add(jvm.getEncryptedPassword());
+            LOGGER.debug("Added jvm win svc password from password store");
         }
 
         return jvm;
@@ -366,6 +369,7 @@ public class JvmServiceImpl implements JvmService {
 
         if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
             jvmWinSvcPwdCollectionService.remove(jvm.getEncryptedPassword());
+            LOGGER.debug("Removed jvm win svc password from password store");
         }
     }
 

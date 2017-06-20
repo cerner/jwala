@@ -1192,7 +1192,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 
         @Bean
         public static CollectionService<String> getJvmWinSvcPwdCollectionService() {
-            return new JvmWinSvcPwdCollectionServiceImpl();
+            return new JvmWinSvcPwdCollectionServiceImpl(mockJvmPersistenceService);
         }
 
         @Bean
