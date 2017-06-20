@@ -6,6 +6,7 @@ import com.cerner.jwala.common.exec.RemoteSystemConnection;
 import com.cerner.jwala.common.jsch.JschService;
 import com.cerner.jwala.common.jsch.JschServiceException;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
+import com.cerner.jwala.common.scrubber.ScrubberService;
 import com.jcraft.jsch.*;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.junit.Before;
@@ -122,6 +123,8 @@ public class JschServiceImplTest {
         @SuppressWarnings("unchecked")
         public static final GenericKeyedObjectPool<ChannelSessionKey, Channel> mockPool = mock(GenericKeyedObjectPool.class);
 
+        public static final ScrubberService MOCK_SCRUBBER_SERVICE = mock(ScrubberService.class);
+
         @Bean
         public JSch getMockJsch() {
             return mockJsch;
@@ -130,6 +133,11 @@ public class JschServiceImplTest {
         @Bean
         public static GenericKeyedObjectPool<ChannelSessionKey, Channel> getMockPool() {
             return mockPool;
+        }
+
+        @Bean
+        public ScrubberService getScrubberService() {
+            return MOCK_SCRUBBER_SERVICE;
         }
 
         @Bean
