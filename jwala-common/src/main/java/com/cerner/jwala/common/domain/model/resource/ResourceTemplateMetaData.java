@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * <p>
  * Created by Jedd Cuison on 3/30/2016.
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResourceTemplateMetaData {
     private final String templateName;
 
