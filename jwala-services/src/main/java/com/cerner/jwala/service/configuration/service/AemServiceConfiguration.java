@@ -7,6 +7,7 @@ import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.jvm.JvmState;
+import com.cerner.jwala.common.domain.model.ssh.DecryptPassword;
 import com.cerner.jwala.common.domain.model.ssh.SshConfiguration;
 import com.cerner.jwala.common.domain.model.state.CurrentState;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
@@ -113,7 +114,8 @@ import java.util.concurrent.ThreadPoolExecutor;
         "com.cerner.jwala.control.jvm.command",
         "com.cerner.jwala.control.webserver.command",
         "com.cerner.jwala.commandprocessor.impl.jsch",
-        "com.cerner.jwala.control.command.common"})
+        "com.cerner.jwala.control.command.common",
+        "com.cerner.jwala.service.custom.logging.impl"})
 public class AemServiceConfiguration {
 
     @Autowired
@@ -386,6 +388,11 @@ public class AemServiceConfiguration {
     @Bean
     public JSch getJSch() {
         return new JSch();
+    }
+
+    @Bean
+    public DecryptPassword getDecryptPassword() {
+        return new DecryptPassword();
     }
 
     /**
