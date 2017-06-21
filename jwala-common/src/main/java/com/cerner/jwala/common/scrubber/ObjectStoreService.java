@@ -1,7 +1,7 @@
 package com.cerner.jwala.common.scrubber;
 
 /**
- * Defines a bare minimum collection
+ * Defines the behavior of an object storage system
  *
  * Created by Jedd Cuison on 6/16/2017
  */
