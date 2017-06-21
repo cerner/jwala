@@ -1,10 +1,13 @@
 package com.cerner.jwala.common.scrubber.impl;
 
 import com.cerner.jwala.common.domain.model.ssh.DecryptPassword;
-import com.cerner.jwala.common.scrubber.KeywordSetWrapperService;
+import com.cerner.jwala.common.scrubber.ObjectStoreService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import java.util.concurrent.CopyOnWriteArraySet;
+
 import static org.junit.Assert.*;
 
 import static org.mockito.Mockito.when;
@@ -25,14 +28,19 @@ public class JvmWinSvcAcctPasswordScrubberServiceImplTest {
             "D:/ctp/app/instances apache-tomcat-7.0.55 \"the-user\" ******** \"";
 
     @Mock
+    private ObjectStoreService<String> mockObjectStoreService;
+
+    @Mock
     private DecryptPassword mockDecryptPassword;
 
     @Before
     public void setUp() {
         initMocks(this);
-        KeywordSetWrapperService.copyOnWriteArraySet.clear();
-        KeywordSetWrapperService.copyOnWriteArraySet.add("secret");
-        jvmWinSvcAcctPasswordScrubberService = new JvmWinSvcAcctPasswordScrubberServiceImpl(mockDecryptPassword);
+        final CopyOnWriteArraySet<String> copyOnWriteArraySet = new CopyOnWriteArraySet<>();
+        copyOnWriteArraySet.add("secret");
+        when(mockObjectStoreService.getIterable()).thenReturn(copyOnWriteArraySet);
+        jvmWinSvcAcctPasswordScrubberService = new JvmWinSvcAcctPasswordScrubberServiceImpl(mockObjectStoreService,
+                mockDecryptPassword);
     }
 
     @Test
