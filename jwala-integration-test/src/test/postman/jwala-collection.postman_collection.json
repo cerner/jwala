@@ -393,7 +393,7 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"postman.setEnvironmentVariable(\"GroupId\", jsonData.applicationResponseContent.id.id);",
-									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === \"Postman-Test-Group\";",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === \"{{GroupName}}\";",
 									"tests[\"Successful POST request\"] = responseCode.code === 201;",
 									"",
 									""
@@ -413,7 +413,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "Postman-Test-Group"
+							"raw": "{{GroupName}}"
 						},
 						"description": "create group"
 					},
@@ -603,7 +603,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "Postman-Test-Group"
+							"raw": "{{GroupName}}"
 						},
 						"description": ""
 					},
@@ -1386,7 +1386,7 @@
 								"type": "text/javascript",
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === \"Postman-Test-Group\";",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === \"{{GroupName}}\";",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
@@ -1884,6 +1884,74 @@
 			"description": "",
 			"item": [
 				{
+					"name": "create jvm with ampersand in password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JvmAmpersandId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === \"Postman-test-jvm-ampersand\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"Postman-test-jvm-ampersand\",\"groupIds\":[{\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"10010\",\"httpsPort\":\"10011\",\"redirectPort\":\"10012\",\"shutdownPort\":\"10013\",\"ajpPort\":\"10014\",\"userName\":\"fakename\",\"encryptedPassword\":\"llBdiyrJrA0po7kbpjRwfw==\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create jvm with network service account and no password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JvmNetworkServiceId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === \"Postman-test-jvm-network-service\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"Postman-test-jvm-network-service\",\"groupIds\":[{\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"10020\",\"httpsPort\":\"10021\",\"redirectPort\":\"10022\",\"shutdownPort\":\"10023\",\"ajpPort\":\"10024\",\"userName\":\"NT AUTHORITY\\NETWORK SERVICE\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "generate jvm",
 					"event": [
 						{
@@ -2074,6 +2142,56 @@
 					"request": {
 						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/conf/hct.xml;groupName={{HealthCheckGroup}};jvmName={{HealthCheckJvm}}",
 						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete jvm with ampersand in password after generation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmAmpersandId}}?hardDelete=true",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete jvm with network service account after generation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmNetworkServiceId}}?hardDelete=true",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -2994,7 +3112,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3019,7 +3137,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3139,7 +3257,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -5147,7 +5265,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5186,7 +5304,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
