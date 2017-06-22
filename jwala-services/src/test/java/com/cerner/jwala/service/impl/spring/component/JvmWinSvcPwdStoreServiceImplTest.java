@@ -1,8 +1,8 @@
 package com.cerner.jwala.service.impl.spring.component;
 
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
-import com.cerner.jwala.common.scrubber.KeywordSetWrapperService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -30,7 +30,6 @@ public class JvmWinSvcPwdStoreServiceImplTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        KeywordSetWrapperService.copyOnWriteArraySet.clear();
         final List<Jvm> mockJvms = new ArrayList<>();
         when(mockJvm.getEncryptedPassword()).thenReturn("$#$%#$%$#^&&==");
         mockJvms.add(mockJvm);
@@ -41,18 +40,18 @@ public class JvmWinSvcPwdStoreServiceImplTest {
     @Test
     public void testAdd() throws Exception {
         jvmWinSvcPwdStoreService.add("@@@!!!@@@@!!==");
-        assertEquals(2, KeywordSetWrapperService.copyOnWriteArraySet.size());
+        assertEquals(2, CollectionUtils.size(jvmWinSvcPwdStoreService.getIterable()));
     }
 
     @Test
     public void testRemove() throws Exception {
         jvmWinSvcPwdStoreService.remove("$#$%#$%$#^&&==");
-        assertEquals(0, KeywordSetWrapperService.copyOnWriteArraySet.size());
+        assertEquals(0, CollectionUtils.size(jvmWinSvcPwdStoreService.getIterable()));
     }
 
     @Test
     public void testClear() throws Exception {
         jvmWinSvcPwdStoreService.clear();
-        assertEquals(0, KeywordSetWrapperService.copyOnWriteArraySet.size());
+        assertEquals(0, CollectionUtils.size(jvmWinSvcPwdStoreService.getIterable()));
     }
 }

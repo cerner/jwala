@@ -25,7 +25,7 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
 import com.cerner.jwala.common.request.jvm.*;
-import com.cerner.jwala.common.scrubber.KeywordSetWrapperService;
+import com.cerner.jwala.common.scrubber.ObjectStoreService;
 import com.cerner.jwala.control.AemControl;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.type.EventType;
@@ -1196,7 +1196,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         }
 
         @Bean
-        public static KeywordSetWrapperService getJvmWinSvcPwdCollectionService() {
+        public static ObjectStoreService getJvmWinSvcPwdCollectionService() {
             return new JvmWinSvcPwdStoreServiceImpl(mockJvmPersistenceService);
         }
 
