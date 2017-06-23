@@ -393,7 +393,7 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"postman.setEnvironmentVariable(\"GroupId\", jsonData.applicationResponseContent.id.id);",
-									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === \"Postman-Test-Group\";",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName\");",
 									"tests[\"Successful POST request\"] = responseCode.code === 201;",
 									"",
 									""
@@ -413,7 +413,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "Postman-Test-Group"
+							"raw": "{{GroupName}}"
 						},
 						"description": "create group"
 					},
@@ -443,7 +443,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Postman-Test-JDK-Media",
+									"value": "{{JdkMediaName}}",
 									"type": "text",
 									"enabled": true
 								},
@@ -496,7 +496,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Postman-Test-Apache-HTTPD-Media",
+									"value": "{{ApacheHttpdMediaName}}",
 									"type": "text",
 									"enabled": true
 								},
@@ -549,7 +549,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Postman-Test-Tomcat-Media",
+									"value": "{{TomcatMediaName}}",
 									"type": "text",
 									"enabled": true
 								},
@@ -603,7 +603,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "Postman-Test-Group"
+							"raw": "{{GroupName}}"
 						},
 						"description": ""
 					},
@@ -620,7 +620,7 @@
 									"tests[\"Status code is 201\"] = responseCode.code === 201;",
 									"var jsonData = JSON.parse(responseBody);",
 									"postman.setEnvironmentVariable(\"JvmId\", jsonData.applicationResponseContent.id.id);",
-									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === \"Postman-test-jvm\";"
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === postman.getEnvironmentVariable(\"JvmName\");"
 								]
 							}
 						}
@@ -637,7 +637,41 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+							"raw": "{\"jvmName\":\"{{JvmName}}\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create jvm with network service account and no password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JvmNetworkServiceId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === postman.getEnvironmentVariable(\"JvmName\") + \"-network-service\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"{{JvmName}}-network-service\",\"groupIds\":[{\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"10020\",\"httpsPort\":\"10021\",\"redirectPort\":\"10022\",\"shutdownPort\":\"10023\",\"ajpPort\":\"10024\",\"userName\":\"NT AUTHORITY\\\\NETWORK SERVICE\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
 						"description": ""
 					},
@@ -1386,7 +1420,7 @@
 								"type": "text/javascript",
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === \"Postman-Test-Group\";",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName\");",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
@@ -2082,6 +2116,31 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "delete jvm with network service account after generation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmNetworkServiceId}}?hardDelete=true",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		},
@@ -2192,7 +2251,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":{{JdkMediaId}},\"name\":\"Postman-Test-JDK-Media-update\",\"type\":\"JDK\",\"remoteDir\":\"{{mediaRemoteDir}}\"}"
+							"raw": "{\"id\":{{JdkMediaId}},\"name\":\"{{JdkMediaName}}-update\",\"type\":\"JDK\",\"remoteDir\":\"{{mediaRemoteDir}}\"}"
 						},
 						"description": ""
 					},
@@ -2717,7 +2776,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "Postman-test-jvm"
+							"raw": "{{JvmName}}"
 						},
 						"description": ""
 					},
@@ -2994,7 +3053,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3019,7 +3078,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3139,7 +3198,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"Postman-Test-Group\",\r\n    \"target\" : \"Postman-Test-Group\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n  \"templateName\" : \"server.xml.tpl\",\r\n  \"deployFileName\" : \"server.xml\",\r\n  \"contentType\" : \"application/xml\",\r\n  \"hotDeploy\":false,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_JVMS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -4743,7 +4802,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":{{JvmId}},\"systemProperties\":\"\",\"jvmName\":\"Postman-test-jvm\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
+							"raw": "{\"jvmId\":{{JvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
 						},
 						"description": ""
 					},
@@ -5147,7 +5206,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5186,7 +5245,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"Postman-Test-Group\",\r\n                \"target\":\"Postman-Test-Group\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5900,7 +5959,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm-delete\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+							"raw": "{\"jvmName\":\"{{JvmName}}-delete\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
 						"description": ""
 					},
@@ -5920,7 +5979,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/services/v2.0/jvms/Postman-test-jvm-delete",
+						"url": "{{url}}/services/v2.0/jvms/{{JvmName}}-delete",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6129,7 +6188,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-JDK-Media-update/JDK",
+						"url": "{{url}}/v1.0/media/{{JdkMediaName}}-update/JDK",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6179,7 +6238,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-Tomcat-Media/Apache%20Tomcat",
+						"url": "{{url}}/v1.0/media/{{TomcatMediaName}}/Apache%20Tomcat",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6204,7 +6263,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media/Postman-Test-Apache-HTTPD-Media/Apache%20HTTPD",
+						"url": "{{url}}/v1.0/media/{{ApacheHttpdMediaName}}/Apache%20HTTPD",
 						"method": "DELETE",
 						"header": [],
 						"body": {
