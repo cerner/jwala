@@ -346,7 +346,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Map<String, Future<CommandOutput>> futures = new HashMap<>();
         try {
             FileCopyUtils.copy(applicationWar, tempWarFile);
-            final String destPath = ApplicationProperties.get("remote.jwala.webapps.dir");
+            final String destPath = getWarDeployPath(application);
             for (String hostName : hostNames) {
                 Future<CommandOutput> commandOutputFuture = executeCopyCommand(application, tempWarFile, destPath, null, hostName);
                 futures.put(hostName, commandOutputFuture);
@@ -371,6 +371,23 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (tempWarFile.exists()) {
                 tempWarFile.delete();
             }
+        }
+    }
+
+    private String getWarDeployPath(Application application) {
+        String appWarName = application.getWarName();
+        ResourceIdentifier appWarResourceId = new ResourceIdentifier.Builder()
+                .setResourceName(appWarName)
+                .setWebAppName(application.getName())
+                .setGroupName(application.getGroup().getName())
+                .build();
+        String metaData = resourceService.getResourceContent(appWarResourceId).getMetaData();
+        try {
+            return resourceService.getTokenizedMetaData(appWarName, application, metaData).getDeployPath();
+        } catch (IOException e) {
+            String messageErr = MessageFormat.format("Failed to generate the war meta data for {0}", application);
+            LOGGER.error(messageErr);
+            throw new ApplicationServiceException(messageErr);
         }
     }
 
