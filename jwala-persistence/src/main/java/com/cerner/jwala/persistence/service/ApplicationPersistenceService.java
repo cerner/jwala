@@ -59,9 +59,10 @@ public interface ApplicationPersistenceService {
      * @param appName the application name
      * @param warName the war name
      * @param warPath the war path
+     * @param warDeployPath the deploy path of the war as defined in the meta data
      * @return number of rows updated
      */
-    Application updateWarInfo(String appName, String warName, String warPath);
+    Application updateWarInfo(String appName, String warName, String warPath, String warDeployPath);
 
     /**
      * Sets the application's war name and path to null.

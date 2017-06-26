@@ -598,7 +598,7 @@ public class ResourceServiceImpl implements ResourceService {
 
         if (MediaType.APPLICATION_ZIP.equals(metaData.getContentType()) &&
                 metaData.getTemplateName().toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
-            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getTemplateName(), templateContent);
+            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getTemplateName(), templateContent, metaData.getDeployPath());
         }
         final String deployFileName = metaData.getDeployFileName();
 
