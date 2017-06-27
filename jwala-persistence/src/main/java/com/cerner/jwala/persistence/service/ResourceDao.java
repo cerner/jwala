@@ -210,6 +210,11 @@ public interface ResourceDao {
      */
     void updateResource(ResourceIdentifier resourceIdentifier, EntityType entityType, String templateContent);
 
-        void updateResourceGroup(JpaApplication aplication, JpaGroup jpaGroup);
+    /**
+     *Update the group of the resources related to an application
+     * @param application the JpaApplication
+     * @param jpaGroup    the new group to be used to update
+     */
+    void updateResourceGroup(JpaApplication application, JpaGroup jpaGroup);
 }
 

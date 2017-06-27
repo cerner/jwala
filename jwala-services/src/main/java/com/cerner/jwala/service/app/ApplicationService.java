@@ -36,7 +36,7 @@ public interface ApplicationService {
      * @param user
      * @return
      */
-    public Application updateApplication(UpdateApplicationRequest anAppToUpdate, User user);
+    public Application updateApplication(UpdateApplicationRequest anAppToUpdate, User user) throws Exception;
 
     /**
      * Create Application

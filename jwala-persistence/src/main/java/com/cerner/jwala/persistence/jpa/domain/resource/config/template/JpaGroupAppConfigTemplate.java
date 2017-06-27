@@ -59,8 +59,6 @@ public class JpaGroupAppConfigTemplate extends ConfigTemplate {
 
     public static final String QUERY_PARAM_GRP_NAME = "grpName";
     public static final String QUERY_PARAM_APP_NAME = "appName";
-    public static final String QUERY_PARAM_APP_ID = "appId";
-    public static final String QUERY_PARAM_GRP_ID = "grpId";
     public static final String QUERY_PARAM_TEMPLATE_NAME = "templateName";
     public static final String QUERY_PARAM_TEMPLATE_NAME_LIST = "templateNameList";
     public static final java.lang.String QUERY_APP_RESOURCE_NAMES = "getAppResourceNames";

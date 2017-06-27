@@ -205,7 +205,7 @@ public class ApplicationServiceRestImplTest {
      * Testing: {@link com.cerner.jwala.ws.rest.v1.service.app.ApplicationServiceRest#updateApplication(JsonUpdateApplication, AuthenticatedUser)}
      */
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws Exception {
         when(Config.service.updateApplication(any(UpdateApplicationRequest.class), any(User.class))).thenReturn(Config.newlyCreatedApp);
         ArrayList<UpdateApplicationRequest> multiUpdate = new ArrayList<>();
         multiUpdate.add(new UpdateApplicationRequest(Identifier.id(0L, Application.class), Identifier.id(0L, Group.class), "", "", true, true, false));

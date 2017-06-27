@@ -255,11 +255,11 @@ public class JpaJvm extends AbstractEntity<JpaJvm> {
     }
 
     private String getGroupNames(List<JpaGroup> groups) {
-        String string="";
+        String groupNames="";
         for(JpaGroup group: groups){
-            string = string + group.getName();
+            groupNames = groupNames +" ,"+ group.getName();
         }
-        return string;
+        return groupNames;
     }
 
 

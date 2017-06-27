@@ -142,9 +142,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     @Override
-    public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser) {
+    public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser)
+            throws Exception{
         updateApplicationRequest.validate();
-        Application oldApplication = applicationPersistenceService.getApplication(updateApplicationRequest.getId());
         final Application application = applicationPersistenceService.updateApplication(updateApplicationRequest);
 
         String appName = application.getName();
@@ -154,9 +154,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<Long> idList = new ArrayList<>();
         idList.add(id);
         List<JpaGroup> jpaGroups = groupPersistenceService.findGroups(idList);
-        if (jpaGroups.size() > 0) {
+        if (jpaGroups.size() == 1) {
             JpaApplication jpaApp = applicationPersistenceService.getJpaApplication(appName);
             resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
+        }
+        else {
+            throw new Exception("One Jpa Group expected for the application.");
         }
 
         updateApplicationWarMetaData(updateApplicationRequest, application);

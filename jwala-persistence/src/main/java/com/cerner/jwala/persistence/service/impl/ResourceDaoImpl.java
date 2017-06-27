@@ -249,7 +249,6 @@ public class ResourceDaoImpl implements ResourceDao {
     }
 
 
-
     @Override
     public void updateResourceGroup(JpaApplication jpaApplication, JpaGroup jpaGroup) {
         final Query q = em.createNamedQuery(JpaGroupAppConfigTemplate.UPDATE_RESOURCE_GROUP);
@@ -265,7 +264,8 @@ public class ResourceDaoImpl implements ResourceDao {
         }
 
         if (numEntitities == 0) {
-            throw new ResourceTemplateUpdateException(jpaApplication, jpaGroup);
+            throw new ResourceTemplateUpdateException(jpaApplication, jpaGroup, "Non-zero entities expected but got " +
+                    "zero");
         }
     }
 

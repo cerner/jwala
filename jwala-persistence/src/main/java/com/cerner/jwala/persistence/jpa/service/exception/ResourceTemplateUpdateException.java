@@ -29,12 +29,29 @@ public class ResourceTemplateUpdateException extends RuntimeException {
         super(resourceName + " of " + entityName + " update failed!", t);
     }
 
-    /*
-    * @param resourceName
-    * @Param JpaGroup
+
+    /**
+     * Exception wrapper for resource template update failures.
+     *
+     * @param application
+     * @param group
      */
-    public ResourceTemplateUpdateException(final JpaApplication application, final JpaGroup group){
-        super("Resource update for group "+group.getName()+" of application "+ application.getName()+" failed.");
+    public ResourceTemplateUpdateException(final JpaApplication application, final JpaGroup group) {
+        super("Resource update for group " + group.getName() + " of application " + application.getName() + " failed.");
+    }
+
+
+    /**
+     * Exception wrapper for resource template update failures.
+     *
+     * @param application
+     * @param group
+     * @param message
+     */
+    public ResourceTemplateUpdateException(final JpaApplication application, final JpaGroup group, final String
+            message) {
+        super("Resource update for group " + group.getName() + " of application " + application.getName() + " failed" +
+                ". "+ message);
     }
 
 

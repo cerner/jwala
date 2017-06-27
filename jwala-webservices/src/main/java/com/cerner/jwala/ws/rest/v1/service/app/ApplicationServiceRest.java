@@ -39,7 +39,7 @@ public interface ApplicationServiceRest {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     Response updateApplication(final JsonUpdateApplication appsToUpdate,
-                               @BeanParam final AuthenticatedUser aUser);
+                               @BeanParam final AuthenticatedUser aUser) throws Exception;
 
     @DELETE
     @Path("/{applicationId}")

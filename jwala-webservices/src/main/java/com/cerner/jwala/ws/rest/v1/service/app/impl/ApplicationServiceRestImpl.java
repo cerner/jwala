@@ -92,7 +92,8 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
     }
 
     @Override
-    public Response updateApplication(final JsonUpdateApplication anAppToUpdate, final AuthenticatedUser aUser) {
+    public Response updateApplication(final JsonUpdateApplication anAppToUpdate, final AuthenticatedUser aUser)
+            throws Exception {
         LOGGER.info("Update Application requested: {}", anAppToUpdate);
         try {
             Application updated = service.updateApplication(anAppToUpdate.toUpdateCommand(), aUser.getUser());
