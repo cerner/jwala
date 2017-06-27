@@ -228,6 +228,8 @@ public class ApplicationServiceImplTest {
         when(Config.mockApplication2.getWarName()).thenReturn("test-war-name");
         when(Config.mockApplication2.getGroup()).thenReturn(group);
         when(group.getName()).thenReturn("group1");
+        long id = 22;
+        when(group.getId()).thenReturn(new Identifier<Group>(id));
 
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData("group1", "test-war-name"))
                 .thenReturn

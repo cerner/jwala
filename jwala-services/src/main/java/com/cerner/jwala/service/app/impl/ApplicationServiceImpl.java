@@ -18,12 +18,21 @@ import com.cerner.jwala.common.request.app.CreateApplicationRequest;
 import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.control.AemControl;
+import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
+import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupAppConfigTemplate;
+import com.cerner.jwala.persistence.jpa.service.ApplicationCrudService;
+import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
+import com.cerner.jwala.persistence.jpa.service.impl.ApplicationCrudServiceImpl;
+import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.ResourceDao;
+import com.cerner.jwala.persistence.service.impl.JpaGroupPersistenceServiceImpl;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
@@ -33,6 +42,7 @@ import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.template.exception.ResourceFileGeneratorException;
+import com.healthmarketscience.jackcess.complex.ComplexValue;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
@@ -70,6 +80,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     BinaryDistributionControlService distributionControlService;
+
+    @Autowired
+    ResourceDao resourceDao;
 
     private final ResourceService resourceService;
 
@@ -134,17 +147,31 @@ public class ApplicationServiceImpl implements ApplicationService {
         updateApplicationRequest.validate();
         Application oldApplication = applicationPersistenceService.getApplication(updateApplicationRequest.getId());
         final Application application = applicationPersistenceService.updateApplication(updateApplicationRequest);
-        updateApplicationWarMetaData(updateApplicationRequest, application, oldApplication);
+
+        String appName = application.getName();
+        Identifier<Group> newGroupId = application.getGroup().getId();
+        Long id = newGroupId.getId();
+
+        List<Long> idList = new ArrayList<>();
+        idList.add(id);
+        List<JpaGroup> jpaGroups = groupPersistenceService.findGroups(idList);
+        if (jpaGroups.size() > 0) {
+            JpaApplication jpaApp = applicationPersistenceService.getJpaApplication(appName);
+            resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
+        }
+
+        updateApplicationWarMetaData(updateApplicationRequest, application);
+
         return application;
     }
 
     private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application
-            application, Application oldApplication) {
+            application) {
         final String appWarName = application.getWarName();
         if (!StringUtils.isEmpty(appWarName)) {
             final String appName = application.getName();
             try {
-                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(oldApplication.getGroup
+                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup
                         ().getName(), appWarName);
                 ResourceTemplateMetaData originalMetaData = resourceService.getMetaData(originalJsonMetaData);
                 ResourceTemplateMetaData updateMetaData = new ResourceTemplateMetaData(

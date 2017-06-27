@@ -242,7 +242,7 @@ public class JpaJvm extends AbstractEntity<JpaJvm> {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", hostName='" + hostName + '\'' +
-                ", groups=" + groups +
+                ", groups=" + getGroupNames(groups) +
                 ", httpPort=" + httpPort +
                 ", httpsPort=" + httpsPort +
                 ", redirectPort=" + redirectPort +
@@ -253,6 +253,15 @@ public class JpaJvm extends AbstractEntity<JpaJvm> {
                 ", userName='" + (userName == null ? "<null>" : userName) + '\'' +
                 '}';
     }
+
+    private String getGroupNames(List<JpaGroup> groups) {
+        String string="";
+        for(JpaGroup group: groups){
+            string = string + group.getName();
+        }
+        return string;
+    }
+
 
     public JpaMedia getJdkMedia() {
         return jdkMedia;
