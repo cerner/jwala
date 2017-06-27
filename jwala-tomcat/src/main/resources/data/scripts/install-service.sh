@@ -25,7 +25,7 @@ if $cygwin; then
     exit $JWALA_EXIT_CODE_FAILED
   fi
 
-  $2/$1/$3/bin/install-service.bat "$4" "$5"
+  $2/$1/$3/bin/install-service.bat "$4" "${5//&/^&}"
   export EXIT_CODE=$?
   if [ "$EXIT_CODE" -ne "0" ]; then
     /usr/bin/echo Failed to install service $1

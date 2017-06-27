@@ -7,7 +7,7 @@ var resourceService = {
             return serviceFoundation.promisedPost("v1.0/resources/template/", "json", formData, null, true);
         }
         var matrixParam = this.createMatrixParam(groupName, webServerName, jvmName, webAppName);
-        return serviceFoundation.promisedPost("v1.0/resources/" + deployFilename + matrixParam, "json", formData, null, true, true);
+        return serviceFoundation.promisedPost("v1.0/resources/" + encodeURIComponent(deployFilename) + matrixParam, "json", formData, null, true, true);
     },
     deleteAllResource: function(resourceName) {
         return serviceFoundation.del("v1.0/resources/template/" + resourceName);

@@ -23,6 +23,7 @@ import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
 import com.cerner.jwala.common.request.jvm.*;
+import com.cerner.jwala.common.scrubber.ObjectStoreService;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaJvmConfigTemplate;
 import com.cerner.jwala.persistence.jpa.service.exception.NonRetrievableResourceTemplateContentException;
@@ -91,6 +92,9 @@ public class JvmServiceImpl implements JvmService {
 
     @Autowired
     private WebServerPersistenceService webServerPersistenceService;
+
+    @Autowired
+    private ObjectStoreService objectStoreService;
 
     public JvmServiceImpl(final JvmPersistenceService jvmPersistenceService,
                           final GroupPersistenceService groupPersistenceService,
@@ -173,6 +177,11 @@ public class JvmServiceImpl implements JvmService {
                 LOGGER.warn("Multiple groups were associated with the JVM, but the JVM was created using the templates from group "
                         + parentGroup.getName());
             }
+        }
+
+        if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
+            objectStoreService.add(jvm.getEncryptedPassword());
+            LOGGER.debug("Added jvm win svc password from password store");
         }
 
         return jvm;
@@ -282,7 +291,21 @@ public class JvmServiceImpl implements JvmService {
 
         addJvmToGroups(updateJvmRequest.getAssignmentCommands());
 
-        return jvmPersistenceService.updateJvm(updateJvmRequest, updateJvmPassword);
+        final Jvm jvm = jvmPersistenceService.updateJvm(updateJvmRequest, updateJvmPassword);
+
+        // Remove the jvm Windows service password from the password store
+        if (StringUtils.isNotEmpty(originalJvm.getEncryptedPassword())) {
+            objectStoreService.remove(originalJvm.getEncryptedPassword());
+            LOGGER.debug("Removed jvm win svc password from password store");
+        }
+
+        // Add the jvm Windows service password to the password store
+        if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
+            objectStoreService.add(jvm.getEncryptedPassword());
+            LOGGER.debug("Added jvm win svc password from password store");
+        }
+
+        return jvm;
     }
 
     private void validateUpdateJvm(UpdateJvmRequest updateJvmRequest) {
@@ -343,6 +366,11 @@ public class JvmServiceImpl implements JvmService {
         }
 
         jvmPersistenceService.removeJvm(id);
+
+        if (StringUtils.isNotEmpty(jvm.getEncryptedPassword())) {
+            objectStoreService.remove(jvm.getEncryptedPassword());
+            LOGGER.debug("Removed jvm win svc password from password store");
+        }
     }
 
     @Override
