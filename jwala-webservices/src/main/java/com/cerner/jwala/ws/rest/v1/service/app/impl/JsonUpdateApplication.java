@@ -17,16 +17,18 @@ public class JsonUpdateApplication {
     private String webappContext;
     private boolean secure;
     private boolean loadBalanceAcrossServers;
+    private String warDeployPath;
 
     public JsonUpdateApplication() {
     }
 
-    public JsonUpdateApplication(Long groupId, String name,
-                                 String webappContext,
-                                 Long webappId,
-                                 boolean secure,
-                                 boolean loadBalanceAcrossServers,
-                                 boolean unpackWar) {
+    public JsonUpdateApplication(final Long groupId, String name,
+                                 final String webappContext,
+                                 final Long webappId,
+                                 final boolean secure,
+                                 final boolean loadBalanceAcrossServers,
+                                 final boolean unpackWar,
+                                 final String warDeployPath) {
         this.groupId = groupId;
         this.webappId = webappId;
         this.name = name;
@@ -34,12 +36,13 @@ public class JsonUpdateApplication {
         this.secure = secure;
         this.loadBalanceAcrossServers = loadBalanceAcrossServers;
         this.unpackWar = unpackWar;
+        this.warDeployPath = warDeployPath;
     }
 
     public UpdateApplicationRequest toUpdateCommand() {
         return new UpdateApplicationRequest(
                 Identifier.id(webappId, Application.class),
-                Identifier.id(groupId, Group.class), webappContext, name, secure, loadBalanceAcrossServers, unpackWar);
+                Identifier.id(groupId, Group.class), webappContext, name, secure, loadBalanceAcrossServers, unpackWar, warDeployPath);
     }
 
     public Long getWebappId() {
@@ -122,7 +125,9 @@ public class JsonUpdateApplication {
                 getWebappContext(),
                 getWebappId(),
                 isSecure(),
-                isLoadBalanceAcrossServers(), isUnpackWar());
+                isLoadBalanceAcrossServers(),
+                isUnpackWar(),
+                getWarDeployPath());
     }
 
     @Override
@@ -137,10 +142,13 @@ public class JsonUpdateApplication {
     public boolean isUnpackWar() {
         return unpackWar;
     }
-    
-    /* test code:
-     * assertEquals(testJua,testJua.clone())
-     * assertEquals(testJua.hashCode(),testJua.clone().hashCode())
-     */
 
+    public String getWarDeployPath() {
+        return warDeployPath;
+    }
+
+    public void setWarDeployPath(String warDeployPath) {
+        this.warDeployPath = warDeployPath;
+    }
+    
 }

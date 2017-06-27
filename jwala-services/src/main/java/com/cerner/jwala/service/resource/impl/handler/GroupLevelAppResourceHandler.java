@@ -180,6 +180,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
         final String appName = application.getName();
         try {
             warMetaData = new ObjectMapper().readValue(jsonMetaData, ResourceTemplateMetaData.class);
+            final String deployPath = resourceName.toLowerCase().endsWith(".war") ? warMetaData.getDeployPath() : application.getWarDeployPath();
             applicationPersistenceService.updateApplication(new UpdateApplicationRequest(
                     application.getId(),
                     application.getGroup().getId(),
@@ -187,7 +188,8 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
                     appName,
                     application.isSecure(),
                     application.isLoadBalanceAcrossServers(),
-                    warMetaData.isUnpack()
+                    warMetaData.isUnpack(),
+                    deployPath
             ));
         } catch (IOException e) {
             final String errorMsg = MessageFormat.format("Failed to parse meta data for war {0} in application {1} during an update of the meta data", resourceName, appName);

@@ -49,7 +49,7 @@ public class JpaApplicationPersistenceServiceImpl implements ApplicationPersiste
     }
 
     @Override
-    public Application updateApplication(UpdateApplicationRequest updateApplicationRequest) {
+    public Application updateApplication(final UpdateApplicationRequest updateApplicationRequest) {
         final JpaApplication jpaOriginal = applicationCrudService.getExisting(updateApplicationRequest.getId());
         final JpaGroup jpaGroup = groupCrudService.getGroup(updateApplicationRequest.getNewGroupId());
         final JpaApplication jpaApp = applicationCrudService.updateApplication(updateApplicationRequest, jpaOriginal, jpaGroup);

@@ -89,7 +89,7 @@ public class ApplicationServiceRestImplTest {
 
     @Test
     public void testJsonSettersGetters() {
-        JsonUpdateApplication testJua = new JsonUpdateApplication(2L, "name", "/ctx", 1L, true, true, false);
+        JsonUpdateApplication testJua = new JsonUpdateApplication(2L, "name", "/ctx", 1L, true, true, false, "c:/war/deplpy/path");
         JsonCreateApplication testJca = new JsonCreateApplication(2L, "name", "/ctx", true, true, false);
         assertEquals(testJca, testJca.clone());
         assertEquals(testJua, testJua.clone());
@@ -207,7 +207,7 @@ public class ApplicationServiceRestImplTest {
     public void testUpdate() {
         when(Config.service.updateApplication(any(UpdateApplicationRequest.class), any(User.class))).thenReturn(Config.newlyCreatedApp);
         ArrayList<UpdateApplicationRequest> multiUpdate = new ArrayList<>();
-        multiUpdate.add(new UpdateApplicationRequest(Identifier.id(0L, Application.class), Identifier.id(0L, Group.class), "", "", true, true, false));
+        multiUpdate.add(new UpdateApplicationRequest(Identifier.id(0L, Application.class), Identifier.id(0L, Group.class), "", "", true, true, false, "c:/war/deplpy/path"));
         JsonUpdateApplication jsonUpdateAppRequest = new JsonUpdateApplication();
         Response resp = applicationServiceRestInterface.updateApplication(jsonUpdateAppRequest, Config.authenticatedUser);
         assertNotNull(resp.getEntity());
