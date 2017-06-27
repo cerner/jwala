@@ -42,7 +42,6 @@ import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.template.exception.ResourceFileGeneratorException;
-import com.healthmarketscience.jackcess.complex.ComplexValue;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;

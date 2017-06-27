@@ -44,9 +44,7 @@ import javax.persistence.*;
                         "LOWER(t.app.name) = LOWER(:appName) and t.templateName = :templateName"),
         @NamedQuery(name = JpaGroupAppConfigTemplate.UPDATE_RESOURCE_GROUP,
                 query = "UPDATE JpaGroupAppConfigTemplate t SET t.grp = :grp WHERE t.app = " +
-                        ":app"
-
-        )
+                        ":app")
 })
 public class JpaGroupAppConfigTemplate extends ConfigTemplate {
     public static final String GET_GROUP_APP_TEMPLATE_RESOURCE_NAMES = "getGroupAppTemplateResourceNames";
