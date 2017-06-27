@@ -222,7 +222,7 @@ public class ApplicationServiceImplTest {
     @Test
     public void testUpdate() throws IOException {
         when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class))).thenReturn(Config.mockApplication2);
-        Group group =mock(Group.class);
+        Group group = mock(Group.class);
 
         when(Config.mockApplication2.getName()).thenReturn("test-app-name");
         when(Config.mockApplication2.getWarName()).thenReturn("test-war-name");
