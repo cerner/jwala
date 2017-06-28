@@ -151,14 +151,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         Identifier<Group> newGroupId = application.getGroup().getId();
         Long id = newGroupId.getId();
 
-        List<Long> idList = new ArrayList<>();
-        idList.add(id);
+        List<Long> idList = Collections.singletonList(id);
         List<JpaGroup> jpaGroups = groupPersistenceService.findGroups(idList);
         if (jpaGroups.size() == 1) {
             JpaApplication jpaApp = applicationPersistenceService.getJpaApplication(appName);
             resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
-        }
-        else {
+        } else {
             throw new ApplicationServiceException("One Jpa Group expected for the application.");
         }
 

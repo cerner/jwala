@@ -3,6 +3,9 @@ package com.cerner.jwala.persistence.jpa.service.exception;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 
+
+import java.text.MessageFormat;
+
 /**
  * Created by Jedd Cuison on 8/28/2015.
  */
@@ -35,9 +38,11 @@ public class ResourceTemplateUpdateException extends RuntimeException {
      *
      * @param application
      * @param group
+     * @param t
      */
-    public ResourceTemplateUpdateException(final JpaApplication application, final JpaGroup group) {
-        super("Resource update for group " + group.getName() + " of application " + application.getName() + " failed.");
+    public ResourceTemplateUpdateException(final JpaApplication application, final JpaGroup group, final Throwable t) {
+        super(MessageFormat.format("Resource update for group {0} of application {1} failed.",group.getName(),
+                application.getName()),t);
     }
 
 
@@ -50,8 +55,8 @@ public class ResourceTemplateUpdateException extends RuntimeException {
      */
     public ResourceTemplateUpdateException(final JpaApplication application, final JpaGroup group, final String
             message) {
-        super("Resource update for group " + group.getName() + " of application " + application.getName() + " failed" +
-                ". "+ message);
+        super(MessageFormat.format("Resource update for group {0} of application {1} failed {2}", group
+                .getName(), application.getName(), message));
     }
 
 

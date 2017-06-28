@@ -259,8 +259,8 @@ public class ResourceDaoImpl implements ResourceDao {
         try {
             numEntitities = q.executeUpdate();
 
-        } catch (RuntimeException re) {
-            throw new ResourceTemplateUpdateException(jpaApplication, jpaGroup);
+        } catch (RuntimeException runtimeException) {
+            throw new ResourceTemplateUpdateException(jpaApplication, jpaGroup, runtimeException);
         }
 
         if (numEntitities == 0) {
