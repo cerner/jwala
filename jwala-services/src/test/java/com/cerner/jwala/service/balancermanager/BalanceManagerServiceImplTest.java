@@ -31,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -501,5 +502,22 @@ public class BalanceManagerServiceImplTest {
     public void testDrainUserJvmMultiApp() throws Exception {
 
 
+    }
+
+    /*
+    * To make sure jwala can parse different versions of apache httpd balancer manager html page
+    * */
+    @Test
+    public void testFindBalancers(){
+        final String testString = "<h3>LoadBalancer Status for <a href='/balancer-manager?b=lb-health-check-4.0&amp;nonce=0d72ebfa-3476-df48-aa89-008c9e7ad89b'>balancer://lb-health-check-4.0</a> [pb616726e_lb_health_check_4_0]</h3>\n" +
+                "\n" +
+                "<h3>LoadBalancer Status for <a href=\"/balancer-manager?b=lb-health-check-4.1&nonce=b63797ed-18be-0d4c-8e80-98b8d04d6f1e\">balancer://lb-health-check-4.1</a> [p921348eb_lb_health_check_4_1]</h3>";
+        BalancerManagerHtmlParser balancerManagerHtmlParser = new BalancerManagerHtmlParser();
+        Map<String, String> balancers = balancerManagerHtmlParser.findBalancers(testString);
+        assertTrue(balancers.size() == 2);
+        Map<String, String> expectedBalancers = new HashMap<>();
+        expectedBalancers.put("lb-health-check-4.0","0d72ebfa-3476-df48-aa89-008c9e7ad89b");
+        expectedBalancers.put("lb-health-check-4.1","b63797ed-18be-0d4c-8e80-98b8d04d6f1e");
+        assertTrue(balancers.equals(expectedBalancers));
     }
 }
