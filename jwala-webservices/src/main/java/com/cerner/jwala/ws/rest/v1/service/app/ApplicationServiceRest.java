@@ -4,6 +4,7 @@ import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import com.cerner.jwala.ws.rest.v1.service.app.impl.JsonCreateApplication;
 import com.cerner.jwala.ws.rest.v1.service.app.impl.JsonUpdateApplication;
@@ -39,7 +40,7 @@ public interface ApplicationServiceRest {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     Response updateApplication(final JsonUpdateApplication appsToUpdate,
-                               @BeanParam final AuthenticatedUser aUser) throws Exception;
+                               @BeanParam final AuthenticatedUser aUser) throws ApplicationServiceException;
 
     @DELETE
     @Path("/{applicationId}")

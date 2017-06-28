@@ -12,6 +12,7 @@ import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
+import com.cerner.jwala.service.exception.ApplicationServiceException;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ApplicationService {
      * @param user
      * @return
      */
-    public Application updateApplication(UpdateApplicationRequest anAppToUpdate, User user) throws Exception;
+    public Application updateApplication(UpdateApplicationRequest anAppToUpdate, User user) throws ApplicationServiceException;
 
     /**
      * Create Application

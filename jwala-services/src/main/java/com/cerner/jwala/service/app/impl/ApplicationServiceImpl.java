@@ -143,7 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     @Override
     public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser)
-            throws Exception{
+            throws ApplicationServiceException{
         updateApplicationRequest.validate();
         final Application application = applicationPersistenceService.updateApplication(updateApplicationRequest);
 
@@ -159,7 +159,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
         }
         else {
-            throw new Exception("One Jpa Group expected for the application.");
+            throw new ApplicationServiceException("One Jpa Group expected for the application.");
         }
 
         updateApplicationWarMetaData(updateApplicationRequest, application);

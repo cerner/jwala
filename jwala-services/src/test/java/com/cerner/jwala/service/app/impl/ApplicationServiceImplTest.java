@@ -222,7 +222,7 @@ public class ApplicationServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() throws ApplicationServiceException,IOException {
             when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class)))
                     .thenReturn(Config.mockApplication2);
         Group group = mock(Group.class);

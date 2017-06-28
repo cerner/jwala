@@ -4,6 +4,7 @@ import com.cerner.jwala.common.domain.model.jvm.JvmState;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "jvm", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
@@ -255,11 +256,7 @@ public class JpaJvm extends AbstractEntity<JpaJvm> {
     }
 
     private String getGroupNames(List<JpaGroup> groups) {
-        String groupNames="";
-        for(JpaGroup group: groups){
-            groupNames = groupNames +" ,"+ group.getName();
-        }
-        return groupNames;
+        return groups.stream().map(JpaGroup::getName).collect(Collectors.joining(","));
     }
 
 
