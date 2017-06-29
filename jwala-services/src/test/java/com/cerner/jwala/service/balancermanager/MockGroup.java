@@ -97,8 +97,7 @@ public class MockGroup {
                 true,
                 false,
                 false,
-                "myWarName",
-                "myWarDeployPath");
+                "myWarName");
         List<Jvm> jvmsList = new LinkedList<>();
         for (Jvm jvm : jvms) {
             jvmsList.add(jvm);
@@ -120,8 +119,7 @@ public class MockGroup {
                 true,
                 false,
                 false,
-                "myWarName",
-                "myWarDeployPath");
+                "myWarName");
         List<Jvm> jvmsList = new LinkedList<>();
         for (Jvm jvm : jvms) {
             jvmsList.add(jvm);
@@ -142,8 +140,7 @@ public class MockGroup {
                 true,
                 false,
                 false,
-                "myWarName",
-                "myWarDeployPath");
+                "myWarName");
         applications.add(application);
         return applications;
     }

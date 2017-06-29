@@ -17,8 +17,7 @@ public class JpaAppBuilder {
                 jpaApp.isSecure(),
                 jpaApp.isLoadBalanceAcrossServers(),
                 jpaApp.isUnpackWar(),
-                jpaApp.getWarName(),
-                jpaApp.getWarDeployPath());
+                jpaApp.getWarName());
 
     }
 }

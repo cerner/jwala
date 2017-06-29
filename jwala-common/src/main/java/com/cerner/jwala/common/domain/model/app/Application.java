@@ -30,8 +30,6 @@ public class Application implements Serializable {
 
     private String warName;
 
-    private String warDeployPath;
-
     private List<Jvm> jvms;
 
     private Jvm parentJvm;
@@ -43,9 +41,7 @@ public class Application implements Serializable {
                        Group aGroup,
                        boolean secure,
                        boolean loadBalanceAcrossServers,
-                       boolean unpackWar,
-                       String warName,
-                       String warDeployPath) {
+                       boolean unpackWar, String warName) {
         group = aGroup;
         id = anId;
         webAppContext = aWebAppContext;
@@ -55,7 +51,6 @@ public class Application implements Serializable {
         this.loadBalanceAcrossServers = loadBalanceAcrossServers;
         this.unpackWar = unpackWar;
         this.warName = warName;
-        this.warDeployPath = warDeployPath;
     }
 
     public Group getGroup() {
@@ -146,14 +141,6 @@ public class Application implements Serializable {
         this.parentJvm = parentJvm;
     }
 
-    public String getWarDeployPath() {
-        return warDeployPath;
-    }
-
-    public void setWarDeployPath(String warDeployPath) {
-        this.warDeployPath = warDeployPath;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -176,7 +163,6 @@ public class Application implements Serializable {
                 .append(name, that.name)
                 .append(warPath, that.warPath)
                 .append(warName, that.warName)
-                .append(warDeployPath, that.warDeployPath)
                 .append(jvms, that.jvms)
                 .append(parentJvm, that.parentJvm)
                 .isEquals();
@@ -194,7 +180,6 @@ public class Application implements Serializable {
                 .append(loadBalanceAcrossServers)
                 .append(unpackWar)
                 .append(warName)
-                .append(warDeployPath)
                 .append(jvms)
                 .append(parentJvm)
                 .toHashCode();
@@ -212,7 +197,6 @@ public class Application implements Serializable {
                 ", loadBalanceAcrossServers=" + loadBalanceAcrossServers +
                 ", unpackWar=" + unpackWar +
                 ", warName='" + warName + '\'' +
-                ", warDeployPath='" + warDeployPath +'\'' +
                 ", jvms=" + jvms +
                 ", parentJvm=" + parentJvm +
                 '}';
