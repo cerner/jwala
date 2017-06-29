@@ -254,7 +254,7 @@ public class ResourceHandlerConfigurationTest {
         verify(MockConfig.getMockGroupPersistenceService()).populateGroupAppTemplate(anyString(), anyString(), anyString(),
                 anyString(), anyString());
         verify(MockConfig.MOCK_APPLICATION_PERSISTENCE_SERVICE).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
-        verify(MockConfig.MOCK_APPLICATION_PERSISTENCE_SERVICE).updateWarInfo(anyString(), anyString(), anyString(), anyString());
+        verify(MockConfig.MOCK_APPLICATION_PERSISTENCE_SERVICE).updateWarInfo(anyString(), anyString(), anyString());
     }
 
     private ResourceIdentifier getWebServerResourceIdentifier() {

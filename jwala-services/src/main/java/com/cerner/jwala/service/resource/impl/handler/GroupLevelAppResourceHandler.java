@@ -85,7 +85,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
                     templateContent.toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
                 final Application app = applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
                 if (StringUtils.isEmpty(app.getWarName())) {
-                    applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), templateContent, metaData.getDeployPath());
+                    applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), templateContent);
                     metaDataCopy = updateApplicationWarMetaData(resourceIdentifier, metaDataCopy, app);
                 } else {
                     throw new ResourceServiceException(MSG_CAN_ONLY_HAVE_ONE_WAR);
