@@ -7,11 +7,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -121,5 +123,37 @@ public class JwalaUi {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    /**
+     * Web driver waits until an element or several elements (as indicated by the numberOfElements parameter)
+     * located by the "by" parameter is/are existing
+     * @param by element locator
+     * @param numberOfElements the number of elements to satisfy the "to be" condition
+     */
+    public void waitUntilNumberOfElementsToBe(final By by, final int numberOfElements) {
+        webDriverWait.until(ExpectedConditions.numberOfElementsToBe(by, 1));
+    }
+
+    public void selectItem(final By by, final String itemName) {
+        final Select select = new Select(driver.findElement(by));
+        select.selectByVisibleText(itemName);
+    }
+
+    /**
+     * This method is used to freeze a step to see what's going on and is not meant to be used in the finished test
+     * steps!!!
+     */
+    public void sleep() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @PreDestroy
+    public void destroy() {
+        driver.close();
     }
 }

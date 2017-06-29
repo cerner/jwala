@@ -1,16 +1,22 @@
 package com.cerner.jwala.ui.selenium.steps;
 
+import com.cerner.jwala.ui.selenium.steps.configuration.ManageGroupRunSteps;
 import cucumber.api.java.en.Given;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
  */
 public class CommonRunSteps {
 
-    final private LoginRunSteps loginRunSteps = new LoginRunSteps();
+    @Autowired
+    private LoginRunSteps loginRunSteps;
 
-    @Given("^I am logged in$")
-    public void isLoggedIn() {
+    @Autowired
+    private ManageGroupRunSteps manageGroupRunSteps;
+
+    @Given("^I logged in$")
+    public void logIn() {
         loginRunSteps.loadLoginPage();
         loginRunSteps.enterUserName();
         loginRunSteps.enterPassword();
@@ -18,4 +24,13 @@ public class CommonRunSteps {
         loginRunSteps.validateResult();
     }
 
+    @Given("^I created a group with the name \"(.*)\"$")
+    public void createGroup(final String groupName) {
+        manageGroupRunSteps.goToGroupTab();
+        manageGroupRunSteps.clickAddGroupBtn();
+        manageGroupRunSteps.checkIfAddGroupDialogBoxIsDisplayed();
+        manageGroupRunSteps.setGroupName(groupName);
+        manageGroupRunSteps.clickOkBtn();
+        manageGroupRunSteps.checkIfGroupWasAdded(groupName);
+    }
 }
