@@ -5,10 +5,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Properties;
 
@@ -69,4 +71,20 @@ public class SeleniumTestHelper {
         return properties;
     }
 
+    public static void runSqlScript(final String sqlScript) throws IOException, ClassNotFoundException, SQLException {
+        final Properties properties = SeleniumTestHelper.getProperties();
+        Class.forName(properties.getProperty("jwala.db.driver"));
+        final String connectionStr = properties.getProperty("jwala.db.connection");
+        final String userName = properties.getProperty("jwala.db.userName");
+        final String password = properties.getProperty("jwala.db.password");
+        try (final Connection conn = DriverManager.getConnection(connectionStr, userName, password);
+             final Statement stmt = conn.createStatement();
+             final BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(sqlScript)))) {
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stmt.execute(line);
+            }
+        }
+    }
 }
