@@ -123,7 +123,7 @@ public class ApplicationCrudServiceImpl extends AbstractCrudServiceImpl<JpaAppli
     }
 
     @Override
-    public JpaApplication updateApplication(final UpdateApplicationRequest updateApplicationRequest, final JpaApplication jpaApp, final JpaGroup jpaGroup) {
+    public JpaApplication updateApplication(UpdateApplicationRequest updateApplicationRequest, JpaApplication jpaApp, JpaGroup jpaGroup) {
 
         final Identifier<Application> appId = updateApplicationRequest.getId();
 
@@ -134,7 +134,6 @@ public class ApplicationCrudServiceImpl extends AbstractCrudServiceImpl<JpaAppli
             jpaApp.setSecure(updateApplicationRequest.isNewSecure());
             jpaApp.setLoadBalanceAcrossServers(updateApplicationRequest.isNewLoadBalanceAcrossServers());
             jpaApp.setUnpackWar(updateApplicationRequest.isUnpackWar());
-            jpaApp.setWarDeployPath(updateApplicationRequest.getWarDeployPath());
             try {
                 return update(jpaApp);
             } catch (EntityExistsException eee) {

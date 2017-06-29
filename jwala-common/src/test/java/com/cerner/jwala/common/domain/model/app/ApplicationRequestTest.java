@@ -1,11 +1,13 @@
 package com.cerner.jwala.common.domain.model.app;
 
+import org.junit.Test;
+
+import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.exception.BadRequestException;
 import com.cerner.jwala.common.request.app.CreateApplicationRequest;
 import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -53,8 +55,7 @@ public class ApplicationRequestTest {
                 Identifier.id(groupId, Group.class),
                 ctx,
                 name,
-                true, true, false,
-                "C:/war/deploy/path");
+                true, true, false);
         assertEquals(name, uac.getNewName());
         assertEquals(ctx, uac.getNewWebAppContext());
         assertEquals(Identifier.id(appId, Application.class), uac.getId());

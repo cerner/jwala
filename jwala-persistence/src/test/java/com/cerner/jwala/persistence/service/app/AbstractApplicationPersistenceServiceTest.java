@@ -63,7 +63,6 @@ public abstract class AbstractApplicationPersistenceServiceTest {
     
     private String textContext = "/" + RandomStringUtils.random(25,alphaUnsafe.toCharArray());
     private String textWarPath = RandomStringUtils.random(25,alphaUnsafe.toCharArray()) + ".war";
-    private String textWarDeployPath = "c:/war/deploy/path-" + RandomStringUtils.random(25, alphaUnsafe.toCharArray());
     private String textName    = RandomStringUtils.random(25,alphaUnsafe.toCharArray());
     private String textGroup   = RandomStringUtils.random(25,alphaUnsafe.toCharArray());
 
@@ -136,7 +135,7 @@ public abstract class AbstractApplicationPersistenceServiceTest {
             testCreateApp();
         }
         
-        UpdateApplicationRequest updateApplicationRequest = new UpdateApplicationRequest(updateAppId, expUpdatedGroupId,  textUpdatedContext, textUpdatedName, true, true, false, textWarDeployPath);
+        UpdateApplicationRequest updateApplicationRequest = new UpdateApplicationRequest(updateAppId, expUpdatedGroupId,  textUpdatedContext, textUpdatedName, true, true, false);
         Application created = applicationPersistenceService.updateApplication(updateApplicationRequest);
         assertEquals(updateAppId, created.getId());
         assertNotNull(created.getGroup());
@@ -168,7 +167,7 @@ public abstract class AbstractApplicationPersistenceServiceTest {
                 new UpdateApplicationRequest(created.getId(),
                                              created.getGroup().getId(),
                                              created.getWebAppContext(),
-                                             created.getName(), false, true, false, textWarDeployPath);
+                                             created.getName(), false, true, false);
         Application updatedApplication = applicationPersistenceService.updateApplication(updateApplicationRequest);
         assertTrue(!updatedApplication.isSecure());
     }

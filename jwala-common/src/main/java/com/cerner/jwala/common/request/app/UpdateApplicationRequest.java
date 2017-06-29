@@ -21,17 +21,13 @@ public class UpdateApplicationRequest implements Serializable, Request {
     private final boolean newSecure;
     private final boolean newLoadBalanceAcrossServers;
     private final boolean unpackWar;
-    private String warDeployPath;
 
     public UpdateApplicationRequest(
             final Identifier<Application> theId,
             final Identifier<Group> theGroupId,
             final String theNewWebAppContext,
             final String theNewName,
-            final boolean theNewSecure,
-            final boolean theNewLoadBalanceAcrossServers,
-            final boolean unpackWar,
-            final String warDeployPath) {
+            boolean theNewSecure, boolean theNewLoadBalanceAcrossServers, boolean unpackWar) {
         id = theId;
         newGroupId = theGroupId;
         newName = theNewName;
@@ -39,7 +35,6 @@ public class UpdateApplicationRequest implements Serializable, Request {
         newSecure = theNewSecure;
         newLoadBalanceAcrossServers = theNewLoadBalanceAcrossServers;
         this.unpackWar = unpackWar;
-        this.warDeployPath = warDeployPath;
     }
 
     public Identifier<Application> getId() {
@@ -87,15 +82,6 @@ public class UpdateApplicationRequest implements Serializable, Request {
                 ", newSecure=" + newSecure +
                 ", newLoadBalanceAcrossServers=" + newLoadBalanceAcrossServers +
                 ", unpackWar=" + unpackWar +
-                ", warDeployPath=" + warDeployPath +
                 '}';
-    }
-
-    public String getWarDeployPath() {
-        return warDeployPath;
-    }
-
-    public void setWarDeployPath(String warDeployPath) {
-        this.warDeployPath = warDeployPath;
     }
 }

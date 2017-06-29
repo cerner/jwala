@@ -230,7 +230,7 @@ public class ApplicationServiceImplTest {
 
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false, null));
 
-        UpdateApplicationRequest cac = new UpdateApplicationRequest(Config.mockApplication2.getId(), Identifier.id(1L, Group.class), "wan", "/wan", true, true, false, "c:/war/deploy/path");
+        UpdateApplicationRequest cac = new UpdateApplicationRequest(Config.mockApplication2.getId(), Identifier.id(1L, Group.class), "wan", "/wan", true, true, false);
         Application created = applicationService.updateApplication(cac, new User("user"));
 
         assertTrue(created == Config.mockApplication2);
