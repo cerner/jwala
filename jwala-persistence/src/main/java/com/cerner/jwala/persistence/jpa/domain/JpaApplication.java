@@ -84,7 +84,10 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
 
     @Column(nullable = true, unique = false)
     private String warPath;
-    
+
+    @Column(nullable = true, unique = false)
+    private String warDeployPath;
+
     @SuppressWarnings("Unused")
     @Column(nullable = true)
     private String documentRoot; // potential addition to track the static content files TODO - coverage, et al.
@@ -167,6 +170,14 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
         this.unpackWar = unpackWar;
     }
 
+    public String getWarDeployPath() {
+        return warDeployPath;
+    }
+
+    public void setWarDeployPath(String warDeployPath) {
+        this.warDeployPath = warDeployPath;
+    }
+
     @Override
     public String toString() {
         return "JpaApplication{" +
@@ -175,6 +186,7 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
                 ", group=" + group +
                 ", webAppContext='" + webAppContext + '\'' +
                 ", warPath='" + warPath + '\'' +
+                ", warDeployPath='" + warDeployPath + '\'' +
                 ", documentRoot='" + documentRoot + '\'' +
                 ", secure=" + secure +
                 ", loadBalanceAcrossServers=" + loadBalanceAcrossServers +

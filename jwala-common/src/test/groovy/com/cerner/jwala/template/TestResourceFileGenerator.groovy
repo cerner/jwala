@@ -38,12 +38,12 @@ class TestResourceFileGenerator extends GroovyTestCase {
         createTestJvmsAndWebServers(groupHashSet)
         group = new Group(new Identifier<Group>(1111L), "groupName", jvms, webServers, new HashSet<History>(), apps)
         groupHashSet.add(group);
-        app = new Application(new Identifier<Application>(111L), "hello-world-1", "d:/jwala/app/archive", "/hello-world-1", group, true, true, false, "testWar.war")
+        app = new Application(new Identifier<Application>(111L), "hello-world-1", "d:/jwala/app/archive", "/hello-world-1", group, true, true, false, "testWar.war", "C:/test/war/deploy/path")
         app.setParentJvm(jvm);
 
         apps.add(app)
-        apps.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", group, true, true, false, "testWar.war"))
-        apps.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", group, true, true, false, "testWar.war"))
+        apps.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", group, true, true, false, "testWar.war", "C:/test/war/deploy/path"))
+        apps.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", group, true, true, false, "testWar.war", "C:/test/war/deploy/path"))
 
         // do it again to associate the group with the jvms and web servers
         createTestJvmsAndWebServers(groupHashSet, group)

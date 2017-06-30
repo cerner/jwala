@@ -6,6 +6,7 @@ import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
@@ -101,31 +102,61 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(readOnly = true)
     @Override
     public Application getApplication(Identifier<Application> aApplicationId) {
-        return applicationPersistenceService.getApplication(aApplicationId);
+        return addWarInfo(applicationPersistenceService.getApplication(aApplicationId));
     }
 
     @Transactional(readOnly = true)
     @Override
     public Application getApplication(final String name) {
-        return applicationPersistenceService.getApplication(name);
+        return addWarInfo(applicationPersistenceService.getApplication(name));
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Application> getApplications() {
-        return applicationPersistenceService.getApplications();
+        return addWarInfo(applicationPersistenceService.getApplications());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Application> findApplications(Identifier<Group> groupId) {
-        return applicationPersistenceService.findApplicationsBelongingTo(groupId);
+        return addWarInfo(applicationPersistenceService.findApplicationsBelongingTo(groupId));
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Application> findApplicationsByJvmId(Identifier<Jvm> jvmId) {
-        return applicationPersistenceService.findApplicationsBelongingToJvm(jvmId);
+        return addWarInfo(applicationPersistenceService.findApplicationsBelongingToJvm(jvmId));
+    }
+
+    private Application addWarInfo(Application application) {
+        if (null == application.getWarName() || application.getWarName().isEmpty()) {
+            return application;
+        }
+
+        ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
+                .setResourceName(application.getWarName())
+                .setGroupName(application.getGroup().getName())
+                .setWebAppName(application.getName())
+                .build();
+        ResourceContent warResource = resourceService.getResourceContent(resourceIdentifier);
+        ResourceTemplateMetaData warMetaData;
+        try {
+            warMetaData = resourceService.getMetaData(warResource.getMetaData());
+        } catch (IOException e) {
+            String errMsg = MessageFormat.format("Failed to parse the war meta data for application {0} and resource {1} in group {2}", application.getName(), application.getWarName(), application.getGroup().getName() );
+            LOGGER.error(errMsg, e);
+            throw new ApplicationServiceException(errMsg);
+        }
+
+        application.setWarDeployPath(warMetaData.getDeployPath());
+        return application;
+    }
+
+    private List<Application> addWarInfo(List<Application> applications) {
+        List<Application> retVal = new ArrayList<>();
+        applications.forEach(application -> retVal.add(addWarInfo(application)));
+        return retVal;
     }
 
     @Transactional
@@ -274,10 +305,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     public String previewResourceTemplate(String fileName, String appName, String groupName, String jvmName, String template, ResourceGroup resourceGroup) {
         final Application application;
         if (StringUtils.isNotEmpty(jvmName)) {
-            application = applicationPersistenceService.findApplication(appName, groupName, jvmName);
+            application = addWarInfo(applicationPersistenceService.findApplication(appName, groupName, jvmName));
             application.setParentJvm(jvmPersistenceService.findJvmByExactName(jvmName));
         } else {
-            application = applicationPersistenceService.getApplication(appName);
+            application = getApplication(appName);
         }
         return resourceService.generateResourceFile(fileName, template, resourceGroup, application, ResourceGeneratorType.PREVIEW);
     }
