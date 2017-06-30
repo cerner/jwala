@@ -58,8 +58,7 @@ public class ManageWebServerRunSteps {
 
     @And("^I select the \"Apache HTTPD\" field \"(.*)\"$")
     public void selectApacheHttpd(final String apacheHttpd) {
-        // TODO: Create ManageMedia so we can have the "has media" step before enabling this
-        // jwalaUi.selectItem(By.name("apacheHttpdMediaId"), apacheHttpd);
+        jwalaUi.selectItem(By.name("apacheHttpdMediaId"), apacheHttpd);
     }
 
     @And("^I select the group \"(.*)\"$")
@@ -69,12 +68,11 @@ public class ManageWebServerRunSteps {
 
     @And("^I click the add web server dialog ok button$")
     public void clickAddWebServerDialogOkBtn() throws InterruptedException {
-        // TODO: Implement
+        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
 
     @Then("^I see \"(.*)\" in the webserver table$")
     public void checkForWebServer(final String webServerName) {
-        // TODO: Implement
-        jwalaUi.sleep();
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webServerName + "']"));
     }
 }

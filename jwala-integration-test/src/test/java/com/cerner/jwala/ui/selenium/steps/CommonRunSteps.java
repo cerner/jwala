@@ -1,8 +1,11 @@
 package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.steps.configuration.ManageGroupRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.ManageMediaRunSteps;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
@@ -14,6 +17,9 @@ public class CommonRunSteps {
 
     @Autowired
     private ManageGroupRunSteps manageGroupRunSteps;
+
+    @Autowired
+    private ManageMediaRunSteps manageMediaRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -32,5 +38,18 @@ public class CommonRunSteps {
         manageGroupRunSteps.setGroupName(groupName);
         manageGroupRunSteps.clickOkBtn();
         manageGroupRunSteps.checkIfGroupWasAdded(groupName);
+    }
+
+    @Given("^I created a media with the following parameters:$")
+    public void createMedia(final Map<String, String> parameters) {
+        manageMediaRunSteps.goToMediaTab();
+        manageMediaRunSteps.clickAddMediaBtn();
+        manageMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
+        manageMediaRunSteps.setMediaName(parameters.get("mediaName"));
+        manageMediaRunSteps.selectMediaType(parameters.get("mediaType"));
+        manageMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
+        manageMediaRunSteps.setRemoteDir(parameters.get("remoteDir"));
+        manageMediaRunSteps.clickAddMediaOkDialogBtn();
+        manageMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
 }
