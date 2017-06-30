@@ -1,8 +1,12 @@
 package com.cerner.jwala.persistence.service.impl;
 
+import com.cerner.jwala.common.domain.model.app.Application;
+import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.resource.EntityType;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
+import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.*;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
 import com.cerner.jwala.persistence.service.ResourceDao;
@@ -241,6 +245,27 @@ public class ResourceDaoImpl implements ResourceDao {
 
         if (numEntities == 0) {
             throw new ResourceTemplateUpdateException(resourceIdentifier.toString(), resourceIdentifier.resourceName);
+        }
+    }
+
+
+    @Override
+    public void updateResourceGroup(JpaApplication jpaApplication, JpaGroup jpaGroup) {
+        final Query q = em.createNamedQuery(JpaGroupAppConfigTemplate.UPDATE_RESOURCE_GROUP);
+
+        q.setParameter(JpaGroupAppConfigTemplate.QUERY_PARAM_APP, jpaApplication);
+        q.setParameter(JpaGroupAppConfigTemplate.QUERY_PARAM_GRP, jpaGroup);
+        int numEntitities = 0;
+        try {
+            numEntitities = q.executeUpdate();
+
+        } catch (RuntimeException runtimeException) {
+            throw new ResourceTemplateUpdateException(jpaApplication, jpaGroup, runtimeException);
+        }
+
+        if (numEntitities == 0) {
+            throw new ResourceTemplateUpdateException(jpaApplication, jpaGroup, "Non-zero entities expected but got " +
+                    "zero");
         }
     }
 
