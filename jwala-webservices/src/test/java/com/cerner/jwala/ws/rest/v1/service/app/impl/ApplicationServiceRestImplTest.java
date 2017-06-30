@@ -18,6 +18,7 @@ import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.Message;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
@@ -205,7 +206,7 @@ public class ApplicationServiceRestImplTest {
      * Testing: {@link com.cerner.jwala.ws.rest.v1.service.app.ApplicationServiceRest#updateApplication(JsonUpdateApplication, AuthenticatedUser)}
      */
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws ApplicationServiceException {
         when(Config.service.updateApplication(any(UpdateApplicationRequest.class), any(User.class))).thenReturn(Config.newlyCreatedApp);
         ArrayList<UpdateApplicationRequest> multiUpdate = new ArrayList<>();
         multiUpdate.add(new UpdateApplicationRequest(Identifier.id(0L, Application.class), Identifier.id(0L, Group.class), "", "", true, true, false));

@@ -19,6 +19,8 @@ import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.control.configuration.SshConfig;
 import com.cerner.jwala.exception.CommandFailureException;
+import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
@@ -220,13 +222,28 @@ public class ApplicationServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testUpdate() throws IOException {
-        when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class))).thenReturn(Config.mockApplication2);
-
+    public void testUpdate() throws ApplicationServiceException,IOException {
+            when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class)))
+                    .thenReturn(Config.mockApplication2);
+        Group group = mock(Group.class);
         when(Config.mockApplication2.getName()).thenReturn("test-app-name");
         when(Config.mockApplication2.getWarName()).thenReturn("test-war-name");
-
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
+        when(Config.mockApplication2.getGroup()).thenReturn(group);
+        when(group.getName()).thenReturn("group1");
+        long id = 22;
+        JpaGroup jpaGroup = mock(JpaGroup.class);
+        when(group.getId()).thenReturn(new Identifier<Group>(id));
+        List<Long> listOfIds = new ArrayList<>();
+        listOfIds.add((long)22);
+        List<JpaGroup> jpaGroups = new ArrayList<>();
+        jpaGroups.add(jpaGroup);
+        when(Config.mockGroupPersistenceService.findGroups(listOfIds)).thenReturn(jpaGroups);
+        JpaApplication jpaApplication = mock(JpaApplication.class);
+        when(Config.applicationPersistenceService.getJpaApplication(Config.mockApplication2.getName())).thenReturn
+                (jpaApplication);
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData("group1", "test-war-name"))
+                .thenReturn
+                ("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
 
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false, null));
 
