@@ -297,6 +297,12 @@ public class ResourceHandlerConfigurationTest {
         public static final ApplicationPersistenceService MOCK_APPLICATION_PERSISTENCE_SERVICE = mock(ApplicationPersistenceService.class);
         public static final MessagingService MOCK_MESSAGING_SERICE = mock(MessagingService.class);
         public static final HistoryFacadeService HISTORY_FACADE_SERVICE = mock(HistoryFacadeService.class);
+        public static final ResourceService mockResourceService = mock(ResourceService.class);
+
+        @Bean
+        public ResourceService getMockResourceService() {
+            return mockResourceService;
+        }
 
         @Bean
         public ResourceDao resourceDao() {
@@ -328,11 +334,13 @@ public class ResourceHandlerConfigurationTest {
         }
 
         @Bean
-        public static MessagingService getMockMessagingSerice(){
+        public static MessagingService getMockMessagingSerice() {
             return MOCK_MESSAGING_SERICE;
         }
 
         @Bean
-        public static HistoryFacadeService getHistoryFacadeService() { return HISTORY_FACADE_SERVICE;}
+        public static HistoryFacadeService getHistoryFacadeService() {
+            return HISTORY_FACADE_SERVICE;
+        }
     }
 }

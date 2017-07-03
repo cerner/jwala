@@ -183,7 +183,7 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
         return "JpaApplication{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", group=" + group +
+                ", group=" + group.getName() +
                 ", webAppContext='" + webAppContext + '\'' +
                 ", warPath='" + warPath + '\'' +
                 ", warDeployPath='" + warDeployPath + '\'' +

@@ -11,14 +11,13 @@ import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.ResourceDao;
 import com.cerner.jwala.service.resource.ResourceHandler;
 import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 /**
  * Handler for an application resource identified by a "resource identifier" {@link ResourceIdentifier}
- *
+ * <p>
  * Created by Jedd Cuison on 7/21/2016
  */
 public class AppResourceHandler extends ResourceHandler {
@@ -72,9 +71,9 @@ public class AppResourceHandler extends ResourceHandler {
     @Override
     protected boolean canHandle(final ResourceIdentifier resourceIdentifier) {
         return StringUtils.isNotEmpty(resourceIdentifier.resourceName) &&
-               StringUtils.isNotEmpty(resourceIdentifier.webAppName) &&
-               StringUtils.isNotEmpty(resourceIdentifier.jvmName) &&
-               StringUtils.isEmpty(resourceIdentifier.webServerName);
+                StringUtils.isNotEmpty(resourceIdentifier.webAppName) &&
+                StringUtils.isNotEmpty(resourceIdentifier.jvmName) &&
+                StringUtils.isEmpty(resourceIdentifier.webServerName);
     }
 
     @Override
@@ -88,8 +87,8 @@ public class AppResourceHandler extends ResourceHandler {
 
     @Override
     public Object getSelectedValue(ResourceIdentifier resourceIdentifier) {
-        if (canHandle(resourceIdentifier)){
-            final Application application = applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
+        if (canHandle(resourceIdentifier)) {
+            Application application = applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
             application.setParentJvm(jvmPersistenceService.findJvmByExactName(resourceIdentifier.jvmName));
             return application;
         } else {
@@ -99,7 +98,7 @@ public class AppResourceHandler extends ResourceHandler {
 
     @Override
     public List<String> getResourceNames(ResourceIdentifier resourceIdentifier) {
-        if (canHandle(resourceIdentifier)){
+        if (canHandle(resourceIdentifier)) {
             return applicationPersistenceService.getResourceTemplateNames(resourceIdentifier.webAppName, resourceIdentifier.jvmName);
         } else {
             return successor.getResourceNames(resourceIdentifier);

@@ -142,7 +142,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         ResourceContent warResource = resourceService.getResourceContent(resourceIdentifier);
         ResourceTemplateMetaData warMetaData;
         try {
-            warMetaData = resourceService.getMetaData(warResource.getMetaData());
+            warMetaData = resourceService.getTokenizedMetaData(application.getWarName(), application, warResource.getMetaData());
         } catch (IOException e) {
             String errMsg = MessageFormat.format("Failed to parse the war meta data for application {0} and resource {1} in group {2}", application.getName(), application.getWarName(), application.getGroup().getName() );
             LOGGER.error(errMsg, e);
@@ -303,10 +303,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public String previewResourceTemplate(String fileName, String appName, String groupName, String jvmName, String template, ResourceGroup resourceGroup) {
-        final Application application;
+        Application application;
         if (StringUtils.isNotEmpty(jvmName)) {
-            application = addWarInfo(applicationPersistenceService.findApplication(appName, groupName, jvmName));
+            application = applicationPersistenceService.findApplication(appName, groupName, jvmName);
             application.setParentJvm(jvmPersistenceService.findJvmByExactName(jvmName));
+            application = addWarInfo(application);
         } else {
             application = getApplication(appName);
         }

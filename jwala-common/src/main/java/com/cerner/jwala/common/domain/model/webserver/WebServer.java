@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class WebServer implements Serializable {
 
@@ -160,10 +161,11 @@ public class WebServer implements Serializable {
 
     /**
      * Return stateLabel for UI
+     *
      * @return
      */
     public String getStateLabel() {
-        if(state != null)
+        if (state != null)
             return state.toStateLabel();
         else
             return "";
@@ -197,7 +199,7 @@ public class WebServer implements Serializable {
     public String toString() {
         return "WebServer{" +
                 "id=" + id +
-                ", groups=" + groups +
+                ", groups=" + getGroupNames(groups.values()) +
                 ", host='" + host + '\'' +
                 ", name='" + name + '\'' +
                 ", port=" + port +
@@ -205,5 +207,13 @@ public class WebServer implements Serializable {
                 ", statusPath=" + statusPath +
                 ", state=" + state +
                 '}';
+    }
+
+    private String getGroupNames(Collection<Group> groups) {
+        StringBuilder groupsNames = new StringBuilder();
+        for (Group group : groups) {
+            groupsNames.append(group.getName()).append(" ");
+        }
+        return groupsNames.toString();
     }
 }

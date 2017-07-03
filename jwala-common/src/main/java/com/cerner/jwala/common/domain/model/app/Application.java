@@ -202,7 +202,7 @@ public class Application implements Serializable {
     public String toString() {
         return "Application{" +
                 "id=" + id +
-                ", group=" + group +
+                ", group=" + group.getName() +
                 ", webAppContext='" + webAppContext + '\'' +
                 ", name='" + name + '\'' +
                 ", warPath='" + warPath + '\'' +
