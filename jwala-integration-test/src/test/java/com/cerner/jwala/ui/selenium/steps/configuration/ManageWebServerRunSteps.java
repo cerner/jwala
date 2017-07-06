@@ -1,7 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
-import com.cerner.jwala.ui.selenium.Test;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
@@ -84,6 +83,6 @@ public class ManageWebServerRunSteps {
 
     @After
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
-        SeleniumTestHelper.runSqlScript(Test.class.getClassLoader().getResource("./selenium/cleanup.sql").getPath());
+        SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
     }
 }
