@@ -36,11 +36,12 @@ public class JwalaUi {
     private Properties properties;
 
     public void clickTab(final String tabLabel) {
-        final WebElement configTag = driver.findElement(By.xpath("//li[a[text()='" + tabLabel + "']]"));
-        if (!configTag.getAttribute("class").equalsIgnoreCase("current")) {
-            configTag.click();
+        final By by = By.xpath("//li[a[text()='" + tabLabel + "']]");
+        if (!driver.findElement(by).getAttribute("class").equalsIgnoreCase("current")) {
+            clickWhenReady(by);
             webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("AppBusyScreen")));
         }
+
     }
 
     /**
