@@ -21,13 +21,16 @@ public class UpdateApplicationRequest implements Serializable, Request {
     private final boolean newSecure;
     private final boolean newLoadBalanceAcrossServers;
     private final boolean unpackWar;
+    private final String warDeployPath;
 
     public UpdateApplicationRequest(
             final Identifier<Application> theId,
             final Identifier<Group> theGroupId,
             final String theNewWebAppContext,
             final String theNewName,
-            boolean theNewSecure, boolean theNewLoadBalanceAcrossServers, boolean unpackWar) {
+            boolean theNewSecure,
+            boolean theNewLoadBalanceAcrossServers,
+            boolean unpackWar) {
         id = theId;
         newGroupId = theGroupId;
         newName = theNewName;
@@ -35,6 +38,27 @@ public class UpdateApplicationRequest implements Serializable, Request {
         newSecure = theNewSecure;
         newLoadBalanceAcrossServers = theNewLoadBalanceAcrossServers;
         this.unpackWar = unpackWar;
+        this.warDeployPath = null;
+    }
+
+    public UpdateApplicationRequest(
+            Identifier<Application> id,
+            Identifier<Group> newGroupId,
+            String newWebAppContext,
+            String newName,
+            boolean newSecure,
+            boolean newLoadBalanceAcrossServers,
+            boolean unpackWar,
+            String warDeployPath) {
+
+        this.id = id;
+        this.newGroupId = newGroupId;
+        this.newWebAppContext = newWebAppContext;
+        this.newName = newName;
+        this.newSecure = newSecure;
+        this.newLoadBalanceAcrossServers = newLoadBalanceAcrossServers;
+        this.unpackWar = unpackWar;
+        this.warDeployPath = warDeployPath;
     }
 
     public Identifier<Application> getId() {
@@ -48,6 +72,7 @@ public class UpdateApplicationRequest implements Serializable, Request {
     public String getNewWebAppContext() {
         return newWebAppContext;
     }
+
     public String getNewName() {
         return newName;
     }
@@ -60,12 +85,16 @@ public class UpdateApplicationRequest implements Serializable, Request {
         return newLoadBalanceAcrossServers;
     }
 
+    public String getWarDeployPath() {
+        return warDeployPath;
+    }
+
     @Override
     public void validate() {
         new MultipleRules(new ApplicationIdRule(id),
-                                new GroupIdRule(newGroupId),
-                                new ApplicationNameRule(newName),
-                                new ApplicationContextRule(newWebAppContext)).validate();
+                new GroupIdRule(newGroupId),
+                new ApplicationNameRule(newName),
+                new ApplicationContextRule(newWebAppContext)).validate();
     }
 
     public boolean isUnpackWar() {
@@ -82,6 +111,7 @@ public class UpdateApplicationRequest implements Serializable, Request {
                 ", newSecure=" + newSecure +
                 ", newLoadBalanceAcrossServers=" + newLoadBalanceAcrossServers +
                 ", unpackWar=" + unpackWar +
+                ", warDeployPath=" + warDeployPath +
                 '}';
     }
 }

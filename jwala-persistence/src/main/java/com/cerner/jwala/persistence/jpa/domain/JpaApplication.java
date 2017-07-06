@@ -4,48 +4,47 @@ import javax.persistence.*;
 
 /**
  * An application is usually a web application stored in a war file
- *
+ * <p>
  * The war file may be deployed to any number of JVMs, which happens
  * through the deploying the owning group to JVMs.
- *
+ * <p>
  * Each Application is created and assigned to a group.
- *
+ * <p>
  * For Health Check, where it might be deployed alongside another application,
  * the caller must create a group for health check, and a group for the
  * other application so that they can be deployed and managed.
  *
  * @author horspe00
- *
  */
 @Entity
 @Table(name = "app", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 @NamedQueries({
-    @NamedQuery(
-        name=JpaApplication.QUERY_BY_GROUP_NAME,
-        query="SELECT a FROM JpaApplication a WHERE a.group.name = :groupName"
-    ),
-    @NamedQuery(
-            name=JpaApplication.QUERY_BY_JVM_ID,
-            query="SELECT a FROM JpaApplication a WHERE a.group in (SELECT g FROM JpaGroup g WHERE g.jvms.id = :jvmId)"
-    ),
-    @NamedQuery(
-        name=JpaApplication.QUERY_BY_GROUP_ID,
-        query="SELECT a FROM JpaApplication a WHERE a.group.id= :groupId"
-    ),
-    @NamedQuery(
-        name=JpaApplication.QUERY_BY_WEB_SERVER_NAME,
-        query="SELECT a FROM JpaApplication a WHERE a.group in (:groups)"),
-    @NamedQuery(
-            name=JpaApplication.QUERY_BY_NAME,
-            query="SELECT a FROM JpaApplication a WHERE a.name = :appName"),
-    @NamedQuery(
-            name=JpaApplication.QUERY_BY_GROUP_JVM_AND_APP_NAME,
-            query="SELECT a FROM JpaApplication a WHERE a.name = :appName AND a.group in " +
-                  "(SELECT g FROM JpaGroup g WHERE g.name = :groupName AND g.jvms.name = :jvmName)"),
-    @NamedQuery(
-            name=JpaApplication.QUERY_FIND_BY_GROUP_AND_APP_NAME,
-            query="SELECT a FROM JpaApplication a WHERE a.name = :appName AND a.group.name = :groupName")
-    })
+        @NamedQuery(
+                name = JpaApplication.QUERY_BY_GROUP_NAME,
+                query = "SELECT a FROM JpaApplication a WHERE a.group.name = :groupName"
+        ),
+        @NamedQuery(
+                name = JpaApplication.QUERY_BY_JVM_ID,
+                query = "SELECT a FROM JpaApplication a WHERE a.group in (SELECT g FROM JpaGroup g WHERE g.jvms.id = :jvmId)"
+        ),
+        @NamedQuery(
+                name = JpaApplication.QUERY_BY_GROUP_ID,
+                query = "SELECT a FROM JpaApplication a WHERE a.group.id= :groupId"
+        ),
+        @NamedQuery(
+                name = JpaApplication.QUERY_BY_WEB_SERVER_NAME,
+                query = "SELECT a FROM JpaApplication a WHERE a.group in (:groups)"),
+        @NamedQuery(
+                name = JpaApplication.QUERY_BY_NAME,
+                query = "SELECT a FROM JpaApplication a WHERE a.name = :appName"),
+        @NamedQuery(
+                name = JpaApplication.QUERY_BY_GROUP_JVM_AND_APP_NAME,
+                query = "SELECT a FROM JpaApplication a WHERE a.name = :appName AND a.group in " +
+                        "(SELECT g FROM JpaGroup g WHERE g.name = :groupName AND g.jvms.name = :jvmName)"),
+        @NamedQuery(
+                name = JpaApplication.QUERY_FIND_BY_GROUP_AND_APP_NAME,
+                query = "SELECT a FROM JpaApplication a WHERE a.name = :appName AND a.group.name = :groupName")
+})
 public class JpaApplication extends AbstractEntity<JpaApplication> {
 
     public static final String QUERY_BY_GROUP_ID = "findApplicationsByGroupId";
@@ -71,13 +70,14 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
 
     @Column(nullable = false, unique = true)
     public String name;
-    
+
     /**
      * Relationship stored in app.group to allow operations across a group
      * BUT, this does mean that a JpaApplication represents a single
      * (potentially deployed) application instance.
      */
-    @ManyToOne(optional=true) public JpaGroup group;
+    @ManyToOne(optional = true)
+    public JpaGroup group;
 
     @Column(nullable = false, unique = false)
     private String webAppContext;
@@ -112,7 +112,7 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
     public void setGroup(JpaGroup jpaGroup) {
         this.group = jpaGroup;
     }
-    
+
     public JpaGroup getGroup() {
         return this.group;
     }
@@ -120,7 +120,7 @@ public class JpaApplication extends AbstractEntity<JpaApplication> {
     public String getWarPath() {
         return this.warPath;
     }
-    
+
     public String getWebAppContext() {
         return this.webAppContext;
     }

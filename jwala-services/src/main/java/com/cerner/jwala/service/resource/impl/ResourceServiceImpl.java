@@ -16,6 +16,7 @@ import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.ExternalProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
+import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.common.request.jvm.UploadJvmConfigTemplateRequest;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
@@ -1034,11 +1035,26 @@ public class ResourceServiceImpl implements ResourceService {
         ResourceContent warResourceContent = getResourceContent(appWarIdentifier);
         final ResourceTemplateMetaData tokenizedMetaData;
         try {
+            // set the war deploy path as a tokenized value
             final String metaData = warResourceContent.getMetaData();
             tokenizedMetaData = getTokenizedMetaData(warName, application, metaData);
             final String deployPath = tokenizedMetaData.getDeployPath();
             LOGGER.info("Setting application {} war deploy path to: {}", name, deployPath);
             application.setWarDeployPath(deployPath);
+
+            // update the value in persistence
+            UpdateApplicationRequest updateWarDeployPathRequest = new UpdateApplicationRequest(
+                    application.getId(),
+                    application.getGroup().getId(),
+                    application.getWebAppContext(),
+                    application.getName(),
+                    application.isSecure(),
+                    application.isLoadBalanceAcrossServers(),
+                    application.isUnpackWar(),
+                    application.getWarDeployPath()
+            );
+            application = applicationPersistenceService.updateApplication(updateWarDeployPathRequest);
+
         } catch (IOException e) {
             String errMsg = MessageFormat.format("Failed to tokenize the meta data for resource {0} in application {1}", warName, name);
             throw new ResourceServiceException(errMsg, e);
