@@ -21,7 +21,6 @@ public class UpdateApplicationRequest implements Serializable, Request {
     private final boolean newSecure;
     private final boolean newLoadBalanceAcrossServers;
     private final boolean unpackWar;
-    private final String warDeployPath;
 
     public UpdateApplicationRequest(
             final Identifier<Application> theId,
@@ -38,27 +37,6 @@ public class UpdateApplicationRequest implements Serializable, Request {
         newSecure = theNewSecure;
         newLoadBalanceAcrossServers = theNewLoadBalanceAcrossServers;
         this.unpackWar = unpackWar;
-        this.warDeployPath = null;
-    }
-
-    public UpdateApplicationRequest(
-            Identifier<Application> id,
-            Identifier<Group> newGroupId,
-            String newWebAppContext,
-            String newName,
-            boolean newSecure,
-            boolean newLoadBalanceAcrossServers,
-            boolean unpackWar,
-            String warDeployPath) {
-
-        this.id = id;
-        this.newGroupId = newGroupId;
-        this.newWebAppContext = newWebAppContext;
-        this.newName = newName;
-        this.newSecure = newSecure;
-        this.newLoadBalanceAcrossServers = newLoadBalanceAcrossServers;
-        this.unpackWar = unpackWar;
-        this.warDeployPath = warDeployPath;
     }
 
     public Identifier<Application> getId() {
@@ -85,10 +63,6 @@ public class UpdateApplicationRequest implements Serializable, Request {
         return newLoadBalanceAcrossServers;
     }
 
-    public String getWarDeployPath() {
-        return warDeployPath;
-    }
-
     @Override
     public void validate() {
         new MultipleRules(new ApplicationIdRule(id),
@@ -111,7 +85,6 @@ public class UpdateApplicationRequest implements Serializable, Request {
                 ", newSecure=" + newSecure +
                 ", newLoadBalanceAcrossServers=" + newLoadBalanceAcrossServers +
                 ", unpackWar=" + unpackWar +
-                ", warDeployPath=" + warDeployPath +
                 '}';
     }
 }

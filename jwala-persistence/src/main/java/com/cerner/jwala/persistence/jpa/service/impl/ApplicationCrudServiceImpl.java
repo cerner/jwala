@@ -134,7 +134,6 @@ public class ApplicationCrudServiceImpl extends AbstractCrudServiceImpl<JpaAppli
             jpaApp.setSecure(updateApplicationRequest.isNewSecure());
             jpaApp.setLoadBalanceAcrossServers(updateApplicationRequest.isNewLoadBalanceAcrossServers());
             jpaApp.setUnpackWar(updateApplicationRequest.isUnpackWar());
-            jpaApp.setWarDeployPath(updateApplicationRequest.getWarDeployPath());
             try {
                 return update(jpaApp);
             } catch (EntityExistsException eee) {
