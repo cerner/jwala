@@ -1,12 +1,18 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
+import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
+import com.cerner.jwala.ui.selenium.Test;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
+import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
@@ -18,6 +24,7 @@ public class ManageGroupRunSteps {
 
     @Given("^I am in the group tab$")
     public void goToGroupTab() {
+        jwalaUi.sleep();
         jwalaUi.clickTab("Group");
     }
 
@@ -44,5 +51,10 @@ public class ManageGroupRunSteps {
     @Then("^I see \"(.*)\" in the group table$")
     public void checkIfGroupWasAdded(final String groupName) {
         jwalaUi.waitUntilNumberOfElementsToBe(By.xpath("//button[text()='" + groupName + "']"), 1);
+    }
+
+    @After
+    public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
+        SeleniumTestHelper.runSqlScript(Test.class.getClassLoader().getResource("./selenium/cleanup.sql").getPath());
     }
 }
