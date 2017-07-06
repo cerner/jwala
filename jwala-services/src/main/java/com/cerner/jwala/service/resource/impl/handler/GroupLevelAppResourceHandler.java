@@ -199,6 +199,13 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
                     application.isLoadBalanceAcrossServers(),
                     warMetaData.isUnpack()
             ));
+
+            // update the war info for the application
+            final String warName = application.getWarName();
+            if (StringUtils.isNotEmpty(warName) && warName.equals(resourceName)) {
+                final String tokenizedDeployPath = getTokenizedDeployPath(warMetaData, application);
+                applicationPersistenceService.updateWarInfo(appName, resourceName, application.getWarPath(), tokenizedDeployPath);
+            }
         } catch (IOException e) {
             final String errorMsg = MessageFormat.format("Failed to parse meta data for war {0} in application {1} during an update of the meta data", resourceName, appName);
             LOGGER.error(errorMsg,e);
