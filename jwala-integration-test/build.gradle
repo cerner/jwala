@@ -25,5 +25,5 @@ test {
     systemProperty "webdriver.class", System.getProperty("webdriver.class")
     systemProperty "webdriver.chrome.driver", System.getProperty("webdriver.chrome.driver")
     systemProperty "selenium.property.path", System.getProperty("selenium.property.path")
-    exclude '**/testsuite/**'
+    exclude "com/cerner/jwala/ui/selenium/**"
 }
