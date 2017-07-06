@@ -168,17 +168,19 @@ public class JpaApplicationPersistenceServiceImpl implements ApplicationPersiste
     }
 
     @Override
-    public Application updateWarInfo(final String appName, final String warName, final String warPath) {
+    public Application updateWarInfo(final String appName, final String warName, final String warPath, String tokenizedDeployPath) {
+        LOGGER.info("Updating war info for application: {}, war: {}, war path: {}, war deploy path: {}", appName, warName, warPath, tokenizedDeployPath);
         final Query q = em.createNamedQuery(JpaApplication.QUERY_BY_NAME);
         q.setParameter(JpaApplication.QUERY_PARAM_APP_NAME, appName);
         final JpaApplication jpaApplication = (JpaApplication) q.getSingleResult();
         jpaApplication.setWarName(warName);
         jpaApplication.setWarPath(warPath);
+        jpaApplication.setWarDeployPath(tokenizedDeployPath);
         return JpaAppBuilder.appFrom(jpaApplication);
     }
 
     @Override
     public Application deleteWarInfo(final String appName) {
-        return updateWarInfo(appName, null, null);
+        return updateWarInfo(appName, null, null, null);
     }
 }
