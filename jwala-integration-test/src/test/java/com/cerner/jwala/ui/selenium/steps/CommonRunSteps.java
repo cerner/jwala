@@ -71,7 +71,6 @@ public class CommonRunSteps {
         manageWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
         manageWebServerRunSteps.selectGroup(parameters.get("group"));
         manageWebServerRunSteps.clickAddWebServerDialogOkBtn();
-        manageWebServerRunSteps.checkForWebServer(parameters.get("name"));
     }
 
 }
