@@ -69,6 +69,7 @@ public class ManageWebServerRunSteps {
     @And("^I select the group \"(.*)\"$")
     public void selectGroup(final String groupName) {
         jwalaUi.click(By.xpath("//div[contains(text(), '" + groupName + "')]/input"));
+        jwalaUi.sleep();
     }
 
     @And("^I click the add web server dialog ok button$")

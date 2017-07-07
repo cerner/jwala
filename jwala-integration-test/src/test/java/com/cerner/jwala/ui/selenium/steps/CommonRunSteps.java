@@ -2,6 +2,7 @@ package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.steps.configuration.ManageGroupRunSteps;
 import com.cerner.jwala.ui.selenium.steps.configuration.ManageMediaRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.ManageWebServerRunSteps;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +21,9 @@ public class CommonRunSteps {
 
     @Autowired
     private ManageMediaRunSteps manageMediaRunSteps;
+
+    @Autowired
+    private ManageWebServerRunSteps manageWebServerRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -52,4 +56,22 @@ public class CommonRunSteps {
         manageMediaRunSteps.clickAddMediaOkDialogBtn();
         manageMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
+
+    @Given("I created a webserver with following parameters:$")
+    public void createWebServer(final Map<String, String> parameters) throws InterruptedException {
+        createMedia(parameters);
+        manageWebServerRunSteps.goToWebServersTab();
+        manageWebServerRunSteps.clickAddWebServerBtn();
+        manageWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
+        manageWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
+        manageWebServerRunSteps.selectStatusPath();
+        manageWebServerRunSteps.setHostName(parameters.get("hostName"));
+        manageWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
+        manageWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
+        manageWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
+        manageWebServerRunSteps.selectGroup(parameters.get("group"));
+        manageWebServerRunSteps.clickAddWebServerDialogOkBtn();
+        manageWebServerRunSteps.checkForWebServer(parameters.get("name"));
+    }
+
 }
