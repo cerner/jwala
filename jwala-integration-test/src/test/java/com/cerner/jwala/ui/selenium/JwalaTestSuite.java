@@ -19,6 +19,7 @@ import com.cerner.jwala.ui.selenium.testsuite.operations.JvmOperationsPageDelete
 import com.cerner.jwala.ui.selenium.testsuite.operations.WebServerOperationsPageDelete;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -51,6 +52,7 @@ import java.util.concurrent.TimeUnit;
         AppDeleteTest.class, JvmOperationsPageDeleteTest.class, WebServerOperationsPageDelete.class, WebServerCreateTest.class,
         WebServerDeleteTest.class, JvmCreateTest.class, JvmDeleteTest.class, GroupDeleteTest.class, BalancerManagerTest.class,
         LogoutTest.class})
+@Ignore
 public class JwalaTestSuite extends TestSuite {
 
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
