@@ -39,7 +39,7 @@ Feature: Sort
 
 
 
-  Scenario: Sort media
+  Scenario: Sort media with name
 
     Given I logged in
     And I am in the configuration tab
@@ -54,11 +54,50 @@ Feature: Sort
       |mediaType      |Apache HTTPD           |
       |archiveFilename|apache-httpd-2.4.20.zip|
       |remoteDir      |d:\ctp|
-    When I click on the sort button of ""
+    When I click on the sort button of media with "Name"
     Then I see first item "aaa"
-    When I click on the sort button of ""
+    When I click on the sort button of media with "Name"
     Then I see first item "zzz"
 
+  Scenario: Sort media with type
+
+    Given I logged in
+    And I am in the configuration tab
+    And I am in the media tab
+    And I created a media with the following parameters:
+      |mediaName      |aaa   |
+      |mediaType      |Apache Tomcat           |
+      |archiveFilename|apache-httpd-2.4.20.zip|
+      |remoteDir      |d:\ctp|
+    And I created a media with the following parameters:
+      |mediaName      |zzz   |
+      |mediaType      |Apache HTTPD           |
+      |archiveFilename|apache-httpd-2.4.20.zip|
+      |remoteDir      |d:\ctp|
+    When I click on the sort button of media with "Type"
+    Then I see first item "zzz"
+    When I click on the sort button of media with "Type"
+    Then I see first item "aaa"
+
+  Scenario: Sort media with remote directory
+
+    Given I logged in
+    And I am in the configuration tab
+    And I am in the media tab
+    And I created a media with the following parameters:
+      |mediaName      |aaa   |
+      |mediaType      |Apache HTTPD           |
+      |archiveFilename|apache-httpd-2.4.20.zip|
+      |remoteDir      |d:\ctp|
+    And I created a media with the following parameters:
+      |mediaName      |zzz   |
+      |mediaType      |Apache HTTPD           |
+      |archiveFilename|apache-httpd-2.4.20.zip|
+      |remoteDir      |c:\ctp|
+    When I click on the sort button of media with "Remote Target Directory"
+    Then I see first item "zzz"
+    When I click on the sort button of media with "Remote Target Directory"
+    Then I see first item "aaa"
 
 
 

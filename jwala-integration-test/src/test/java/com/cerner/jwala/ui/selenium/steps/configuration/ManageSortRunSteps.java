@@ -30,6 +30,12 @@ public class ManageSortRunSteps {
     }
 
 
+    @When("I click on the sort button of media with \"(.*)\"$")
+    public void clickSortButtonOfMedia(String attribute) {
+        jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), '"+attribute+"')]"));
+    }
+
+
     @When("I click on the sort button of web server with attribute \"(.*)\"$")
     public void clickSortButtonOfWebServer(String attribute) {
         jwalaUi.click(By.xpath("//div[text()='" + attribute + "']/.."));
