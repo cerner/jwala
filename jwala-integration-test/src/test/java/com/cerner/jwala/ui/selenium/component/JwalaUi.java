@@ -90,9 +90,9 @@ public class JwalaUi {
         action.build().perform();
     }
 
-    public boolean isElementExists(final String xPath) {
+    public boolean isElementExists(final By by) {
         try {
-            driver.findElement(By.xpath(xPath));
+            driver.findElement(by);
         } catch (final NoSuchElementException e) {
             return false;
         }
