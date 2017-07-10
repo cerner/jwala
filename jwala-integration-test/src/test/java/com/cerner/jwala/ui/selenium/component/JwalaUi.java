@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.sql.Driver;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -113,10 +114,6 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
-    public void waitUntilElementIsNotVisible(final By by) {
-        webDriverWait.until(ExpectedConditions.numberOfElementsToBe(by, 0));
-    }
-
     public void loadPath(final String path) {
         driver.get(getBaseUrl() + path);
     }
@@ -150,6 +147,10 @@ public class JwalaUi {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public WebDriver getWebDriver(){
+        return driver;
     }
 
     @PreDestroy

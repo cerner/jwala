@@ -2,9 +2,12 @@ package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.steps.configuration.ManageGroupRunSteps;
 import com.cerner.jwala.ui.selenium.steps.configuration.ManageMediaRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.ManageWebAppRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.ManageWebServerRunSteps;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +23,12 @@ public class CommonRunSteps {
 
     @Autowired
     private ManageMediaRunSteps manageMediaRunSteps;
+
+    @Autowired
+    private ManageWebAppRunSteps manageWebAppRunSteps;
+
+    @Autowired
+    private ManageWebServerRunSteps manageWebServerRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -39,6 +48,40 @@ public class CommonRunSteps {
         manageGroupRunSteps.clickOkBtn();
         manageGroupRunSteps.checkIfGroupWasAdded(groupName);
     }
+
+    @Given("^I created a web app with the following parameters:$")
+    public void createWebApp(final Map<String, String> parameters) {
+        manageWebAppRunSteps.goToWebAppsTab();
+        manageWebAppRunSteps.clickAddWebAppBtn();
+        manageWebAppRunSteps.checkForWebAppDialog();
+        manageWebAppRunSteps.setWebAppName(parameters.get("name"));
+        manageWebAppRunSteps.setContextPath(parameters.get("webappContext"));
+        List<String> list = new ArrayList<String>();
+        list.add(parameters.get("group"));
+        manageWebAppRunSteps.setGroups(list);
+        manageWebAppRunSteps.clickAddDialogOkBtn();
+        manageWebAppRunSteps.checkForWebApp(parameters.get("name"));
+    }
+
+    @Given("^I created a web server with the following parameters:$")
+    public void createWebServer(final Map<String, String> parameters) throws InterruptedException {
+        createMedia(parameters);
+        manageWebServerRunSteps.goToWebServersTab();
+        manageWebServerRunSteps.clickAddWebServerBtn();
+        manageWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
+        manageWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
+        manageWebServerRunSteps.selectStatusPath();
+        manageWebServerRunSteps.setHostName(parameters.get("hostName"));
+        manageWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
+        manageWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
+        manageWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
+        manageWebServerRunSteps.selectGroup(parameters.get("group"));
+        manageWebServerRunSteps.clickAddWebServerDialogOkBtn();
+        manageWebServerRunSteps.checkForWebServer(parameters.get("webserverName"));
+    }
+
+
+
 
     @Given("^I created a media with the following parameters:$")
     public void createMedia(final Map<String, String> parameters) {
