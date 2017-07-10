@@ -42,7 +42,7 @@ public class ManageSortRunSteps {
     }
 
 
-    @Then("^I see first item \"(.*)\"$")
+    @Then("I see first item \"(.*)\"$")
     public void checkFirstElement(String name) {
         List<WebElement> listOfWebElements = jwalaUi.getWebDriver().findElements(By.xpath("//td[button[@class='button-link']]"));
         WebElement firstElement = listOfWebElements.get(0);
