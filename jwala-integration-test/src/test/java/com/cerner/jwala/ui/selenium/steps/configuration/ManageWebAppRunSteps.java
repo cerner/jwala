@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Jedd Cuison on 7/5/2017
@@ -58,9 +61,11 @@ public class ManageWebAppRunSteps {
         jwalaUi.click(By.xpath("//span[text()='Ok']"));
     }
 
-    @And("^I see \"(.*)\" in the web app table$")
-    public void checkForWebApp(final String webAppName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webAppName + "']"));
+    @And("^I see the following web app details in the web app table:$")
+    public void checkForWebApp(final Map<String, String> webAppDetails) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webAppDetails.get("name") + "']"));
+        assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + webAppDetails.get("context") + "']")));
+        assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + webAppDetails.get("group") + "']")));
     }
 
     @After

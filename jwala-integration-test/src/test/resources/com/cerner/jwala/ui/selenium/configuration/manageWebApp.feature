@@ -13,4 +13,7 @@ Scenario: Add Web Application
     And I associate the web app to the following groups:
         |GROUP_FOR_ADD_WEBAPP_TEST|
     And I click the add web app dialog ok button
-    Then I see "WEBAPP_X" in the web app table
+    Then I see the following web app details in the web app table:
+        |name   |WEBAPP_X                 |
+        |context|webapp                   |
+        |group  |GROUP_FOR_ADD_WEBAPP_TEST|
