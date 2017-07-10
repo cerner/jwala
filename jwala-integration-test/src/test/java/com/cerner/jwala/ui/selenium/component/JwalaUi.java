@@ -114,6 +114,10 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
+    public void waitUntilElementIsNotVisible(final By by) {
+        webDriverWait.until(ExpectedConditions.numberOfElementsToBe(by, 0));
+    }
+
     public void loadPath(final String path) {
         driver.get(getBaseUrl() + path);
     }
