@@ -16,4 +16,9 @@ Feature: Upload Resource - Webserver Node
       | group              | Rahul group             |
       | apacheHttpdMediaId | apache-httpd-2.4.20     |
       | statusPath         | /apache_pb.png          |
-    Then I see "Rahul webserver" in the webserver table
+    And I am in the resource tab
+    And expand group
+    And expand webservers
+    And click on webserver
+    And click on add resource
+

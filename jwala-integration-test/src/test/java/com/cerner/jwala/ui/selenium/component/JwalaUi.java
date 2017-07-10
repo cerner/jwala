@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper component that simplifies the calling of Selenium driver commands
- *
+ * <p>
  * Created by Jedd Cuison on 6/28/2017
  */
 @Component
@@ -46,6 +46,7 @@ public class JwalaUi {
 
     /**
      * Wait until element is clickable before clicking
+     *
      * @param by {@link By}
      */
     public void clickWhenReady(final By by) {
@@ -55,7 +56,7 @@ public class JwalaUi {
 
     public WebElement clickTreeItemExpandCollapseIcon(final String itemLabel) {
         final WebElement webElement =
-                driver.findElement(By.xpath("//li[span[text()='" +  itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
+                driver.findElement(By.xpath("//li[span[text()='" + itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
         new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
         webElement.click();
         return webElement;
@@ -63,7 +64,7 @@ public class JwalaUi {
 
     public WebElement clickTreeItemExpandCollapseIcon(final WebElement parentNode, final String itemLabel) {
         final WebElement webElement =
-                parentNode.findElement(By.xpath("//li[span[text()='" +  itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
+                parentNode.findElement(By.xpath("//li[span[text()='" + itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
         new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
         webElement.click();
         return webElement;
@@ -129,7 +130,8 @@ public class JwalaUi {
     /**
      * Web driver waits until an element or several elements (as indicated by the numberOfElements parameter)
      * located by the "by" parameter is/are existing
-     * @param by element locator
+     *
+     * @param by               element locator
      * @param numberOfElements the number of elements to satisfy the "to be" condition
      */
     public void waitUntilNumberOfElementsToBe(final By by, final int numberOfElements) {
@@ -156,5 +158,19 @@ public class JwalaUi {
     @PreDestroy
     public void destroy() {
         driver.close();
+    }
+
+    public void clickComponentForUpload(String s) {
+        final WebElement webElement =
+                driver.findElement(By.xpath("//li[span[text()='" + s + "']]/span"));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
+        webElement.click();
+    }
+
+    public void clickAddResource() {
+        final WebElement webElement =
+                driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
+        webElement.click();
     }
 }
