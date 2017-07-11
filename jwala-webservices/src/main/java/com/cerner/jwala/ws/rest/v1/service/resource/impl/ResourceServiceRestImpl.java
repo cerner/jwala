@@ -132,10 +132,16 @@ public class ResourceServiceRestImpl implements ResourceServiceRest {
         // TODO pass down single param from UI to designate external properties
         final boolean isExternalProperty = createResourceParam.getGroup() == null && createResourceParam.getJvm() == null && createResourceParam.getWebApp() == null && createResourceParam.getWebServer() == null;
 
-        if (attachments == null || !isExternalProperty && attachments.size() != CREATE_RESOURCE_ATTACHMENT_SIZE) {
-            return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR, new FaultCodeException(
-                    FaultType.INVALID_NUMBER_OF_ATTACHMENTS,
-                    "Invalid number of attachments! " + CREATE_RESOURCE_ATTACHMENT_SIZE + " attachments is expected by the service."));
+        if (attachments == null || !isExternalProperty && attachments.size() == 0 ) {
+            LOGGER.error("Expected non-empty attachments. Returning without creating Resource.");
+            return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
+                    new FaultCodeException(FaultType.RESOURCE_NO_ATTACHMENT_EXCEPTION, "There is no attachment when try to create resource."));
+        } else {
+            LOGGER.debug("attachments.size() " + attachments.size());
+            for (final Attachment attachment : attachments) {
+                LOGGER.debug("attachment.getDataHandler().getName(): " + attachment.getDataHandler().getName() +
+                        " attachment.getHeader(\"Content-Type\"): " + attachment.getHeader("Content-Type"));
+            }
         }
 
         try {
@@ -143,6 +149,11 @@ public class ResourceServiceRestImpl implements ResourceServiceRest {
             BufferedInputStream bufferedInputStream = null;
             String templateName = null;
             for (final Attachment attachment : attachments) {
+                // when using the REST API from Chef a null attachment gets added somewhere between the execute_rest and here
+                if (attachment.getDataHandler().getName() == null ){
+                    LOGGER.debug("attachment.getDataHandler().getName() is null");
+                    continue;
+                }
                 if (attachment.getHeader("Content-Type") == null) {
                     metaDataMap.put(attachment.getDataHandler().getName(),
                             IOUtils.toString(attachment.getDataHandler().getInputStream(), Charset.defaultCharset()));
