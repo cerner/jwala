@@ -5,6 +5,7 @@ import com.cerner.jwala.common.domain.model.webserver.WebServerReachableState;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "webserver", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
@@ -27,7 +28,7 @@ import java.util.List;
         @NamedQuery(name = JpaWebServer.QUERY_GET_WS_BY_GROUP_NAME, query = "SELECT w FROM JpaWebServer w WHERE w.groups.name = :groupName"),
         @NamedQuery(name = JpaWebServer.FIND_WEBSERVER_BY_GROUP_QUERY, query = "SELECT w FROM JpaWebServer w WHERE w.name = :wsName AND w.groups.name = :groupName"),
         @NamedQuery(name = JpaWebServer.FIND_WEBSERVERS_BY_GROUPID, query = "SELECT j FROM JpaWebServer j WHERE :groupId MEMBER OF j.groups.id"),
-        @NamedQuery(name = JpaWebServer.FIND_WEB_SERVER_BY_NAME_LIKE_QUERY, query= "SELECT g FROM JpaWebServer g WHERE g.name LIKE  ?1 ")
+        @NamedQuery(name = JpaWebServer.FIND_WEB_SERVER_BY_NAME_LIKE_QUERY, query = "SELECT g FROM JpaWebServer g WHERE g.name LIKE  ?1 ")
 })
 public class JpaWebServer extends AbstractEntity<JpaWebServer> {
 
@@ -70,7 +71,7 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
     @ManyToMany(mappedBy = "webServers", fetch = FetchType.EAGER)
     private List<JpaGroup> groups = new ArrayList<>();
 
-    @OneToOne (targetEntity = JpaMedia.class)
+    @OneToOne(targetEntity = JpaMedia.class)
     @Column(nullable = true)
     private JpaMedia apacheHttpdMedia;
 
@@ -173,6 +174,7 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
     public String toString() {
         return "JpaWebServer{" +
                 "id=" + id +
+                "groups='" + getGroupNames(groups) + '\'' +
                 ", host='" + host + '\'' +
                 ", name='" + name + '\'' +
                 ", port=" + port +
@@ -181,4 +183,7 @@ public class JpaWebServer extends AbstractEntity<JpaWebServer> {
                 '}';
     }
 
+    private String getGroupNames(List<JpaGroup> groups) {
+        return groups.stream().map(JpaGroup::getName).collect(Collectors.joining(","));
+    }
 }

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Jvm implements Serializable {
 
@@ -62,29 +63,30 @@ public class Jvm implements Serializable {
 
     /**
      * Excludes the encrypted password
+     *
      * @return jvm without the encrypted password
      */
     public Jvm toJvmWithoutEncrytedPassword() {
         return new Jvm(this.id,
-                       this.jvmName,
-                       this.hostName,
-                       this.groups,
-                       this.httpPort,
-                       this.httpsPort,
-                       this.redirectPort,
-                       this.shutdownPort,
-                       this.ajpPort,
-                       this.statusPath,
-                       this.systemProperties,
-                       this.state,
-                       this.errorStatus,
-                       this.lastUpdatedDate,
-                       this.userName,
-                       StringUtils.isEmpty(this.encryptedPassword) ? StringUtils.EMPTY : MASKED_PASSWORD,
-                       this.jdkMedia,
-                       this.tomcatMedia,
-                       this.javaHome,
-                       this.webApps);
+                this.jvmName,
+                this.hostName,
+                this.groups,
+                this.httpPort,
+                this.httpsPort,
+                this.redirectPort,
+                this.shutdownPort,
+                this.ajpPort,
+                this.statusPath,
+                this.systemProperties,
+                this.state,
+                this.errorStatus,
+                this.lastUpdatedDate,
+                this.userName,
+                StringUtils.isEmpty(this.encryptedPassword) ? StringUtils.EMPTY : MASKED_PASSWORD,
+                this.jdkMedia,
+                this.tomcatMedia,
+                this.javaHome,
+                this.webApps);
     }
 
     public Jvm(Identifier<Jvm> id,
@@ -136,6 +138,7 @@ public class Jvm implements Serializable {
     public Media getTomcatMedia() {
         return tomcatMedia;
     }
+
     public String getEncryptedPassword() {
         return encryptedPassword;
     }
@@ -288,7 +291,7 @@ public class Jvm implements Serializable {
                 "id=" + id +
                 ", jvmName='" + jvmName + '\'' +
                 ", hostName='" + hostName + '\'' +
-                ", groups=" + groups +
+                ", groups=" + getGroupNames(groups) +
                 ", httpPort=" + httpPort +
                 ", httpsPort=" + httpsPort +
                 ", redirectPort=" + redirectPort +
@@ -304,6 +307,14 @@ public class Jvm implements Serializable {
                 ", jdkMedia='" + jdkMedia + '\'' +
                 ", tomcatMedia='" + tomcatMedia + '\'' +
                 '}';
+    }
+
+    private String getGroupNames(Set<Group> groups) {
+        StringBuilder groupsNames = new StringBuilder();
+        for (Group group : groups) {
+            groupsNames.append(group.getName()).append(" ");
+        }
+        return groupsNames.toString();
     }
 
 }

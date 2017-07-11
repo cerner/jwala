@@ -15,13 +15,16 @@ import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.ResourceDao;
 import com.cerner.jwala.service.exception.GroupLevelAppResourceHandlerException;
 import com.cerner.jwala.service.exception.ResourceServiceException;
+import com.cerner.jwala.service.resource.ResourceContentGeneratorService;
 import com.cerner.jwala.service.resource.ResourceHandler;
 import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
+import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.mime.MediaType;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -44,6 +47,9 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
     private final GroupPersistenceService groupPersistenceService;
     private final JvmPersistenceService jvmPersistenceService;
     private final ApplicationPersistenceService applicationPersistenceService;
+
+    @Autowired
+    ResourceContentGeneratorService resourceContentGeneratorService;
 
     public GroupLevelAppResourceHandler(final ResourceDao resourceDao,
                                         final GroupPersistenceService groupPersistenceService,
@@ -85,7 +91,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
                     templateContent.toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
                 final Application app = applicationPersistenceService.getApplication(resourceIdentifier.webAppName);
                 if (StringUtils.isEmpty(app.getWarName())) {
-                    applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), templateContent);
+                    applicationPersistenceService.updateWarInfo(resourceIdentifier.webAppName, metaDataCopy.getDeployFileName(), templateContent, getTokenizedDeployPath(metaDataCopy, app));
                     metaDataCopy = updateApplicationWarMetaData(resourceIdentifier, metaDataCopy, app);
                 } else {
                     throw new ResourceServiceException(MSG_CAN_ONLY_HAVE_ONE_WAR);
@@ -102,6 +108,10 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
             createResourceResponseWrapper = successor.createResource(resourceIdentifier, metaDataCopy, templateContent);
         }
         return createResourceResponseWrapper;
+    }
+
+    private String getTokenizedDeployPath(ResourceTemplateMetaData metaData, Application app) {
+        return resourceContentGeneratorService.generateContent(metaData.getDeployFileName(), metaData.getDeployPath(), null, app, ResourceGeneratorType.METADATA);
     }
 
     private ResourceTemplateMetaData updateApplicationWarMetaData(ResourceIdentifier resourceIdentifier, ResourceTemplateMetaData metaDataCopy, Application app) {
@@ -189,6 +199,13 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
                     application.isLoadBalanceAcrossServers(),
                     warMetaData.isUnpack()
             ));
+
+            // update the war info for the application
+            final String warName = application.getWarName();
+            if (StringUtils.isNotEmpty(warName) && warName.equals(resourceName)) {
+                final String tokenizedDeployPath = getTokenizedDeployPath(warMetaData, application);
+                applicationPersistenceService.updateWarInfo(appName, resourceName, application.getWarPath(), tokenizedDeployPath);
+            }
         } catch (IOException e) {
             final String errorMsg = MessageFormat.format("Failed to parse meta data for war {0} in application {1} during an update of the meta data", resourceName, appName);
             LOGGER.error(errorMsg,e);
