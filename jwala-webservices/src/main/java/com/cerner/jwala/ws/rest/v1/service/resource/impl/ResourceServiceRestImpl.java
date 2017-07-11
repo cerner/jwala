@@ -134,10 +134,9 @@ public class ResourceServiceRestImpl implements ResourceServiceRest {
 
         if (attachments == null || !isExternalProperty && attachments.size() == 0 ) {
             LOGGER.error("Expected non-empty attachments. Returning without creating Resource.");
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-
-        if (attachments != null){
+            return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR,
+                    new FaultCodeException(FaultType.RESOURCE_NO_ATTACHMENT_EXCEPTION, "There is no attachment when try to create resource."));
+        } else {
             LOGGER.debug("attachments.size() " + attachments.size());
             for (final Attachment attachment : attachments) {
                 LOGGER.debug("attachment.getDataHandler().getName(): " + attachment.getDataHandler().getName() +

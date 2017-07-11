@@ -186,7 +186,7 @@ public class ResourceServiceRestImplTest {
         CreateResourceParam createResourceParam = new CreateResourceParam();
         createResourceParam.setJvm("sampleJvm");
         final Response response = cut.createResource("httpd.conf", createResourceParam, attachmentList);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals("AEM78", ((ApplicationResponse) response.getEntity()).getMsgCode());
     }
 
     @Test
@@ -194,7 +194,7 @@ public class ResourceServiceRestImplTest {
         CreateResourceParam createResourceParam = new CreateResourceParam();
         createResourceParam.setJvm("sampleJvm");
         final Response response = cut.createResource("httpd.conf", createResourceParam, null);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals("AEM78", ((ApplicationResponse) response.getEntity()).getMsgCode());
     }
 
     @Test
