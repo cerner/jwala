@@ -16,7 +16,7 @@ import java.sql.SQLException;
 /**
  * Created by Jedd Cuison on 6/27/2017
  */
-public class ManageGroupRunSteps {
+public class CreateGroupRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;

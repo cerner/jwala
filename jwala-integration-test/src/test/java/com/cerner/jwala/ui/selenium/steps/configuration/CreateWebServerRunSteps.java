@@ -16,7 +16,7 @@ import java.sql.SQLException;
 /**
  * Created by Jedd Cuison on 6/27/2017
  */
-public class ManageWebServerRunSteps {
+public class CreateWebServerRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;

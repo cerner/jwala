@@ -18,7 +18,7 @@ import java.sql.SQLException;
 /**
  * Created by Jedd Cuison on 6/30/2017
  */
-public class ManageMediaRunSteps {
+public class CreateMediaRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;

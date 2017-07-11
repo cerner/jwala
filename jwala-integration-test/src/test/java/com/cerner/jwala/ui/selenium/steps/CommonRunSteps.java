@@ -1,7 +1,7 @@
 package com.cerner.jwala.ui.selenium.steps;
 
-import com.cerner.jwala.ui.selenium.steps.configuration.ManageGroupRunSteps;
-import com.cerner.jwala.ui.selenium.steps.configuration.ManageMediaRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.CreateGroupRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.CreateMediaRunSteps;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,10 +16,10 @@ public class CommonRunSteps {
     private LoginRunSteps loginRunSteps;
 
     @Autowired
-    private ManageGroupRunSteps manageGroupRunSteps;
+    private CreateGroupRunSteps createGroupRunSteps;
 
     @Autowired
-    private ManageMediaRunSteps manageMediaRunSteps;
+    private CreateMediaRunSteps createMediaRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -32,24 +32,24 @@ public class CommonRunSteps {
 
     @Given("^I created a group with the name \"(.*)\"$")
     public void createGroup(final String groupName) {
-        manageGroupRunSteps.goToGroupTab();
-        manageGroupRunSteps.clickAddGroupBtn();
-        manageGroupRunSteps.checkIfAddGroupDialogBoxIsDisplayed();
-        manageGroupRunSteps.setGroupName(groupName);
-        manageGroupRunSteps.clickOkBtn();
-        manageGroupRunSteps.checkIfGroupWasAdded(groupName);
+        createGroupRunSteps.goToGroupTab();
+        createGroupRunSteps.clickAddGroupBtn();
+        createGroupRunSteps.checkIfAddGroupDialogBoxIsDisplayed();
+        createGroupRunSteps.setGroupName(groupName);
+        createGroupRunSteps.clickOkBtn();
+        createGroupRunSteps.checkIfGroupWasAdded(groupName);
     }
 
     @Given("^I created a media with the following parameters:$")
     public void createMedia(final Map<String, String> parameters) {
-        manageMediaRunSteps.goToMediaTab();
-        manageMediaRunSteps.clickAddMediaBtn();
-        manageMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
-        manageMediaRunSteps.setMediaName(parameters.get("mediaName"));
-        manageMediaRunSteps.selectMediaType(parameters.get("mediaType"));
-        manageMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
-        manageMediaRunSteps.setRemoteDir(parameters.get("remoteDir"));
-        manageMediaRunSteps.clickAddMediaOkDialogBtn();
-        manageMediaRunSteps.checkForMedia(parameters.get("mediaName"));
+        createMediaRunSteps.goToMediaTab();
+        createMediaRunSteps.clickAddMediaBtn();
+        createMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
+        createMediaRunSteps.setMediaName(parameters.get("mediaName"));
+        createMediaRunSteps.selectMediaType(parameters.get("mediaType"));
+        createMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
+        createMediaRunSteps.setRemoteDir(parameters.get("remoteDir"));
+        createMediaRunSteps.clickAddMediaOkDialogBtn();
+        createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
 }
