@@ -22,17 +22,11 @@ import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
-import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupAppConfigTemplate;
-import com.cerner.jwala.persistence.jpa.service.ApplicationCrudService;
-import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
-import com.cerner.jwala.persistence.jpa.service.impl.ApplicationCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.ResourceDao;
-import com.cerner.jwala.persistence.service.impl.JpaGroupPersistenceServiceImpl;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
@@ -415,7 +409,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return resourceService.getTokenizedMetaData(appWarName, application, metaData).getDeployPath();
         } catch (IOException e) {
             String messageErr = MessageFormat.format("Failed to generate the war meta data for {0}", application);
-            LOGGER.error(messageErr);
+            LOGGER.error(messageErr,e);
             throw new ApplicationServiceException(messageErr);
         }
     }
