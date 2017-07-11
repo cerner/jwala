@@ -180,6 +180,13 @@ public class JpaApplicationPersistenceServiceImpl implements ApplicationPersiste
     }
 
     @Override
+    public JpaApplication getJpaApplication(String appName) {
+        final Query q = em.createNamedQuery(JpaApplication.QUERY_BY_NAME);
+        q.setParameter(JpaApplication.QUERY_PARAM_APP_NAME, appName);
+        return (JpaApplication) q.getSingleResult();
+    }
+
+    @Override
     public Application deleteWarInfo(final String appName) {
         return updateWarInfo(appName, null, null, null);
     }

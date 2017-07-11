@@ -568,7 +568,7 @@
 								},
 								{
 									"key": "remoteDir",
-									"value": "{{mediaRemoteDir}}",
+									"value": "{{mediaRemoteDir}}/app/instances",
 									"type": "text",
 									"enabled": true
 								}
