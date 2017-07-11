@@ -27,6 +27,8 @@ public class JGroupsClusterInitializer implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(JGroupsClusterInitializer.class);
     private static final String JGROUPS_COORDINATOR_HOSTNAME = "jgroups.coordinator.hostname";
     private static final String JGROUPS_COORDINATOR_IP_ADDRESS = "jgroups.coordinator.ip.address";
+    private static final String JGROUPS_BIND_ADDR = "jgroups.bind_addr";
+    private static final String JAVA_NET_PREFER_IPV4_STACK = "java.net.preferIPv4Stack";
 
     private final String jgroupsJavaNetPreferIPv4Stack = ApplicationProperties.get("jgroups.java.net.preferIPv4Stack", "true");
     private final String jgroupsCoordinatorHostname = ApplicationProperties.get(JGROUPS_COORDINATOR_HOSTNAME);
@@ -43,13 +45,7 @@ public class JGroupsClusterInitializer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.setProperty("java.net.preferIPv4Stack", jgroupsJavaNetPreferIPv4Stack);
-
         try {
-            LOGGER.debug("Starting JGroups cluster {}", jgroupsClusterName);
-            final JChannel channel = new JChannel(jgroupsConfXml);
-            channel.setReceiver(receiverAdapter);
-
             IpAddress coordinatorIP;
             if (null != this.jgroupsCoordinatorIPAddress) {
                 coordinatorIP = new IpAddress(this.jgroupsCoordinatorIPAddress + ":" + jgroupsCoordinatorPort);
@@ -61,6 +57,13 @@ public class JGroupsClusterInitializer implements InitializingBean {
                 }
                 coordinatorIP = getIPAddressFromHostname(jgroupsCoordinatorHostname);
             }
+
+            System.setProperty(JAVA_NET_PREFER_IPV4_STACK, jgroupsJavaNetPreferIPv4Stack);
+            System.setProperty(JGROUPS_BIND_ADDR, coordinatorIP.getIpAddress().getHostAddress());
+
+            LOGGER.debug("Starting JGroups cluster {}", jgroupsClusterName);
+            final JChannel channel = new JChannel(jgroupsConfXml);
+            channel.setReceiver(receiverAdapter);
             channel.connect(jgroupsClusterName, coordinatorIP, Long.parseLong(jgroupsClusterConnectTimeout));
             LOGGER.debug("JGroups connection to cluster {} SUCCESSFUL", jgroupsClusterName);
 
