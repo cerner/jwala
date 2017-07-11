@@ -1023,6 +1023,11 @@ public class ResourceServiceImpl implements ResourceService {
         return resourceFileString;
     }
 
+    /**
+     * Get the deploy path of the application's war from the meta data, and update the application's warDeployPath attribute
+     * @param application the application to update the war deploy path
+     * @return the application with the latest war deploy path
+     */
     private Application setApplicationWarDeployPath(Application application) {
         final String warName = application.getWarName();
         final String name = application.getName();
@@ -1032,12 +1037,11 @@ public class ResourceServiceImpl implements ResourceService {
             return application;
         }
 
-        ResourceIdentifier appWarIdentifier = new ResourceIdentifier.Builder()
-                .setResourceName(warName)
-                .setWebAppName(name)
-                .setGroupName(application.getGroup().getName())
-                .build();
-        ResourceContent warResourceContent = getResourceContent(appWarIdentifier);
+        ResourceContent warResourceContent = getApplicationWarResourceContent(application, warName, name);
+        return updateApplicationWarInfo(application, warName, name, warResourceContent);
+    }
+
+    private Application updateApplicationWarInfo(Application application, String warName, String name, ResourceContent warResourceContent) {
         final ResourceTemplateMetaData tokenizedMetaData;
         try {
             final String metaData = warResourceContent.getMetaData();
@@ -1050,8 +1054,16 @@ public class ResourceServiceImpl implements ResourceService {
             String errMsg = MessageFormat.format("Failed to tokenize the meta data for resource {0} in application {1}", warName, name);
             throw new ResourceServiceException(errMsg, e);
         }
-
         return application;
+    }
+
+    private ResourceContent getApplicationWarResourceContent(Application application, String warName, String name) {
+        ResourceIdentifier appWarIdentifier = new ResourceIdentifier.Builder()
+                .setResourceName(warName)
+                .setWebAppName(name)
+                .setGroupName(application.getGroup().getName())
+                .build();
+        return getResourceContent(appWarIdentifier);
     }
 
 
