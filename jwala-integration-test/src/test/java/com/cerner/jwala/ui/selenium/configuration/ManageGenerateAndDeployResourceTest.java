@@ -5,10 +5,11 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 /**
- * Created by Jedd Cuison on 6/27/2017
+ * Created by Rahul Sayini on 7/11/2017.
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = { "classpath:com/cerner/jwala/ui/selenium/configuration/uploadWebserverResource.feature" },
+        features = {"classpath:com/cerner/jwala/ui/selenium/configuration/generateAndDeployResources.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManageResourceTest{}
+public class ManageGenerateAndDeployResourceTest {
+}

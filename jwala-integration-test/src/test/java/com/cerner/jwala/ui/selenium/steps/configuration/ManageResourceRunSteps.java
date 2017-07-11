@@ -21,26 +21,23 @@ public class ManageResourceRunSteps {
     @Given("^I am in the resource tab$")
     public void goToConfigurationTab() {
         jwalaUi.clickTab("Resources");
+        jwalaUi.sleep();
     }
 
-    @And("I expanded group")
-    public void expandGroup() {
-        jwalaUi.clickTreeItemExpandCollapseIcon("Rahul group");
+    @And("I expanded component \"(.*)\"$")
+    public void expandComponent(String component) {
+        jwalaUi.clickTreeItemExpandCollapseIcon(component);
     }
 
-    @And("I expanded webservers")
-    public void expandWebserver() {
-        jwalaUi.clickTreeItemExpandCollapseIcon("Web Servers");
-    }
-
-    @And("I clicked on webserver")
-    public void clickWebserver() {
-        jwalaUi.clickComponentForUpload("Rahul webserver");
+    @And("I clicked on component \"(.*)\"$")
+    public void clickComponent(String component) {
+        jwalaUi.clickComponentForUpload(component);
     }
 
     @And("I clicked on add resource")
     public void addResource() {
         jwalaUi.clickAddResource();
+        jwalaUi.sleep();
     }
 
     @And("^I fill in the \"Deploy Name\" field with \"(.*)\"$")

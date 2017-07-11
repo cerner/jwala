@@ -160,9 +160,9 @@ public class JwalaUi {
         driver.close();
     }
 
-    public void clickComponentForUpload(String s) {
+    public void clickComponentForUpload(String component) {
         final WebElement webElement =
-                driver.findElement(By.xpath("//li[span[text()='" + s + "']]/span"));
+                driver.findElement(By.xpath("//li[span[text()='" + component + "']]/span"));
         new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
         webElement.click();
     }
