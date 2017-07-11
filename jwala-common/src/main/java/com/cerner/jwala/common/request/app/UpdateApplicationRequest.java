@@ -27,7 +27,9 @@ public class UpdateApplicationRequest implements Serializable, Request {
             final Identifier<Group> theGroupId,
             final String theNewWebAppContext,
             final String theNewName,
-            boolean theNewSecure, boolean theNewLoadBalanceAcrossServers, boolean unpackWar) {
+            boolean theNewSecure,
+            boolean theNewLoadBalanceAcrossServers,
+            boolean unpackWar) {
         id = theId;
         newGroupId = theGroupId;
         newName = theNewName;
@@ -48,6 +50,7 @@ public class UpdateApplicationRequest implements Serializable, Request {
     public String getNewWebAppContext() {
         return newWebAppContext;
     }
+
     public String getNewName() {
         return newName;
     }
@@ -63,9 +66,9 @@ public class UpdateApplicationRequest implements Serializable, Request {
     @Override
     public void validate() {
         new MultipleRules(new ApplicationIdRule(id),
-                                new GroupIdRule(newGroupId),
-                                new ApplicationNameRule(newName),
-                                new ApplicationContextRule(newWebAppContext)).validate();
+                new GroupIdRule(newGroupId),
+                new ApplicationNameRule(newName),
+                new ApplicationContextRule(newWebAppContext)).validate();
     }
 
     public boolean isUnpackWar() {

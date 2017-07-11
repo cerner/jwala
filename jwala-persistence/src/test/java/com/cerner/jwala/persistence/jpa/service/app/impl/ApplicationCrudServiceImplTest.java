@@ -263,7 +263,7 @@ public class ApplicationCrudServiceImplTest {
         List<Application> appsForJpaGroup = applicationCrudService.findApplicationsBelongingTo(new Identifier<Group>(jpaGroup.getId()));
         assertEquals(1, appsForJpaGroup.size());
 
-        Application app = new Application(new Identifier<Application>(jpaApp.getId()), jpaApp.getName(), jpaApp.getWarPath(), jpaApp.getWebAppContext(), group, true, true, false, "testApp.war");
+        Application app = new Application(new Identifier<Application>(jpaApp.getId()), jpaApp.getName(), jpaApp.getWarPath(), jpaApp.getWebAppContext(), group, true, true, false, "testApp.war", "C:/test/app/deploy/path");
         UploadAppTemplateRequest uploadTemplateRequest = new UploadAppTemplateRequest(app, "ServerXMLTemplate.tpl", "hct.xml",
                 "testJvmName", StringUtils.EMPTY, templateContent);
 

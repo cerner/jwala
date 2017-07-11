@@ -21,8 +21,8 @@ import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
 import com.cerner.jwala.common.rule.MultipleRules;
 import com.cerner.jwala.common.rule.NameLengthRule;
 import com.cerner.jwala.common.rule.group.GroupNameRule;
-import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
+import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.exception.GroupServiceException;
 import com.cerner.jwala.service.group.GroupService;
@@ -46,7 +46,6 @@ import java.util.concurrent.*;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupPersistenceService groupPersistenceService;
-    private ApplicationPersistenceService applicationPersistenceService;
     private ResourceService resourceService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupServiceImpl.class);
@@ -58,13 +57,14 @@ public class GroupServiceImpl implements GroupService {
     private JvmService jvmService;
 
     @Autowired
+    private ApplicationService applicationService;
+
+    @Autowired
     private BinaryDistributionLockManager binaryDistributionLockManager;
 
     public GroupServiceImpl(final GroupPersistenceService groupPersistenceService,
-                            final ApplicationPersistenceService applicationPersistenceService,
                             final ResourceService resourceService) {
         this.groupPersistenceService = groupPersistenceService;
-        this.applicationPersistenceService = applicationPersistenceService;
         this.resourceService = resourceService;
     }
 
@@ -352,7 +352,7 @@ public class GroupServiceImpl implements GroupService {
         String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, resourceTemplateName);
         try {
             ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceTemplateName, jvm, metaDataStr);
-            Application app = applicationPersistenceService.getApplication(metaData.getEntity().getTarget());
+            Application app = applicationService.getApplication(metaData.getEntity().getTarget());
             app.setParentJvm(jvm);
             return resourceService.generateResourceFile(resourceTemplateName, template, resourceGroup, app,
                     ResourceGeneratorType.PREVIEW);
@@ -376,7 +376,7 @@ public class GroupServiceImpl implements GroupService {
         final String template = groupPersistenceService.getGroupAppResourceTemplate(groupName, appName, resourceTemplateName);
         if (tokensReplaced) {
             try {
-                Application app = applicationPersistenceService.getApplication(appName);
+                Application app = applicationService.getApplication(appName);
                 return resourceService.generateResourceFile(resourceTemplateName, template, resourceGroup, app, ResourceGeneratorType.TEMPLATE);
             } catch (ResourceFileGeneratorException rfge) {
                 LOGGER.error("Failed to generate and deploy file {} to Web App {}", resourceTemplateName, appName, rfge);

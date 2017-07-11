@@ -22,17 +22,11 @@ import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
-import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupAppConfigTemplate;
-import com.cerner.jwala.persistence.jpa.service.ApplicationCrudService;
-import com.cerner.jwala.persistence.jpa.service.GroupCrudService;
-import com.cerner.jwala.persistence.jpa.service.impl.ApplicationCrudServiceImpl;
-import com.cerner.jwala.persistence.jpa.service.impl.GroupCrudServiceImpl;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.ResourceDao;
-import com.cerner.jwala.persistence.service.impl.JpaGroupPersistenceServiceImpl;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
@@ -301,12 +295,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public String previewResourceTemplate(String fileName, String appName, String groupName, String jvmName, String template, ResourceGroup resourceGroup) {
-        final Application application;
+        Application application;
         if (StringUtils.isNotEmpty(jvmName)) {
             application = applicationPersistenceService.findApplication(appName, groupName, jvmName);
             application.setParentJvm(jvmPersistenceService.findJvmByExactName(jvmName));
         } else {
-            application = applicationPersistenceService.getApplication(appName);
+            application = getApplication(appName);
         }
         return resourceService.generateResourceFile(fileName, template, resourceGroup, application, ResourceGeneratorType.PREVIEW);
     }
@@ -375,7 +369,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Map<String, Future<CommandOutput>> futures = new HashMap<>();
         try {
             FileCopyUtils.copy(applicationWar, tempWarFile);
-            final String destPath = ApplicationProperties.get("remote.jwala.webapps.dir");
+            final String destPath = getWarDeployPath(application);
             for (String hostName : hostNames) {
                 Future<CommandOutput> commandOutputFuture = executeCopyCommand(application, tempWarFile, destPath, null, hostName);
                 futures.put(hostName, commandOutputFuture);
@@ -400,6 +394,23 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (tempWarFile.exists()) {
                 tempWarFile.delete();
             }
+        }
+    }
+
+    private String getWarDeployPath(Application application) {
+        String appWarName = application.getWarName();
+        ResourceIdentifier appWarResourceId = new ResourceIdentifier.Builder()
+                .setResourceName(appWarName)
+                .setWebAppName(application.getName())
+                .setGroupName(application.getGroup().getName())
+                .build();
+        String metaData = resourceService.getResourceContent(appWarResourceId).getMetaData();
+        try {
+            return resourceService.getTokenizedMetaData(appWarName, application, metaData).getDeployPath();
+        } catch (IOException e) {
+            String messageErr = MessageFormat.format("Failed to generate the war meta data for {0}", application);
+            LOGGER.error(messageErr,e);
+            throw new ApplicationServiceException(messageErr);
         }
     }
 
