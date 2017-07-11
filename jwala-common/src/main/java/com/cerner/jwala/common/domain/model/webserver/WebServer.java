@@ -212,7 +212,7 @@ public class WebServer implements Serializable {
     private String getGroupNames(Collection<Group> groups) {
         StringBuilder groupsNames = new StringBuilder();
         for (Group group : groups) {
-            groupsNames.append(group.getName()).append(" ");
+            groupsNames.append(group.getName()).append(",");
         }
         return groupsNames.toString();
     }
