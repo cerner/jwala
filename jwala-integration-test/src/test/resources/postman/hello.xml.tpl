@@ -1,2 +1,2 @@
-<Context docBase="${jvm.tomcatMedia.remoteDir}/app/webapps/hello-world.war">
+<Context docBase="${jvm.tomcatMedia.remoteDir}/../webapps/hello-world.war">
 </Context>
