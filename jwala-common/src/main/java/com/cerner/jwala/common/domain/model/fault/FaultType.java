@@ -156,7 +156,9 @@ public enum FaultType implements MessageResponseStatus {
 
     NAME_INVALID_SPECIAL_CHARACTERS("AEM76", "NameInvalidSpecialCharacters"),
 
-    MEDIA_NOT_FOUND("AEM77", "MediaNotFound");
+    MEDIA_NOT_FOUND("AEM77", "MediaNotFound"),
+
+    RESOURCE_NO_ATTACHMENT_EXCEPTION("AEM78", "ResourceNoAttachmentException");
 
     private final String faultCode;
     private final String faultMessage;
