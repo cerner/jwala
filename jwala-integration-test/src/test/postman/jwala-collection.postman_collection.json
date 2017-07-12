@@ -1232,17 +1232,6 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "tplFile",
-									"type": "file",
-									"enabled": true,
-									"src": "../resources/postman/hello.xml.tpl",
-									"value": ""
-								},
-								{
-									"key": "",
-									"value": "",
-									"type": "text",
-									"enabled": true
 								}
 							]
 						},
@@ -1302,17 +1291,6 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "tplFile",
-									"type": "file",
-									"enabled": true,
-									"src": "../resources/postman/hello.xml.tpl",
-									"value": ""
-								},
-								{
-									"key": "",
-									"value": "",
-									"type": "text",
-									"enabled": true
 								}
 							]
 						},
