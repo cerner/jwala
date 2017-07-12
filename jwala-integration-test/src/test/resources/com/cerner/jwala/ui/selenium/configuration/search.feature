@@ -128,12 +128,3 @@ Feature: Search
     And I fill in the search field with "aa"
     Then I see "aaa" in the JVM table
     And I don't see "zzz" in the table
-
-
-
-
-
-
-
-
-
