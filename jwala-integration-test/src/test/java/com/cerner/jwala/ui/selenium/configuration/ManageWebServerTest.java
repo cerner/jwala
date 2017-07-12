@@ -1,6 +1,5 @@
 package com.cerner.jwala.ui.selenium.configuration;
 
-
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
