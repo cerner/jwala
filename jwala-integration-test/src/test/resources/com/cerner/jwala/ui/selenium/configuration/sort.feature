@@ -620,9 +620,3 @@ Feature: Sort
     Then I see first item "aaa"
     When I click on the sort button with attribute "HTTPS"
     Then I see first item "zzz"
-
-
-
-
-
-
