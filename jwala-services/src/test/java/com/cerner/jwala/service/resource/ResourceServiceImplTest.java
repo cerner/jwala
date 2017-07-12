@@ -339,9 +339,9 @@ public class ResourceServiceImplTest {
                     new HashSet<History>(),
                     new HashSet<>(applications));
             groups.add(group);
-            applications.add(new Application(new Identifier<Application>(111L), "hello-world-1", "d:/jwala/app/archive", "/hello-world-1", group, true, true, false, "testWar.war"));
-            applications.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", group, true, true, false, "testWar.war"));
-            applications.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", group, true, true, false, "testWar.war"));
+            applications.add(new Application(new Identifier<Application>(111L), "hello-world-1", "d:/jwala/app/archive", "/hello-world-1", group, true, true, false, "testWar.war", "d:/test1/deployPath"));
+            applications.add(new Application(new Identifier<Application>(222L), "hello-world-2", "d:/jwala/app/archive", "/hello-world-2", group, true, true, false, "testWar.war", "d:/test2/deployPath"));
+            applications.add(new Application(new Identifier<Application>(333L), "hello-world-3", "d:/jwala/app/archive", "/hello-world-3", group, true, true, false, "testWar.war", "d:/test3/deployPath"));
             WebServer webServer = new WebServer(new Identifier<WebServer>(1L), groups, "Apache2.4", "localhost", 80, 443,
                     new com.cerner.jwala.common.domain.model.path.Path("/statusPath"), WebServerReachableState.WS_UNREACHABLE, null);
             webServers.add(webServer);

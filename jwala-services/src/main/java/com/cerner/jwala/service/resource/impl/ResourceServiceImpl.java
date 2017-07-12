@@ -598,7 +598,13 @@ public class ResourceServiceImpl implements ResourceService {
 
         if (MediaType.APPLICATION_ZIP.equals(metaData.getContentType()) &&
                 metaData.getTemplateName().toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
-            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getTemplateName(), templateContent);
+            String tokenizedWarDeployPath = resourceContentGeneratorService.generateContent(
+                    metaData.getDeployFileName(),
+                    metaData.getDeployPath(),
+                    null,
+                    applicationPersistenceService.getApplication(targetAppName),
+                    ResourceGeneratorType.METADATA);
+            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getTemplateName(), templateContent, tokenizedWarDeployPath);
         }
         final String deployFileName = metaData.getDeployFileName();
 
@@ -784,7 +790,7 @@ public class ResourceServiceImpl implements ResourceService {
             return ((WebServer) selectedValue).getGroups();
         }
 
-        if (selectedValue instanceof Application){
+        if (selectedValue instanceof Application) {
             return Collections.singleton(((Application) selectedValue).getGroup());
         }
 
@@ -932,7 +938,7 @@ public class ResourceServiceImpl implements ResourceService {
             String message = "Failed to copy file " + fileName + ". " + ce.getMessage();
             LOGGER.error(badStreamMessage + message, ce);
             throw new InternalErrorException(FaultType.BAD_STREAM, message, ce);
-        }finally{
+        } finally {
             if (resourceDestPath != null) {
                 binaryDistributionLockManager.writeUnlock(hostIPAddress + ":" + resourceDestPath);
             }
@@ -959,10 +965,17 @@ public class ResourceServiceImpl implements ResourceService {
         if (entity instanceof Jvm) {
             template = jvmPersistenceService.getResourceTemplate(((Jvm) entity).getJvmName(), fileName);
         } else if (entity instanceof Application) {
-            if (((Application) entity).getParentJvm() != null) {
-                template = applicationPersistenceService.getResourceTemplate(((Application) entity).getName(), fileName, ((Application) entity).getParentJvm().getJvmName(), ((Application) entity).getGroup().getName());
+            Application application = setApplicationWarDeployPath((Application) entity);
+            if (application.getParentJvm() != null) {
+                template = applicationPersistenceService.getResourceTemplate(
+                        application.getName(),
+                        fileName,
+                        application.getParentJvm().getJvmName(),
+                        application.getGroup().getName());
             } else {
-                template = groupPersistenceService.getGroupAppResourceTemplate(((Application) entity).getGroup().getName(), ((Application) entity).getName(), fileName);
+                template = groupPersistenceService.getGroupAppResourceTemplate(
+                        application.getGroup().getName(),
+                        application.getName(), fileName);
             }
         } else if (entity instanceof WebServer) {
             template = webServerPersistenceService.getResourceTemplate(((WebServer) entity).getName(), fileName);
@@ -982,10 +995,17 @@ public class ResourceServiceImpl implements ResourceService {
             }
         } else if (entity instanceof Application) {
             String templateContentApplication;
-            if (((Application) entity).getParentJvm() != null) {
-                templateContentApplication = applicationPersistenceService.getResourceTemplate(((Application) entity).getName(), fileName, ((Application) entity).getParentJvm().getJvmName(), ((Application) entity).getGroup().getName());
+            Application application = setApplicationWarDeployPath((Application) entity);
+            if (application.getParentJvm() != null) {
+                templateContentApplication = applicationPersistenceService.getResourceTemplate(
+                        application.getName(),
+                        fileName,
+                        application.getParentJvm().getJvmName(),
+                        application.getGroup().getName());
             } else {
-                templateContentApplication = groupPersistenceService.getGroupAppResourceTemplate(((Application) entity).getGroup().getName(), ((Application) entity).getName(), fileName);
+                templateContentApplication = groupPersistenceService.getGroupAppResourceTemplate(
+                        application.getGroup().getName(),
+                        application.getName(), fileName);
             }
             if (!templateContentApplication.isEmpty()) {
                 resourceFileString = generateResourceFile(fileName, templateContentApplication, generateResourceGroup(), entity, ResourceGeneratorType.TEMPLATE);
@@ -1001,6 +1021,49 @@ public class ResourceServiceImpl implements ResourceService {
             }
         }
         return resourceFileString;
+    }
+
+    /**
+     * Get the deploy path of the application's war from the meta data, and update the application's warDeployPath attribute
+     * @param application the application to update the war deploy path
+     * @return the application with the latest war deploy path
+     */
+    private Application setApplicationWarDeployPath(Application application) {
+        final String warName = application.getWarName();
+        final String name = application.getName();
+
+        if (StringUtils.isEmpty(warName)) {
+            LOGGER.info("No war found for application {}, skipping setting of war deploy path.", name);
+            return application;
+        }
+
+        ResourceContent warResourceContent = getApplicationWarResourceContent(application, warName, name);
+        return updateApplicationWarInfo(application, warName, name, warResourceContent);
+    }
+
+    private Application updateApplicationWarInfo(Application application, String warName, String name, ResourceContent warResourceContent) {
+        final ResourceTemplateMetaData tokenizedMetaData;
+        try {
+            final String metaData = warResourceContent.getMetaData();
+            tokenizedMetaData = getTokenizedMetaData(warName, application, metaData);
+            final String deployPath = tokenizedMetaData.getDeployPath();
+            LOGGER.info("Setting application {} war deploy path to: {}", name, deployPath);
+
+            application = applicationPersistenceService.updateWarInfo(name, warName, application.getWarPath(), deployPath);
+        } catch (IOException e) {
+            String errMsg = MessageFormat.format("Failed to tokenize the meta data for resource {0} in application {1}", warName, name);
+            throw new ResourceServiceException(errMsg, e);
+        }
+        return application;
+    }
+
+    private ResourceContent getApplicationWarResourceContent(Application application, String warName, String name) {
+        ResourceIdentifier appWarIdentifier = new ResourceIdentifier.Builder()
+                .setResourceName(warName)
+                .setWebAppName(name)
+                .setGroupName(application.getGroup().getName())
+                .build();
+        return getResourceContent(appWarIdentifier);
     }
 
 

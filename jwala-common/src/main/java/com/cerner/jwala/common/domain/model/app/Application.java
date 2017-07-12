@@ -30,18 +30,22 @@ public class Application implements Serializable {
 
     private String warName;
 
+    private String warDeployPath;
+
     private List<Jvm> jvms;
 
     private Jvm parentJvm;
 
-    public Application(Identifier<Application> anId,
-                       String aName,
-                       String aWarPath,
-                       String aWebAppContext,
-                       Group aGroup,
-                       boolean secure,
-                       boolean loadBalanceAcrossServers,
-                       boolean unpackWar, String warName) {
+    public Application(final Identifier<Application> anId,
+                       final String aName,
+                       final String aWarPath,
+                       final String aWebAppContext,
+                       final Group aGroup,
+                       final boolean secure,
+                       final boolean loadBalanceAcrossServers,
+                       final boolean unpackWar,
+                       final String warName,
+                       final String warDeployPath) {
         group = aGroup;
         id = anId;
         webAppContext = aWebAppContext;
@@ -51,6 +55,7 @@ public class Application implements Serializable {
         this.loadBalanceAcrossServers = loadBalanceAcrossServers;
         this.unpackWar = unpackWar;
         this.warName = warName;
+        this.warDeployPath = warDeployPath;
     }
 
     public Group getGroup() {
@@ -141,6 +146,14 @@ public class Application implements Serializable {
         this.parentJvm = parentJvm;
     }
 
+    public String getWarDeployPath() {
+        return warDeployPath;
+    }
+
+    public void setWarDeployPath(String warDeployPath) {
+        this.warDeployPath = warDeployPath;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -189,7 +202,7 @@ public class Application implements Serializable {
     public String toString() {
         return "Application{" +
                 "id=" + id +
-                ", group=" + group +
+                ", group=" + group.getName() +
                 ", webAppContext='" + webAppContext + '\'' +
                 ", name='" + name + '\'' +
                 ", warPath='" + warPath + '\'' +
@@ -197,6 +210,7 @@ public class Application implements Serializable {
                 ", loadBalanceAcrossServers=" + loadBalanceAcrossServers +
                 ", unpackWar=" + unpackWar +
                 ", warName='" + warName + '\'' +
+                ", warDeployPath='" + warDeployPath + '\'' +
                 ", jvms=" + jvms +
                 ", parentJvm=" + parentJvm +
                 '}';

@@ -17,19 +17,19 @@ public class CommonRunSteps {
     private LoginRunSteps loginRunSteps;
 
     @Autowired
-    private ManageGroupRunSteps manageGroupRunSteps;
+    private CreateGroupRunSteps createGroupRunSteps;
 
     @Autowired
-    private ManageMediaRunSteps manageMediaRunSteps;
+    private CreateWebServerRunSteps createWebServerRunSteps;
 
     @Autowired
-    private ManageWebServerRunSteps manageWebServerRunSteps;
+    private CreateJvmRunSteps createJvmRunSteps;
 
     @Autowired
-    private ManageJvmRunSteps manageJvmRunSteps;
+    private CreateWebAppRunSteps createWebAppRunSteps;
 
     @Autowired
-    private ManageWebAppRunSteps manageWebAppRunSteps;
+    private CreateMediaRunSteps createMediaRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -42,70 +42,70 @@ public class CommonRunSteps {
 
     @Given("^I created a group with the name \"(.*)\"$")
     public void createGroup(final String groupName) {
-        manageGroupRunSteps.goToGroupTab();
-        manageGroupRunSteps.clickAddGroupBtn();
-        manageGroupRunSteps.checkIfAddGroupDialogBoxIsDisplayed();
-        manageGroupRunSteps.setGroupName(groupName);
-        manageGroupRunSteps.clickOkBtn();
-        manageGroupRunSteps.checkIfGroupWasAdded(groupName);
+        createGroupRunSteps.goToGroupTab();
+        createGroupRunSteps.clickAddGroupBtn();
+        createGroupRunSteps.checkIfAddGroupDialogBoxIsDisplayed();
+        createGroupRunSteps.setGroupName(groupName);
+        createGroupRunSteps.clickOkBtn();
+        createGroupRunSteps.checkIfGroupWasAdded(groupName);
     }
 
     @Given("^I created a media with the following parameters:$")
     public void createMedia(final Map<String, String> parameters) {
-        manageMediaRunSteps.goToMediaTab();
-        manageMediaRunSteps.clickAddMediaBtn();
-        manageMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
-        manageMediaRunSteps.setMediaName(parameters.get("mediaName"));
-        manageMediaRunSteps.selectMediaType(parameters.get("mediaType"));
-        manageMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
-        manageMediaRunSteps.setRemoteDir(parameters.get("remoteDir"));
-        manageMediaRunSteps.clickAddMediaOkDialogBtn();
-        manageMediaRunSteps.checkForMedia(parameters.get("mediaName"));
+        createMediaRunSteps.goToMediaTab();
+        createMediaRunSteps.clickAddMediaBtn();
+        createMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
+        createMediaRunSteps.setMediaName(parameters.get("mediaName"));
+        createMediaRunSteps.selectMediaType(parameters.get("mediaType"));
+        createMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
+        createMediaRunSteps.setRemoteDir(parameters.get("remoteDir"));
+        createMediaRunSteps.clickAddMediaOkDialogBtn();
+        createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
 
     @Given("I created a webserver with following parameters:$")
     public void createWebServer(final Map<String, String> parameters) throws InterruptedException {
-        manageWebServerRunSteps.goToWebServersTab();
-        manageWebServerRunSteps.clickAddWebServerBtn();
-        manageWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
-        manageWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
-        manageWebServerRunSteps.selectStatusPath();
-        manageWebServerRunSteps.setHostName(parameters.get("hostName"));
-        manageWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
-        manageWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
-        manageWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
-        manageWebServerRunSteps.selectGroup(parameters.get("group"));
-        manageWebServerRunSteps.clickAddWebServerDialogOkBtn();
+        createWebServerRunSteps.goToWebServersTab();
+        createWebServerRunSteps.clickAddWebServerBtn();
+        createWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
+        createWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
+        createWebServerRunSteps.selectStatusPath();
+        createWebServerRunSteps.setHostName(parameters.get("hostName"));
+        createWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
+        createWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
+        createWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
+        createWebServerRunSteps.selectGroup(parameters.get("group"));
+        createWebServerRunSteps.clickAddWebServerDialogOkBtn();
     }
 
     @Given("I created a jvm with following parameters:$")
     public void createJvm(final Map<String, String> parameters) {
-        manageJvmRunSteps.goToJvmTab();
-        manageJvmRunSteps.clickAddJvmBtn();
-        manageJvmRunSteps.checkForAddJvmDlg();
-        manageJvmRunSteps.setName(parameters.get("jvmName"));
-        manageJvmRunSteps.setHostName(parameters.get("hostName"));
-        manageJvmRunSteps.setHttpPort(parameters.get("portNumber"));
-        manageJvmRunSteps.selectJdk(parameters.get("jdk"));
-        manageJvmRunSteps.selectTomcat(parameters.get("tomcat"));
-        manageJvmRunSteps.clickStatusPath();
+        createJvmRunSteps.goToJvmTab();
+        createJvmRunSteps.clickAddJvmBtn();
+        createJvmRunSteps.checkForAddJvmDlg();
+        createJvmRunSteps.setName(parameters.get("jvmName"));
+        createJvmRunSteps.setHostName(parameters.get("hostName"));
+        createJvmRunSteps.setHttpPort(parameters.get("portNumber"));
+        createJvmRunSteps.selectJdk(parameters.get("jdk"));
+        createJvmRunSteps.selectTomcat(parameters.get("tomcat"));
+        createJvmRunSteps.clickStatusPath();
         List<String> groups = new ArrayList<String>();
         groups.add(parameters.get("group"));
-        manageJvmRunSteps.setGroups(groups);
-        manageJvmRunSteps.clickOkBtn();
+        createJvmRunSteps.setGroups(groups);
+        createJvmRunSteps.clickOkBtn();
     }
 
     @Given("I created a webapp with following parameters:$")
     public void createWebapp(final Map<String, String> parameters) {
-        manageWebAppRunSteps.goToWebAppsTab();
-        manageWebAppRunSteps.clickAddWebAppBtn();
-        manageWebAppRunSteps.checkForWebAppDialog();
-        manageWebAppRunSteps.setWebAppName(parameters.get("webappName"));
-        manageWebAppRunSteps.setContextPath(parameters.get("contextPath"));
+        createWebAppRunSteps.goToWebAppsTab();
+        createWebAppRunSteps.clickAddWebAppBtn();
+        createWebAppRunSteps.checkForWebAppDialog();
+        createWebAppRunSteps.setWebAppName(parameters.get("webappName"));
+        createWebAppRunSteps.setContextPath(parameters.get("contextPath"));
         List<String> groups = new ArrayList<String>();
         groups.add(parameters.get("group"));
-        manageWebAppRunSteps.setGroups(groups);
-        manageWebAppRunSteps.clickAddDialogOkBtn();
+        createWebAppRunSteps.setGroups(groups);
+        createWebAppRunSteps.clickAddDialogOkBtn();
     }
 
 }

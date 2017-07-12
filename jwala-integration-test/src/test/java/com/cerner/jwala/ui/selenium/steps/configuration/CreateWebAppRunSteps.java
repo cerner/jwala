@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Jedd Cuison on 7/5/2017
  */
-public class ManageWebAppRunSteps {
+public class CreateWebAppRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;

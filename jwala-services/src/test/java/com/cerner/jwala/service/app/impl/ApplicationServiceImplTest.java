@@ -598,7 +598,7 @@ public class ApplicationServiceImplTest {
     }
 
     @Test
-    public void testCopyApplicationWarToGroupHosts() {
+    public void testCopyApplicationWarToGroupHosts() throws IOException {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getHostName()).thenReturn("mock-hostname");
 
@@ -616,6 +616,11 @@ public class ApplicationServiceImplTest {
         when(Config.mockGroupPersistenceService.getGroup(any(Identifier.class))).thenReturn(mockGroup);
         when(Config.binaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Create directory succeeded", ""));
         when(Config.binaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Secure copy succeeded", ""));
+
+        ResourceTemplateMetaData mockResourceTemplateMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockResourceTemplateMetaData.getDeployPath()).thenReturn("C:/deploy/path");
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("C:/deploy/path", "content"));
+        when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Application.class), anyString())).thenReturn(mockResourceTemplateMetaData);
 
         applicationService.copyApplicationWarToGroupHosts(mockApplicationForCopy);
 

@@ -22,6 +22,7 @@ import java.nio.file.Paths;
  * POJO that defines a media such as jdk, tomcat application server,  web srve* Creted by Jedd Cuison on 12/6/2016
  */
 @Entity(name = "media")
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME", "TYPE"})})
 @NamedQueries({@NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME, query = "SELECT m FROM media m WHERE lower(m.name) = lower(:name)"),
         @NamedQuery(name = JpaMedia.QUERY_FIND_BY_NAME_TYPE, query = "SELECT m FROM media m WHERE lower(m.name) = lower(:name) AND m.type = (:type)")})
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -38,7 +39,7 @@ public class JpaMedia extends AbstractEntity<JpaMedia> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @Size(min = 2, max = 200, message = "{media.name.length.msg}")
     private String name;
 

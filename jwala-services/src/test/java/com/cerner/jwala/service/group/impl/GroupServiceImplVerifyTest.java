@@ -14,9 +14,9 @@ import com.cerner.jwala.common.exception.NotFoundException;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.request.group.*;
 import com.cerner.jwala.common.request.jvm.UploadJvmTemplateRequest;
-import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.service.VerificationBehaviorSupport;
+import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionLockManager;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.jvm.JvmService;
@@ -444,9 +444,8 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         when(mockApp.isLoadBalanceAcrossServers()).thenReturn(true);
         when(mockGroup.getJvms()).thenReturn(jvmsList);
         when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
-        when(Config.mockApplicationPersistenceService.getApplications()).thenReturn(appList);
-        when(Config.mockApplicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(mockApp);
-        when(Config.mockApplicationPersistenceService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockApplicationService.getApplications()).thenReturn(appList);
+        when(Config.mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
 
         String content = groupService.previewGroupAppResourceTemplate("testGroup", "hct.xml", "hct content", new ResourceGroup());
@@ -476,21 +475,20 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         when(mockGroup.getJvms()).thenReturn(jvmsList);
         when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplate(anyString(), anyString(), anyString())).thenReturn("hct content ${webApp.name}");
-        when(Config.mockApplicationPersistenceService.getApplications()).thenReturn(appList);
-        when(Config.mockApplicationPersistenceService.findApplication(anyString(), anyString(), anyString())).thenReturn(mockApp);
-        when(Config.mockApplicationPersistenceService.getApplication(anyString())).thenReturn(mockApp);
+        when(Config.mockApplicationService.getApplications()).thenReturn(appList);
+        when(Config.mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
 
         String content = groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", false, new ResourceGroup());
         assertEquals("hct content ${webApp.name}", content);
 
-        reset(Config.mockGroupPersistenceService, Config.mockApplicationPersistenceService, Config.mockResourceService);
+        reset(Config.mockGroupPersistenceService, Config.mockApplicationService, Config.mockResourceService);
 
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
         when(Config.mockGroupPersistenceService.getGroups()).thenReturn(Collections.singletonList(mockGroup));
         groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", true, new ResourceGroup());
 
         verify(Config.mockGroupPersistenceService).getGroupAppResourceTemplate(eq("testGroup"), eq("testAppName"), eq("hct.xml"));
-        verify(Config.mockApplicationPersistenceService).getApplication(eq("testAppName"));
+        verify(Config.mockApplicationService).getApplication(eq("testAppName"));
         verify(Config.mockResourceService).generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), any(Application.class), any(ResourceGeneratorType.class));
 
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplate(anyString(), anyString(), anyString())).thenReturn("hct content ${webApp.fail.name}");
@@ -534,7 +532,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         private static ExecutorService mockExecutorService = mock(ExecutorService.class);
         private static BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
         private static ResourceService mockResourceService = mock(ResourceService.class);
-        private static ApplicationPersistenceService mockApplicationPersistenceService = mock(ApplicationPersistenceService.class);
+        private static ApplicationService mockApplicationService = mock(ApplicationService.class);
         private static GroupPersistenceService mockGroupPersistenceService = mock(GroupPersistenceService.class);
 
         @Bean
@@ -558,8 +556,8 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         }
 
         @Bean
-        public ApplicationPersistenceService getApplicationPersistenceService() {
-            return mockApplicationPersistenceService;
+        public ApplicationService getApplicationService() {
+            return mockApplicationService;
         }
 
         @Bean
@@ -569,7 +567,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         @Bean
         public GroupService getGroupService() {
-            return new GroupServiceImpl(Config.mockGroupPersistenceService, mockApplicationPersistenceService, mockResourceService);
+            return new GroupServiceImpl(Config.mockGroupPersistenceService, mockResourceService);
         }
     }
 }

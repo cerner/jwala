@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Jedd Cuison on 7/7/2017
  */
-public class ManageJvmRunSteps {
+public class CreateJvmRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
