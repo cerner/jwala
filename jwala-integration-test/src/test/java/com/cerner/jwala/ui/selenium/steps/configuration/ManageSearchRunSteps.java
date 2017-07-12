@@ -19,21 +19,14 @@ public class ManageSearchRunSteps {
 
     @When("^I fill in the search field with \"(.*)\"$")
     public void enterSearchString(String searchString) {
-        jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), 'Search')]/following-sibling::input"));
-        jwalaUi.sendKeys(searchString);
-    }
-
-
-    @When("^I fill in the web server search field with \"(.*)\"$")
-    public void enterwebServerSearchString(String searchString) {
         jwalaUi.clickWhenReady(By.xpath("//input"));
         jwalaUi.sendKeys(searchString);
     }
 
+
     @Then("^I don't see \"(.*) in the table$")
     public void checkIfElementIsNotPresent(final String name) {
-        String xpath = String.valueOf(By.xpath("//button[text()='" + name + "']"));
-        assertEquals(false, jwalaUi.isElementExists(xpath));
+        assertEquals(false, jwalaUi.isElementExists(By.xpath("//button[text()='" + name + "']")));
     }
 
 

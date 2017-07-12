@@ -24,29 +24,24 @@ public class ManageSortRunSteps {
     JwalaUi jwalaUi;
 
 
-    @When("I click on the sort button of \"(.*)\"$")
-    public void clickSortButton(String tab) {
-        jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), '" + tab + "Name')]"));
+    @When("I click on the sort button of component \"(.*)\" with attribute \"(.*)\"$")
+    public void clickSortButton(String component, String attribute) {
+        jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), '" + component + attribute + "')]"));
     }
 
 
-    @When("I click on the sort button of media with \"(.*)\"$")
-    public void clickSortButtonOfMedia(String attribute) {
-        jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), '"+attribute+"')]"));
-    }
-
-
-    @When("I click on the sort button of web server with attribute \"(.*)\"$")
-    public void clickSortButtonOfWebServer(String attribute) {
+    @When("I click on the sort button with attribute \"(.*)\"$")
+    public void clickSortButtonWithAttribute(String attribute) {
         jwalaUi.click(By.xpath("//div[text()='" + attribute + "']/.."));
+        jwalaUi.sleep();
     }
 
 
     @Then("I see first item \"(.*)\"$")
-    public void checkFirstElement(String name) {
+    public void checkFirstElement(String firstElementName) {
         List<WebElement> listOfWebElements = jwalaUi.getWebDriver().findElements(By.xpath("//td[button[@class='button-link']]"));
         WebElement firstElement = listOfWebElements.get(0);
-        assertEquals(firstElement.getText(), name + "");
+        assertEquals(firstElement.getText(), firstElementName);
     }
 
     @After

@@ -1,11 +1,10 @@
 package com.cerner.jwala.ui.selenium.steps;
 
-import com.cerner.jwala.ui.selenium.steps.configuration.ManageGroupRunSteps;
-import com.cerner.jwala.ui.selenium.steps.configuration.ManageMediaRunSteps;
-import com.cerner.jwala.ui.selenium.steps.configuration.ManageWebAppRunSteps;
-import com.cerner.jwala.ui.selenium.steps.configuration.ManageWebServerRunSteps;
+import com.cerner.jwala.ui.selenium.steps.configuration.*;
+import cucumber.api.java.cs.A;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,9 @@ public class CommonRunSteps {
 
     @Autowired
     private ManageWebServerRunSteps manageWebServerRunSteps;
+
+    @Autowired
+    private ManageJvmRunSteps manageJvmRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -65,7 +67,6 @@ public class CommonRunSteps {
 
     @Given("^I created a web server with the following parameters:$")
     public void createWebServer(final Map<String, String> parameters) throws InterruptedException {
-        createMedia(parameters);
         manageWebServerRunSteps.goToWebServersTab();
         manageWebServerRunSteps.clickAddWebServerBtn();
         manageWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
@@ -80,7 +81,22 @@ public class CommonRunSteps {
         manageWebServerRunSteps.checkForWebServer(parameters.get("webserverName"));
     }
 
-
+    @Given("^I created a jvm with the following parameters:$")
+    public void createJvm(final Map<String, String> parameters) throws InterruptedException {
+        manageJvmRunSteps.goToJvmTab();
+        manageJvmRunSteps.clickAddJvmBtn();
+        manageJvmRunSteps.checkForAddJvmDlg();
+        manageJvmRunSteps.setName(parameters.get("jvmName"));
+        manageJvmRunSteps.clickStatusPath();
+        manageJvmRunSteps.setHostName(parameters.get("hostName"));
+        manageJvmRunSteps.setHttpPort(parameters.get("httpPort"));
+        manageJvmRunSteps.selectJdk(parameters.get("jdkMediaId"));
+        manageJvmRunSteps.selectTomcat(parameters.get("tomcatMediaId"));
+        List<String> groups = new ArrayList<>();
+        groups.add(parameters.get("group"));
+        manageJvmRunSteps.setGroups(groups);
+        manageJvmRunSteps.clickOkBtn();
+    }
 
 
     @Given("^I created a media with the following parameters:$")
