@@ -11,5 +11,4 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/configuration/manageGroup.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManageGroupTest {
-}
+public class ManageGroupTest {}
