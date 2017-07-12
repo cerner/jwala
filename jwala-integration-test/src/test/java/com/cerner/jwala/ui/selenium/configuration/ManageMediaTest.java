@@ -12,5 +12,4 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/configuration/manageMedia.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManageMediaTest {
-}
+public class ManageMediaTest {}
