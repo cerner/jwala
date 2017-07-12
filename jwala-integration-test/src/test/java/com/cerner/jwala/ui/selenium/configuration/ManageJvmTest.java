@@ -12,4 +12,3 @@ import org.junit.runner.RunWith;
         features = { "classpath:com/cerner/jwala/ui/selenium/configuration/manageJvm.feature" },
         glue = {"com.cerner.jwala.ui.selenium.steps"})
 public class ManageJvmTest {}
-
