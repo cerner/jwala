@@ -59,7 +59,16 @@ public class JGroupsClusterInitializer implements InitializingBean {
             }
 
             System.setProperty(JAVA_NET_PREFER_IPV4_STACK, jgroupsJavaNetPreferIPv4Stack);
-            System.setProperty(JGROUPS_BIND_ADDR, coordinatorIP.getIpAddress().getHostAddress());
+
+            if (coordinatorIP.getIpAddress() != null) {
+                System.setProperty(JGROUPS_BIND_ADDR, coordinatorIP.getIpAddress().getHostAddress());
+                LOGGER.info("{} was set to {}", JGROUPS_BIND_ADDR, coordinatorIP.getIpAddress().getHostAddress());
+            } else {
+                // We did not not throw an exception here because not setting the jgroups bind address explicitly
+                // is only a problem when the ip address is internal.
+                LOGGER.warn("Coordinator ip = {}. Host address is null! Cannot set {}! " +
+                            "Jwala might not receive JVM status!", coordinatorIP, JGROUPS_BIND_ADDR);
+            }
 
             LOGGER.debug("Starting JGroups cluster {}", jgroupsClusterName);
             final JChannel channel = new JChannel(jgroupsConfXml);
