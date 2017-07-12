@@ -11,4 +11,4 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = { "classpath:com/cerner/jwala/ui/selenium/security.feature" },
         glue = {"com.cerner.jwala.ui.selenium.steps" })
-public class SecurityTest extends Test {}
+public class SecurityTest {}

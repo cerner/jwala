@@ -1,6 +1,5 @@
 package com.cerner.jwala.ui.selenium.configuration;
 
-import com.cerner.jwala.ui.selenium.Test;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
@@ -10,6 +9,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = { "classpath:com/cerner/jwala/ui/selenium/configuration/manageGroup.feature" },
+        features = {"classpath:com/cerner/jwala/ui/selenium/configuration/manageGroup.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManageGroupTest extends Test {}
+public class ManageGroupTest {
+}

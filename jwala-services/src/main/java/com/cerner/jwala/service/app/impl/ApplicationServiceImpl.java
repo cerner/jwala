@@ -18,12 +18,15 @@ import com.cerner.jwala.common.request.app.CreateApplicationRequest;
 import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.control.AemControl;
+import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
+import com.cerner.jwala.persistence.service.ResourceDao;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
@@ -70,6 +73,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     BinaryDistributionControlService distributionControlService;
+
+    @Autowired
+    ResourceDao resourceDao;
 
     private final ResourceService resourceService;
 
@@ -130,20 +136,37 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     @Override
-    public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser) {
+    public Application updateApplication(UpdateApplicationRequest updateApplicationRequest, User anUpdatingUser)
+            throws ApplicationServiceException{
         updateApplicationRequest.validate();
-
         final Application application = applicationPersistenceService.updateApplication(updateApplicationRequest);
+
+        String appName = application.getName();
+        Identifier<Group> newGroupId = application.getGroup().getId();
+        Long id = newGroupId.getId();
+
+        List<Long> idList = Collections.singletonList(id);
+        List<JpaGroup> jpaGroups = groupPersistenceService.findGroups(idList);
+        if (jpaGroups.size() == 1) {
+            JpaApplication jpaApp = applicationPersistenceService.getJpaApplication(appName);
+            resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
+        } else {
+            throw new ApplicationServiceException("One Jpa Group expected for the application.");
+        }
+
         updateApplicationWarMetaData(updateApplicationRequest, application);
+
         return application;
     }
 
-    private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application application) {
+    private void updateApplicationWarMetaData(UpdateApplicationRequest updateApplicationRequest, Application
+            application) {
         final String appWarName = application.getWarName();
         if (!StringUtils.isEmpty(appWarName)) {
             final String appName = application.getName();
             try {
-                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup().getName(), appWarName);
+                String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup
+                        ().getName(), appWarName);
                 ResourceTemplateMetaData originalMetaData = resourceService.getMetaData(originalJsonMetaData);
                 ResourceTemplateMetaData updateMetaData = new ResourceTemplateMetaData(
                         originalMetaData.getTemplateName(),
@@ -272,12 +295,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public String previewResourceTemplate(String fileName, String appName, String groupName, String jvmName, String template, ResourceGroup resourceGroup) {
-        final Application application;
+        Application application;
         if (StringUtils.isNotEmpty(jvmName)) {
             application = applicationPersistenceService.findApplication(appName, groupName, jvmName);
             application.setParentJvm(jvmPersistenceService.findJvmByExactName(jvmName));
         } else {
-            application = applicationPersistenceService.getApplication(appName);
+            application = getApplication(appName);
         }
         return resourceService.generateResourceFile(fileName, template, resourceGroup, application, ResourceGeneratorType.PREVIEW);
     }
@@ -346,7 +369,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Map<String, Future<CommandOutput>> futures = new HashMap<>();
         try {
             FileCopyUtils.copy(applicationWar, tempWarFile);
-            final String destPath = ApplicationProperties.get("remote.jwala.webapps.dir");
+            final String destPath = getWarDeployPath(application);
             for (String hostName : hostNames) {
                 Future<CommandOutput> commandOutputFuture = executeCopyCommand(application, tempWarFile, destPath, null, hostName);
                 futures.put(hostName, commandOutputFuture);
@@ -371,6 +394,23 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (tempWarFile.exists()) {
                 tempWarFile.delete();
             }
+        }
+    }
+
+    private String getWarDeployPath(Application application) {
+        String appWarName = application.getWarName();
+        ResourceIdentifier appWarResourceId = new ResourceIdentifier.Builder()
+                .setResourceName(appWarName)
+                .setWebAppName(application.getName())
+                .setGroupName(application.getGroup().getName())
+                .build();
+        String metaData = resourceService.getResourceContent(appWarResourceId).getMetaData();
+        try {
+            return resourceService.getTokenizedMetaData(appWarName, application, metaData).getDeployPath();
+        } catch (IOException e) {
+            String messageErr = MessageFormat.format("Failed to generate the war meta data for {0}", application);
+            LOGGER.error(messageErr,e);
+            throw new ApplicationServiceException(messageErr);
         }
     }
 

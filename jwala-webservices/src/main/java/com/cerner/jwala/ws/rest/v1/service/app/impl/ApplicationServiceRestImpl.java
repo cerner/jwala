@@ -12,6 +12,7 @@ import com.cerner.jwala.persistence.jpa.type.EventType;
 import com.cerner.jwala.service.HistoryFacadeService;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
@@ -92,7 +93,8 @@ public class ApplicationServiceRestImpl implements ApplicationServiceRest {
     }
 
     @Override
-    public Response updateApplication(final JsonUpdateApplication anAppToUpdate, final AuthenticatedUser aUser) {
+    public Response updateApplication(final JsonUpdateApplication anAppToUpdate, final AuthenticatedUser aUser)
+            throws ApplicationServiceException {
         LOGGER.info("Update Application requested: {}", anAppToUpdate);
         try {
             Application updated = service.updateApplication(anAppToUpdate.toUpdateCommand(), aUser.getUser());

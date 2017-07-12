@@ -42,6 +42,9 @@ import javax.persistence.*;
         @NamedQuery(name = JpaGroupAppConfigTemplate.QUERY_GET_GROUP_LEVEL_APP_RESOURCE,
                 query = "SELECT t FROM JpaGroupAppConfigTemplate t where LOWER(t.grp.name) = LOWER(:grpName) and " +
                         "LOWER(t.app.name) = LOWER(:appName) and t.templateName = :templateName"),
+        @NamedQuery(name = JpaGroupAppConfigTemplate.UPDATE_RESOURCE_GROUP,
+                query = "UPDATE JpaGroupAppConfigTemplate t SET t.grp = :grp WHERE t.app = " +
+                        ":app")
 })
 public class JpaGroupAppConfigTemplate extends ConfigTemplate {
     public static final String GET_GROUP_APP_TEMPLATE_RESOURCE_NAMES = "getGroupAppTemplateResourceNames";
@@ -49,6 +52,7 @@ public class JpaGroupAppConfigTemplate extends ConfigTemplate {
     public static final String GET_GROUP_APP_TEMPLATE_META_DATA = "getGroupAppTemplateMetaData";
     public static final String UPDATE_GROUP_APP_TEMPLATE_CONTENT = "updateGroupAppTemplateContent";
     public static final String UPDATE_GROUP_APP_TEMPLATE_META_DATA = "updateGroupAppTemplateMetaData";
+    public static final String UPDATE_RESOURCE_GROUP = "updateResourceGroup";
     public static final String QUERY_DELETE_GROUP_LEVEL_APP_RESOURCE_BY_APP_GROUP_TEMPLATE_NAME = "deleteGroupLevelAppResourceByTemplateGroupName";
     public static final String QUERY_DELETE_GROUP_LEVEL_APP_RESOURCES_BY_APP_GROUP_NAME_TEMPLATE_NAME_LIST = "deleteGroupLevelAppResourcesByTemplateNameListAndGroupName";
     public static final String QUERY_GET_GROUP_LEVEL_APP_RESOURCE = "getGroupLevelAppResource";
@@ -58,6 +62,8 @@ public class JpaGroupAppConfigTemplate extends ConfigTemplate {
     public static final String QUERY_PARAM_TEMPLATE_NAME = "templateName";
     public static final String QUERY_PARAM_TEMPLATE_NAME_LIST = "templateNameList";
     public static final java.lang.String QUERY_APP_RESOURCE_NAMES = "getAppResourceNames";
+    public static final String QUERY_PARAM_GRP = "grp";
+    public static final String QUERY_PARAM_APP = "app";
 
     public static final String GET_GROUP_APP_TEMPLATE_RESOURCE_NAME = "getGroupAppTemplateResourceName";
 

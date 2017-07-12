@@ -1,8 +1,12 @@
 package com.cerner.jwala.persistence.service;
 
+import com.cerner.jwala.common.domain.model.app.Application;
+import com.cerner.jwala.common.domain.model.group.Group;
 import com.cerner.jwala.common.domain.model.resource.EntityType;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
+import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplicationConfigTemplate;
+import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.*;
 
 import java.util.List;
@@ -205,4 +209,12 @@ public interface ResourceDao {
      * @param templateContent the updated content of the template
      */
     void updateResource(ResourceIdentifier resourceIdentifier, EntityType entityType, String templateContent);
+
+    /**
+     *Update the group of the resources related to an application
+     * @param application the JpaApplication
+     * @param jpaGroup    the new group to be used to update
+     */
+    void updateResourceGroup(JpaApplication application, JpaGroup jpaGroup);
 }
+

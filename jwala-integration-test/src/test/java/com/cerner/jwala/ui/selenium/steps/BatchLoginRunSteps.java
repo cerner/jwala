@@ -28,7 +28,12 @@ public class BatchLoginRunSteps {
 
     @Given("^I load predefined user accounts$")
     public void loadUserAccounts() throws IOException {
+<<<<<<< HEAD
         try (final Stream<String> stream = Files.lines(Paths.get("c:/selenium/user-accounts.csv"))) {
+=======
+        try (final Stream<String> stream = Files.lines(Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir")
+                + "/user-accounts.csv"))) {
+>>>>>>> master
             stream.skip(1).forEach(item -> userAccounts.add(item.split(",")));
         }
     }

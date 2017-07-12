@@ -12,5 +12,5 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/configuration/pagination.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManagePaginationTest extends Test {}
+public class ManagePaginationTest  {}
 

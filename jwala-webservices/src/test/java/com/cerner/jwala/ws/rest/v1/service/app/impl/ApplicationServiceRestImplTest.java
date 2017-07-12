@@ -3,7 +3,6 @@ package com.cerner.jwala.ws.rest.v1.service.app.impl;
 import com.cerner.jwala.common.domain.model.app.Application;
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.group.Group;
-import com.cerner.jwala.common.domain.model.group.History;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
@@ -15,9 +14,9 @@ import com.cerner.jwala.common.request.app.CreateApplicationRequest;
 import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
 import com.cerner.jwala.service.HistoryFacadeService;
-import com.cerner.jwala.service.Message;
 import com.cerner.jwala.service.app.ApplicationService;
 import com.cerner.jwala.service.binarydistribution.BinaryDistributionControlService;
+import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.service.group.GroupService;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
@@ -28,14 +27,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
@@ -63,9 +63,8 @@ public class ApplicationServiceRestImplTest {
     private ApplicationServiceRest applicationServiceRestInterface;
 
     Group group1 = new Group(Identifier.id(0L, Group.class), "");
-    Application application = new Application(Identifier.id(1L, Application.class), "", "", "", group1, true, true, false, "testWar.war");
-    Application applicationWithWar = new Application(Identifier.id(1L, Application.class), "", "D:\\APACHE\\TOMCAT\\WEBAPPS\\jwala-webapp-1.0-SNAPSHOT-b6349ade-d8f2-4a2f-bdc5-d92d644a1a67-.war", "", group1, true, true, false, "testWar.war");
-    Application newlyCreatedApp = new Application(Identifier.id(2L, Application.class), "", "", "", group1, true, true, false, "testWar.war");
+    Application application = new Application(Identifier.id(1L, Application.class), "", "", "", group1, true, true, false, "testWar.war", "c:/application/war/deploy/path");
+    Application newlyCreatedApp = new Application(Identifier.id(2L, Application.class), "", "", "", group1, true, true, false, "testWar.war", "c:/newlyCreatedApp/war/deploy/path");
 
     List<Application> applications = new ArrayList<>(1);
     List<Application> applications2 = new ArrayList<>(2);
@@ -205,7 +204,7 @@ public class ApplicationServiceRestImplTest {
      * Testing: {@link com.cerner.jwala.ws.rest.v1.service.app.ApplicationServiceRest#updateApplication(JsonUpdateApplication, AuthenticatedUser)}
      */
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws ApplicationServiceException {
         when(Config.service.updateApplication(any(UpdateApplicationRequest.class), any(User.class))).thenReturn(Config.newlyCreatedApp);
         ArrayList<UpdateApplicationRequest> multiUpdate = new ArrayList<>();
         multiUpdate.add(new UpdateApplicationRequest(Identifier.id(0L, Application.class), Identifier.id(0L, Group.class), "", "", true, true, false));
@@ -325,9 +324,9 @@ public class ApplicationServiceRestImplTest {
         private static HistoryFacadeService historyFacadeService = mock(HistoryFacadeService.class);
         private static AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
         static Group group1 = new Group(Identifier.id(0L, Group.class), "");
-        static Application application = new Application(Identifier.id(1L, Application.class), "", "", "", group1, true, true, false, "testWar.war");
-        static Application applicationWithWar = new Application(Identifier.id(1L, Application.class), "", "D:\\APACHE\\TOMCAT\\WEBAPPS\\jwala-webapp-1.0-SNAPSHOT-b6349ade-d8f2-4a2f-bdc5-d92d644a1a67-.war", "", group1, true, true, false, "testWar.war");
-        static Application newlyCreatedApp = new Application(Identifier.id(2L, Application.class), "", "", "", group1, true, true, false, "testWar.war");
+        static Application application = new Application(Identifier.id(1L, Application.class), "", "", "", group1, true, true, false, "testWar.war", "c:/application/war/deploy/path");
+        static Application applicationWithWar = new Application(Identifier.id(1L, Application.class), "", "D:\\APACHE\\TOMCAT\\WEBAPPS\\jwala-webapp-1.0-SNAPSHOT-b6349ade-d8f2-4a2f-bdc5-d92d644a1a67-.war", "", group1, true, true, false, "testWar.war", "c:/applicationWar/war/deploy/path");
+        static Application newlyCreatedApp = new Application(Identifier.id(2L, Application.class), "", "", "", group1, true, true, false, "testWar.war", "c:/newlyCreatedApp/war/deploy/path");
         static ApplicationService service = mock(ApplicationService.class);
         static ResourceService resourceService = mock(ResourceService.class);
         static BinaryDistributionControlService binaryDistributionControlService=mock(BinaryDistributionControlService.class);

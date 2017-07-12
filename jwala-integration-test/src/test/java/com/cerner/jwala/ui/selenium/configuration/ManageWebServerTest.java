@@ -1,6 +1,6 @@
 package com.cerner.jwala.ui.selenium.configuration;
 
-import com.cerner.jwala.ui.selenium.Test;
+
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
@@ -12,4 +12,6 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/configuration/manageWebServer.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManageWebServerTest extends Test {}
+
+public class ManageWebServerTest {
+}

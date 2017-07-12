@@ -4,18 +4,19 @@ import com.cerner.jwala.common.domain.model.jvm.JvmState;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "jvm", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 @NamedQueries({
         @NamedQuery(name = JpaJvm.QUERY_FIND_JVM_BY_GROUP_AND_JVM_NAME,
-                query = "SELECT j FROM JpaJvm j WHERE j.name = :jvmName AND j.groups.name = :groupName"),
+                query = "SELECT j FROM JpaJvm j WHERE LOWER(j.name) = LOWER(:jvmName) AND LOWER(j.groups.name) = LOWER(:groupName)"),
         @NamedQuery(name = JpaJvm.QUERY_UPDATE_STATE_BY_ID, query = "UPDATE JpaJvm j SET j.state = :state, j.lastUpdateDate = CURRENT_TIMESTAMP WHERE j.id = :id"),
         @NamedQuery(name = JpaJvm.QUERY_UPDATE_ERROR_STATUS_BY_ID, query = "UPDATE JpaJvm j SET j.errorStatus = :errorStatus, j.lastUpdateDate = CURRENT_TIMESTAMP  WHERE j.id = :id"),
         @NamedQuery(name = JpaJvm.QUERY_UPDATE_STATE_AND_ERR_STS_BY_ID, query = "UPDATE JpaJvm j SET j.state = :state, j.errorStatus = :errorStatus, j.lastUpdateDate = CURRENT_TIMESTAMP WHERE j.id = :id"),
-        @NamedQuery(name = JpaJvm.QUERY_GET_JVM_COUNT_BY_STATE_AND_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaJvm j WHERE j.state = :state AND j.groups.name = :groupName"),
-        @NamedQuery(name = JpaJvm.QUERY_GET_JVM_COUNT_BY_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaJvm j WHERE j.groups.name = :groupName"),
-        @NamedQuery(name = JpaJvm.QUERY_GET_JVMS_BY_GROUP_NAME, query = "SELECT j FROM JpaJvm j WHERE j.groups.name = :groupName ORDER by j.name")
+        @NamedQuery(name = JpaJvm.QUERY_GET_JVM_COUNT_BY_STATE_AND_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaJvm j WHERE j.state = :state AND LOWER(j.groups.name) = LOWER(:groupName)"),
+        @NamedQuery(name = JpaJvm.QUERY_GET_JVM_COUNT_BY_GROUP_NAME, query = "SELECT COUNT(1) FROM JpaJvm j WHERE LOWER(j.groups.name) = LOWER(:groupName)"),
+        @NamedQuery(name = JpaJvm.QUERY_GET_JVMS_BY_GROUP_NAME, query = "SELECT j FROM JpaJvm j WHERE LOWER(j.groups.name) = LOWER(:groupName) ORDER by j.name")
 })
 public class JpaJvm extends AbstractEntity<JpaJvm> {
 
@@ -242,7 +243,7 @@ public class JpaJvm extends AbstractEntity<JpaJvm> {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", hostName='" + hostName + '\'' +
-                ", groups=" + groups +
+                ", groups=" + getGroupNames(groups) +
                 ", httpPort=" + httpPort +
                 ", httpsPort=" + httpsPort +
                 ", redirectPort=" + redirectPort +
@@ -253,6 +254,11 @@ public class JpaJvm extends AbstractEntity<JpaJvm> {
                 ", userName='" + (userName == null ? "<null>" : userName) + '\'' +
                 '}';
     }
+
+    private String getGroupNames(List<JpaGroup> groups) {
+        return groups.stream().map(JpaGroup::getName).collect(Collectors.joining(","));
+    }
+
 
     public JpaMedia getJdkMedia() {
         return jdkMedia;

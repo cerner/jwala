@@ -160,10 +160,7 @@ public class AemServiceConfiguration {
 
     @Bean
     public GroupService getGroupService(final HistoryFacadeService historyFacadeService) {
-        return new GroupServiceImpl(aemPersistenceServiceConfiguration.getGroupPersistenceService(),
-                aemPersistenceServiceConfiguration.getApplicationPersistenceService(),
-                resourceService
-        );
+        return new GroupServiceImpl(aemPersistenceServiceConfiguration.getGroupPersistenceService(), resourceService);
     }
 
     @Bean(name = "jvmService")
