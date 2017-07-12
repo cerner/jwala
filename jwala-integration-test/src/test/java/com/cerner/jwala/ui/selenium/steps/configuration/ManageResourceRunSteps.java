@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Created by RS045609 on 7/7/2017.
+ * Created by Rahul Sayini on 7/7/2017.
  */
 public class ManageResourceRunSteps {
     @Autowired
@@ -49,6 +49,18 @@ public class ManageResourceRunSteps {
     public void setDeployPath(String deployPath) {
         jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), deployPath);
         jwalaUi.sleep();
+    }
+
+    @And("I check Upload Meta Data File")
+    public void clickUploadMetaDataFile() {
+        jwalaUi.click(By.xpath("//div[contains(text(),'Upload Meta Data File')]/input"));
+        jwalaUi.sleep();
+    }
+
+    @And("^I choose the meta data file \"(.*)\"$")
+    public void selectMetaDataFile(final String archiveFileName) {
+        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
+        jwalaUi.sendKeys(By.name("metaDataFile"), mediaPath.normalize().toString());
     }
 
     @And("^I choose the resource file \"(.*)\"$")

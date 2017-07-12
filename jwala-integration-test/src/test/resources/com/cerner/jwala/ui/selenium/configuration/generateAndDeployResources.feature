@@ -34,6 +34,12 @@ Feature: Upload Resource - Jvm Node
       | group              | seleniumGroup       |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
+    
+    And I created a webapp with following parameters:
+      | webappName  | seleniumWebapp |
+      | contextPath | /hello       |
+      | group       | seleniumGroup  |
+    
     And I am in the resource tab
 #    upload webserver resources
     And I expanded component "seleniumGroup"
@@ -49,21 +55,40 @@ Feature: Upload Resource - Jvm Node
     And I expanded component "JVMs"
     And I clicked on component "seleniumJvm"
     And I clicked on add resource
-    And I fill in the "Deploy Name" field with "hello.xml"
-    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+#    And I fill in the "Deploy Name" field with "hello.xml"
+#    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+    And I check Upload Meta Data File
+    And I choose the meta data file "hello.xml.json"
     And I choose the resource file "hello.xml.tpl"
     And I click the upload resource dialog ok button
     Then check resource uploaded successful
     And I clicked on add resource
-    And I fill in the "Deploy Name" field with "setenv.bat"
-    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+#    And I fill in the "Deploy Name" field with "setenv.bat"
+#    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+    And I check Upload Meta Data File
+    And I choose the meta data file "setenv.bat.json"
     And I choose the resource file "setenv.bat.tpl"
     And I click the upload resource dialog ok button
     Then check resource uploaded successful
     And I clicked on add resource
-    And I fill in the "Deploy Name" field with "server.xml"
-    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+#    And I fill in the "Deploy Name" field with "server.xml"
+#    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+    And I check Upload Meta Data File
+    And I choose the meta data file "server.xml.json"
     And I choose the resource file "server.xml.tpl"
     And I click the upload resource dialog ok button
     Then check resource uploaded successful
+    
+    And I expanded component "Web Apps"
+    And I clicked on component "seleniumWebapp"
+    And I clicked on add resource
+    And I fill in the "Deploy Name" field with "hello-world.war"
+    And I fill in the "Deploy Path" field with "D:\ctp\app\webapps"
+    And I choose the resource file "hello-world.war"
+    And I click the upload resource dialog ok button
+    Then check resource uploaded successful
+
+    And I am in the Operations tab
+
+
 
