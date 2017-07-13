@@ -514,7 +514,7 @@ var WebServerDataTable = React.createClass({
     renderMediaName:function(dataTable, data, aoColumnDefs, itemIndex) {
         var self = this;
         aoColumnDefs[itemIndex].fnCreatedCell = function (nTd, sData, oData, iRow, iCol) {
-            return React.renderComponent(React.createElement("span", {}, sData  ? sData : ""), nTd);
+            return React.renderComponent(React.createElement("span", {}, sData ? sData : ""), nTd);
         }
     },
     renderNameLink:function(dataTable, data, aoColumnDefs, itemIndex) {
