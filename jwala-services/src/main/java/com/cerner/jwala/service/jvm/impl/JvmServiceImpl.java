@@ -215,10 +215,11 @@ public class JvmServiceImpl implements JvmService {
         templateNames = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName);
         for (String templateName : templateNames) {
             String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, templateName);
+            String applicationName = applicationService.findApplications(groupPersistenceService.getGroup(groupName).getId()).iterator().next().getName();
             try {
                 ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
                 if (metaData.getEntity().getDeployToJvms()) {
-                    final String template = resourceService.getAppTemplate(groupName, metaData.getEntity().getTarget(),
+                    final String template = resourceService.getAppTemplate(groupName, applicationName,
                             templateName);
                     final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
                             .setResourceName(metaData.getTemplateName()).setJvmName(jvmName)
@@ -490,7 +491,7 @@ public class JvmServiceImpl implements JvmService {
             errorMsgs.add(jdkMediaErrorMsg);
         }
 
-        if (null == jvm.getTomcatMedia()){
+        if (null == jvm.getTomcatMedia()) {
             final String tomcatMediaErrorMsg = MessageFormat.format("No Tomcat version specified for JVM {0}. Stopping the JVM generation", jvmName);
             LOGGER.error(tomcatMediaErrorMsg);
             errorMsgs.add(tomcatMediaErrorMsg);
