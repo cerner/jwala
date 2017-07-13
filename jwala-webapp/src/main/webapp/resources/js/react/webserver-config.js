@@ -496,7 +496,7 @@ var WebServerDataTable = React.createClass({
                         {sTitle:"Port", mData:"port"},
                         {sTitle:"HTTPS Port", mData:"httpsPort"},
                         {sTitle:"Status Path", mData:"statusPath.path", maxDisplayTextLen:20},
-                        {sTitle:"Apache HTTPD", mData:"apacheHttpdMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName},
+                        {sTitle:"Apache HTTPD", mData:"apacheHttpdMedia.name", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName},
                         {sTitle:"Group",
                          mData:"groups",
                          jwalaType:"array",
@@ -514,7 +514,7 @@ var WebServerDataTable = React.createClass({
     renderMediaName:function(dataTable, data, aoColumnDefs, itemIndex) {
         var self = this;
         aoColumnDefs[itemIndex].fnCreatedCell = function (nTd, sData, oData, iRow, iCol) {
-            return React.renderComponent(React.createElement("span", {}, sData && sData.name ? sData.name : ""), nTd);
+            return React.renderComponent(React.createElement("span", {}, sData  ? sData : ""), nTd);
         }
     },
     renderNameLink:function(dataTable, data, aoColumnDefs, itemIndex) {
