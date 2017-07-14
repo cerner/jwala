@@ -213,12 +213,12 @@ public class JvmServiceImpl implements JvmService {
 
         // get the group App templates
         templateNames = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName);
-        String applicationName = applicationService.findApplications(groupPersistenceService.getGroup(groupName).getId()).iterator().next().getName();
         for (String templateName : templateNames) {
             String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, templateName);
             try {
                 ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
                 if (metaData.getEntity().getDeployToJvms()) {
+                    String applicationName = applicationService.findApplications(groupPersistenceService.getGroup(groupName).getId()).iterator().next().getName();
                     final String template = resourceService.getAppTemplate(groupName, applicationName,
                             templateName);
                     final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
