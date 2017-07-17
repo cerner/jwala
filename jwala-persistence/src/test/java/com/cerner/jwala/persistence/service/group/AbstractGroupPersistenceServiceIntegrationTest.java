@@ -421,9 +421,4 @@ public abstract class AbstractGroupPersistenceServiceIntegrationTest {
                 "app.xml", "some meta data", "app content");
         assertNotNull(template);
     }
-
-    @Test
-    public void testGetGroupAppResourceTemplateMetaDataWithAppName(){
-
-    }
 }
