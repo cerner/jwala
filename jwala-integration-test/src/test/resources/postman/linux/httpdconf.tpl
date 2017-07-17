@@ -199,7 +199,15 @@ SSLSessionCache shmcb:logs/ssl_cache_shm
 #Note: we are not password protecting our keys
 #SSLPassPhraseDialog "exec:../app/data/security/apache/authorize.bat"
 
-SSLPassPhraseDialog "exec:/opt/ctp/app/data/security/scripts/httpd_helper.sh"
+<%
+  def scriptname = vars.'remote.jwala.data.dir' + "/security/scripts/httpd_helper";
+%>
+
+<%
+scriptname = "exec:" + scriptname + ".sh";
+%>
+
+SSLPassPhraseDialog "${scriptname}"
 
 #IPINS
 LoadModule rewrite_module modules/mod_rewrite.so
