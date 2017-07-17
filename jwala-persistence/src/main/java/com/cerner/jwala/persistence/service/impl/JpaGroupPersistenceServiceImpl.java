@@ -314,4 +314,9 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
         q.setParameter(JpaGroup.QUERY_PARAM_ID_LIST, idList);
         return q.getResultList();
     }
+
+    @Override
+    public String getGroupAppResourceTemplateMetaDataWithAppName(String groupName, String templateName, String appName) {
+        return groupCrudService.getGroupAppResourceTemplateMetaDataWithAppname(groupName, templateName, appName);
+    }
 }

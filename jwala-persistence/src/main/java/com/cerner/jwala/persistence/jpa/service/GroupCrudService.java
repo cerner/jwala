@@ -105,4 +105,6 @@ public interface GroupCrudService extends CrudService<JpaGroup> {
     void updateGroupJvmResourceMetaData(String groupName, String resourceName, String metaData);
 
     void updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData);
+
+    String getGroupAppResourceTemplateMetaDataWithAppname(String groupName, String templateName, String appName);
 }

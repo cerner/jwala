@@ -288,4 +288,9 @@ public class GroupCrudServiceImplTest {
         List<String> templateNames = groupCrudService.getGroupAppsResourceTemplateNames(groupName, "some-app-name");
         assertEquals(1, templateNames.size());
     }
+
+    @Test(expected = NonRetrievableResourceTemplateContentException.class)
+    public void testGetGroupAppResourceTemplateMetaDataWithAppname() {
+        groupCrudService.getGroupAppResourceTemplateMetaDataWithAppname(groupName, "hct.xml", "some-app-name");
+    }
 }

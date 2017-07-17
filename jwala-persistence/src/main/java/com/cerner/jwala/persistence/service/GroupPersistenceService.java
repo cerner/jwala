@@ -118,4 +118,6 @@ public interface GroupPersistenceService {
     String updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData);
 
     List<JpaGroup> findGroups(List<Long> idList);
+
+    String getGroupAppResourceTemplateMetaDataWithAppName(String groupName, String templateName, String appName);
 }
