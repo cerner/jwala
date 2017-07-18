@@ -69,7 +69,7 @@ public class CommonRunSteps {
         createWebServerRunSteps.clickAddWebServerBtn();
         createWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
         createWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
-        createWebServerRunSteps.selectStatusPath();
+        createWebServerRunSteps.setStatusPath(parameters.get("statusPath"));
         createWebServerRunSteps.setHostName(parameters.get("hostName"));
         createWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
         createWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
