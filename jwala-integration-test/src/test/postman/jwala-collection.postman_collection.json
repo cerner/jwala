@@ -1007,6 +1007,46 @@
 					"response": []
 				},
 				{
+					"name": "upload catalina.properties template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/catalina.properties.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"enabled": true,
+									"src": "../resources/postman/catalina.properties.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"enabled": true,
+									"src": "../resources/postman/catalina.properties.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "upload hello xml template",
 					"event": [
 						{
