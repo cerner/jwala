@@ -94,7 +94,15 @@
 	  SSLCertificateFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.cer"
       SSLCertificateKeyFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.key"
       SSLEnabled="true"
-      SSLPassword="" 
+
+	<% if (jvm.hostName.tokenize('.')[0].toLowerCase()=="usmlvv1cds0068") { %>
+	SSLPassword="\${enc:9hQ4KpxpM8e/VX3KkT2VYg==}" 
+	<% } else if (jvm.hostName.tokenize('.')[0].toLowerCase()=="usmlvv1cds0069") { %>
+	SSLPassword="\${enc:2mSe/FS9WcArFYK73S35dA==}" 
+	<% } else { %>
+	SSLPassword="" 
+	<% } %>
+
       acceptCount="100" 
       clientAuth="false" 
       disableUploadTimeout="true" 
