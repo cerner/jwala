@@ -151,10 +151,11 @@ public interface GroupServiceRest {
                                             final String content);
 
     @PUT
-    @Path("/{groupName}/apps/resources/preview/{resourceTemplateName}")
+    @Path("/{groupName}/apps/resources/preview/{resourceTemplateName}/{appName}")
     @Consumes(MediaType.TEXT_PLAIN)
     Response previewGroupAppResourceTemplate(@PathParam("groupName") String groupName,
                                              @PathParam("resourceTemplateName") String resourceTemplateName,
+                                             @PathParam("appName") String appName,
                                              String template);
 
     @PUT

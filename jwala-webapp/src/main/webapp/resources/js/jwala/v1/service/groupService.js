@@ -87,7 +87,7 @@ var groupService = {
                                      "text/plain; charset=utf-8");
     },
     previewGroupAppResourceFile: function(groupName, templateName, template, successCallback, errorCallback) {
-        return serviceFoundation.put("v1.0/groups/" + encodeURIComponent(groupName) + "/apps/resources/preview/" + encodeURIComponent(templateName),
+        return serviceFoundation.put("v1.0/groups/" + encodeURIComponent(groupName) + "/apps/resources/preview/" + encodeURIComponent(templateName) + "/" + encodeURIComponent(appName),
                                      "json",
                                      template,
                                      successCallback,

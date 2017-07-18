@@ -633,11 +633,11 @@ public class GroupServiceRestImplTest {
     public void testPreviewGroupAppResourceTemplate() {
         final ResourceGroup resourceGroup = new ResourceGroup();
         when(mockResourceService.generateResourceGroup()).thenReturn(resourceGroup);
-        groupServiceRest.previewGroupAppResourceTemplate("testGroup", "hct.xml", "preview me!");
-        verify(mockGroupService).previewGroupAppResourceTemplate("testGroup", "hct.xml", "preview me!", resourceGroup);
+        groupServiceRest.previewGroupAppResourceTemplate("testGroup", "hct.xml", "preview me!", "testApp");
+        verify(mockGroupService).previewGroupAppResourceTemplate("testGroup", "hct.xml", "preview me!", resourceGroup, "testApp");
 
-        when(mockGroupService.previewGroupAppResourceTemplate(anyString(), anyString(), anyString(), any(ResourceGroup.class))).thenThrow(new RuntimeException());
-        Response response = groupServiceRest.previewGroupAppResourceTemplate("testGroup", "hct.xml", "preview me!");
+        when(mockGroupService.previewGroupAppResourceTemplate(anyString(), anyString(), anyString(), any(ResourceGroup.class), anyString())).thenThrow(new RuntimeException());
+        Response response = groupServiceRest.previewGroupAppResourceTemplate("testGroup", "hct.xml", "preview me!", "testApp");
         assertTrue(response.getStatus() > 499);
     }
 
@@ -785,7 +785,7 @@ public class GroupServiceRestImplTest {
     @Test(expected = InternalErrorException.class)
     public void testGenerateAndDeployGroupAppFileFail() throws IOException {
         when(mockGroupService.getGroup(anyString())).thenReturn(mockGroup);
-        when(mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("anyString");
+        when(mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("anyString");
         Application mockApp = mock(Application.class);
         when(mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
         when(mockResourceService.getMetaData(anyString())).thenThrow(new IOException("Cannot parse meta data: \"anyString\""));

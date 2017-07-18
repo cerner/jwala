@@ -695,7 +695,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
         LOGGER.info("Generate and deploy group app file {} for group {} by user {} to host {}", fileName, groupName, aUser.getUser().getId(), hostName);
 
         Group group = groupService.getGroup(groupName);
-        final String groupAppMetaData = groupService.getGroupAppResourceTemplateMetaData(groupName, fileName);
+        final String groupAppMetaData = groupService.getGroupAppResourceTemplateMetaData(groupName, fileName, appName);
         ResourceTemplateMetaData metaData;
         try {
             // cannot call getTokenizedMetaData here - the app resource could be associated to a JVM and use JVM attributes
@@ -894,11 +894,11 @@ public class GroupServiceRestImpl implements GroupServiceRest {
     }
 
     @Override
-    public Response previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template) {
+    public Response previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template, String appName) {
         LOGGER.debug("Preview group app resource {} in group {}", resourceTemplateName, groupName);
         LOGGER.debug(template);
         try {
-            return ResponseBuilder.ok(groupService.previewGroupAppResourceTemplate(groupName, resourceTemplateName, template, resourceService.generateResourceGroup()));
+            return ResponseBuilder.ok(groupService.previewGroupAppResourceTemplate(groupName, resourceTemplateName, template, resourceService.generateResourceGroup(), appName));
         } catch (RuntimeException e) {
             LOGGER.error("Failed to preview the application template {} for {}", resourceTemplateName, groupName, e);
             return ResponseBuilder.notOk(Response.Status.INTERNAL_SERVER_ERROR, new FaultCodeException(

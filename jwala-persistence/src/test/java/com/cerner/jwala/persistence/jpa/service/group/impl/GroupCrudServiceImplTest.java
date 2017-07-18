@@ -245,14 +245,6 @@ public class GroupCrudServiceImplTest {
         groupCrudService.getGroupWebServerResourceTemplate(groupName, "UHUHUH-youdidntsaythemagicword");
     }
 
-    @Test
-    public void testPopulateGroupAppTemplate() {
-        groupCrudService.populateGroupAppTemplate(groupName, "some-app-name", "app.xml", "someMetaData", "content!");
-        groupCrudService.populateGroupAppTemplate(groupName, "some-app-name", "app.xml", "someMetaData", "content new!");
-        assertTrue(groupCrudService.checkGroupAppResourceFileName(groupName, "app.xml"));
-        assertEquals("someMetaData", groupCrudService.getGroupAppResourceTemplateMetaData(groupName, "app.xml"));
-    }
-
     @Test(expected = ResourceTemplateUpdateException.class)
     public void testUpdateGroupAppTemplateThrowsException() {
         groupCrudService.updateGroupAppResourceTemplate(groupName, "some-app-name", "hct.xml", "new hct.xml template");
