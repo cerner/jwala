@@ -273,7 +273,7 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
     @Override
     public String updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData) {
         groupCrudService.updateGroupAppResourceMetaData(groupName, webAppName, resourceName, metaData);
-        return groupCrudService.getGroupAppResourceTemplateMetaDataWithAppname(groupName, resourceName, webAppName);
+        return groupCrudService.getGroupAppResourceTemplateMetaData(groupName, resourceName, webAppName);
 
     }
 
@@ -312,7 +312,7 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
     }
 
     @Override
-    public String getGroupAppResourceTemplateMetaDataWithAppName(String groupName, String templateName, String appName) {
-        return groupCrudService.getGroupAppResourceTemplateMetaDataWithAppname(groupName, templateName, appName);
+    public String getGroupAppResourceTemplateMetaData(String groupName, String templateName, String appName) {
+        return groupCrudService.getGroupAppResourceTemplateMetaData(groupName, templateName, appName);
     }
 }

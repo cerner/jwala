@@ -365,7 +365,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public String getGroupAppResourceTemplateMetaData(String groupName, String fileName, String appName) {
-        return groupPersistenceService.getGroupAppResourceTemplateMetaDataWithAppName(groupName, fileName, appName);
+        return groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, fileName, appName);
     }
 
     @Override

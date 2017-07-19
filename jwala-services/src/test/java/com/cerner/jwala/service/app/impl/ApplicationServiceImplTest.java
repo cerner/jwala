@@ -241,7 +241,7 @@ public class ApplicationServiceImplTest {
         JpaApplication jpaApplication = mock(JpaApplication.class);
         when(Config.applicationPersistenceService.getJpaApplication(Config.mockApplication2.getName())).thenReturn
                 (jpaApplication);
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaDataWithAppName("group1", "test-war-name", "test-app-names"))
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData("group1", "test-war-name", "test-app-names"))
                 .thenReturn
                 ("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
 
@@ -472,7 +472,7 @@ public class ApplicationServiceImplTest {
        when(mockJvm.getHostName()).thenReturn("testserver");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
         when(Config.mockGroupPersistenceService.getHosts(anyString())).thenReturn(hosts);
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaDataWithAppName(anyString(), anyString(), anyString())).thenReturn("");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("");
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
         when(mockMetaData.getEntity()).thenReturn(mockEntity);
         when(mockEntity.getDeployToJvms()).thenReturn(false);
@@ -512,7 +512,7 @@ public class ApplicationServiceImplTest {
         when(mockJvm.getHostName()).thenReturn("testserver");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
         when(Config.mockGroupPersistenceService.getHosts(anyString())).thenReturn(hosts);
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaDataWithAppName(anyString(), anyString(), anyString())).thenReturn("");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("");
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
         when(mockMetaData.getEntity()).thenReturn(mockEntity);
         when(mockEntity.getDeployToJvms()).thenReturn(false);
@@ -591,7 +591,7 @@ public class ApplicationServiceImplTest {
         when(mockJvm.getHostName()).thenReturn("testserver");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
         when(Config.mockGroupPersistenceService.getHosts(anyString())).thenReturn(hosts);
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaDataWithAppName(anyString(), anyString(), anyString())).thenReturn("");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("");
         when(Config.mockResourceService.getMetaData(anyString())).thenThrow(IOException.class);
         when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString(), anyString())).thenReturn(templateNames);
         applicationService.deployConf(appName, "testserver", testUser);
@@ -710,7 +710,7 @@ public class ApplicationServiceImplTest {
         when(mockResourceTemplateMetaData.getEntity()).thenReturn(mockEntity);
 
         when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(Collections.singletonList("mock-application-resource"));
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaDataWithAppName(anyString(), anyString(), anyString())).thenReturn("{\"fake\":\"meta-data\"}");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"fake\":\"meta-data\"}");
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), anyObject(), anyString())).thenReturn(mockResourceTemplateMetaData);
         when(Config.mockResourceService.generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Generate and deploy succeeded", ""));
         when(Config.jvmPersistenceService.getJvmsByGroupName(anyString())).thenReturn(Collections.singletonList(mockJvm));

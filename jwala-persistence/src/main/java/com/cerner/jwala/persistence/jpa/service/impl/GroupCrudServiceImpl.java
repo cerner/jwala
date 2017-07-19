@@ -260,8 +260,8 @@ public class GroupCrudServiceImpl extends AbstractCrudServiceImpl<JpaGroup> impl
     }
 
     @Override
-    public String getGroupAppResourceTemplateMetaDataWithAppname(String groupName, String templateName, String appName) {
-        final Query q = entityManager.createNamedQuery(JpaGroupAppConfigTemplate.GET_GROUP_APP_TEMPLATE_META_DATA_WITH_APP);
+    public String getGroupAppResourceTemplateMetaData(String groupName, String templateName, String appName) {
+        final Query q = entityManager.createNamedQuery(JpaGroupAppConfigTemplate.GET_GROUP_APP_TEMPLATE_META_DATA);
         q.setParameter("grpName", groupName);
         q.setParameter("templateName", templateName);
         q.setParameter("appName", appName);

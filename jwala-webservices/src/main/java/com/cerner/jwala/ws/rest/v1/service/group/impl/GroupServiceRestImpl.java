@@ -894,7 +894,7 @@ public class GroupServiceRestImpl implements GroupServiceRest {
     }
 
     @Override
-    public Response previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template, String appName) {
+    public Response previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String appName, String template) {
         LOGGER.debug("Preview group app resource {} in group {}", resourceTemplateName, groupName);
         LOGGER.debug(template);
         try {

@@ -17,7 +17,7 @@ import javax.persistence.*;
         @NamedQuery(name = JpaGroupAppConfigTemplate.GET_GROUP_APP_TEMPLATE_CONTENT,
                 query = "SELECT t.templateContent FROM JpaGroupAppConfigTemplate t where LOWER(t.grp.name) = " +
                         "LOWER(:grpName) and LOWER(t.app.name) = LOWER(:appName) and t.templateName = :templateName"),
-        @NamedQuery(name = JpaGroupAppConfigTemplate.GET_GROUP_APP_TEMPLATE_META_DATA_WITH_APP,
+        @NamedQuery(name = JpaGroupAppConfigTemplate.GET_GROUP_APP_TEMPLATE_META_DATA,
                 query = "SELECT t.metaData FROM JpaGroupAppConfigTemplate t where LOWER(t.grp.name) = LOWER(:grpName)" +
                         " and t.templateName = :templateName" + " and t.app.name = :appName"),
         @NamedQuery(name = JpaGroupAppConfigTemplate.UPDATE_GROUP_APP_TEMPLATE_CONTENT,
@@ -49,7 +49,7 @@ import javax.persistence.*;
 public class JpaGroupAppConfigTemplate extends ConfigTemplate {
     public static final String GET_GROUP_APP_TEMPLATE_RESOURCE_NAMES = "getGroupAppTemplateResourceNames";
     public static final String GET_GROUP_APP_TEMPLATE_CONTENT = "getGroupAppTemplateContent";
-    public static final String GET_GROUP_APP_TEMPLATE_META_DATA_WITH_APP = "getGroupAppTemplateMetaDataWithApp";
+    public static final String GET_GROUP_APP_TEMPLATE_META_DATA = "getGroupAppTemplateMetaDataWithApp";
     public static final String UPDATE_GROUP_APP_TEMPLATE_CONTENT = "updateGroupAppTemplateContent";
     public static final String UPDATE_GROUP_APP_TEMPLATE_META_DATA = "updateGroupAppTemplateMetaData";
     public static final String UPDATE_RESOURCE_GROUP = "updateResourceGroup";

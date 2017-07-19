@@ -283,6 +283,6 @@ public class GroupCrudServiceImplTest {
 
     @Test(expected = NonRetrievableResourceTemplateContentException.class)
     public void testGetGroupAppResourceTemplateMetaDataWithAppname() {
-        groupCrudService.getGroupAppResourceTemplateMetaDataWithAppname(groupName, "hct.xml", "some-app-name");
+        groupCrudService.getGroupAppResourceTemplateMetaData(groupName, "hct.xml", "some-app-name");
     }
 }
