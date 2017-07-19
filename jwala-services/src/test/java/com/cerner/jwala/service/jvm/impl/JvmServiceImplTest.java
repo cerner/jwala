@@ -145,8 +145,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
 
         final Entity mockEntity = mock(Entity.class);
-        final CreateJvmRequest createJvmRequest = mock(CreateJvmRequest.class);
-        final CreateJvmAndAddToGroupsRequest createJvmAndAddToGroupsRequest = mock(CreateJvmAndAddToGroupsRequest.class);
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
         Set<Jvm> jvms = new HashSet<>();
         jvms.add(jvm);
@@ -157,7 +155,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         templateNames.add("testTEmplate");
         applications.add(application);
         ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
-        CreateResourceResponseWrapper mockCreateResourceResponseWrapper = mock(CreateResourceResponseWrapper.class);
         when(mockMetaData.getDeployFileName()).thenReturn("testFile");
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
         when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
@@ -168,9 +165,11 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockMetaData.getEntity()).thenReturn(mockEntity);
         when(mockEntity.getDeployToJvms()).thenReturn(false);
 
+        jvmService.createDefaultTemplates(jvm.getJvmName(), group);
 
-        jvmService.createDefaultTemplates("TestJvm", group);
-
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupJvmsResourceTemplateNames(anyString());
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupJvmResourceTemplate(anyString(), anyString());
+        verify(Config.mockResourceService,times(1)).getMetaData(anyString());
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
