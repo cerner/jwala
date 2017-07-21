@@ -222,7 +222,7 @@ public class JvmServiceImpl implements JvmService {
                         final String template = resourceService.getAppTemplate(groupName, app.getName(),
                                 templateName);
                         final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
-                                .setResourceName(metaData.getTemplateName()).setJvmName(jvmName)
+                                .setResourceName(templateName).setJvmName(jvmName)
                                 .setWebAppName(app.getName()).build();
                         resourceService.createResource(resourceIdentifier, metaData, new ByteArrayInputStream(template.getBytes(StandardCharsets.UTF_8)));
                     }
