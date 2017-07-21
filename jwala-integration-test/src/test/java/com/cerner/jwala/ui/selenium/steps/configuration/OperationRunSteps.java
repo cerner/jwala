@@ -48,6 +48,11 @@ public class OperationRunSteps {
         jwalaUi.waitUntilElementIstVisible(By.xpath("//div[contains(text(), '" + value + "')]"), 240000);
     }
 
+    @And("I wait for component (.*) state \"(.*)\"$")
+    public void componentState(String component, String status) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='" + component + "']//following-sibling::td[6]/div/span[contains(text(),'" + status + "')"));
+    }
+
     @And("I generate webapp")
     public void generateWebapp() {
         jwalaUi.click(By.xpath("//tr/td[text()='seleniumWebapp']/following-sibling::td[3]/div/button[@title='Generate and deploy the webapp resources.']"));

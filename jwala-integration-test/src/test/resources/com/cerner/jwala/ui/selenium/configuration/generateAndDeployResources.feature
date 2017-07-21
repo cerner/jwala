@@ -23,12 +23,12 @@ Feature: Upload Resource - Jvm Node
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
       | jdk        | jdk1.8.0_92          |
-      | hostName   | USMLVV2CTO0766       |
+      | hostName   | usmlvv2cto0766       |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
     And I created a webserver with following parameters:
       | webserverName      | seleniumWebserver   |
-      | hostName           | USMLVV2CTO0766      |
+      | hostName           | usmlvv2cto0766      |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
       | group              | seleniumGroup       |
@@ -97,10 +97,12 @@ Feature: Upload Resource - Jvm Node
     And I wait for popup string "Successfully generated the web servers for seleniumGroup"
     And I click on ok button
     And I start all webservers
+    And I wait for component "seleniumWebserver" state "STARTED"
     And I generate all jvms
     And I wait for popup string "Successfully generated the JVMs for seleniumGroup"
+    And I click on ok button
     And I start all jvms
-    And I wait for popup string "this"
+    And I wait for component "seleniumJvm" state "STARTED"
 
 
 
