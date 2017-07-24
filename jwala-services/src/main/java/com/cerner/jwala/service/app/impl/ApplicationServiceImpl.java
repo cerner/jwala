@@ -166,7 +166,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             final String appName = application.getName();
             try {
                 String originalJsonMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(application.getGroup
-                        ().getName(), appWarName);
+                        ().getName(), appWarName, application.getName());
                 ResourceTemplateMetaData originalMetaData = resourceService.getMetaData(originalJsonMetaData);
                 ResourceTemplateMetaData updateMetaData = new ResourceTemplateMetaData(
                         originalMetaData.getTemplateName(),
@@ -328,7 +328,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         final List<Jvm> jvms = jvmPersistenceService.getJvmsByGroupName(groupName);
         if (null != appResourcesNames && !appResourcesNames.isEmpty()) {
             for (String resourceTemplateName : appResourcesNames) {
-                String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, resourceTemplateName);
+                String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, resourceTemplateName, app.getName());
                 try {
                     ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceTemplateName, app, metaDataStr);
                     if (jvms != null && !jvms.isEmpty() && !metaData.getEntity().getDeployToJvms()) {
@@ -581,7 +581,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         final Set<String> resourceSet = new HashSet<>();
         List<String> resourceTemplates = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName, appName);
         for (String resourceTemplate : resourceTemplates) {
-            String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, resourceTemplate);
+            String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(
+                    groupName, resourceTemplate, appName);
             LOGGER.debug("metadata for template: {} is {}", resourceTemplate, metaDataStr);
             try {
                 ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);

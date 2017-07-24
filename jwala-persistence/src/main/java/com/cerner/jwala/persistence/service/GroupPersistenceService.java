@@ -72,8 +72,6 @@ public interface GroupPersistenceService {
 
     String getGroupAppResourceTemplate(String groupName, String appName, String resourceTemplateName);
 
-    String getGroupAppResourceTemplateMetaData(String groupName, String fileName);
-
     String updateGroupAppResourceTemplate(String groupName, String appName, String resourceTemplateName, String content);
 
     String getGroupJvmResourceTemplateMetaData(String groupName, String fileName);
@@ -118,4 +116,6 @@ public interface GroupPersistenceService {
     String updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData);
 
     List<JpaGroup> findGroups(List<Long> idList);
+
+    String getGroupAppResourceTemplateMetaData(String groupName, String templateName, String appName);
 }
