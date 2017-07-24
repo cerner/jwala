@@ -78,4 +78,5 @@ public class JpaJvmPersistenceServiceImplTest extends AbstractJvmPersistenceServ
             return new MediaDaoImpl();
         }
     }
+
 }
