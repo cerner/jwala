@@ -1,8 +1,6 @@
 Feature: Search
 
   Scenario: Search within groups
-
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -14,7 +12,6 @@ Feature: Search
 
 
   Scenario: Search within web app
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -34,7 +31,6 @@ Feature: Search
     And I don't see "zzz" in the table
 
   Scenario: Search within media
-
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
@@ -53,7 +49,6 @@ Feature: Search
     And I don't see "ZZZ" in the table
 
   Scenario: Search within web servers
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -89,7 +84,6 @@ Feature: Search
 
 
   Scenario: Search within  jvms
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -106,8 +100,6 @@ Feature: Search
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | aaa                  |
       | host   | localHost            |
@@ -115,7 +107,6 @@ Feature: Search
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     And I created a jvm with the following parameters:
       | name   | zzz                  |
       | host   | localhost            |
@@ -123,7 +114,6 @@ Feature: Search
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     And I am in the jvm tab
     When I fill in the search field with "aa"
     Then I see "aaa" in the jvm table

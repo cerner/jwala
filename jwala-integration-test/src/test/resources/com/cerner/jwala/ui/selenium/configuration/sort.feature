@@ -1,7 +1,6 @@
 Feature:Sort
 
   Scenario: Sort groups
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -14,7 +13,6 @@ Feature:Sort
     Then I see first item "ZZZ"
 
   Scenario: Sort web-apps
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -97,7 +95,6 @@ Feature:Sort
 
 
   Scenario: Sort web servers with name
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -141,7 +138,6 @@ Feature:Sort
 
 
   Scenario: Sort web servers with host
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -177,7 +173,6 @@ Feature:Sort
 
 
   Scenario: Sort web servers with port
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -213,7 +208,6 @@ Feature:Sort
 
 
   Scenario: Sort web servers with HTTPS port
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -248,7 +242,6 @@ Feature:Sort
 
 
   Scenario: Sort web servers with Group
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -283,7 +276,6 @@ Feature:Sort
 
 
   Scenario: Sort web servers with Apache HTTPD
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -322,7 +314,6 @@ Feature:Sort
 
 
   Scenario: Sort  jvms with Name
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -339,8 +330,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | aaa                  |
       | host   | aaaHost              |
@@ -348,7 +337,6 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     And I created a jvm with the following parameters:
       | name   | zzz                  |
       | host   | zzzHost              |
@@ -363,7 +351,6 @@ Feature:Sort
     Then I see first item "zzz"
 
   Scenario: Sort  jvms with Group
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -380,8 +367,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | zzz                  |
       | host   | zzzHost              |
@@ -389,7 +374,6 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | aaagroup1            |
-
     And I created a jvm with the following parameters:
       | name   | aaa                  |
       | host   | aaaHost              |
@@ -405,7 +389,6 @@ Feature:Sort
 
 
   Scenario: Sort  jvms with hostName
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -422,8 +405,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | zzz                  |
       | host   | aaaHost              |
@@ -439,7 +420,6 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     When I click on the sort button with attribute "Host"
     Then I see first item "zzz"
     When I click on the sort button with attribute "Host"
@@ -447,7 +427,6 @@ Feature:Sort
 
 
   Scenario: Sort  jvms with Port
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -464,8 +443,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | aaa                  |
       | host   | aaaHost              |
@@ -473,7 +450,6 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     And I created a jvm with the following parameters:
       | name   | zzz                  |
       | host   | zzzHost              |
@@ -481,14 +457,12 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     When I click on the sort button with attribute "HTTP"
     Then I see first item "zzz"
     When I click on the sort button with attribute "HTTP"
     Then I see first item "aaa"
 
   Scenario: Sort  jvms with JDK
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -510,8 +484,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | aaa                  |
       | host   | aaaHost              |
@@ -527,7 +499,6 @@ Feature:Sort
       | jdk    | aaajdk1.8.0_92       |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     When I click on the sort button with attribute "JDK"
     Then I see first item "zzz"
     When I click on the sort button with attribute "JDK"
@@ -535,7 +506,6 @@ Feature:Sort
 
 
   Scenario: Sort  jvms with HTTPS
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -552,8 +522,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
     And I created a jvm with the following parameters:
       | name   | aaa                  |
       | host   | aaaHost              |
@@ -561,7 +529,6 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     And I created a jvm with the following parameters:
       | name   | zzz                  |
       | host   | zzzHost              |
@@ -569,7 +536,6 @@ Feature:Sort
       | jdk    | jdk1.8.0_92          |
       | tomcat | apache-tomcat-7.0.55 |
       | group  | group1               |
-
     When I click on the sort button with attribute "HTTPS"
     Then I see first item "aaa"
     When I click on the sort button with attribute "HTTPS"
@@ -577,7 +543,6 @@ Feature:Sort
 
 
   Scenario: Sort  jvms with TomcatMedia
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab

@@ -243,8 +243,6 @@ Feature: Pagination
 
 
   Scenario: Pagination within groups
-
-
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
