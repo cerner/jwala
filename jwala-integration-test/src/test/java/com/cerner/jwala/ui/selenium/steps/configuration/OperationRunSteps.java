@@ -18,47 +18,47 @@ public class OperationRunSteps {
         jwalaUi.clickTab("Operations");
     }
 
-    @And("I generate all webservers")
+    @And("^I generate all webservers")
     public void generateAllWebservers() {
         jwalaUi.click(By.xpath("//button[span[text()='Generate Web Servers']]"));
     }
 
-    @And("I generate all jvms")
+    @And("^I generate all jvms")
     public void generateAllJvms() {
         jwalaUi.click(By.xpath("//button[span[text()='Generate JVMs']]"));
     }
 
-    @And("I start all webservers")
+    @And("^I start all webservers")
     public void startAllWebServers() {
         jwalaUi.click(By.xpath("//button[span[text()='Start Web Servers']]"));
     }
 
-    @And("I start all jvms")
+    @And("^I start all jvms")
     public void startAllJvms() {
         jwalaUi.click(By.xpath("//button[span[text()='Start JVMs']]"));
     }
 
-    @And("I expanded group \"(.*)\"$")
+    @And("^I expanded group \"(.*)\"$")
     public void expandGroup(String groupName) {
         jwalaUi.click(By.xpath("//td[text()='" + groupName + "']/preceding-sibling::td"));
     }
 
-    @And("I wait for popup string \"(.*)\"$")
+    @And("^I wait for popup string \"(.*)\"$")
     public void waitForSomeTime(String value) throws InterruptedException {
         jwalaUi.waitUntilElementIstVisible(By.xpath("//div[contains(text(), '" + value + "')]"), 240000);
     }
 
-    @And("I wait for component (.*) state \"(.*)\"$")
+    @And("^I wait for component (.*) state \"(.*)\"$")
     public void componentState(String component, String status) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='" + component + "']//following-sibling::td[6]/div/span[contains(text(),'" + status + "')"));
+        jwalaUi.waitUntilElementIstVisible(By.xpath("//tr/td[text()='" + component + "']//following-sibling::td[6]/div/span[contains(text(),'" + status + "')]"), 6000);
     }
 
-    @And("I generate webapp")
+    @And("^I generate webapp")
     public void generateWebapp() {
         jwalaUi.click(By.xpath("//tr/td[text()='seleniumWebapp']/following-sibling::td[3]/div/button[@title='Generate and deploy the webapp resources.']"));
     }
 
-    @And("I click on ok button")
+    @And("^I click on ok button")
     public void clickOkButton() {
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }

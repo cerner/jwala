@@ -5,7 +5,7 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 /**
- * Created by RS045609 on 7/10/2017.
+ * Created by Rahul Sayini on 7/10/2017.
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(

@@ -63,7 +63,7 @@ public class CommonRunSteps {
         createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
 
-    @Given("I created a webserver with following parameters:$")
+    @Given("^I created a webserver with following parameters:$")
     public void createWebServer(final Map<String, String> parameters) throws InterruptedException {
         createWebServerRunSteps.goToWebServersTab();
         createWebServerRunSteps.clickAddWebServerBtn();
@@ -78,7 +78,7 @@ public class CommonRunSteps {
         createWebServerRunSteps.clickAddWebServerDialogOkBtn();
     }
 
-    @Given("I created a jvm with following parameters:$")
+    @Given("^I created a jvm with following parameters:$")
     public void createJvm(final Map<String, String> parameters) {
         createJvmRunSteps.goToJvmTab();
         createJvmRunSteps.clickAddJvmBtn();
@@ -95,7 +95,7 @@ public class CommonRunSteps {
         createJvmRunSteps.clickOkBtn();
     }
 
-    @Given("I created a webapp with following parameters:$")
+    @Given("^I created a webapp with following parameters:$")
     public void createWebapp(final Map<String, String> parameters) {
         createWebAppRunSteps.goToWebAppsTab();
         createWebAppRunSteps.clickAddWebAppBtn();

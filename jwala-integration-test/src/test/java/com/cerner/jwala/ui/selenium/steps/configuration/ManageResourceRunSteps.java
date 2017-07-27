@@ -4,6 +4,7 @@ import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ public class ManageResourceRunSteps {
     @Given("^I am in the resource tab$")
     public void goToConfigurationTab() {
         jwalaUi.clickTab("Resources");
-        jwalaUi.sleep();
     }
 
     @And("I expanded component \"(.*)\"$")
@@ -37,7 +37,6 @@ public class ManageResourceRunSteps {
     @And("I clicked on add resource")
     public void addResource() {
         jwalaUi.clickAddResource();
-        jwalaUi.sleep();
     }
 
     @And("^I fill in the \"Deploy Name\" field with \"(.*)\"$")
@@ -48,13 +47,11 @@ public class ManageResourceRunSteps {
     @And("^I fill in the \"Deploy Path\" field with \"(.*)\"$")
     public void setDeployPath(String deployPath) {
         jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), deployPath);
-        jwalaUi.sleep();
     }
 
     @And("I check Upload Meta Data File")
     public void clickUploadMetaDataFile() {
         jwalaUi.click(By.xpath("//div[contains(text(),'Upload Meta Data File')]/input"));
-        jwalaUi.sleep();
     }
 
     @And("^I choose the meta data file \"(.*)\"$")
@@ -74,7 +71,7 @@ public class ManageResourceRunSteps {
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
 
-    @Then("check resource uploaded successful")
+    @When("^check resource uploaded successful")
     public void checkForResource() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
