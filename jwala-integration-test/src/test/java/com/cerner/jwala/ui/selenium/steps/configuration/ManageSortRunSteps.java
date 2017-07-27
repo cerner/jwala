@@ -29,12 +29,10 @@ public class ManageSortRunSteps {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), '" + component + attribute + "')]"));
     }
 
-
     @When("^I click on the sort button with attribute \"(.*)\"$")
     public void clickSortButtonWithAttribute(String attribute) {
         jwalaUi.click(By.xpath("//div[text()='" + attribute + "']/.."));
     }
-
 
     @Then("^I see first item \"(.*)\"$")
     public void checkFirstElement(String firstElementName) {

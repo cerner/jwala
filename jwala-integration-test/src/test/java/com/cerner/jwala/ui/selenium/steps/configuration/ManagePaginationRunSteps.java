@@ -41,14 +41,12 @@ public class ManagePaginationRunSteps {
         assertNotNull(element);
     }
 
-
     @When("^I select the dropdown of \"(.*)\" with option \"(.*)\"$")
     public void selectPaginationDropDown(String component, String option) {
         Select dropdownElement = new Select(jwalaUi.getWebDriver().findElement(By.xpath("//*[@id='" + component + "-config-datatable_length']/label/select")));
         assertNotNull(dropdownElement);
         dropdownElement.selectByValue(option);
     }
-
 
     @After
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {

@@ -23,11 +23,9 @@ public class ManageSearchRunSteps {
         jwalaUi.sendKeys(searchString);
     }
 
-
     @Then("^I don't see \"(.*) in the table$")
     public void checkIfElementIsNotPresent(final String name) {
         assertEquals(false, jwalaUi.isElementExists(By.xpath("//button[text()='" + name + "']")));
     }
-
 
 }
