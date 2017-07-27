@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by SB053052 on 7/5/2017.
+ * Created by Sharvari Barve on 7/5/2017.
  */
 public class ManageSearchRunSteps {
     @Autowired
