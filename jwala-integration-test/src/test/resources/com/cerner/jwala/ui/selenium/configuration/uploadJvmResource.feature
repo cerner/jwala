@@ -41,5 +41,5 @@ Feature: Upload Resource - Jvm Node
     And I fill in the "Deploy Name" field with "server.xml"
     And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
     And I choose the resource file "server.xml.tpl"
-    And I click the upload resource dialog ok button
+    When I click the upload resource dialog ok button
     Then check resource uploaded successful

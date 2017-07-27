@@ -25,6 +25,6 @@ Feature: Upload Resource - Webserver Node
     And I fill in the "Deploy Name" field with "httpd.conf"
     And I fill in the "Deploy Path" field with "C:\ctp\app\data\httpd"
     And I choose the resource file "httpdconf.tpl"
-    And I click the upload resource dialog ok button
+    When I click the upload resource dialog ok button
     Then check resource uploaded successful
 
