@@ -98,16 +98,18 @@ public class CommonRunSteps {
         createJvmRunSteps.goToJvmTab();
         createJvmRunSteps.clickAddJvmBtn();
         createJvmRunSteps.checkForAddJvmDlg();
-        createJvmRunSteps.setName(parameters.get("jvmName"));
+        createJvmRunSteps.setName(parameters.get("name"));
         createJvmRunSteps.clickStatusPath();
-        createJvmRunSteps.setHostName(parameters.get("hostName"));
-        createJvmRunSteps.setHttpPort(parameters.get("httpPort"));
-        createJvmRunSteps.selectJdk(parameters.get("jdkMediaId"));
-        createJvmRunSteps.selectTomcat(parameters.get("tomcatMediaId"));
+        createJvmRunSteps.setHostName(parameters.get("host"));
+        createJvmRunSteps.setHttpPort(parameters.get("http"));
+        createJvmRunSteps.selectJdk(parameters.get("jdk"));
+        createJvmRunSteps.selectTomcat(parameters.get("tomcat"));
         List<String> groups = new ArrayList<>();
         groups.add(parameters.get("group"));
         createJvmRunSteps.setGroups(groups);
         createJvmRunSteps.clickOkBtn();
+        createJvmRunSteps.waitForJvm(parameters.get("name"));
+
     }
 
 

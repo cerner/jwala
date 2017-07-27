@@ -1,50 +1,4 @@
-Feature: Sort
-
-  Scenario: Sort  jvms with TomcatMedia
-
-    Given I logged in
-    And I am in the configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I am in the jvm tab
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | c:\ctp                  |
-    And I created a media with the following parameters:
-      | mediaName       | zzzapache-tomcat-7.0.55              |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | c:\stp                               |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-    And I created a media with the following parameters:
-      | mediaName       | aaaapache-tomcat-7.0.55              |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | c:\stp                               |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-
-
-    And I created a jvm with the following parameters:
-      | jvmName       | aaa                     |
-      | hostName      | localHost               |
-      | httpPort      | 100                     |
-      | jdkMediaId    | jdk1.8.0_92             |
-      | tomcatMediaId | zzzapache-tomcat-7.0.55 |
-      | group         | group1                  |
-
-    And I created a jvm with the following parameters:
-      | jvmName       | zzz                     |
-      | hostName      | localHost               |
-      | httpPort      | 100                     |
-      | jdkMediaId    | jdk1.8.0_92             |
-      | tomcatMediaId | aaaapache-tomcat-7.0.55 |
-      | group         | group1                  |
-
-    When I click on the sort button with attribute "Tomcat"
-    Then I see first item "zzz"
-    When I click on the sort button with attribute "Tomcat"
-    Then I see first item "aaa"
+Feature:Sort
 
   Scenario: Sort groups
 
@@ -388,20 +342,20 @@ Feature: Sort
 
 
     And I created a jvm with the following parameters:
-      | jvmName       | aaa                  |
-      | hostName      | aaaHost              |
-      | httpPort      | 1000                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | aaa                  |
+      | host   | aaaHost              |
+      | http   | 1000                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     And I created a jvm with the following parameters:
-      | jvmName       | zzz                  |
-      | hostName      | zzzHost              |
-      | httpPort      | 9999                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | zzz                  |
+      | host   | zzzHost              |
+      | http   | 9999                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     When I click on the sort button with attribute "Name"
     Then I see first item "aaa"
@@ -429,20 +383,20 @@ Feature: Sort
 
 
     And I created a jvm with the following parameters:
-      | jvmName       | zzz                  |
-      | hostName      | zzzHost              |
-      | httpPort      | 1000                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | aaagroup1            |
+      | name   | zzz                  |
+      | host   | zzzHost              |
+      | http   | 1000                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | aaagroup1            |
 
     And I created a jvm with the following parameters:
-      | jvmName       | aaa                  |
-      | hostName      | aaaHost              |
-      | httpPort      | 9999                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | yyygroup1            |
+      | name   | aaa                  |
+      | host   | aaaHost              |
+      | http   | 9999                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | yyygroup1            |
 
     When I click on the sort button with attribute "Group"
     Then I see first item "zzz"
@@ -471,20 +425,20 @@ Feature: Sort
 
 
     And I created a jvm with the following parameters:
-      | jvmName       | zzz                  |
-      | hostName      | aaaHost              |
-      | httpPort      | 9999                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | zzz                  |
+      | host   | aaaHost              |
+      | http   | 9999                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     And I created a jvm with the following parameters:
-      | jvmName       | aaa                  |
-      | hostName      | zzzHost              |
-      | httpPort      | 100                  |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | aaa                  |
+      | host   | zzzHost              |
+      | http   | 100                  |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     When I click on the sort button with attribute "Host"
     Then I see first item "zzz"
@@ -513,20 +467,20 @@ Feature: Sort
 
 
     And I created a jvm with the following parameters:
-      | jvmName       | aaa                  |
-      | hostName      | aaaHost              |
-      | httpPort      | 9999                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | aaa                  |
+      | host   | aaaHost              |
+      | http   | 9999                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     And I created a jvm with the following parameters:
-      | jvmName       | zzz                  |
-      | hostName      | zzzHost              |
-      | httpPort      | 1000                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | zzz                  |
+      | host   | zzzHost              |
+      | http   | 1000                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     When I click on the sort button with attribute "HTTP"
     Then I see first item "zzz"
@@ -559,20 +513,20 @@ Feature: Sort
 
 
     And I created a jvm with the following parameters:
-      | jvmName       | aaa                  |
-      | hostName      | aaaHost              |
-      | httpPort      | 1000                 |
-      | jdkMediaId    | zzzjdk1.8.0_92       |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | aaa                  |
+      | host   | aaaHost              |
+      | http   | 1000                 |
+      | jdk    | zzzjdk1.8.0_92       |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     And I created a jvm with the following parameters:
-      | jvmName       | zzz                  |
-      | hostName      | zzzHost              |
-      | httpPort      | 9999                 |
-      | jdkMediaId    | aaajdk1.8.0_92       |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | zzz                  |
+      | host   | zzzHost              |
+      | http   | 9999                 |
+      | jdk    | aaajdk1.8.0_92       |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     When I click on the sort button with attribute "JDK"
     Then I see first item "zzz"
@@ -601,22 +555,65 @@ Feature: Sort
 
 
     And I created a jvm with the following parameters:
-      | jvmName       | aaa                  |
-      | hostName      | aaaHost              |
-      | httpPort      | 1000                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | aaa                  |
+      | host   | aaaHost              |
+      | http   | 1000                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     And I created a jvm with the following parameters:
-      | jvmName       | zzz                  |
-      | hostName      | zzzHost              |
-      | httpPort      | 9999                 |
-      | jdkMediaId    | jdk1.8.0_92          |
-      | tomcatMediaId | apache-tomcat-7.0.55 |
-      | group         | group1               |
+      | name   | zzz                  |
+      | host   | zzzHost              |
+      | http   | 9999                 |
+      | jdk    | jdk1.8.0_92          |
+      | tomcat | apache-tomcat-7.0.55 |
+      | group  | group1               |
 
     When I click on the sort button with attribute "HTTPS"
     Then I see first item "aaa"
     When I click on the sort button with attribute "HTTPS"
     Then I see first item "zzz"
+
+
+  Scenario: Sort  jvms with TomcatMedia
+
+    Given I logged in
+    And I am in the configuration tab
+    And I am in the group tab
+    And I created a group with the name "group1"
+    And I created a group with the name "group2"
+    And I am in the jvm tab
+    And I created a media with the following parameters:
+      | mediaName       | jdk1.8.0_92             |
+      | mediaType       | JDK                     |
+      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | remoteDir       | c:\ctp                  |
+    And I created a media with the following parameters:
+      | mediaName       | zzzapache-tomcat-7.0.55              |
+      | mediaType       | Apache Tomcat                        |
+      | remoteDir       | c:\stp                               |
+      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+    And I created a media with the following parameters:
+      | mediaName       | aaaapache-tomcat-7.0.55              |
+      | mediaType       | Apache Tomcat                        |
+      | remoteDir       | c:\stp                               |
+      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+    And I created a jvm with the following parameters:
+      | name   | aaa                     |
+      | host   | localHost               |
+      | http   | 100                     |
+      | jdk    | jdk1.8.0_92             |
+      | tomcat | zzzapache-tomcat-7.0.55 |
+      | group  | group1                  |
+    And I created a jvm with the following parameters:
+      | name   | zzz                     |
+      | host   | localHost               |
+      | http   | 100                     |
+      | jdk    | jdk1.8.0_92             |
+      | tomcat | aaaapache-tomcat-7.0.55 |
+      | group  | group1                  |
+    When I click on the sort button with attribute "Tomcat"
+    Then I see first item "zzz"
+    When I click on the sort button with attribute "Tomcat"
+    Then I see first item "aaa"

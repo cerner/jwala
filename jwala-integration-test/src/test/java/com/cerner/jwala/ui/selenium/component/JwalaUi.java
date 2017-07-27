@@ -114,6 +114,10 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
+    public boolean isCheckBoxChecked(final By by){
+       return driver.findElement(by).isSelected();
+    }
+
     /**
      * Wait until an element is visible
      * @param by {@link By}

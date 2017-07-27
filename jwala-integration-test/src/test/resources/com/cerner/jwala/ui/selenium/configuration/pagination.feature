@@ -238,8 +238,8 @@ Feature: Pagination
       | group              | group1              |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-    And I click on the sort button with attribute "Name"
-    And I see "29" in the webserver table
+    When I click on the sort button with attribute "Name"
+    Then I see "29" in the webserver table
 
 
   Scenario: Pagination within groups
@@ -274,7 +274,7 @@ Feature: Pagination
     And I created a group with the name "A24"
     And I created a group with the name "A25"
     And I created a group with the name "A26"
-    And I click the next page button
+    When I click the next page button
     Then I see the text "Page 2/2"
-    And I click the previous page button
+    When I click the previous page button
     Then I see the text "Page 1/2"

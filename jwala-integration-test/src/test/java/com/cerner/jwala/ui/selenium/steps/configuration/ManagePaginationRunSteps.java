@@ -18,37 +18,35 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by SB053052 on 7/10/2017.
+ * Created by Sharvari Barve on 7/10/2017.
  */
 public class ManagePaginationRunSteps {
 
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
-    @When("I click the next page button")
+    @When("^I click the next page button$")
     public void clickRightButton() {
         jwalaUi.clickWhenReady(By.className("ui-corner-right"));
-
     }
 
-    @When("I click the previous page button")
+    @When("^I click the previous page button$")
     public void clickLeftButton() {
         jwalaUi.clickWhenReady(By.className("ui-corner-left"));
     }
 
-    @Then("I see the text \"(.*)\"$")
+    @Then("^I see the text \"(.*)\"$")
     public void verifyText(String text) {
         WebElement element = jwalaUi.getWebDriver().findElement(By.xpath("//*[contains(text(),'" + text + "')]"));
         assertNotNull(element);
     }
 
 
-    @When("I select the dropdown of \"(.*)\" with option \"(.*)\"$")
+    @When("^I select the dropdown of \"(.*)\" with option \"(.*)\"$")
     public void selectPaginationDropDown(String component, String option) {
         Select dropdownElement = new Select(jwalaUi.getWebDriver().findElement(By.xpath("//*[@id='" + component + "-config-datatable_length']/label/select")));
         assertNotNull(dropdownElement);
         dropdownElement.selectByValue(option);
-
     }
 
 
