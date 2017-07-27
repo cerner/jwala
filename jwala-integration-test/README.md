@@ -23,3 +23,14 @@ In the run configurations set the VM options to
 ```ssh
 -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
 ```
+
+# Jwala Db Backup Scripts
+
+These scripts were meant to be used to backup a Jwala instance's before running Selenium tests then restore the db
+afterwards
+
+- jwala-backup-db.sh backs up the db to $DB_HOME/jwala.h2.db.bak
+- jwala-restore-db.sh copies $DB_HOME/jwala.h2.db.bak back to $DB_HOME/jwala.h2.db
+
+> Note: Please be aware that before editing these scripts that they require Unix\OSX line endings or they will have errors
+on execution
