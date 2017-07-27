@@ -16,5 +16,5 @@ Feature: Upload Resource - Webbapp Node
     And I fill in the "Deploy Name" field with "hello-world.war"
     And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
     And I choose the resource file "hello-world.war"
-    And I click the upload resource dialog ok button
+    When I click the upload resource dialog ok button
     Then check resource uploaded successful
