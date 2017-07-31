@@ -22,6 +22,7 @@ public class SeleniumTestHelper {
 
     private static final String SELENIUM_PROPERTY_PATH = "selenium.property.path";
     private static final String TEST_PROPERTIES = "selenium/test.properties";
+    private static final String JWALA_PROPERTIES = "selenium/jwala.properties";
 
     /**
      * Crate an instance of a {@link WebDriver} to facilitate browser based testing
@@ -65,6 +66,16 @@ public class SeleniumTestHelper {
         final String propertyPath = System.getProperty(SELENIUM_PROPERTY_PATH);
         if (StringUtils.isEmpty(propertyPath)) {
             properties.load(SeleniumTestHelper.class.getClassLoader().getResourceAsStream(TEST_PROPERTIES));
+        } else {
+            properties.load(new FileInputStream(new File(propertyPath)));
+        }
+        return properties;
+    }
+    public static Properties getJwalaProperties() throws IOException {
+        final Properties properties = new Properties();
+        final String propertyPath = System.getProperty(SELENIUM_PROPERTY_PATH);
+        if (StringUtils.isEmpty(propertyPath)) {
+            properties.load(SeleniumTestHelper.class.getClassLoader().getResourceAsStream(JWALA_PROPERTIES));
         } else {
             properties.load(new FileInputStream(new File(propertyPath)));
         }

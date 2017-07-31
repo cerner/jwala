@@ -12,6 +12,7 @@ Feature: Pagination
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | c:\ctp                  |
+    And I load properties file
     And I am in the web server tab
     And I select the dropdown of "webserver" with option "100"
     And I created a web server with the following parameters:

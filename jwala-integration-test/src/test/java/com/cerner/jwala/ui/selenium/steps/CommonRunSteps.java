@@ -4,14 +4,20 @@ import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import static com.cerner.jwala.ui.selenium.SeleniumTestHelper.getJwalaProperties;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
  */
 public class CommonRunSteps {
+
+    private Properties prop = new Properties();
 
     @Autowired
     private LoginRunSteps loginRunSteps;
@@ -38,6 +44,15 @@ public class CommonRunSteps {
         loginRunSteps.enterPassword();
         loginRunSteps.clickLoginButton();
         loginRunSteps.validateResult();
+    }
+
+    @Given("^I load properties file$")
+    public void loadPropertiesFile() throws IOException {
+        prop = getJwalaProperties();
+    }
+
+    public Properties getProperties() {
+        return prop;
     }
 
     @Given("^I created a group with the name \"(.*)\"$")
@@ -69,8 +84,8 @@ public class CommonRunSteps {
         createWebAppRunSteps.goToWebAppsTab();
         createWebAppRunSteps.clickAddWebAppBtn();
         createWebAppRunSteps.checkForWebAppDialog();
-        createWebAppRunSteps.setWebAppName(parameters.get("name"));
-        createWebAppRunSteps.setContextPath(parameters.get("webappContext"));
+        createWebAppRunSteps.setWebAppName(parameters.get("webappName"));
+        createWebAppRunSteps.setContextPath(parameters.get("contextPath"));
         List<String> list = new ArrayList<String>();
         list.add(parameters.get("group"));
         createWebAppRunSteps.setGroups(list);
@@ -83,8 +98,9 @@ public class CommonRunSteps {
         createWebServerRunSteps.clickAddWebServerBtn();
         createWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
         createWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
-        createWebServerRunSteps.selectStatusPath();
-        createWebServerRunSteps.setHostName(parameters.get("hostName"));
+        createWebServerRunSteps.setStatusPath(parameters.get("statusPath"));
+        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") : prop.getProperty(parameters.get("hostName"));
+        createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
         createWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
         createWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
@@ -98,17 +114,18 @@ public class CommonRunSteps {
         createJvmRunSteps.goToJvmTab();
         createJvmRunSteps.clickAddJvmBtn();
         createJvmRunSteps.checkForAddJvmDlg();
-        createJvmRunSteps.setName(parameters.get("name"));
+        createJvmRunSteps.setName(parameters.get("jvmName"));
         createJvmRunSteps.clickStatusPath();
-        createJvmRunSteps.setHostName(parameters.get("host"));
-        createJvmRunSteps.setHttpPort(parameters.get("http"));
+        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") : prop.getProperty(parameters.get("host"));
+        createWebServerRunSteps.setHostName(hostName);
+        createJvmRunSteps.setHttpPort(parameters.get("portNumber"));
         createJvmRunSteps.selectJdk(parameters.get("jdk"));
         createJvmRunSteps.selectTomcat(parameters.get("tomcat"));
         List<String> groups = new ArrayList<>();
         groups.add(parameters.get("group"));
         createJvmRunSteps.setGroups(groups);
         createJvmRunSteps.clickOkBtn();
-        createJvmRunSteps.waitForJvm(parameters.get("name"));
+        createJvmRunSteps.waitForJvm(parameters.get("jvmName"));
 
     }
 

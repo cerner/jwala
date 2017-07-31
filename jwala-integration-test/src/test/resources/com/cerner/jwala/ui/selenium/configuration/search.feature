@@ -19,13 +19,13 @@ Feature: Search
     And I created a group with the name "group2"
     And I am in the web apps tab
     And I created a web app with the following parameters:
-      | name          | app1   |
-      | webappContext | \name1 |
-      | group         | group1 |
+      | webappName  | app1   |
+      | contextPath | \name1 |
+      | group       | group1 |
     And I created a web app with the following parameters:
-      | name          | zzz    |
-      | webappContext | \name2 |
-      | group         | group2 |
+      | webappName  | zzz    |
+      | contextPath | \name2 |
+      | group       | group2 |
     When I fill in the search field with "app"
     Then I see "app1" web app table
     And I don't see "zzz" in the table
@@ -60,6 +60,7 @@ Feature: Search
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | c:\ctp                  |
+    And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | aWebserver          |
@@ -100,20 +101,21 @@ Feature: Search
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | c:\stp                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+    And I load properties file
     And I created a jvm with the following parameters:
-      | name   | aaa                  |
-      | host   | localHost            |
-      | http   | 122                  |
-      | jdk    | jdk1.8.0_92          |
-      | tomcat | apache-tomcat-7.0.55 |
-      | group  | group1               |
+      | jvmName    | aaa                  |
+      | hostName   | localHost            |
+      | portNumber | 122                  |
+      | jdk        | jdk1.8.0_92          |
+      | tomcat     | apache-tomcat-7.0.55 |
+      | group      | group1               |
     And I created a jvm with the following parameters:
-      | name   | zzz                  |
-      | host   | localhost            |
-      | http   | 404                  |
-      | jdk    | jdk1.8.0_92          |
-      | tomcat | apache-tomcat-7.0.55 |
-      | group  | group1               |
+      | jvmName    | zzz                  |
+      | hostName   | localhost            |
+      | portNumber | 404                  |
+      | jdk        | jdk1.8.0_92          |
+      | tomcat     | apache-tomcat-7.0.55 |
+      | group      | group1               |
     And I am in the jvm tab
     When I fill in the search field with "aa"
     Then I see "aaa" in the jvm table

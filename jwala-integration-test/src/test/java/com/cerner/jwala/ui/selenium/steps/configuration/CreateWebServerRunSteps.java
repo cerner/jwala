@@ -8,6 +8,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -64,6 +65,11 @@ public class CreateWebServerRunSteps {
     @And("^I select the \"Apache HTTPD\" field \"(.*)\"$")
     public void selectApacheHttpd(final String apacheHttpd) {
         jwalaUi.selectItem(By.name("apacheHttpdMediaId"), apacheHttpd);
+    }
+
+    @And("^I fill in the \"Status Path\" field with \"(.*)\"$")
+    public void setStatusPath(final String statusPath) {
+        jwalaUi.getWebElement(By.name("statusPath")).sendKeys(Keys.chord(Keys.CONTROL, "a"), statusPath);
     }
 
     @And("^I select the group \"(.*)\"$")

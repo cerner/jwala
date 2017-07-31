@@ -73,7 +73,7 @@ public class CreateJvmRunSteps {
 
     @And("^I associate the JVM to the following groups:$")
     public void setGroups(final List<String> groups) {
-        for (final String group: groups) {
+        for (final String group : groups) {
             jwalaUi.click(By.xpath("//div[text()='" + group + "']/input"));
         }
     }
@@ -90,8 +90,8 @@ public class CreateJvmRunSteps {
 
     @Then("^I see the following jvm details in the jvm table:$")
     public void validateJvm(final Map<String, String> jvmDetails) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("name") + "']"));
-        jwalaUi.click(By.xpath("//button[text()='" + jvmDetails.get("name") + "']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
+        jwalaUi.click(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("host") + "']")));
         jwalaUi.isCheckBoxChecked(By.xpath("//div[contains(text(),'" + jvmDetails.get("group") + "')]/input"));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("http") + "']")));
@@ -99,7 +99,7 @@ public class CreateJvmRunSteps {
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("jdk") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("tomcat") + "']")));
         clickOkBtn();
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("name") + "']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
     }
 
     @Then("^I wait for the jvm \"(.*)\"$")
