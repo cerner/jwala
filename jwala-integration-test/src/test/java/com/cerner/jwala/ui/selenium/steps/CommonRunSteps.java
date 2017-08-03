@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.cerner.jwala.ui.selenium.SeleniumTestHelper.getJwalaProperties;
+import static com.cerner.jwala.ui.selenium.SeleniumTestHelper.getParamatersProperties;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
@@ -48,7 +48,7 @@ public class CommonRunSteps {
 
     @Given("^I load properties file$")
     public void loadPropertiesFile() throws IOException {
-        prop = getJwalaProperties();
+        prop = getParamatersProperties();
     }
 
     public Properties getProperties() {
@@ -126,7 +126,6 @@ public class CommonRunSteps {
         createJvmRunSteps.setGroups(groups);
         createJvmRunSteps.clickOkBtn();
         createJvmRunSteps.waitForJvm(parameters.get("jvmName"));
-
     }
 
 

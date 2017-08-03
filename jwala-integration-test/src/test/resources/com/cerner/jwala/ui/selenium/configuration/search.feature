@@ -19,8 +19,8 @@ Feature: Search
     And I created a group with the name "group2"
     And I am in the web apps tab
     And I created a web app with the following parameters:
-      | webappName  | application |
-      | contextPath | \name1       |
+      | webappName  | application  |
+      | contextPath | /contextPath |
       | group       | group1       |
     And I created a web app with the following parameters:
       | webappName  | zzzApp |
@@ -100,7 +100,7 @@ Feature: Search
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | remoteDir                            |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |

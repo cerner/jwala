@@ -17,7 +17,7 @@ Feature: Pagination
     And I am in the web server tab
     And I select the dropdown of "webserver" with option "100"
     And I created a web server with the following parameters:
-      | webserverName      | 1WebServer          |
+      | webserverName      | WebServer1          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -25,7 +25,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 2WebServer          |
+      | webserverName      | WebServer2          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -33,7 +33,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 3WebServer          |
+      | webserverName      | WebServer3          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -41,7 +41,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 4WebServer          |
+      | webserverName      | WebServer4          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -49,7 +49,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 5WebServer          |
+      | webserverName      | WebServer5          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -57,7 +57,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 6WebServer          |
+      | webserverName      | WebServer6          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -65,7 +65,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 7WebServer          |
+      | webserverName      | WebServer7          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -73,7 +73,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 8WebServer          |
+      | webserverName      | WebServer8          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -81,7 +81,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 9WebServer          |
+      | webserverName      | WebServer9          |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -89,7 +89,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 10WebServer         |
+      | webserverName      | WebServer10         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -97,7 +97,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 11WebServer         |
+      | webserverName      | WebServer11         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -105,7 +105,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 12WebServer         |
+      | webserverName      | WebServer12         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -113,7 +113,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 13WebServer         |
+      | webserverName      | WebServer13         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -121,7 +121,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 14WebServer         |
+      | webserverName      | WebServer14         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -129,7 +129,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 15WebServer         |
+      | webserverName      | WebServer15         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -137,7 +137,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 16WebServer         |
+      | webserverName      | WebServer16         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -145,7 +145,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 17WebServer         |
+      | webserverName      | WebServer17         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -153,7 +153,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 18WebServer         |
+      | webserverName      | WebServer18         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -161,7 +161,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 20WebServer         |
+      | webserverName      | WebServer20         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -169,7 +169,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 21WebServer         |
+      | webserverName      | WebServer21         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -177,7 +177,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 22WebServer         |
+      | webserverName      | WebServer22         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -185,7 +185,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 23WebServer         |
+      | webserverName      | WebServer23         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -193,7 +193,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 24WebServer         |
+      | webserverName      | WebServer24         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -201,7 +201,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 25WebServer         |
+      | webserverName      | WebServer25         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -209,7 +209,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 26WebServer         |
+      | webserverName      | WebServer26         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -217,7 +217,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 27WebServer         |
+      | webserverName      | WebServer27         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -225,7 +225,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 28WebServer         |
+      | webserverName      | WebServer28         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -233,7 +233,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server with the following parameters:
-      | webserverName      | 29WebServer         |
+      | webserverName      | WebServer29         |
       | hostName           | localhost           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
@@ -241,7 +241,7 @@ Feature: Pagination
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     When I click on the sort button with attribute "Name"
-    Then I see "29WebServer" in the webserver table
+    Then I see "WebServer29" in the webserver table
 
 
   Scenario: Pagination within groups
