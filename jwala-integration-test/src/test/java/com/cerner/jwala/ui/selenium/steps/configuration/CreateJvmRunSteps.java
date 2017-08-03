@@ -94,6 +94,11 @@ public class CreateJvmRunSteps {
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("tomcat") + "']")));
     }
 
+    @Then("^I wait for the jvm \"(.*)\"$")
+    public void waitForJvm(String name) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + name + "']"));
+    }
+
     @After
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
         SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());

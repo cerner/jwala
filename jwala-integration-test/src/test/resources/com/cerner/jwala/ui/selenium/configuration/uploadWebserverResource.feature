@@ -4,6 +4,7 @@ Feature: Upload Resource - Webserver Node
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
+    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |

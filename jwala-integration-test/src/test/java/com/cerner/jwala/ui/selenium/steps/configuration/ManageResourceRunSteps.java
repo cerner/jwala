@@ -1,5 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
+import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -9,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -45,8 +47,8 @@ public class ManageResourceRunSteps {
     }
 
     @And("^I fill in the \"Deploy Path\" field with \"(.*)\"$")
-    public void setDeployPath(String deployPath) {
-        jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), deployPath);
+    public void setDeployPath(String deployPath) throws IOException {
+        jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), SeleniumTestHelper.getJwalaProperties().getProperty(deployPath));
     }
 
     @And("I check Upload Meta Data File")

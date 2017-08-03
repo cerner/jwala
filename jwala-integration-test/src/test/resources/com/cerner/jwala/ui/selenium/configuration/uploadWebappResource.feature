@@ -4,7 +4,8 @@ Feature: Upload Resource - Webbapp Node
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
-    And I created a webapp with following parameters:
+    And I load properties file
+    And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |
       | contextPath | /hello       |
       | group       | seleniumGroup  |
@@ -14,7 +15,7 @@ Feature: Upload Resource - Webbapp Node
     And I clicked on component "seleniumWebapp"
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "hello-world.war"
-    And I fill in the "Deploy Path" field with "C:\ctp\app\instances"
+    And I fill in the "Deploy Path" field with "resourcesDeployPath"
     And I choose the resource file "hello-world.war"
     When I click the upload resource dialog ok button
     Then check resource uploaded successful
