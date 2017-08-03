@@ -10,9 +10,9 @@ Feature: Upload Resource - Webserver Node
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | d:/ctp                  |
-    And I created a webserver with following parameters:
+    And I created a web server with the following parameters:
       | webserverName      | seleniumWebserver     |
-      | hostName           | localhost           |
+      | hostName           | host1           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
       | group              | seleniumGroup         |

@@ -24,12 +24,12 @@ Feature: Upload Resource - Jvm Node
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
       | jdk        | jdk1.8.0_92          |
-      | hostName   | localhost            |
+      | hostName   | host1            |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
     And I created a web server with the following parameters:
       | webserverName      | seleniumWebserver   |
-      | hostName           | localhost           |
+      | hostName           | host1           |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
       | group              | seleniumGroup       |

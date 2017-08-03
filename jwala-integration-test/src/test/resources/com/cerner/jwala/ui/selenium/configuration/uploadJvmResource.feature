@@ -19,7 +19,7 @@ Feature: Upload Resource - Jvm Node
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
       | jdk        | jdk1.8.0_92          |
-      | hostName   | localhost            |
+      | hostName   | host1            |
       | portNumber | 80                   |
       | group      | seleniumGroup        |
     And I am in the resource tab
