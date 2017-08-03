@@ -4,11 +4,11 @@ Feature: Search
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
-    And I created a group with the name "MMM"
-    And I created a group with the name "ZZZ"
+    And I created a group with the name "MMMGroup"
+    And I created a group with the name "ZZZGroup"
     When I fill in the search field with "MM"
-    Then I see "MMM" in the group table
-    And I don't see "ZZZ" in the table
+    Then I see "MMMGroup" in the group table
+    And I don't see "ZZZGroup" in the table
 
 
   Scenario: Search within web app
@@ -19,34 +19,35 @@ Feature: Search
     And I created a group with the name "group2"
     And I am in the web apps tab
     And I created a web app with the following parameters:
-      | webappName  | app1   |
-      | contextPath | \name1 |
-      | group       | group1 |
+      | webappName  | application |
+      | contextPath | \name1       |
+      | group       | group1       |
     And I created a web app with the following parameters:
-      | webappName  | zzz    |
+      | webappName  | zzzApp |
       | contextPath | \name2 |
       | group       | group2 |
-    When I fill in the search field with "app"
-    Then I see "app1" web app table
-    And I don't see "zzz" in the table
+    When I fill in the search field with "appli"
+    Then I see "application" web app table
+    And I don't see "zzzApp" in the table
 
   Scenario: Search within media
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
+    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | d:\ctp                  |
+      | remoteDir       | remoteDir               |
     And I created a media with the following parameters:
-      | mediaName       | ZZZ                     |
+      | mediaName       | ZZZApacheMedia          |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | c:\ctp                  |
+      | remoteDir       | remoteDir               |
     When I fill in the search field with "ap"
     Then I see "apache-httpd-2.4.20" in the media table
-    And I don't see "ZZZ" in the table
+    And I don't see "ZZZApacheMedia" in the table
 
   Scenario: Search within web servers
     Given I logged in
@@ -54,13 +55,13 @@ Feature: Search
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
+    And I load properties file
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | c:\ctp                  |
-    And I load properties file
+      | remoteDir       | remoteDir               |
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | aWebserver          |
@@ -90,27 +91,26 @@ Feature: Search
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I am in the jvm tab
+    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | c:\ctp                  |
+      | remoteDir       | remoteDir               |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | c:\stp                               |
+      | remoteDir       | remoteDir                               |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-    And I load properties file
     And I created a jvm with the following parameters:
-      | jvmName    | aaa                  |
+      | jvmName    | aaaJvm               |
       | hostName   | localHost            |
       | portNumber | 122                  |
       | jdk        | jdk1.8.0_92          |
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | group1               |
     And I created a jvm with the following parameters:
-      | jvmName    | zzz                  |
+      | jvmName    | zzzJvm               |
       | hostName   | localhost            |
       | portNumber | 404                  |
       | jdk        | jdk1.8.0_92          |
@@ -118,5 +118,5 @@ Feature: Search
       | group      | group1               |
     And I am in the jvm tab
     When I fill in the search field with "aa"
-    Then I see "aaa" in the jvm table
-    And I don't see "zzz" in the table
+    Then I see "aaaJvm" in the jvm table
+    And I don't see "zzzJvm" in the table

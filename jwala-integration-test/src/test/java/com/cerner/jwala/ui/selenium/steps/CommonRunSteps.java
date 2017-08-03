@@ -74,7 +74,7 @@ public class CommonRunSteps {
         createMediaRunSteps.setMediaName(parameters.get("mediaName"));
         createMediaRunSteps.selectMediaType(parameters.get("mediaType"));
         createMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
-        createMediaRunSteps.setRemoteDir(parameters.get("remoteDir"));
+        createMediaRunSteps.setRemoteDir(prop.getProperty(parameters.get("remoteDir")));
         createMediaRunSteps.clickAddMediaOkDialogBtn();
         createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
