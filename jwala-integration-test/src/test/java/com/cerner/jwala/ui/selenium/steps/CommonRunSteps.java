@@ -98,7 +98,8 @@ public class CommonRunSteps {
         createWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
         createWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
         createWebServerRunSteps.setStatusPath(parameters.get("statusPath"));
-        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") : prop.getProperty(parameters.get("hostName"));
+        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") :
+                prop.getProperty(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
         createWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
@@ -115,7 +116,8 @@ public class CommonRunSteps {
         createJvmRunSteps.checkForAddJvmDlg();
         createJvmRunSteps.setName(parameters.get("jvmName"));
         createJvmRunSteps.clickStatusPath();
-        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") : prop.getProperty(parameters.get("host"));
+        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") :
+                prop.getProperty(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createJvmRunSteps.setHttpPort(parameters.get("portNumber"));
         createJvmRunSteps.selectJdk(parameters.get("jdk"));
