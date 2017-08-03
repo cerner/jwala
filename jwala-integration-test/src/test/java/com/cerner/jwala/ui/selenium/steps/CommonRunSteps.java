@@ -65,7 +65,6 @@ public class CommonRunSteps {
         createGroupRunSteps.checkIfGroupWasAdded(groupName);
     }
 
-
     @Given("^I created a media with the following parameters:$")
     public void createMedia(final Map<String, String> parameters) {
         createMediaRunSteps.goToMediaTab();
@@ -127,6 +126,4 @@ public class CommonRunSteps {
         createJvmRunSteps.clickOkBtn();
         createJvmRunSteps.waitForJvm(parameters.get("jvmName"));
     }
-
-
 }
