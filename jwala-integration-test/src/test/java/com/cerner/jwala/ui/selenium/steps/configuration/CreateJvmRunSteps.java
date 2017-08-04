@@ -8,7 +8,6 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -100,11 +99,6 @@ public class CreateJvmRunSteps {
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("tomcat") + "']")));
         clickOkBtn();
         jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
-    }
-
-    @Then("^I wait for the jvm \"(.*)\"$")
-    public void waitForJvm(String name) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + name + "']"));
     }
 
     @After
