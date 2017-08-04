@@ -8,6 +8,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -44,6 +45,11 @@ public class CreateWebServerRunSteps {
     @And("^I fill in the \"Host Name\" field with \"(.*)\"$")
     public void setHostName(final String hostName) {
         jwalaUi.sendKeys(By.name("hostName"), hostName);
+    }
+
+    @And("^I fill in the \"Status Path\" field with \"(.*)\"$")
+    public void setStatusPath(final String statusPath) {
+        jwalaUi.getWebElement(By.name("statusPath")).sendKeys(Keys.chord(Keys.CONTROL, "a"), statusPath);
     }
 
     @And("^I fill in the \"HTTP Port\" field with \"(.*)\"$")
