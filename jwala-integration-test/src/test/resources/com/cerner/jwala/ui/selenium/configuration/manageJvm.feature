@@ -5,15 +5,15 @@ Scenario: Add JVM
     Given I logged in
     And I am in the configuration tab
     And I created a media with the following parameters:
-            |mediaName      |jdk1.8.0_92    |
-            |mediaType      |JDK            |
-            |archiveFilename|jdk1.8.0_92.zip|
-            |remoteDir      |d:/ctp         |
+            |mediaName      |jdk1.8.0_92     |
+            |mediaType      |JDK             |
+            |archiveFilename|jdk1.8.0_92.zip |
+            |remoteDir      |media.remote.dir|
     And I created a media with the following parameters:
             |mediaName      |apache-tomcat-7.0.55    |
             |mediaType      |Apache Tomcat           |
             |archiveFilename|apache-tomcat-7.0.55.zip|
-            |remoteDir      |d:/ctp                  |
+            |remoteDir      |media.remote.dir        |
     And I created a group with the name "GROUP_FOR_ADD_JVM_TEST"
     And I am in the jvm tab
     When I click the add jvm button

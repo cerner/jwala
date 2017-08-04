@@ -41,12 +41,12 @@ Feature:Sort
       | mediaName       | aaaMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     When I click the column header with the label "Name"
     Then I see first item "aaaMedia"
     When I click the column header with the label "Name"
@@ -62,12 +62,12 @@ Feature:Sort
       | mediaName       | aaaMedia                |
       | mediaType       | Apache Tomcat           |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     When I click the column header with the label "Type"
     Then I see first item "zzzMedia"
     When I click the column header with the label "Type"
@@ -83,12 +83,12 @@ Feature:Sort
       | mediaName       | aaaMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteStpDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     When I click the column header with the label "Remote Target Directory"
     Then I see first item "zzzMedia"
     When I click the column header with the label "Remote Target Directory"
@@ -107,14 +107,14 @@ Feature:Sort
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
       | mediaName          | apache-httpd-2.4.20     |
       | mediaType          | Apache HTTPD            |
       | archiveFilename    | apache-httpd-2.4.20.zip |
-      | remoteDir          | remoteDir               |
+      | remoteDir          | media.remote.dir        |
       | webserverName      | ZZZZZ                   |
       | hostName           | localhost               |
       | portNumber         | 80                      |
@@ -126,7 +126,7 @@ Feature:Sort
       | mediaName          | apache-httpd-2.4.21     |
       | mediaType          | Apache HTTPD            |
       | archiveFilename    | apache-httpd-2.4.20.zip |
-      | remoteDir          | remoteDir               |
+      | remoteDir          | media.remote.dir        |
       | webserverName      | AAAAAA                  |
       | hostName           | localhost               |
       | portNumber         | 80                      |
@@ -152,7 +152,7 @@ Feature:Sort
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
@@ -189,7 +189,7 @@ Feature:Sort
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | zWebServer          |
@@ -224,7 +224,7 @@ Feature:Sort
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
@@ -260,7 +260,7 @@ Feature:Sort
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | ZZZZZWebServer      |
@@ -294,12 +294,12 @@ Feature:Sort
       | mediaName       | aaaMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | ZZZZZWebServer |
@@ -334,11 +334,11 @@ Feature:Sort
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
@@ -371,11 +371,11 @@ Feature:Sort
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | zzzJvm               |
@@ -409,11 +409,11 @@ Feature:Sort
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I load properties file
     And I created a jvm with the following parameters:
@@ -448,11 +448,11 @@ Feature:Sort
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
@@ -484,16 +484,16 @@ Feature:Sort
       | mediaName       | zzzjdk1.8.0_92          |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | aaajdk1.8.0_92          |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I load properties file
     And I created a jvm with the following parameters:
@@ -527,11 +527,11 @@ Feature:Sort
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
@@ -564,16 +564,16 @@ Feature:Sort
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzapache-tomcat-7.0.55              |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a media with the following parameters:
       | mediaName       | aaaapache-tomcat-7.0.55              |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                               |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm                  |

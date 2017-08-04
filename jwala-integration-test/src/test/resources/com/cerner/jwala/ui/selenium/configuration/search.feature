@@ -39,12 +39,12 @@ Feature: Search
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | ZZZApacheMedia          |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     When I fill in the search field with "ap"
     Then I see "apache-httpd-2.4.20" in the media table
     And I don't see "ZZZApacheMedia" in the table
@@ -61,7 +61,7 @@ Feature: Search
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | aWebserver          |
@@ -96,11 +96,11 @@ Feature: Search
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
       | archiveFilename | jdk1.8.0_92-windows.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
-      | remoteDir       | remoteDir                            |
+      | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |

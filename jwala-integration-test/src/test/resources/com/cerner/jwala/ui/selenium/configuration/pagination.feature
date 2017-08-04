@@ -12,7 +12,7 @@ Feature: Pagination
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I load properties file
     And I am in the web server tab
     And I select the dropdown of "webserver" with option "100"
