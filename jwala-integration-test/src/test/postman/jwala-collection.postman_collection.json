@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "798b0f1b-ac33-d9f6-72cb-74c92f29554b",
+		"_postman_id": "212f0f97-79e4-4abf-73fa-c6a1dea3fd3e",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1004,14 +1004,12 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/catalina.properties.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/catalina.properties.tpl",
 									"value": ""
 								}
@@ -3906,6 +3904,62 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupName}}/apps/resources/name",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get all group states",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.message === \"SUCCESS\";",
+									"tests[\"Successful GET\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/state",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get  group state by name ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.message === \"SUCCESS\";",
+									"tests[\"Successful GET\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/state",
 						"method": "GET",
 						"header": [],
 						"body": {
