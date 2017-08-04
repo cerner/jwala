@@ -44,7 +44,7 @@ package.definition=sun.,java.,org.apache.catalina.,org.apache.coyote.,org.apache
 #     "foo/*.jar": Add all the JARs of the specified folder as class
 #                  repositories
 #     "foo/bar.jar": Add bar.jar as a class repository
-common.loader=\${catalina.base}/lib/*.jar,\${catalina.home}/lib/*.jar,/opt/ctp/app/lib/ctp_platform_tc7-1.2.19/conf,/opt/ctp/app/lib/ctp_platform_tc7-1.2.19/cerner/*.jar,/opt/ctp/app/lib/ctp_platform_tc7-1.2.19/ext/*.jar,/opt/ctp/app/lib/ctp_platform_tc7-1.2.19/ext/*.jar
+common.loader=\${catalina.base}/lib/*.jar,\${catalina.home}/lib/*.jar,/opt/ctp/app/lib/ctp_platform_tc7-1.2.20/conf,/opt/ctp/app/lib/ctp_platform_tc7-1.2.20/cerner/*.jar,/opt/ctp/app/lib/ctp_platform_tc7-1.2.20/ext/*.jar,/opt/ctp/app/lib/ctp_platform_tc7-1.2.20/ext/*.jar
 
 #
 # List of comma-separated paths defining the contents of the "server"
