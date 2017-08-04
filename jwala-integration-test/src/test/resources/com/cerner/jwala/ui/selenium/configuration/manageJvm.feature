@@ -30,7 +30,7 @@ Scenario: Add JVM
     Then I see the following jvm details in the jvm table:
         |name      |JVM_X                                  |
         |host      |localhost                              |
-        |group     |GROUP_FOR_...                           |
+        |group     |GROUP_FOR_...                          |
         |statusPath|https://localhost:91...                |
         |http      |9100                                   |
         |https     |9101                                   |
