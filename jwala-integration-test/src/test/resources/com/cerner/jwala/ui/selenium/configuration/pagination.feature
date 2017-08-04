@@ -240,7 +240,7 @@ Feature: Pagination
       | group              | group1              |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-    When I click on the sort button with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see "WebServer29" in the webserver table
 
 

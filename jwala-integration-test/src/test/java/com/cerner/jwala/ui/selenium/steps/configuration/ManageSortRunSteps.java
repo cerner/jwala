@@ -7,7 +7,6 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -20,18 +19,13 @@ import static org.junit.Assert.assertEquals;
  * Created by Sharvari Barve on 7/6/2017.
  */
 public class ManageSortRunSteps {
+
     @Autowired
     private JwalaUi jwalaUi;
 
-
-    @When("^I click on the sort button of component \"(.*)\" with attribute \"(.*)\"$")
-    public void clickSortButton(String component, String attribute) {
-        jwalaUi.clickWhenReady(By.xpath("//span[contains(text(), '" + component + attribute + "')]"));
-    }
-
-    @When("^I click on the sort button with attribute \"(.*)\"$")
-    public void clickSortButtonWithAttribute(String attribute) {
-        jwalaUi.click(By.xpath("//div[text()='" + attribute + "']/.."));
+    @When("^I click the column header with the label \"(.*)\"$")
+    public void clickColumnHeader(final String label) {
+        jwalaUi.clickWhenReady(By.xpath("//th//*[contains(text(), '" + label + "')]"));
     }
 
     @Then("^I see first item \"(.*)\"$")
@@ -45,5 +39,4 @@ public class ManageSortRunSteps {
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
         SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
     }
-
 }

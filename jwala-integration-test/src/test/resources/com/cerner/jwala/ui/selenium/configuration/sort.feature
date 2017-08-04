@@ -7,9 +7,9 @@ Feature:Sort
     And I created a group with the name "MMMGroup"
     And I created a group with the name "ZZZGroup"
     And I created a group with the name "AAAGroup"
-    When I click on the sort button of component "Group " with attribute "Name"
+    When I click the column header with the label "Group Name"
     Then I see first item "AAAGroup"
-    When I click on the sort button of component "Group " with attribute "Name"
+    When I click the column header with the label "Group Name"
     Then I see first item "ZZZGroup"
 
   Scenario: Sort web-apps
@@ -27,9 +27,9 @@ Feature:Sort
       | webappName  | ZZZApp |
       | contextPath | \name2 |
       | group       | group2 |
-    When I click on the sort button of component "WebApp " with attribute "Name"
+    When I click the column header with the label "WebApp Name"
     Then I see first item "AAAApp"
-    When I click on the sort button of component "WebApp " with attribute "Name"
+    When I click the column header with the label "WebApp Name"
     Then I see first item "ZZZApp"
 
   Scenario: Sort media with name
@@ -47,9 +47,9 @@ Feature:Sort
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | remoteDir               |
-    When I click on the sort button of component "" with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see first item "aaaMedia"
-    When I click on the sort button of component "" with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see first item "zzzMedia"
 
   Scenario: Sort media with type
@@ -68,9 +68,9 @@ Feature:Sort
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | remoteDir               |
-    When I click on the sort button of component "" with attribute "Type"
+    When I click the column header with the label "Type"
     Then I see first item "zzzMedia"
-    When I click on the sort button of component "" with attribute "Type"
+    When I click the column header with the label "Type"
     Then I see first item "aaaMedia"
 
 
@@ -89,9 +89,9 @@ Feature:Sort
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | remoteDir               |
-    When I click on the sort button of component "" with attribute "Remote Target Directory"
+    When I click the column header with the label "Remote Target Directory"
     Then I see first item "zzzMedia"
-    When I click on the sort button of component "" with attribute "Remote Target Directory"
+    When I click the column header with the label "Remote Target Directory"
     Then I see first item "aaaMedia"
 
 
