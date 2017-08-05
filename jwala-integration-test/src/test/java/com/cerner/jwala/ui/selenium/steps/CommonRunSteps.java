@@ -73,7 +73,7 @@ public class CommonRunSteps {
         createMediaRunSteps.setMediaName(parameters.get("mediaName"));
         createMediaRunSteps.selectMediaType(parameters.get("mediaType"));
         createMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
-        createMediaRunSteps.setRemoteDir(prop.getProperty(parameters.get("remoteDir")));
+        createMediaRunSteps.setRemoteDir(getPropertyValue(parameters.get("remoteDir")));
         createMediaRunSteps.clickAddMediaOkDialogBtn();
         createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
     }
@@ -98,8 +98,7 @@ public class CommonRunSteps {
         createWebServerRunSteps.checkAddWebServerDialogBoxIsDisplayed();
         createWebServerRunSteps.setWebServerName(parameters.get("webserverName"));
         createWebServerRunSteps.setStatusPath(parameters.get("statusPath"));
-        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") :
-                prop.getProperty(parameters.get("hostName"));
+        String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
         createWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
@@ -116,8 +115,7 @@ public class CommonRunSteps {
         createJvmRunSteps.checkForAddJvmDlg();
         createJvmRunSteps.setName(parameters.get("jvmName"));
         createJvmRunSteps.clickStatusPath();
-        String hostName = prop.getProperty(parameters.get("hostName")) == null ? parameters.get("hostName") :
-                prop.getProperty(parameters.get("hostName"));
+        String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createJvmRunSteps.setHttpPort(parameters.get("portNumber"));
         createJvmRunSteps.selectJdk(parameters.get("jdk"));
@@ -126,6 +124,15 @@ public class CommonRunSteps {
         groups.add(parameters.get("group"));
         createJvmRunSteps.setGroups(groups);
         createJvmRunSteps.clickOkBtn();
-        createJvmRunSteps.waitForJvm(parameters.get("jvmName"));
+        createJvmRunSteps.checkForJvm(parameters.get("jvmName"));
+    }
+
+    /**
+     * Gets the value from the properties file
+     * @param key the property key
+     * @return the value of the property, if null the key is returned instead
+     */
+    private String getPropertyValue(final String key) {
+        return prop.getProperty(key) == null ? key : prop.getProperty(key);
     }
 }

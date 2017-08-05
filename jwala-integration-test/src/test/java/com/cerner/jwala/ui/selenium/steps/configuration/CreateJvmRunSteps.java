@@ -77,28 +77,26 @@ public class CreateJvmRunSteps {
         }
     }
 
-    @Then("^I see \"(.*)\" in the jvm table$")
-    public void checkForWebServer(final String jvmName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmName + "']"));
-    }
-
     @And("^I click the jvm add dialog ok button$")
     public void clickOkBtn() {
         jwalaUi.click(By.xpath("//span[text()='Ok']"));
     }
 
+    @Then("^I see \"(.*)\" in the jvm table$")
+    public void checkForJvm(final String jvmName) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmName + "']"));
+    }
+
     @Then("^I see the following jvm details in the jvm table:$")
     public void validateJvm(final Map<String, String> jvmDetails) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
-        jwalaUi.click(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("name") + "']"));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("host") + "']")));
-        jwalaUi.isCheckBoxChecked(By.xpath("//div[contains(text(),'" + jvmDetails.get("group") + "')]/input"));
+        assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("group") + "']")));
+        assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("statusPath") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("http") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("https") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("jdk") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("tomcat") + "']")));
-        clickOkBtn();
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("jvmName") + "']"));
     }
 
     @After
