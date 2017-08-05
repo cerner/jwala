@@ -20,13 +20,13 @@ Feature:Sort
     And I created a group with the name "group2"
     And I am in the web apps tab
     And I created a web app with the following parameters:
-      | webappName  | AAAApp |
-      | contextPath | \name1 |
-      | group       | group1 |
+      | webappName  | AAAApp       |
+      | contextPath | aContextPath |
+      | group       | group1       |
     And I created a web app with the following parameters:
-      | webappName  | ZZZApp |
-      | contextPath | \name2 |
-      | group       | group2 |
+      | webappName  | ZZZApp       |
+      | contextPath | aContextPath |
+      | group       | group2       |
     When I click the column header with the label "WebApp Name"
     Then I see first item "AAAApp"
     When I click the column header with the label "WebApp Name"
@@ -80,12 +80,12 @@ Feature:Sort
       | mediaName       | aaaMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+      | remoteDir       | zDir                    |
     And I created a media with the following parameters:
       | mediaName       | zzzMedia                |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+      | remoteDir       | aDir                    |
     When I click the column header with the label "Remote Target Directory"
     Then I see first item "zzzMedia"
     When I click the column header with the label "Remote Target Directory"
@@ -129,9 +129,9 @@ Feature:Sort
       | group              | group2                  |
       | apacheHttpdMediaId | apache-httpd-2.4.20     |
       | statusPath         | /apache_pb.png          |
-    When I click on the sort button with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see first item "AAAAAA"
-    When I click on the sort button with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see first item "ZZZZZ"
 
 
@@ -149,6 +149,14 @@ Feature:Sort
       | remoteDir       | media.remote.dir        |
     And I am in the web server tab
     And I created a web server with the following parameters:
+          | webserverName      | AAAAAAWebServer     |
+          | hostName           | zHost               |
+          | portNumber         | 80                  |
+          | httpsPort          | 443                 |
+          | group              | group2              |
+          | apacheHttpdMediaId | apache-httpd-2.4.20 |
+          | statusPath         | /apache_pb.png      |
+    And I created a web server with the following parameters:
       | webserverName      | ZZZZZWebServer      |
       | hostName           | aHost               |
       | portNumber         | 80                  |
@@ -156,17 +164,9 @@ Feature:Sort
       | group              | group1              |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-    And I created a web server with the following parameters:
-      | webserverName      | AAAAAAWebServer     |
-      | hostName           | zHost               |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | group2              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    When I click on the sort button with attribute "Host"
+    When I click the column header with the label "Host"
     Then I see first item "ZZZZZWebServer"
-    When I click on the sort button with attribute "Host"
+    When I click the column header with the label "Host"
     Then I see first item "AAAAAAWebServer"
 
 
@@ -199,9 +199,9 @@ Feature:Sort
       | group              | group2              |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-    When I click on the sort button with attribute "Port"
+    When I click the column header with the label "Port"
     Then I see first item "zWebServer"
-    When I click on the sort button with attribute "Port"
+    When I click the column header with the label "Port"
     Then I see first item "aWebServer"
 
 
@@ -233,9 +233,9 @@ Feature:Sort
       | group              | group2              |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-    When I click on the sort button with attribute "HTTPS Port"
+    When I click the column header with the label "HTTPS Port"
     Then I see first item "zWebServer"
-    When I click on the sort button with attribute "HTTPS Port"
+    When I click the column header with the label "HTTPS Port"
     Then I see first item "aWebServer"
 
 
@@ -267,9 +267,9 @@ Feature:Sort
       | group              | zGroup              |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-    When I click on the sort button with attribute "Group"
+    When I click the column header with the label "Group"
     Then I see first item "ZZZZZWebServer"
-    When I click on the sort button with attribute "Group"
+    When I click the column header with the label "Group"
     Then I see first item "AAAAAAWebServer"
 
 
@@ -305,9 +305,9 @@ Feature:Sort
       | group              | group1          |
       | apacheHttpdMediaId | zzzMedia        |
       | statusPath         | /apache_pb.png  |
-    When I click on the sort button with attribute "Apache HTTPD"
+    When I click the column header with the label "Apache HTTPD"
     Then I see first item "ZZZZZWebServer"
-    When I click on the sort button with attribute "Apache HTTPD"
+    When I click the column header with the label "Apache HTTPD"
     Then I see first item "AAAAAAWebServer"
 
 
@@ -320,13 +320,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -342,9 +342,9 @@ Feature:Sort
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | group1               |
 
-    When I click on the sort button with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see first item "aaaJvm"
-    When I click on the sort button with attribute "Name"
+    When I click the column header with the label "Name"
     Then I see first item "zzzJvm"
 
   Scenario: Sort  jvms with Group
@@ -356,13 +356,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | zzzJvm               |
       | hostName   | zzzHost              |
@@ -378,9 +378,9 @@ Feature:Sort
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | yyygroup1            |
 
-    When I click on the sort button with attribute "Group"
+    When I click the column header with the label "Group"
     Then I see first item "zzzJvm"
-    When I click on the sort button with attribute "Group"
+    When I click the column header with the label "Group"
     Then I see first item "aaaJvm"
 
 
@@ -393,13 +393,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | zzzJvm               |
       | hostName   | aaaHost              |
@@ -415,9 +415,9 @@ Feature:Sort
       | jdk        | jdk1.8.0_92          |
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | group1               |
-    When I click on the sort button with attribute "Host"
+    When I click the column header with the label "Host"
     Then I see first item "zzzJvm"
-    When I click on the sort button with attribute "Host"
+    When I click the column header with the label "Host"
     Then I see first item "aaaJvm"
 
 
@@ -430,13 +430,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -451,9 +451,9 @@ Feature:Sort
       | jdk        | jdk1.8.0_92          |
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | group1               |
-    When I click on the sort button with attribute "HTTP"
+    When I click the column header with the label "HTTP"
     Then I see first item "zzzJvm"
-    When I click on the sort button with attribute "HTTP"
+    When I click the column header with the label "HTTP"
     Then I see first item "aaaJvm"
 
   Scenario: Sort  jvms with JDK
@@ -465,18 +465,18 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | zzzjdk1.8.0_92          |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | aaajdk1.8.0_92          |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -491,9 +491,9 @@ Feature:Sort
       | jdk        | aaajdk1.8.0_92       |
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | group1               |
-    When I click on the sort button with attribute "JDK"
+    When I click the column header with the label "JDK"
     Then I see first item "zzzJvm"
-    When I click on the sort button with attribute "JDK"
+    When I click the column header with the label "JDK"
     Then I see first item "aaaJvm"
 
 
@@ -506,13 +506,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -527,9 +527,9 @@ Feature:Sort
       | jdk        | jdk1.8.0_92          |
       | tomcat     | apache-tomcat-7.0.55 |
       | group      | group1               |
-    When I click on the sort button with attribute "HTTPS"
+    When I click the column header with the label "HTTPS"
     Then I see first item "aaaJvm"
-    When I click on the sort button with attribute "HTTPS"
+    When I click the column header with the label "HTTPS"
     Then I see first item "zzzJvm"
 
 
@@ -542,18 +542,18 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-win.zip |
+      | archiveFilename | jdk1.8.0_92.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzapache-tomcat-7.0.55              |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a media with the following parameters:
       | mediaName       | aaaapache-tomcat-7.0.55              |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm                  |
       | hostName   | localHost               |
@@ -568,7 +568,7 @@ Feature:Sort
       | jdk        | jdk1.8.0_92             |
       | tomcat     | aaaapache-tomcat-7.0.55 |
       | group      | group1                  |
-    When I click on the sort button with attribute "Tomcat"
+    When I click the column header with the label "Tomcat"
     Then I see first item "zzzJvm"
-    When I click on the sort button with attribute "Tomcat"
+    When I click the column header with the label "Tomcat"
     Then I see first item "aaaJvm"
