@@ -10,6 +10,6 @@ Scenario: Add a media
     And I fill in the "Media Name" field with "apache-httpd-2.4.20"
     And I select "Media Type" item "Apache HTTPD"
     And I choose the media archive file "apache-httpd-2.4.20.zip"
-    And I fill in the "Remote Directory" field with "d:/ctp"
+    And I fill in the "Remote Directory" field with "aDir"
     And I click the add media dialog ok button
     Then I see "apache-httpd-2.4.20" in the media table
