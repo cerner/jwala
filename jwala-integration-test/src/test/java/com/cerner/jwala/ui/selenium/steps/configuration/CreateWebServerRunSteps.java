@@ -84,7 +84,7 @@ public class CreateWebServerRunSteps {
 
     @Then("^I see \"(.*)\" in the webserver table$")
     public void checkForWebServer(final String webServerName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webServerName + "']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webServerName + "']"), 60);
     }
 
     @After
