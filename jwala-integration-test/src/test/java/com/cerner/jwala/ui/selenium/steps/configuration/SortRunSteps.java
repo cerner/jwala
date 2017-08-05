@@ -29,10 +29,10 @@ public class SortRunSteps {
     }
 
     @Then("^I see first item \"(.*)\"$")
-    public void checkFirstElement(String firstElementName) {
+    public void checkFirstElement(final String expectedElementName) {
         List<WebElement> listOfWebElements = jwalaUi.getWebDriver().findElements(By.xpath("//td[button[@class='button-link']]"));
         WebElement firstElement = listOfWebElements.get(0);
-        assertEquals(firstElement.getText(), firstElementName);
+        assertEquals(expectedElementName, firstElement.getText());
     }
 
     @After
