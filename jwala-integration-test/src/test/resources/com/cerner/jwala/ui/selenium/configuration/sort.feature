@@ -320,13 +320,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -356,13 +356,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | zzzJvm               |
       | hostName   | zzzHost              |
@@ -393,13 +393,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | zzzJvm               |
       | hostName   | aaaHost              |
@@ -430,13 +430,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -465,18 +465,18 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | zzzjdk1.8.0_92          |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | aaajdk1.8.0_92          |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -506,13 +506,13 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55                 |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -542,18 +542,18 @@ Feature:Sort
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92-windows.zip |
+      | archiveFilename | jdk1.8.0_92-win.zip |
       | remoteDir       | media.remote.dir        |
     And I created a media with the following parameters:
       | mediaName       | zzzapache-tomcat-7.0.55              |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a media with the following parameters:
       | mediaName       | aaaapache-tomcat-7.0.55              |
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
+      | archiveFilename | apache-tomcat-7.0.55-win-x64.zip |
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm                  |
       | hostName   | localHost               |
