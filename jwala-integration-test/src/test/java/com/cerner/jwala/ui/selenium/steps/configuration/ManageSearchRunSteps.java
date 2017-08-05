@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Sharvari Barve on 7/5/2017.
  */
 public class ManageSearchRunSteps {
+
     @Autowired
     private JwalaUi jwalaUi;
 
@@ -27,5 +28,4 @@ public class ManageSearchRunSteps {
     public void checkIfElementIsNotPresent(final String name) {
         assertEquals(false, jwalaUi.isElementExists(By.xpath("//button[text()='" + name + "']")));
     }
-
 }
