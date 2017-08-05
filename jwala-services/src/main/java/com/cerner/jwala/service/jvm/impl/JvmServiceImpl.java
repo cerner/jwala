@@ -211,27 +211,30 @@ public class JvmServiceImpl implements JvmService {
             }
         }
 
-        // get the group App templates
-        templateNames = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName);
-        for (String templateName : templateNames) {
-            String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, templateName);
-            try {
-                ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
-                if (metaData.getEntity().getDeployToJvms()) {
-                    final String template = resourceService.getAppTemplate(groupName, metaData.getEntity().getTarget(),
-                            templateName);
-                    final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
-                            .setResourceName(metaData.getTemplateName()).setJvmName(jvmName)
-                            .setWebAppName(metaData.getEntity().getTarget()).build();
-                    resourceService.createResource(resourceIdentifier, metaData, new ByteArrayInputStream(template.getBytes(StandardCharsets.UTF_8)));
+        for (Application app : applicationService.findApplications(parentGroup.getId())) {
+
+            templateNames = groupPersistenceService.getGroupAppsResourceTemplateNames(groupName, app.getName());
+            for (String templateName : templateNames) {
+                String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, templateName, app.getName());
+                try {
+                    ResourceTemplateMetaData metaData = resourceService.getMetaData(metaDataStr);
+                    if (metaData.getEntity().getDeployToJvms()) {
+                        final String template = resourceService.getAppTemplate(groupName, app.getName(),
+                                templateName);
+                        final ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder()
+                                .setResourceName(templateName).setJvmName(jvmName)
+                                .setWebAppName(app.getName()).build();
+                        resourceService.createResource(resourceIdentifier, metaData, new ByteArrayInputStream(template.getBytes(StandardCharsets.UTF_8)));
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Failed to map meta data while creating JVM for template {} in group {}",
+                            templateName, groupName, e);
+                    throw new InternalErrorException(FaultType.BAD_STREAM, "Failed to map data for template " +
+                            templateName + " in group " + groupName, e);
                 }
-            } catch (IOException e) {
-                LOGGER.error("Failed to map meta data while creating JVM for template {} in group {}",
-                        templateName, groupName, e);
-                throw new InternalErrorException(FaultType.BAD_STREAM, "Failed to map data for template " +
-                        templateName + " in group " + groupName, e);
             }
         }
+
     }
 
     @Transactional
@@ -490,7 +493,7 @@ public class JvmServiceImpl implements JvmService {
             errorMsgs.add(jdkMediaErrorMsg);
         }
 
-        if (null == jvm.getTomcatMedia()){
+        if (null == jvm.getTomcatMedia()) {
             final String tomcatMediaErrorMsg = MessageFormat.format("No Tomcat version specified for JVM {0}. Stopping the JVM generation", jvmName);
             LOGGER.error(tomcatMediaErrorMsg);
             errorMsgs.add(tomcatMediaErrorMsg);

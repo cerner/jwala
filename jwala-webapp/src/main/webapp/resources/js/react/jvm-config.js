@@ -626,8 +626,8 @@ var JvmConfigDataTable = React.createClass({
                         {sTitle:"HTTP", mData:"httpPort"},
                         {sTitle:"HTTPS", mData:"httpsPort"},
                         {sTitle:"Username", mData: "userName"},
-                        {sTitle:"JDK", mData:"jdkMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName},
-                        {sTitle:"Tomcat", mData:"tomcatMedia", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName}];
+                        {sTitle:"JDK", mData:"jdkMedia.name", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName},
+                        {sTitle:"Tomcat", mData:"tomcatMedia.name", jwalaType:"custom", jwalaRenderCfgFn:this.renderMediaName}];
         return <JwalaDataTable ref="dataTableWrapper"
                                tableId="jvm-config-datatable"
                                tableDef={tableDef}
@@ -647,7 +647,7 @@ var JvmConfigDataTable = React.createClass({
    renderMediaName:function(dataTable, data, aoColumnDefs, itemIndex) {
         var self = this;
         aoColumnDefs[itemIndex].fnCreatedCell = function (nTd, sData, oData, iRow, iCol) {
-            return React.renderComponent(React.createElement("span", {}, sData && sData.name ? sData.name : ""), nTd);
+            return React.renderComponent(React.createElement("span", {}, sData ? sData : ""), nTd);
         }
    },
    componentDidMount: function() {

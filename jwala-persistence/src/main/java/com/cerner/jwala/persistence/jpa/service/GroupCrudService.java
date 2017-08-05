@@ -68,8 +68,6 @@ public interface GroupCrudService extends CrudService<JpaGroup> {
 
     String getGroupAppResourceTemplate(String groupName, String appName, String resourceTemplateName);
 
-    String getGroupAppResourceTemplateMetaData(String groupName, String fileName);
-
     void updateGroupAppResourceTemplate(String groupName, String appName, String resourceTemplateName, String content);
 
     String getGroupJvmResourceTemplateMetaData(String groupName, String fileName);
@@ -105,4 +103,6 @@ public interface GroupCrudService extends CrudService<JpaGroup> {
     void updateGroupJvmResourceMetaData(String groupName, String resourceName, String metaData);
 
     void updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData);
+
+    String getGroupAppResourceTemplateMetaData(String groupName, String templateName, String appName);
 }
