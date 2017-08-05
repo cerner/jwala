@@ -84,7 +84,7 @@ public class CreateJvmRunSteps {
 
     @Then("^I see \"(.*)\" in the jvm table$")
     public void checkForJvm(final String jvmName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmName + "']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmName + "']"), 60);
     }
 
     @Then("^I see the following jvm details in the jvm table:$")
