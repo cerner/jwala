@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Sharvari Barve on 7/5/2017.
  */
-public class ManageSearchRunSteps {
+public class SearchRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;

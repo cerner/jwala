@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Sharvari Barve on 7/6/2017.
  */
-public class ManageSortRunSteps {
+public class SortRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Sharvari Barve on 7/10/2017.
  */
-public class ManagePaginationRunSteps {
+public class PaginationRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
