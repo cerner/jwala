@@ -87,6 +87,7 @@ public class CommonRunSteps {
         list.add(parameters.get("group"));
         createWebAppRunSteps.setGroups(list);
         createWebAppRunSteps.clickAddDialogOkBtn();
+        createWebAppRunSteps.checkForWebApp(parameters.get("webappName"));
     }
 
     @Given("^I created a web server with the following parameters:$")
