@@ -34,7 +34,6 @@ Feature: Search
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
@@ -55,7 +54,6 @@ Feature: Search
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
@@ -91,7 +89,6 @@ Feature: Search
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |

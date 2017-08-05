@@ -1,23 +1,26 @@
 package com.cerner.jwala.ui.selenium.steps;
 
+import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.cerner.jwala.ui.selenium.SeleniumTestHelper.getParamatersProperties;
-
 /**
  * Created by Jedd Cuison on 6/27/2017
  */
+@ContextConfiguration(classes = TestConfig.class)
 public class CommonRunSteps {
 
-    private Properties prop = new Properties();
+    @Autowired
+    @Qualifier("parameterProperties")
+    private Properties paramProp;
 
     @Autowired
     private LoginRunSteps loginRunSteps;
@@ -46,13 +49,8 @@ public class CommonRunSteps {
         loginRunSteps.validateResult();
     }
 
-    @Given("^I load properties file$")
-    public void loadPropertiesFile() throws IOException {
-        prop = getParamatersProperties();
-    }
-
     public Properties getProperties() {
-        return prop;
+        return paramProp;
     }
 
     @Given("^I created a group with the name \"(.*)\"$")
@@ -133,6 +131,6 @@ public class CommonRunSteps {
      * @return the value of the property, if null the key is returned instead
      */
     private String getPropertyValue(final String key) {
-        return prop.getProperty(key) == null ? key : prop.getProperty(key);
+        return paramProp.getProperty(key) == null ? key : paramProp.getProperty(key);
     }
 }

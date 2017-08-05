@@ -22,8 +22,6 @@ public class SeleniumTestHelper {
 
     private static final String SELENIUM_PROPERTY_PATH = "selenium.property.path";
     private static final String TEST_PROPERTIES = "selenium/test.properties";
-    private static final String PARAMETERS_PROPERTIES = "selenium/parameters.properties";
-    private static Properties paramatersProperties;
 
     /**
      * Crate an instance of a {@link WebDriver} to facilitate browser based testing
@@ -71,19 +69,6 @@ public class SeleniumTestHelper {
             properties.load(new FileInputStream(new File(propertyPath)));
         }
         return properties;
-    }
-
-    public static Properties getParamatersProperties() throws IOException {
-        if (paramatersProperties == null) {
-            paramatersProperties = new Properties();
-            final String propertyPath = System.getProperty(SELENIUM_PROPERTY_PATH);
-            if (StringUtils.isEmpty(propertyPath)) {
-                paramatersProperties.load(SeleniumTestHelper.class.getClassLoader().getResourceAsStream(PARAMETERS_PROPERTIES));
-            } else {
-                paramatersProperties.load(new FileInputStream(new File(propertyPath)));
-            }
-        }
-        return paramatersProperties;
     }
 
     public static void runSqlScript(final String sqlScript) throws IOException, ClassNotFoundException, SQLException {

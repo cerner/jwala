@@ -36,7 +36,6 @@ Feature:Sort
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
       | mediaType       | Apache HTTPD            |
@@ -56,7 +55,6 @@ Feature:Sort
 
     Given I logged in
     And I am in the configuration tab
-    And I load properties file
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
@@ -77,7 +75,6 @@ Feature:Sort
   Scenario: Sort media with remote directory
     Given I logged in
     And I am in the configuration tab
-    And I load properties file
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
@@ -97,7 +94,6 @@ Feature:Sort
 
   Scenario: Sort web servers with name
     Given I logged in
-    And I load properties file
     And I am in the configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
@@ -108,7 +104,6 @@ Feature:Sort
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | media.remote.dir        |
-    And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
       | mediaName          | apache-httpd-2.4.20     |
@@ -146,14 +141,12 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | media.remote.dir        |
-    And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | ZZZZZWebServer      |
@@ -183,7 +176,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
@@ -219,13 +211,11 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | media.remote.dir        |
-    And I load properties file
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | zWebServer          |
@@ -255,7 +245,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "aGroup"
     And I created a group with the name "zGroup"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
@@ -289,7 +278,6 @@ Feature:Sort
     And I am in the configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
       | mediaType       | Apache HTTPD            |
@@ -329,7 +317,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
@@ -366,7 +353,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "aaagroup1"
     And I created a group with the name "yyygroup1"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
@@ -404,7 +390,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
@@ -415,7 +400,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-    And I load properties file
     And I created a jvm with the following parameters:
       | jvmName    | zzzJvm               |
       | hostName   | aaaHost              |
@@ -443,7 +427,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
@@ -479,7 +462,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | zzzjdk1.8.0_92          |
       | mediaType       | JDK                     |
@@ -495,7 +477,6 @@ Feature:Sort
       | mediaType       | Apache Tomcat                        |
       | remoteDir       | media.remote.dir                     |
       | archiveFilename | apache-tomcat-7.0.55-windows-x64.zip |
-    And I load properties file
     And I created a jvm with the following parameters:
       | jvmName    | aaaJvm               |
       | hostName   | aaaHost              |
@@ -522,7 +503,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
@@ -559,7 +539,6 @@ Feature:Sort
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92             |
       | mediaType       | JDK                     |
