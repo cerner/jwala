@@ -1,6 +1,6 @@
-Feature: Upload Resource - Jvm Node
+Feature: Upload JVM Resource
 
-  Scenario:Jvm Node
+Scenario: Upload a JVM Resource
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
