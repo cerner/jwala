@@ -72,11 +72,6 @@ public class CreateWebServerRunSteps {
         jwalaUi.selectItem(By.name("apacheHttpdMediaId"), apacheHttpd);
     }
 
-    @And("^I fill in the \"Status Path\" field with \"(.*)\"$")
-    public void setStatusPath(final String statusPath) {
-        jwalaUi.getWebElement(By.name("statusPath")).sendKeys(Keys.chord(Keys.CONTROL, "a"), statusPath);
-    }
-
     @And("^I select the group \"(.*)\"$")
     public void selectGroup(final String groupName) {
         jwalaUi.click(By.xpath("//div[contains(text(), '" + groupName + "')]/input"));
