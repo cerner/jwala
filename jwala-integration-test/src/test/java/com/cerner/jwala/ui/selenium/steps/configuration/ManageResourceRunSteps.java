@@ -1,25 +1,29 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
-import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 /**
- * Created by Rahul Sayini on 7/7/2017.
+ * Created by Rahul Sayini on 7/7/2017
  */
 public class ManageResourceRunSteps {
+
     @Autowired
     private JwalaUi jwalaUi;
+
+    @Autowired
+    @Qualifier("parameterProperties")
+    private Properties paramProp;
 
     @Given("^I am in the resource tab$")
     public void goToConfigurationTab() {
@@ -48,7 +52,7 @@ public class ManageResourceRunSteps {
 
     @And("^I fill in the \"Deploy Path\" field with \"(.*)\"$")
     public void setDeployPath(String deployPath) throws IOException {
-        jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), SeleniumTestHelper.getJwalaProperties().getProperty(deployPath));
+        jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), paramProp.getProperty(deployPath));
     }
 
     @And("I check Upload Meta Data File")
@@ -77,5 +81,4 @@ public class ManageResourceRunSteps {
     public void checkForResource() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
-
 }
