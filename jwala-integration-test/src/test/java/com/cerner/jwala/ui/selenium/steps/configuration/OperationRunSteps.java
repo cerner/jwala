@@ -45,12 +45,12 @@ public class OperationRunSteps {
 
     @And("^I wait for popup string \"(.*)\"$")
     public void waitForSomeTime(String value) throws InterruptedException {
-        jwalaUi.waitUntilElementIstVisible(By.xpath("//div[contains(text(), '" + value + "')]"), 240000);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[contains(text(), '" + value + "')]"), 240000);
     }
 
     @And("^I wait for component (.*) state \"(.*)\"$")
     public void componentState(String component, String status) {
-        jwalaUi.waitUntilElementIstVisible(By.xpath("//tr/td[text()='" + component + "']//following-sibling::td[6]/div/span[contains(text(),'" + status + "')]"), 6000);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='" + component + "']//following-sibling::td[6]/div/span[contains(text(),'" + status + "')]"), 6000);
     }
 
     @And("^I generate webapp")
