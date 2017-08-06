@@ -66,7 +66,7 @@ public class CreateMediaRunSteps {
 
     @Then("I see \"(.*)\" in the media table")
     public void checkForMedia(final String mediaName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + mediaName + "']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + mediaName + "']"), 300);
     }
 
     @After

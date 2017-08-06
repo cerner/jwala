@@ -8,7 +8,7 @@ Scenario: Add Web Server
             |mediaName      |apache-httpd-2.4.20    |
             |mediaType      |Apache HTTPD           |
             |archiveFilename|apache-httpd-2.4.20.zip|
-            |remoteDir      |d:/ctp                 |
+            |remoteDir      |media.remote.dir       |
     And I created a group with the name "GROUP_FOR_ADD_WEBSERVER_TEST"
     And I am in the web server tab
     When I click the add web server button

@@ -68,6 +68,11 @@ public class CreateWebAppRunSteps {
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + webAppDetails.get("group") + "']")));
     }
 
+    @And("^I see \"(.*)\" web app table$")
+    public void checkForWebApp(final String webAppName) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webAppName + "']"));
+    }
+
     @After
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
         SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
