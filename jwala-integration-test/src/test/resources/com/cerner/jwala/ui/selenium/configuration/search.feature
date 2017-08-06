@@ -1,6 +1,9 @@
-Feature: Search
+Feature: Search Items
+    Group, JVM, web server, web application and media tables should be searchable
 
-  Scenario: Search within groups
+
+Scenario: Search for a Group in the Group Table
+
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -11,7 +14,8 @@ Feature: Search
     And I don't see "ZZZGroup" in the table
 
 
-  Scenario: Search within web app
+Scenario: Search for a Web Application in the Web Application Table
+
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -30,7 +34,9 @@ Feature: Search
     Then I see "application" web app table
     And I don't see "zzzApp" in the table
 
-  Scenario: Search within media
+
+Scenario: Search for a Media in the Media Table
+
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
@@ -48,7 +54,9 @@ Feature: Search
     Then I see "apache-httpd-2.4.20" in the media table
     And I don't see "ZZZApacheMedia" in the table
 
-  Scenario: Search within web servers
+
+Scenario: Search for a Web Server in the Web Server Table
+
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -83,7 +91,8 @@ Feature: Search
     And I don't see "aWebserver" in the table
 
 
-  Scenario: Search within  jvms
+Scenario: Search for JVM in the JVM Table
+
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
