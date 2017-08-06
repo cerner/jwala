@@ -4,7 +4,6 @@ Scenario: Upload a JVM Resource
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92     |
       | mediaType       | JDK             |
@@ -28,19 +27,19 @@ Scenario: Upload a JVM Resource
     And I clicked on component "seleniumJvm"
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "hello.xml"
-    And I fill in the "Deploy Path" field with "resourcesDeployPath"
+    And I fill in the "Deploy Path" field with "resource.deploy.path"
     And I choose the resource file "hello.xml.tpl"
     And I click the upload resource dialog ok button
     Then check resource uploaded successful
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "setenv.bat"
-    And I fill in the "Deploy Path" field with "resourcesDeployPath"
+    And I fill in the "Deploy Path" field with "resource.deploy.path"
     And I choose the resource file "setenv.bat.tpl"
     And I click the upload resource dialog ok button
     Then check resource uploaded successful
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "server.xml"
-    And I fill in the "Deploy Path" field with "resourcesDeployPath"
+    And I fill in the "Deploy Path" field with "resource.deploy.path"
     And I choose the resource file "server.xml.tpl"
     When I click the upload resource dialog ok button
     Then check resource uploaded successful
