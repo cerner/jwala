@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper component that simplifies the calling of Selenium driver commands
- *
+ * <p>
  * Created by Jedd Cuison on 6/28/2017
  */
 @Component
@@ -46,6 +46,7 @@ public class JwalaUi {
 
     /**
      * Wait until element is clickable before clicking
+     *
      * @param by {@link By}
      */
     public void clickWhenReady(final By by) {
@@ -55,7 +56,7 @@ public class JwalaUi {
 
     public WebElement clickTreeItemExpandCollapseIcon(final String itemLabel) {
         final WebElement webElement =
-                driver.findElement(By.xpath("//li[span[text()='" +  itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
+                driver.findElement(By.xpath("//li[span[text()='" + itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
         new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
         webElement.click();
         return webElement;
@@ -63,7 +64,7 @@ public class JwalaUi {
 
     public WebElement clickTreeItemExpandCollapseIcon(final WebElement parentNode, final String itemLabel) {
         final WebElement webElement =
-                parentNode.findElement(By.xpath("//li[span[text()='" +  itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
+                parentNode.findElement(By.xpath("//li[span[text()='" + itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
         new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
         webElement.click();
         return webElement;
@@ -114,12 +115,17 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
+    public boolean isCheckBoxChecked(final By by) {
+        return driver.findElement(by).isSelected();
+    }
+
     /**
      * Wait until an element is visible
+     *
      * @param by {@link By}
      * @param timeout timeout in seconds
      */
-    public void waitUntilElementIstVisible(final By by, final long timeout) {
+    public void waitUntilElementIsVisible(final By by, final long timeout) {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.numberOfElementsToBe(by, 1));
     }
 
@@ -138,6 +144,7 @@ public class JwalaUi {
     /**
      * Web driver waits until an element or several elements (as indicated by the numberOfElements parameter)
      * located by the "by" parameter is/are existing
+     *
      * @param by element locator
      * @param numberOfElements the number of elements to satisfy the "to be" condition
      */
@@ -160,6 +167,14 @@ public class JwalaUi {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public WebDriver getWebDriver() {
+        return driver;
+    }
+
+    public WebElement getWebElement(By by) {
+        return driver.findElement(by);
     }
 
     @PreDestroy
