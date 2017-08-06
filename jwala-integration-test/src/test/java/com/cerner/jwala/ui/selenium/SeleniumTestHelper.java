@@ -73,19 +73,6 @@ public class SeleniumTestHelper {
         return properties;
     }
 
-    public static Properties getJwalaProperties() throws IOException {
-        if (jwalaProperties == null) {
-            jwalaProperties = new Properties();
-            final String propertyPath = System.getProperty(SELENIUM_PROPERTY_PATH);
-            if (StringUtils.isEmpty(propertyPath)) {
-                jwalaProperties.load(SeleniumTestHelper.class.getClassLoader().getResourceAsStream(JWALA_PROPERTIES));
-            } else {
-                jwalaProperties.load(new FileInputStream(new File(propertyPath)));
-            }
-        }
-        return jwalaProperties;
-    }
-
     public static void runSqlScript(final String sqlScript) throws IOException, ClassNotFoundException, SQLException {
         final Properties properties = SeleniumTestHelper.getProperties();
         Class.forName(properties.getProperty("jwala.db.driver"));
