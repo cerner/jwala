@@ -273,12 +273,8 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
     @Override
     public String updateGroupAppResourceMetaData(String groupName, String webAppName, String resourceName, String metaData) {
         groupCrudService.updateGroupAppResourceMetaData(groupName, webAppName, resourceName, metaData);
-        return groupCrudService.getGroupAppResourceTemplateMetaData(groupName, resourceName);
-    }
+        return groupCrudService.getGroupAppResourceTemplateMetaData(groupName, resourceName, webAppName);
 
-    @Override
-    public String getGroupAppResourceTemplateMetaData(String groupName, String fileName) {
-        return groupCrudService.getGroupAppResourceTemplateMetaData(groupName, fileName);
     }
 
     @Override
@@ -313,5 +309,10 @@ public class JpaGroupPersistenceServiceImpl implements GroupPersistenceService {
         final Query q = entityManager.createNamedQuery(JpaGroup.QUERY_GET_GROUPS_BY_ID_LIST);
         q.setParameter(JpaGroup.QUERY_PARAM_ID_LIST, idList);
         return q.getResultList();
+    }
+
+    @Override
+    public String getGroupAppResourceTemplateMetaData(String groupName, String templateName, String appName) {
+        return groupCrudService.getGroupAppResourceTemplateMetaData(groupName, templateName, appName);
     }
 }

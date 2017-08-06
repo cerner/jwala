@@ -72,7 +72,7 @@ public class CreateJvmRunSteps {
 
     @And("^I associate the JVM to the following groups:$")
     public void setGroups(final List<String> groups) {
-        for (final String group: groups) {
+        for (final String group : groups) {
             jwalaUi.click(By.xpath("//div[text()='" + group + "']/input"));
         }
     }
@@ -80,6 +80,11 @@ public class CreateJvmRunSteps {
     @And("^I click the jvm add dialog ok button$")
     public void clickOkBtn() {
         jwalaUi.click(By.xpath("//span[text()='Ok']"));
+    }
+
+    @Then("^I see \"(.*)\" in the jvm table$")
+    public void checkForJvm(final String jvmName) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmName + "']"), 60);
     }
 
     @Then("^I see the following jvm details in the jvm table:$")

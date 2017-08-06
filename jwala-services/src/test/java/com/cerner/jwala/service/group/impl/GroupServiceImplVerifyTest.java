@@ -132,7 +132,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         when(mockGroup.getName()).thenReturn("testGroup");
         when(Config.mockGroupPersistenceService.getGroup(anyString())).thenThrow(NotFoundException.class);
         groupService.updateGroup(updateGroupRequest, user);
-        
+
         verify(Config.mockGroupPersistenceService).updateGroup(updateGroupRequest);
     }
 
@@ -446,12 +446,13 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
         when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(mockGroup);
         when(Config.mockApplicationService.getApplications()).thenReturn(appList);
         when(Config.mockApplicationService.getApplication(anyString())).thenReturn(mockApp);
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
+        when(Config.mockResourceService.generateResourceFile(anyString(),anyString(), any(), any(), any())).thenThrow(ApplicationException.class);
 
-        String content = groupService.previewGroupAppResourceTemplate("testGroup", "hct.xml", "hct content", new ResourceGroup());
+        String content = groupService.previewGroupAppResourceTemplate("testGroup", "hct.xml", "hct content", new ResourceGroup(), "testApp");
         assertEquals("hct content", content);
 
-        groupService.previewGroupAppResourceTemplate("testGroup", "hct.xml", "hct content ${webApp.fail.token}", new ResourceGroup());
+        groupService.previewGroupAppResourceTemplate("testGroup", "hct.xml", "hct content ${webApp.fail.token}", new ResourceGroup(), "testApp");
     }
 
     @Test
@@ -483,7 +484,7 @@ public class GroupServiceImplVerifyTest extends VerificationBehaviorSupport {
 
         reset(Config.mockGroupPersistenceService, Config.mockApplicationService, Config.mockResourceService);
 
-        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
+        when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"entity\":{\"target\": \"testApp\"}}");
         when(Config.mockGroupPersistenceService.getGroups()).thenReturn(Collections.singletonList(mockGroup));
         groupService.getGroupAppResourceTemplate("testGroup", "testAppName", "hct.xml", true, new ResourceGroup());
 
