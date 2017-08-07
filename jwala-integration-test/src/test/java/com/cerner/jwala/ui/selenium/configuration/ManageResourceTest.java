@@ -9,6 +9,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = {"classpath:com/cerner/jwala/ui/selenium/configuration/uploadJvmResource.feature"},
+        features = {"classpath:com/cerner/jwala/ui/selenium/configuration/uploadResource.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ManageJvmResourceTest {}
+public class ManageResourceTest {}
