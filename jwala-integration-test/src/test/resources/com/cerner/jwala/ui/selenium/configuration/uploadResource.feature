@@ -22,28 +22,32 @@ Scenario: Upload a JVM Resource
       | hostName   | host1            |
       | portNumber | 80                   |
       | group      | seleniumGroup        |
-    And I am in the resource tab
-    And I expanded component "seleniumGroup"
-    And I expanded component "JVMs"
-    And I clicked on component "seleniumJvm"
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "hello.xml"
-    And I fill in the "Deploy Path" field with "resource.deploy.path"
-    And I choose the resource file "hello.xml.tpl"
-    And I click the upload resource dialog ok button
-    Then check resource uploaded successful
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "setenv.bat"
-    And I fill in the "Deploy Path" field with "resource.deploy.path"
-    And I choose the resource file "setenv.bat.tpl"
-    And I click the upload resource dialog ok button
-    Then check resource uploaded successful
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "server.xml"
-    And I fill in the "Deploy Path" field with "resource.deploy.path"
-    And I choose the resource file "server.xml.tpl"
-    When I click the upload resource dialog ok button
-    Then check resource uploaded successful
+
+   And I am in the resource tab
+   And I expand "seleniumGroup" node
+   And I expand "JVMs" node
+   And I click "seleniumJvm" node
+
+   When I click the add resource button
+   And I fill in the "Deploy Name" field with "hello.xml"
+   And I fill in the "Deploy Path" field with "resource.deploy.path"
+   And I choose the resource file "hello.xml.tpl"
+   And I click the upload resource dialog ok button
+   Then I see that the resource got uploaded successfully
+
+   When I click the add resource button
+   And I fill in the "Deploy Name" field with "setenv.bat"
+   And I fill in the "Deploy Path" field with "resource.deploy.path"
+   And I choose the resource file "setenv.bat.tpl"
+   And I click the upload resource dialog ok button
+   Then I see that the resource got uploaded successfully
+
+   When I click the add resource button
+   And I fill in the "Deploy Name" field with "server.xml"
+   And I fill in the "Deploy Path" field with "resource.deploy.path"
+   And I choose the resource file "server.xml.tpl"
+   And I click the upload resource dialog ok button
+   Then I see that the resource got uploaded successfully
 
 
 Scenario: Upload a Web Server Resource
@@ -65,15 +69,15 @@ Scenario: Upload a Web Server Resource
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I am in the resource tab
-    And I expanded component "seleniumGroup"
-    And I expanded component "Web Servers"
-    And I clicked on component "seleniumWebserver"
-    And I clicked on add resource
+    And I expand "seleniumGroup" node
+    And I expand "Web Servers" node
+    And I click "seleniumWebserver" node
+    When I click the add resource button
     And I fill in the "Deploy Name" field with "httpd.conf"
     And I fill in the "Deploy Path" field with "httpd.resource.deploy.path"
     And I choose the resource file "httpdconf.tpl"
-    When I click the upload resource dialog ok button
-    Then check resource uploaded successful
+    And I click the upload resource dialog ok button
+    Then I see that the resource got uploaded successfully
 
 
 Scenario: Upload a Web Application Resource
@@ -86,12 +90,12 @@ Scenario: Upload a Web Application Resource
       | contextPath | /hello       |
       | group       | seleniumGroup  |
     And I am in the resource tab
-    And I expanded component "seleniumGroup"
-    And I expanded component "Web Apps"
-    And I clicked on component "seleniumWebapp"
-    And I clicked on add resource
+    And I expand "seleniumGroup" node
+    And I expand "Web Apps" node
+    And I click "seleniumWebapp" node
+    When I click the add resource button
     And I fill in the "Deploy Name" field with "hello-world.war"
     And I fill in the "Deploy Path" field with "resource.deploy.path"
     And I choose the resource file "hello-world.war"
-    When I click the upload resource dialog ok button
-    Then check resource uploaded successful
+    And I click the upload resource dialog ok button
+    Then I see that the resource got uploaded successfully

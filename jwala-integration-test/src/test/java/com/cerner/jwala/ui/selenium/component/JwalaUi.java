@@ -1,5 +1,6 @@
 package com.cerner.jwala.ui.selenium.component;
 
+import com.cerner.jwala.ui.selenium.steps.UploadResourceRunStepException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +43,6 @@ public class JwalaUi {
             clickWhenReady(by);
             webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("AppBusyScreen")));
         }
-
     }
 
     /**
@@ -54,6 +55,39 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
     }
 
+    public void expandNode(final String nodeLabel) {
+        try {
+            final WebElement webElement = driver.findElement(
+                    By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/plus.png']"));
+            webElement.click();
+        } catch (final NoSuchElementException e) {
+            // We don't ignore the error and assume that the item is already expanded since the proper test assumption
+            // is that the initial state of an item is relevant
+            final String msg =
+                    MessageFormat.format("Failed to expand tree item {0} since it may already be expanded!", nodeLabel);
+            throw new UploadResourceRunStepException(msg, e);
+        }
+    }
+
+    public void collapseNode(final String nodeLabel) {
+        try {
+            final WebElement webElement = driver.findElement(
+                    By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/minus.png']"));
+            webElement.click();
+        } catch (final NoSuchElementException e) {
+            // We don't ignore the error and assume that the item is already collapsed since the proper test assumption
+            // is that the initial state of an item is relevant
+            final String msg =
+                    MessageFormat.format("Failed to collapse tree item {0} since it may already be collapsed!", nodeLabel);
+            throw new UploadResourceRunStepException(msg, e);
+        }
+    }
+
+    public void clickNode(final String nodeLabel) {
+        clickWhenReady(By.xpath("//li[span[text()='" + nodeLabel + "']]/span"));
+    }
+
+    @Deprecated
     public WebElement clickTreeItemExpandCollapseIcon(final String itemLabel) {
         final WebElement webElement =
                 driver.findElement(By.xpath("//li[span[text()='" + itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
@@ -62,6 +96,7 @@ public class JwalaUi {
         return webElement;
     }
 
+    @Deprecated
     public WebElement clickTreeItemExpandCollapseIcon(final WebElement parentNode, final String itemLabel) {
         final WebElement webElement =
                 parentNode.findElement(By.xpath("//li[span[text()='" + itemLabel + "']]/img[contains(@class, 'expand-collapse-padding')]"));
@@ -176,20 +211,6 @@ public class JwalaUi {
     @PreDestroy
     public void destroy() {
         driver.close();
-    }
-
-    public void clickComponentForUpload(String component) {
-        final WebElement webElement =
-                driver.findElement(By.xpath("//li[span[text()='" + component + "']]/span"));
-        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
-        webElement.click();
-    }
-
-    public void clickAddResource() {
-        final WebElement webElement =
-                driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
-        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
-        webElement.click();
     }
 
     public WebElement getWebElement(By by) {
