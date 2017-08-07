@@ -1,15 +1,9 @@
-<<<<<<< HEAD
-Feature: Search
-
-  Scenario: Search within groups
-=======
 Feature: Search Items
     Group, JVM, web server, web application and media tables should be searchable
 
 
 Scenario: Search for a Group in the Group Table
 
->>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -20,12 +14,8 @@ Scenario: Search for a Group in the Group Table
     And I don't see "ZZZGroup" in the table
 
 
-<<<<<<< HEAD
-  Scenario: Search within web app
-=======
 Scenario: Search for a Web Application in the Web Application Table
 
->>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -44,13 +34,9 @@ Scenario: Search for a Web Application in the Web Application Table
     Then I see "application" web app table
     And I don't see "zzzApp" in the table
 
-<<<<<<< HEAD
-  Scenario: Search within media
-=======
 
 Scenario: Search for a Media in the Media Table
 
->>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
@@ -68,13 +54,9 @@ Scenario: Search for a Media in the Media Table
     Then I see "apache-httpd-2.4.20" in the media table
     And I don't see "ZZZApacheMedia" in the table
 
-<<<<<<< HEAD
-  Scenario: Search within web servers
-=======
 
 Scenario: Search for a Web Server in the Web Server Table
 
->>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -109,12 +91,8 @@ Scenario: Search for a Web Server in the Web Server Table
     And I don't see "aWebserver" in the table
 
 
-<<<<<<< HEAD
-  Scenario: Search within  jvms
-=======
 Scenario: Search for JVM in the JVM Table
 
->>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -147,8 +125,4 @@ Scenario: Search for JVM in the JVM Table
     And I am in the jvm tab
     When I fill in the search field with "aa"
     Then I see "aaaJvm" in the jvm table
-<<<<<<< HEAD
     And I don't see "zzzJvm" in the table
-=======
-    And I don't see "zzzJvm" in the table
->>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
