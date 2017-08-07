@@ -1,6 +1,7 @@
 Feature: Pagination
 
-  Scenario: Pagination within web-servers
+Scenario: Web Server Pagination
+
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -242,7 +243,8 @@ Feature: Pagination
     Then I see "WebServer29" in the webserver table
 
 
-  Scenario: Pagination within groups
+Scenario: Group Pagination
+
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab

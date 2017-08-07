@@ -1,6 +1,19 @@
+<<<<<<< HEAD
 Feature:Sort
 
   Scenario: Sort groups
+=======
+Feature: Sort Table
+    Groups can be sorted in ascending or descending order based on the column header that a user clicked
+    JVMs can be sorted in ascending or descending order based on the column header that a user clicked
+    Web Servers can be sorted in ascending or descending order based on the column header that a user clicked
+    Web Applications can be sorted in ascending or descending order based on the column header that a user clicked
+    Media can be sorted in ascending or descending order based on the column header that a user clicked
+
+
+Scenario: Sort Group by Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -12,7 +25,13 @@ Feature:Sort
     When I click the column header with the label "Group Name"
     Then I see first item "ZZZGroup"
 
+<<<<<<< HEAD
   Scenario: Sort web-apps
+=======
+
+Scenario: Sort Web Applications by Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -32,7 +51,13 @@ Feature:Sort
     When I click the column header with the label "WebApp Name"
     Then I see first item "ZZZApp"
 
+<<<<<<< HEAD
   Scenario: Sort media with name
+=======
+
+Scenario: Sort Media by Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
@@ -51,7 +76,12 @@ Feature:Sort
     When I click the column header with the label "Name"
     Then I see first item "zzzMedia"
 
+<<<<<<< HEAD
   Scenario: Sort media with type
+=======
+
+Scenario: Sort Media by Type
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
 
     Given I logged in
     And I am in the configuration tab
@@ -72,7 +102,12 @@ Feature:Sort
     Then I see first item "aaaMedia"
 
 
+<<<<<<< HEAD
   Scenario: Sort media with remote directory
+=======
+Scenario: Sort Media by Remote Directory
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the media tab
@@ -92,7 +127,12 @@ Feature:Sort
     Then I see first item "aaaMedia"
 
 
+<<<<<<< HEAD
   Scenario: Sort web servers with name
+=======
+Scenario: Sort Web Servers by Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -135,7 +175,12 @@ Feature:Sort
     Then I see first item "ZZZZZ"
 
 
+<<<<<<< HEAD
   Scenario: Sort web servers with host
+=======
+Scenario: Sort Web Servers by Host Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -170,7 +215,12 @@ Feature:Sort
     Then I see first item "AAAAAAWebServer"
 
 
+<<<<<<< HEAD
   Scenario: Sort web servers with port
+=======
+Scenario: Sort Web Servers by HTTP Port
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -205,7 +255,12 @@ Feature:Sort
     Then I see first item "aWebServer"
 
 
+<<<<<<< HEAD
   Scenario: Sort web servers with HTTPS port
+=======
+Scenario: Sort Seb Servers by HTTPS Port
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -239,7 +294,12 @@ Feature:Sort
     Then I see first item "aWebServer"
 
 
+<<<<<<< HEAD
   Scenario: Sort web servers with Group
+=======
+Scenario: Sort Web Servers by Group Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -273,7 +333,12 @@ Feature:Sort
     Then I see first item "AAAAAAWebServer"
 
 
+<<<<<<< HEAD
   Scenario: Sort web servers with Apache HTTPD
+=======
+Scenario: Sort Web Servers by Apache HTTPD Media
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -311,7 +376,12 @@ Feature:Sort
     Then I see first item "AAAAAAWebServer"
 
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with Name
+=======
+Scenario: Sort JVMs by Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -347,7 +417,13 @@ Feature:Sort
     When I click the column header with the label "Name"
     Then I see first item "zzzJvm"
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with Group
+=======
+
+Scenario: Sort JVMs by Group Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -384,7 +460,12 @@ Feature:Sort
     Then I see first item "aaaJvm"
 
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with hostName
+=======
+Scenario: Sort JVMs by Host Name
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -421,7 +502,12 @@ Feature:Sort
     Then I see first item "aaaJvm"
 
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with Port
+=======
+Scenario: Sort JVMs by HTTP Port
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -456,7 +542,13 @@ Feature:Sort
     When I click the column header with the label "HTTP"
     Then I see first item "aaaJvm"
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with JDK
+=======
+
+Scenario: Sort JVMs by JDK
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -497,7 +589,12 @@ Feature:Sort
     Then I see first item "aaaJvm"
 
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with HTTPS
+=======
+Scenario: Sort jvms by HTTPS Port
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -533,7 +630,12 @@ Feature:Sort
     Then I see first item "zzzJvm"
 
 
+<<<<<<< HEAD
   Scenario: Sort  jvms with TomcatMedia
+=======
+Scenario: Sort JVMs by Tomcat Media
+
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
     Given I logged in
     And I am in the configuration tab
     And I am in the group tab
@@ -571,4 +673,8 @@ Feature:Sort
     When I click the column header with the label "Tomcat"
     Then I see first item "zzzJvm"
     When I click the column header with the label "Tomcat"
+<<<<<<< HEAD
     Then I see first item "aaaJvm"
+=======
+    Then I see first item "aaaJvm"
+>>>>>>> 1684a283504a31261d90d01c619f994cf6eb2680
