@@ -15,7 +15,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by SB053052 on 7/21/2017.
+ * Created by Sharvari Barve on 7/21/2017.
  */
 public class AdminRunSteps {
 
@@ -34,23 +34,25 @@ public class AdminRunSteps {
 
 
     @When("^I fill in the data to be encrypted \"(.*)\"$")
-    public void fillDataToEncrypt(String data){
-        jwalaUi.sendKeys(By.xpath("//input[@class='toEncrypt']"),data);
+    public void fillDataToEncrypt(String data) {
+        jwalaUi.sendKeys(By.xpath("//input[@class='toEncrypt']"), data);
     }
+
     @When("I click \"(.*)\" button$")
-    public void clickEncryptButton(String componentName){
-        jwalaUi.click(By.xpath("//button/span[contains(text(),'"+componentName+"')]"));
+    public void clickEncryptButton(String componentName) {
+        jwalaUi.click(By.xpath("//button/span[contains(text(),'" + componentName + "')]"));
     }
 
     @Then("I see the text \"(.*)\" in properties management box$")
-    public void verifyPropertiesManagementTextBox(String text){
+    public void verifyPropertiesManagementTextBox(String text) {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[8]/textarea"));
         String textInTheBox = element.getAttribute("value");
         assertNotNull(textInTheBox);
         assert (textInTheBox.contains(text));
     }
+
     @Then("I see the text \"(.*)\" in manifest box$")
-    public void verifyManifestTextBox(String text){
+    public void verifyManifestTextBox(String text) {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[10]/textarea"));
         String textInTheBox = element.getAttribute("value");
         assertNotNull(textInTheBox);
@@ -58,7 +60,7 @@ public class AdminRunSteps {
     }
 
     @Then("I see the implementation version \"(.*)\" in manifest box$")
-    public void verifyVersion(String text){
+    public void verifyVersion(String text) {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[10]/textarea"));
         String textInTheBox = element.getAttribute("value");
         assertNotNull(textInTheBox);
@@ -66,15 +68,15 @@ public class AdminRunSteps {
     }
 
     @Then("I verify header with text \"(.*)\"$")
-    public void verifyHeader(String text){
-        WebElement header = jwalaUi.getWebElement(By.xpath("//h3[contains(text(),'"+text+"')]"));
+    public void verifyHeader(String text) {
+        WebElement header = jwalaUi.getWebElement(By.xpath("//h3[contains(text(),'" + text + "')]"));
         assertNotNull(header);
     }
 
 
     @Then("I verify text \"(.*)\"$")
-    public void verifyText(String s){
-        jwalaUi.isElementExists(By.xpath("//p[contains(text(),'"+s+"']"));
+    public void verifyText(String s) {
+        jwalaUi.isElementExists(By.xpath("//p[contains(text(),'" + s + "']"));
     }
 
 

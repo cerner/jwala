@@ -5,38 +5,38 @@ Feature: Thread Dump
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92     |
-      | mediaType       | JDK             |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir          |
+      | mediaName       | jdk1.8.0_92      |
+      | mediaType       | JDK              |
+      | archiveFilename | jdk1.8.0_92.zip  |
+      | remoteDir       | media.remote.dir |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
       | archiveFilename | apache-tomcat-7.0.55.zip |
-      | remoteDir       | media.remote.dir                   |
+      | remoteDir       | media.remote.dir         |
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir                 |
+      | remoteDir       | media.remote.dir        |
     And I created a jvm with the following parameters:
-      | jvmName    | seleniumJvmThreadDump          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
-      | hostName   | host1                |
-      | portNumber | 9000                 |
-      | group      | seleniumGroup        |
+      | jvmName    | seleniumJvmThreadDump |
+      | tomcat     | apache-tomcat-7.0.55  |
+      | jdk        | jdk1.8.0_92           |
+      | hostName   | host1                 |
+      | portNumber | 9000                  |
+      | group      | seleniumGroup         |
     And I created a web server with the following parameters:
-      | webserverName      | seleniumWebserverThreadDump   |
-      | hostName           | host1               |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | seleniumGroup       |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
+      | webserverName      | seleniumWebserverThreadDump |
+      | hostName           | host1                       |
+      | portNumber         | 80                          |
+      | httpsPort          | 443                         |
+      | group              | seleniumGroup               |
+      | apacheHttpdMediaId | apache-httpd-2.4.20         |
+      | statusPath         | /apache_pb.png              |
 
     And I created a web app with the following parameters:
-      | webappName        | seleniumWebapp |
+      | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
 

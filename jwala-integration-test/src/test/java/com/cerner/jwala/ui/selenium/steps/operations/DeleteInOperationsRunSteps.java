@@ -1,14 +1,19 @@
 package com.cerner.jwala.ui.selenium.steps.operations;
 
-import com.cerner.jwala.ui.selenium.SeleniumTestHelper;import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.java.After;import cucumber.api.java.en.And;
+import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
+import com.cerner.jwala.ui.selenium.component.JwalaUi;
+import cucumber.api.java.After;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.springframework.beans.factory.annotation.Autowired;import java.io.IOException;import java.sql.SQLException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
- * Created by SB053052 on 7/18/2017.
+ * Created by Sharvari Barve on 7/18/2017.
  */
 public class DeleteInOperationsRunSteps {
     @Autowired
@@ -20,9 +25,10 @@ public class DeleteInOperationsRunSteps {
     }
 
     @Then("I don't see \"(.*)\"$")
-    public void verifyElementNotPresent(String name){
-        Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'"+name+"')")));
+    public void verifyElementNotPresent(String name) {
+        Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
     }
+
     @After
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
         SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());

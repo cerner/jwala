@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created by SB053052 on 7/18/2017.
+ * Created by Sharvari Barve on 7/18/2017.
  */
 public class HttpdConfRunSteps {
     @Autowired
@@ -14,13 +14,13 @@ public class HttpdConfRunSteps {
 
 
     @Then("I see the proper httpd.conf")
-    public void verifyConf(){
+    public void verifyConf() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'This is the main Apache HTTP server configuration file.')"));
 
     }
 
     @Then("I see error while reading conf file")
-    public void verifyError(){
+    public void verifyError() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'Error reading httpd.conf:')"));
 
     }

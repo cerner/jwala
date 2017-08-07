@@ -36,7 +36,7 @@ Feature: Heap Dump
       | statusPath         | /apache_pb.png             |
 
     And I created a web app with the following parameters:
-      | webappName        | seleniumWebapp |
+      | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
 
@@ -121,7 +121,7 @@ Feature: Heap Dump
       | statusPath         | /apache_pb.png             |
 
     And I created a web app with the following parameters:
-      | webappName        | seleniumWebapp |
+      | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
 

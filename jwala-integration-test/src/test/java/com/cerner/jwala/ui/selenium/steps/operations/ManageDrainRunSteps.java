@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Created by SB053052 on 7/14/2017.
+ * Created by Sharvari Barve on 7/14/2017.
  */
 public class ManageDrainRunSteps {
     @Autowired
@@ -43,8 +43,8 @@ public class ManageDrainRunSteps {
     }
 
     @Then("I see the started  webserver \"(.*)\"$")
-    public void waitUntilElementIsStarted(String webserver){
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='"+webserver+"']//following-sibling::td[6]/div/span[contains(text(),'STARTED')"), (long)240000);
+    public void waitUntilElementIsStarted(String webserver) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='" + webserver + "']//following-sibling::td[6]/div/span[contains(text(),'STARTED')"), (long) 240000);
     }
 
 }

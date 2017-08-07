@@ -18,7 +18,7 @@ import java.util.Properties;
 import static junit.framework.TestCase.assertNotNull;
 
 /**
- * Created by SB053052 on 7/18/2017.
+ * Created by Sharvari Barve on 7/18/2017.
  */
 public class StatusRunSteps {
     @Autowired
@@ -34,7 +34,7 @@ public class StatusRunSteps {
     public void verfiyLoadBalancerPage(String app, String host, String port) throws IOException {
         String hostName = paramProp.getProperty(host);
         jwalaUi.isElementExists(By.xpath("//td[text()='http://" + hostName + ":" + port + "/" + app + "')"));
-        jwalaUi.isElementExists(By.xpath("//h1[text()='Load Balancer Manager for"+hostName+"'"));
+        jwalaUi.isElementExists(By.xpath("//h1[text()='Load Balancer Manager for" + hostName + "'"));
     }
 
     @After

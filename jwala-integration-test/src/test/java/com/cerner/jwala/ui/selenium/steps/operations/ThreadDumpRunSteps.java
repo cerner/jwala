@@ -6,14 +6,14 @@ import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created by SB053052 on 7/18/2017.
+ * Created by Sharvari Barve on 7/18/2017.
  */
 public class ThreadDumpRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
     @Then("I see the thread dump page")
-    public void verifyThreadDumpPage(){
+    public void verifyThreadDumpPage() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'Full thread dump Java HotSpot(TM) 64-Bit Server VM')"));
 
     }

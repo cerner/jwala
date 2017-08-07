@@ -99,7 +99,7 @@ public class OperationsRunSteps {
 
     @And("I wait for popup string \"(.*)\"$")
     public void waitForSomeTime(String value) throws InterruptedException {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[contains(text(), '" + value + "')]"), (long)240000);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[contains(text(), '" + value + "')]"), (long) 240000);
     }
 
     @And("I generate webapp \"(.*)\"$")
