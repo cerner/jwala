@@ -1,6 +1,9 @@
 Feature:HealthCheck
 
-  Scenario:Healthcheck
+# Needs more work e.g. clean up of created files and services to make it run successfully consistently,
+# replace hard coded path values with values from parameters.properties
+@ignore
+Scenario:Healthcheck
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
