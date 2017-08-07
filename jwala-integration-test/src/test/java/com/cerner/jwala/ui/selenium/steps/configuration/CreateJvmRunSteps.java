@@ -1,8 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
-import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -10,8 +8,6 @@ import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -102,10 +98,5 @@ public class CreateJvmRunSteps {
     @Then("^I wait for the jvm \"(.*)\"$")
     public void waitForJvm(String name) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + name + "']"));
-    }
-
-    @After
-    public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
-        SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
     }
 }
