@@ -26,11 +26,11 @@ public class ManagerRunSteps {
     @Qualifier("parameterProperties")
     Properties paramProp;
 
-    @When("I verify url with port \"(.*)\" and with host \"(.*)\"$")
+    @When("^I verify url with port \"(.*)\" and with host \"(.*)\"$")
     public void login(String port, String host) {
         String url = jwalaUi.getWebDriver().getCurrentUrl();
         Alert alert = jwalaUi.getWebDriver().switchTo().alert();
-        alert.authenticateUsing(new UserAndPassword(jwalaUi.getProperties().getProperty("jwala.user.name"),jwalaUi.getProperties().getProperty("jwala.user.pwd")));
+        alert.authenticateUsing(new UserAndPassword(jwalaUi.getProperties().getProperty("jwala.user.name"), jwalaUi.getProperties().getProperty("jwala.user.pwd")));
     }
 
 

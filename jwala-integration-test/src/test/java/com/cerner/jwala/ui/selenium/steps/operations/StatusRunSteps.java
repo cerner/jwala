@@ -30,7 +30,7 @@ public class StatusRunSteps {
     Properties paramProp;
 
 
-    @Then("I see the load balancer page with app \"(.*)\" and host \"(.*)\" and port \"(.*)\"$")
+    @Then("^I see the load balancer page with app \"(.*)\" and host \"(.*)\" and port \"(.*)\"$")
     public void verfiyLoadBalancerPage(String app, String host, String port) throws IOException {
         String hostName = paramProp.getProperty(host);
         jwalaUi.isElementExists(By.xpath("//td[text()='http://" + hostName + ":" + port + "/" + app + "')"));

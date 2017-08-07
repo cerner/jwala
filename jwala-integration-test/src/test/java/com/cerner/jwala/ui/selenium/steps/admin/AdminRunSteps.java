@@ -1,6 +1,7 @@
 package com.cerner.jwala.ui.selenium.steps.admin;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -38,7 +39,7 @@ public class AdminRunSteps {
         jwalaUi.sendKeys(By.xpath("//input[@class='toEncrypt']"), data);
     }
 
-    @When("I click \"(.*)\" button$")
+    @And("^I click \"(.*)\" button$")
     public void clickEncryptButton(String componentName) {
         jwalaUi.click(By.xpath("//button/span[contains(text(),'" + componentName + "')]"));
     }
@@ -51,7 +52,7 @@ public class AdminRunSteps {
         assert (textInTheBox.contains(text));
     }
 
-    @Then("I see the text \"(.*)\" in manifest box$")
+    @Then("^I see the text \"(.*)\" in manifest box$")
     public void verifyManifestTextBox(String text) {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[10]/textarea"));
         String textInTheBox = element.getAttribute("value");
@@ -59,7 +60,7 @@ public class AdminRunSteps {
         assert (textInTheBox.contains(text));
     }
 
-    @Then("I see the implementation version \"(.*)\" in manifest box$")
+    @And("^I see the implementation version \"(.*)\" in manifest box$")
     public void verifyVersion(String text) {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[10]/textarea"));
         String textInTheBox = element.getAttribute("value");
@@ -67,14 +68,14 @@ public class AdminRunSteps {
         assert (textInTheBox.contains(paramProp.getProperty(text)));
     }
 
-    @Then("I verify header with text \"(.*)\"$")
+    @And("^I verify header with text \"(.*)\"$")
     public void verifyHeader(String text) {
         WebElement header = jwalaUi.getWebElement(By.xpath("//h3[contains(text(),'" + text + "')]"));
         assertNotNull(header);
     }
 
 
-    @Then("I verify text \"(.*)\"$")
+    @And("^I verify text \"(.*)\"$")
     public void verifyText(String s) {
         jwalaUi.isElementExists(By.xpath("//p[contains(text(),'" + s + "']"));
     }

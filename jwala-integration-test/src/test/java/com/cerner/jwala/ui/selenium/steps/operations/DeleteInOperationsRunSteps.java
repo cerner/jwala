@@ -19,12 +19,12 @@ public class DeleteInOperationsRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
-    @And("I click on yes button")
+    @And("^I click on yes button")
     public void clickOkButton() {
         jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
     }
 
-    @Then("I don't see \"(.*)\"$")
+    @Then("^I don't see \"(.*)\"$")
     public void verifyElementNotPresent(String name) {
         Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
     }

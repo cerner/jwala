@@ -12,7 +12,7 @@ public class ThreadDumpRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
-    @Then("I see the thread dump page")
+    @Then("^I see the thread dump page$S")
     public void verifyThreadDumpPage() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'Full thread dump Java HotSpot(TM) 64-Bit Server VM')"));
 
