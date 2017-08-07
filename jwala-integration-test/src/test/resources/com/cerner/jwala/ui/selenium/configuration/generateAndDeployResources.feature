@@ -1,5 +1,7 @@
 Feature: Generate and Deploy Resource
 
+# Needs more work e.g. clean up of created files and services, use of "then"
+@ignore
 Scenario: Deploy and Run a Web Application
 
     Given I logged in
@@ -9,17 +11,17 @@ Scenario: Deploy and Run a Web Application
       | mediaName       | jdk1.8.0_92     |
       | mediaType       | JDK             |
       | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | remoteDir       |
+      | remoteDir       | media.remote.dir|
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
       | archiveFilename | apache-tomcat-7.0.55.zip |
-      | remoteDir       | remoteDir                |
+      | remoteDir       | media.remote.dir         |
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | remoteDir               |
+      | remoteDir       | media.remote.dir        |
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
