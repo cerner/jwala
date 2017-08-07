@@ -156,6 +156,20 @@ public class JwalaUi {
         final Select select = new Select(driver.findElement(by));
         select.selectByVisibleText(itemName);
     }
+    public void clickComponentForUpload(String component) {
+        final WebElement webElement =
+                driver.findElement(By.xpath("//li[span[text()='" + component + "']]/span"));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
+        webElement.click();
+    }
+
+
+    public void clickAddResource() {
+        final WebElement webElement =
+                driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
+        new WebDriverWait(driver, 100).until(ExpectedConditions.visibilityOf(webElement));
+        webElement.click();
+    }
 
     /**
      * This method is used to freeze a step to see what's going on and is not meant to be used in the finished test
