@@ -1,10 +1,10 @@
-Feature: Upload Resource - Jvm Node
+Feature: Generate and Deploy Resource
 
-  Scenario:Jvm Node
+Scenario: Deploy and Run a Web Application
+
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
-    And I load properties file
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92     |
       | mediaType       | JDK             |
@@ -24,7 +24,7 @@ Feature: Upload Resource - Jvm Node
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
       | jdk        | jdk1.8.0_92          |
-      | hostName   | host1            |
+      | hostName   | host1                |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
     And I created a web server with the following parameters:
@@ -47,7 +47,7 @@ Feature: Upload Resource - Jvm Node
     And I clicked on component "seleniumWebserver"
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "httpd.conf"
-    And I fill in the "Deploy Path" field with "httpdDeployPath"
+    And I fill in the "Deploy Path" field with "httpd.resource.deploy.path"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
     When check resource uploaded successful
@@ -77,7 +77,7 @@ Feature: Upload Resource - Jvm Node
     And I clicked on component "seleniumWebapp"
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "hello-world.war"
-    And I fill in the "Deploy Path" field with "webAppDeployPath"
+    And I fill in the "Deploy Path" field with "webapp.resource.deploy.path"
     And I choose the resource file "hello-world.war"
     And I click the upload resource dialog ok button
     When check resource uploaded successful
