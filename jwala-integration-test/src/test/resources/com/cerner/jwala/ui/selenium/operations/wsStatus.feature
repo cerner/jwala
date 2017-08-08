@@ -41,7 +41,6 @@ Feature: Status
       | group       | seleniumGroup  |
 
     And I am in the resource tab
-  #    upload webserver resources
     And I expanded component "seleniumGroup"
     And I expanded component "Web Servers"
     And I clicked on component "seleniumWebserverStatus"
@@ -74,8 +73,6 @@ Feature: Status
     And I choose the resource file "server.xml.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "server.xml"
-
-
 
     And I expanded component "Web Apps"
     And I clicked on component "seleniumWebapp"
