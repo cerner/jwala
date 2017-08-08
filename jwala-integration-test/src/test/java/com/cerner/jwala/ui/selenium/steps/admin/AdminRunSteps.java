@@ -79,11 +79,4 @@ public class AdminRunSteps {
     public void verifyText(String s) {
         jwalaUi.isElementExists(By.xpath("//p[contains(text(),'" + s + "']"));
     }
-
-
 }
-
-
-
-
-
