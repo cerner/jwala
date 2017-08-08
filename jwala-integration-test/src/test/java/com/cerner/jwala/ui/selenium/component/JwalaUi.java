@@ -163,7 +163,6 @@ public class JwalaUi {
         webElement.click();
     }
 
-
     public void clickAddResource() {
         final WebElement webElement =
                 driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
