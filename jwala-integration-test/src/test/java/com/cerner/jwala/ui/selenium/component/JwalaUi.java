@@ -211,6 +211,7 @@ public class JwalaUi {
     @PreDestroy
     public void destroy() {
         driver.close();
+        driver.quit();
     }
 
     public WebElement getWebElement(By by) {
