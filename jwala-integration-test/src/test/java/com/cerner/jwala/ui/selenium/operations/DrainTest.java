@@ -11,6 +11,4 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = { "classpath:com/cerner/jwala/ui/selenium/operations/drain.feature" },
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class DrainTest {
-}
-
+public class DrainTest {}
