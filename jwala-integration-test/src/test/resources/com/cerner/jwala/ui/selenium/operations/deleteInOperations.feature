@@ -34,26 +34,25 @@ Feature:Delete
       | group              | seleniumGroup           |
       | apacheHttpdMediaId | apache-httpd-2.4.20     |
       | statusPath         | /apache_pb.png          |
-
     And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
-
     And I am in the resource tab
-  #    upload webserver resources
     And I expanded component "seleniumGroup"
     And I expanded component "Web Servers"
     And I clicked on component "seleniumWebserver"
+    
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "httpd.conf"
     And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserver"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "httpd.conf"
-
+    
     And I expanded component "JVMs"
     And I clicked on component "seleniumJvm"
+    
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "hello.xml.json"
@@ -74,9 +73,7 @@ Feature:Delete
     And I choose the resource file "server.xml.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "server.xml"
-
-
-
+    
     And I expanded component "Web Apps"
     And I clicked on component "seleniumWebapp"
     And I clicked on add resource
@@ -104,9 +101,8 @@ Feature:Delete
     And I click on yes button
     And I click on ok button
     And I see delete error
-
-
-
+    
+    
   Scenario: delete new  jvm
     Given I logged in
     And I am in the configuration tab
@@ -180,9 +176,7 @@ Feature:Delete
     And I choose the resource file "server.xml.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "server.xml"
-
-
-
+    
     And I expanded component "Web Apps"
     And I clicked on component "seleniumWebapp"
     And I clicked on add resource
@@ -194,7 +188,6 @@ Feature:Delete
 
     When I am in the Operations tab
     And I expanded operations Group "seleniumGroup"
-
     When I choose the row of the component with name "seleniumJvm" and click button "Delete JVM"
     And I click on yes button
     And I click on ok button
