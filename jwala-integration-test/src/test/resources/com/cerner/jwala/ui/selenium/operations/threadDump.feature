@@ -49,7 +49,7 @@ Feature: Thread Dump
     And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserverThreadDump"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
-    Then check resource "httpd.conf"
+    Then I check for resource "httpd.conf"
 
     And I expanded component "JVMs"
     And I clicked on component "seleniumJvmThreadDump"
@@ -59,21 +59,21 @@ Feature: Thread Dump
     And I choose the meta data file "hello.xml.json"
     And I choose the resource file "hello.xml.tpl"
     And I click the upload resource dialog ok button
-    Then check resource uploaded successful
+    Then I check for resource "hello.xml"
 
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "setenv.bat.json"
     And I choose the resource file "setenv.bat.tpl"
     And I click the upload resource dialog ok button
-    Then check resource "setenv.bat"
+    Then I check for resource "setenv.bat"
 
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "server.xml.json"
     And I choose the resource file "server.xml.tpl"
     And I click the upload resource dialog ok button
-    Then check resource "server.xml"
+    Then I check for resource "server.xml"
 
     And I expanded component "Web Apps"
     And I clicked on component "seleniumWebapp"
@@ -82,7 +82,7 @@ Feature: Thread Dump
     And I fill in the "Deploy Path" field with "webapp.resource.deploy.path"
     And I choose the resource file "hello-world.war"
     And I click the upload resource dialog ok button
-    Then check resource "hello-world.war"
+    Then I check for resource "hello-world.war"
 
     And I am in the Operations tab
     And I expanded operations Group "seleniumGroup"

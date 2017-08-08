@@ -92,7 +92,7 @@ public class ManageResourceRunSteps {
     public void checkForResource() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
-    @Then("^check resource \"(.*)\"$")
+    @Then("^I check for resource \"(.*)\"$")
     public void checkForResourceUpload(String resource) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input/following-sibling::span[text()= '"+resource+"']"));
     }
