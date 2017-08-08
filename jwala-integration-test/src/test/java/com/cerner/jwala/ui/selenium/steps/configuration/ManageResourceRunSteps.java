@@ -6,7 +6,9 @@ import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -92,9 +95,37 @@ public class ManageResourceRunSteps {
     public void checkForResource() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
+
     @Then("^I check for resource \"(.*)\"$")
     public void checkForResourceUpload(String resource) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//input/following-sibling::span[text()= '"+resource+"']"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//input/following-sibling::span[text()= '" + resource + "']"));
+    }
+
+    @When("^I click save button of \"(.*)\"$")
+    public void saveButton(String text) {
+        List<WebElement> elements = jwalaUi.getWebDriver().findElements(By.xpath("//span[contains(@class, 'ui-icon-disk') and @title='Save']"));
+        WebElement saveElement = elements.get(0);
+        for (WebElement element : elements) {
+            if (element.getAttribute("outerHTML").contains(text)) {
+                saveElement = element;
+                break;
+            }
+        }
+        saveElement.click();
+    }
+
+    @When("^I wait for \"(.*)\"")
+    public void waitFor(String text) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Saved']"));
+    }
+
+    @When("^I enter value \"(.*)\" in the edit box for the file \"(.*)\"$")
+    public void enterInEditBox(String text, String file) {
+        jwalaUi.click(By.xpath("//*[text()='{']"));
+        jwalaUi.sendKeys(Keys.DELETE);
+        jwalaUi.sendKeys("{");
+        jwalaUi.sendKeys(Keys.ENTER);
+        jwalaUi.sendKeys(text + ",");
     }
 
     @After
