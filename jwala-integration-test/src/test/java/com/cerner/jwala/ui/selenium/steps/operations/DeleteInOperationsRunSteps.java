@@ -22,7 +22,6 @@ public class DeleteInOperationsRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
-
     @When("^I click on yes button$")
     public void clickOkButton() {
         jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
@@ -35,7 +34,6 @@ public class DeleteInOperationsRunSteps {
 
     @Then("^I don't see delete error$")
     public void verifyNoError(){
-
         assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'Please stop')")));
     }
 
@@ -43,7 +41,6 @@ public class DeleteInOperationsRunSteps {
     public void verifyElementPresent(String name){
         Assert.assertTrue(jwalaUi.isElementExists(By.xpath("/contains(text(),'"+name+"')")));
     }
-
 
     @Then("^I don't see \"(.*)\"$")
     public void verifyElementNotPresent(String name){
