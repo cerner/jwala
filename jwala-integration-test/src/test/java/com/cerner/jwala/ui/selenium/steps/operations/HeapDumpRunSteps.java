@@ -18,10 +18,9 @@ public class HeapDumpRunSteps {
 
 
     }
-
+    
     @Then("^I see heap dump error for jvm$")
     public void verfiyHeapDumpError() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'Oops! Something went wrong! The JVM might not have been started.')"));
     }
-
 }
