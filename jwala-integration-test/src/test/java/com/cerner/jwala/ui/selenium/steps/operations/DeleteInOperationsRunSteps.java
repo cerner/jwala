@@ -9,10 +9,8 @@ import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.IOException;
 import java.sql.SQLException;
-
 import static junit.framework.TestCase.assertFalse;
 
 /**
