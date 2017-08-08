@@ -19,8 +19,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Sharvari Barve on 7/21/2017.
  */
 public class AdminRunSteps {
-
-
+    
     @Autowired
     private JwalaUi jwalaUi;
 
@@ -32,7 +31,6 @@ public class AdminRunSteps {
     public void goToConfigurationTab() {
         jwalaUi.clickTab("Admin");
     }
-
 
     @When("^I fill in the data to be encrypted \"(.*)\"$")
     public void fillDataToEncrypt(String data) {
@@ -73,7 +71,6 @@ public class AdminRunSteps {
         WebElement header = jwalaUi.getWebElement(By.xpath("//h3[contains(text(),'" + text + "')]"));
         assertNotNull(header);
     }
-
 
     @And("^I verify text \"(.*)\"$")
     public void verifyText(String s) {
