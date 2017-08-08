@@ -1,7 +1,5 @@
 Feature: Generate and Deploy Resource
 
-# Needs more work e.g. clean up of created files and services, use of "then"
-@ignore
 Scenario: Deploy and Run a Web Application
 
     Given I logged in
@@ -44,61 +42,54 @@ Scenario: Deploy and Run a Web Application
       | group       | seleniumGroup  |
 
     And I am in the resource tab
-    And I expanded component "seleniumGroup"
-    And I expanded component "Web Servers"
-    And I clicked on component "seleniumWebserver"
-    And I clicked on add resource
+
+    And I expand "seleniumGroup" node
+    And I expand "Web Servers" node
+    And I click "seleniumWebserver" node
+    When I click the add resource button
     And I fill in the "Deploy Name" field with "httpd.conf"
     And I fill in the "Deploy Path" field with "httpd.resource.deploy.path"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
-    When check resource uploaded successful
-    And I expanded component "JVMs"
-    And I clicked on component "seleniumJvm"
-    And I clicked on add resource
+    Then I see that the resource got uploaded successfully
 
+    Given I expand "JVMs" node
+    And I click "seleniumJvm" node
+
+    When I click the add resource button
     And I check Upload Meta Data File
     And I choose the meta data file "hello.xml.json"
     And I choose the resource file "hello.xml.tpl"
     And I click the upload resource dialog ok button
-    When check resource uploaded successful
-    And I clicked on add resource
+    Then I see that the resource got uploaded successfully
+
+    When I click the add resource button
     And I check Upload Meta Data File
     And I choose the meta data file "setenv.bat.json"
     And I choose the resource file "setenv.bat.tpl"
     And I click the upload resource dialog ok button
-    When check resource uploaded successful
-    And I clicked on add resource
+    Then I see that the resource got uploaded successfully
+
+    When I click the add resource button
     And I check Upload Meta Data File
     And I choose the meta data file "server.xml.json"
     And I choose the resource file "server.xml.tpl"
     And I click the upload resource dialog ok button
-    When check resource uploaded successful
+    Then I see that the resource got uploaded successfully
 
-    And I expanded component "Web Apps"
-    And I clicked on component "seleniumWebapp"
-    And I clicked on add resource
+    Given I expand "Web Apps" node
+    And I click "seleniumWebapp" node
+    When I click the add resource button
     And I fill in the "Deploy Name" field with "hello-world.war"
     And I fill in the "Deploy Path" field with "webapp.resource.deploy.path"
     And I choose the resource file "hello-world.war"
     And I click the upload resource dialog ok button
-    When check resource uploaded successful
+    Then I see that the resource got uploaded successfully
 
-    And I am in the Operations tab
-    And I expanded group "seleniumGroup"
-    And I generate webapp
-    And I wait for popup string "seleniumWebapp resource files deployed successfully"
-    And I click on ok button
-    And I generate all webservers
-    And I wait for popup string "Successfully generated the web servers for seleniumGroup"
-    And I click on ok button
-    And I start all webservers
-    And I wait for component "seleniumWebserver" state "STARTED"
-    And I generate all jvms
-    And I wait for popup string "Successfully generated the JVMs for seleniumGroup"
-    And I click on ok button
-    And I start all jvms
-    And I wait for component "seleniumJvm" state "STARTED"
+    Given I am in the Operations tab
+    And I expand the group operation's "seleniumGroup" group
+    When I click the generate web application button of "seleniumWebapp"
+    Then I see "seleniumWebapp" web application got deployed successfully
 
-
-
+    When I click the "Generate Web Servers" button of group "seleniumGroup"
+    Then I see that the web servers were successfully generated for group "seleniumGroup"

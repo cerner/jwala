@@ -66,6 +66,17 @@ public class UploadResourceRunSteps {
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
 
+    @And("^I check Upload Meta Data File$")
+    public void clickUploadMetaDataFile() {
+        jwalaUi.click(By.xpath("//div[contains(text(),'Upload Meta Data File')]/input"));
+    }
+
+    @And("^I choose the meta data file \"(.*)\"$")
+    public void selectMetaDataFile(final String archiveFileName) {
+        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
+        jwalaUi.sendKeys(By.name("metaDataFile"), mediaPath.normalize().toString());
+    }
+
     @Then("^I see that the resource got uploaded successfully$")
     public void checkForResource() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
