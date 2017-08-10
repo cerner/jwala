@@ -80,7 +80,7 @@ public class OperationsRunSteps {
 
     @And("^I wait for component \"(.*)\" state \"(.*)\"$")
     public void componentState(String component, String status) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[contains(text(),'" + component + "')]//following-sibling::td[6]/div/span[contains(text(),'" + status + "')]"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[contains(text(),'" + component + "')]//following-sibling::td[6]/div/span[contains(text(),'" + status + "')]"), 40);
     }
 
     @Then("^I see a new page with url \"(.*)\"$")
