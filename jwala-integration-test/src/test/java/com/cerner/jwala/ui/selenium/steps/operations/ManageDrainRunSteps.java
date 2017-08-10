@@ -17,36 +17,30 @@ public class ManageDrainRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
-
     @When("^I click on the drain button for all webservers in the group$")
     public void clickGroupDrain() {
         jwalaUi.click(By.xpath("//button[span[text()='Drain Web Servers']]"));
     }
 
-
     @Then("^I see the drain message$")
     public void verifyDrainMessage() {
         jwalaUi.isElementExists(By.xpath("//*contains(text(),'Drain request for' )"));
-
     }
 
     @Then("^I see drain error$")
     public void verifyDrainError() {
         jwalaUi.isElementExists(By.xpath("//*contains(text(),'must be STARTED before attempting to drain users')"));
-
     }
 
     @Then("^I do not see drain error$")
     public void verifynoDrainError() {
         assertFalse(jwalaUi.isElementExists(By.xpath("//*contains(text(),'must be STARTED before attempting to drain users')")));
-
     }
 
     @Then("^I see the started  webserver \"(.*)\"$")
     public void waitUntilElementIsStarted(String webserver) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='" + webserver + "']//following-sibling::td[6]/div/span[contains(text(),'STARTED')"), (long) 240000);
     }
-
 }
 
 

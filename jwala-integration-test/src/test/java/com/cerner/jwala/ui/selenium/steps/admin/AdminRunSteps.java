@@ -28,7 +28,7 @@ public class AdminRunSteps {
     private Properties paramProp;
 
     @Given("^I am in the admin tab$")
-    public void goToConfigurationTab() {
+    public void goToAdminTab() {
         jwalaUi.clickTab("Admin");
     }
 
@@ -42,7 +42,7 @@ public class AdminRunSteps {
         jwalaUi.click(By.xpath("//button/span[contains(text(),'" + componentName + "')]"));
     }
 
-    @Then("I see the text \"(.*)\" in properties management box$")
+    @Then("^I see the text \"(.*)\" in properties management box$")
     public void verifyPropertiesManagementTextBox(String text) {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[8]/textarea"));
         String textInTheBox = element.getAttribute("value");
