@@ -9,8 +9,10 @@ import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.IOException;
 import java.sql.SQLException;
+
 import static junit.framework.TestCase.assertFalse;
 
 /**
@@ -31,17 +33,17 @@ public class DeleteInOperationsRunSteps {
     }
 
     @Then("^I don't see delete error$")
-    public void verifyNoError(){
+    public void verifyNoError() {
         assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'Please stop')")));
     }
 
     @Then("^I see element in operations table\"(.*)\"$")
-    public void verifyElementPresent(String name){
-        Assert.assertTrue(jwalaUi.isElementExists(By.xpath("/contains(text(),'"+name+"')")));
+    public void verifyElementPresent(String name) {
+        Assert.assertTrue(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
     }
 
     @Then("^I don't see \"(.*)\"$")
-    public void verifyElementNotPresent(String name){
-        Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'"+name+"')")));
+    public void verifyElementNotPresent(String name) {
+        Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
     }
 }

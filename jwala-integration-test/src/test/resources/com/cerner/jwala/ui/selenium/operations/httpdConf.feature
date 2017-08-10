@@ -78,7 +78,7 @@ Feature: HttpdConf
     And I clicked on component "seleniumWebserverHttpdConf2"
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "httpd.conf"
-    And I fill in the webserver "Deploy Path" field with "httpdDeployPath" for web server "seleniumWebserverHttpdConf2"
+    And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserverHttpdConf2"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "httpd.conf"
@@ -126,6 +126,6 @@ Feature: HttpdConf
     And I wait for popup string "Successfully generated the JVMs for seleniumGroup"
     And I click on ok button
     And I start all jvms
-    And I wait for component "seleniumJvm" state "STARTED"
-    And I choose the row of the component with name "seleniumWebserver" and click text "httpd.conf"
+    And I wait for component "seleniumWebserverHttpdConf2" state "STARTED"
+    And I choose the row of the component with name "seleniumWebserverHttpdConf2" and click text "httpd.conf"
     Then I see the proper httpd.conf

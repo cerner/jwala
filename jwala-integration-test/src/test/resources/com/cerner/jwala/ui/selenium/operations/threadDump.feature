@@ -99,4 +99,4 @@ Feature: Thread Dump
     And I start all jvms
     And I wait for component "seleniumJvmThreadDump" state "STARTED"
     And I choose the row of the component with name "seleniumJvmThreadDump" and click button "Thread Dump"
-    And I see the thread dump page
+    Then I see the thread dump page

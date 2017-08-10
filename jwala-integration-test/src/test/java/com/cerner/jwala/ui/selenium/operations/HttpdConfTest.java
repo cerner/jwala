@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = { "classpath:com/cerner/jwala/ui/selenium/operations/httpdConf.feature" },
+        features = {"classpath:com/cerner/jwala/ui/selenium/operations/httpdConf.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
 public class HttpdConfTest {
 }

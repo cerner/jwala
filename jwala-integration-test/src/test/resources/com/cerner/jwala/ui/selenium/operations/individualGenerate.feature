@@ -1,6 +1,6 @@
-Feature:Delete
+Feature: Generate
 
-  Scenario: delete started webserver
+  Scenario:Generate a Webserver
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
@@ -34,39 +34,36 @@ Feature:Delete
       | group              | seleniumGroup       |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
+
     And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
+
     And I am in the resource tab
     And I expanded component "seleniumGroup"
     And I expanded component "Web Servers"
     And I clicked on component "seleniumWebserver"
-
     And I clicked on add resource
     And I fill in the "Deploy Name" field with "httpd.conf"
     And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserver"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "httpd.conf"
-
     And I expanded component "JVMs"
     And I clicked on component "seleniumJvm"
-
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "hello.xml.json"
     And I choose the resource file "hello.xml.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "hello.xml"
-
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "setenv.bat.json"
     And I choose the resource file "setenv.bat.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "setenv.bat"
-
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "server.xml.json"
@@ -88,22 +85,12 @@ Feature:Delete
     And I generate webapp "seleniumWebapp"
     And I wait for popup string "seleniumWebapp resource files deployed successfully"
     And I click on ok button
-    And I generate all webservers
-    And I wait for popup string "Successfully generated the web servers for seleniumGroup"
+    When I choose the row of the component with name "seleniumWebserver" and click button "Generate the httpd.conf and deploy as a service"
+    Then I wait for popup string "Successfully installed the service, and generated and deployed configuration file(s)."
     And I click on ok button
-    And I start all webservers
-    And I generate all jvms
-    And I wait for popup string "Successfully generated the JVMs for seleniumGroup"
-    And I click on ok button
-    And I start all jvms
-    And I wait for component "seleniumWebserver" state "STARTED"
-    When I choose the row of the component with name "seleniumWebserver" and click button "Delete Web Server"
-    And I click on yes button
-    And I click on ok button
-    And I see delete error
 
 
-  Scenario: delete new  jvm
+  Scenario:Generate a Jvm
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
@@ -153,7 +140,6 @@ Feature:Delete
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "httpd.conf"
-
     And I expanded component "JVMs"
     And I clicked on component "seleniumJvm"
     And I clicked on add resource
@@ -162,14 +148,12 @@ Feature:Delete
     And I choose the resource file "hello.xml.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "hello.xml"
-
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "setenv.bat.json"
     And I choose the resource file "setenv.bat.tpl"
     And I click the upload resource dialog ok button
     Then I check for resource "setenv.bat"
-
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "server.xml.json"
@@ -186,9 +170,12 @@ Feature:Delete
     And I click the upload resource dialog ok button
     Then I check for resource "hello-world.war"
 
-    When I am in the Operations tab
+    And I am in the Operations tab
     And I expanded operations Group "seleniumGroup"
-    When I choose the row of the component with name "seleniumJvm" and click button "Delete JVM"
-    And I click on yes button
+    And I generate webapp "seleniumWebapp"
+    And I wait for popup string "seleniumWebapp resource files deployed successfully"
     And I click on ok button
-    Then I don't see delete error
+    When I choose the row of the component with name "seleniumJvm" and click button "Generate JVM resources files and deploy as a service"
+    Then I wait for popup string "Successfully generated and deployed JVM resource files"
+    And I click on ok button
+  

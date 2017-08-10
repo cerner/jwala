@@ -21,5 +21,5 @@ public class HttpdConfRunSteps {
     public void verifyError() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'Error reading httpd.conf:')"));
     }
-    
+
 }

@@ -5,11 +5,11 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 /**
- * Created by Sharvari Barve on 7/14/2017.
+ * Created by Sharvari Barve on 7/18/2017.
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = {"classpath:com/cerner/jwala/ui/selenium/operations/threadDump.feature"},
+        features = {"classpath:com/cerner/jwala/ui/selenium/operations/individualStart.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class ThreadDumpTest {
+public class IndividualStartTest {
 }

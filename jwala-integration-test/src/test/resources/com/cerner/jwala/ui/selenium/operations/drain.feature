@@ -49,7 +49,7 @@ Feature: Drain
     And I fill in the webserver "Deploy Path" field with "httpdDeployPath" for web server "seleniumWebserverDrain1"
     And I choose the resource file "httpdconf.tpl"
     And I click the upload resource dialog ok button
-    Then I check for resource uploaded successful
+    Then I check for resource "httpd.conf"
     And I expanded component "JVMs"
     And I clicked on component "seleniumJvmDrain1"
     And I clicked on add resource
