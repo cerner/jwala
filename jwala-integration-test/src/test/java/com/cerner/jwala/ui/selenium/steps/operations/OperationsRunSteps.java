@@ -46,11 +46,9 @@ public class OperationsRunSteps {
         jwalaUi.click(By.xpath("//td[text()='" + group + "']/preceding-sibling::td"));
     }
 
-
     @And("^I choose the row of the component with name \"(.*)\" and click button \"(.*)\"$")
     public void chooseRowandClickIcon(String componentName, String name) {
         jwalaUi.clickWhenReady((By.xpath("//tr/td[text()='" + componentName + "']/following-sibling::td[5]/div/button[@title='" + name + "']")));
-
     }
 
     @And("^I choose the row of the component with name \"(.*)\" and click text \"(.*)\"$")
@@ -85,7 +83,6 @@ public class OperationsRunSteps {
 
     @Then("^I see a new page with url \"(.*)\"$")
     public void seePageWithUrl(String url) {
-
         Set<String> windows = jwalaUi.getWebDriver().getWindowHandles();
         String originalOne = jwalaUi.getWebDriver().getCurrentUrl();
         for (String currentWindow : windows) {

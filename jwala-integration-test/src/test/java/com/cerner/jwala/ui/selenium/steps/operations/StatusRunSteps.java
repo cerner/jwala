@@ -24,11 +24,9 @@ public class StatusRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
-
     @Autowired
     @Qualifier("parameterProperties")
     Properties paramProp;
-
 
     @Then("^I see the load balancer page with app \"(.*)\" and host \"(.*)\" and port \"(.*)\"$")
     public void verfiyLoadBalancerPage(String app, String host, String port) throws IOException {
@@ -41,5 +39,4 @@ public class StatusRunSteps {
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
         SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
     }
-
 }

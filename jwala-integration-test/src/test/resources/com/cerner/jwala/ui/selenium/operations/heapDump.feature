@@ -181,6 +181,4 @@ Feature: Heap Dump
     And I wait for component "seleniumJvmHeapDump2" state "STARTED"
     And I choose the row of the component with name "seleniumJvmHeapDump2" and click button "Heap Dump"
     Then I see heap dump popup
-
-
-
+    
