@@ -22,7 +22,6 @@ public class ManageExternalPropertiesRunSteps {
     @Autowired
     JwalaUi jwalaUi;
 
-
     @When("^I click ext property add resource$")
     public void clickAddResource() {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
@@ -57,7 +56,6 @@ public class ManageExternalPropertiesRunSteps {
     public void verifyDataTree(String key, String value) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + key + "') ]"));
         jwalaUi.waitUntilElementIsVisible(By.xpath("//span[contains(@class,'nodeVal') and contains(text(),'" + value + "')]"));
-
     }
 
     @Then("^I click ext property data tree$")
@@ -68,8 +66,6 @@ public class ManageExternalPropertiesRunSteps {
     @When("I click the delete icon$")
     public void clickDelete() {
         jwalaUi.click(By.xpath("//*[@title='delete']"));
-
-
     }
 
     @When("^I click external properties check-box$")
