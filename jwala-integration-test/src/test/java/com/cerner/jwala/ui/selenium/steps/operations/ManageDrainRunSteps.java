@@ -42,6 +42,3 @@ public class ManageDrainRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr/td[text()='" + webserver + "']//following-sibling::td[6]/div/span[contains(text(),'STARTED')"), (long) 240000);
     }
 }
-
-
-
