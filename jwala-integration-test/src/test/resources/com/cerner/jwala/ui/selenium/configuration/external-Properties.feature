@@ -42,7 +42,6 @@ Feature: External property
     And I wait for "Saved"
     And I verify edit "team=ctp"
 
-
   Scenario: Delete external Property
     Given I logged in
     And I am in the configuration tab
