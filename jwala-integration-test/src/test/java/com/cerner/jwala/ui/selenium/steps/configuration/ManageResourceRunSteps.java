@@ -63,7 +63,7 @@ public class ManageResourceRunSteps {
     @Then("^I fill in the webserver \"Deploy Path\" field with \"(.*)\" for web server \"(.*)\"$")
     public void fillWebserverDeployPath(String deployPath, String webserver) {
         String newDeployPath = paramProp.getProperty(deployPath) == null ? deployPath : (String) paramProp.get(deployPath);
-        jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), newDeployPath + webserver);
+        jwalaUi.sendKeys(By.xpath("//label[text()='Deploy Path']/following-sibling::input"), newDeployPath + "/" + webserver);
     }
 
     @And("I check Upload Meta Data File")
