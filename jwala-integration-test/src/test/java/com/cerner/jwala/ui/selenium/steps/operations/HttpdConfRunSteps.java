@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class HttpdConfRunSteps {
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
     @Then("^I see the proper httpd.conf")
     public void verifyConf() {

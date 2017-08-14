@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ThreadDumpRunSteps {
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
     @Then("^I see the thread dump page$")
     public void verifyThreadDumpPage() {

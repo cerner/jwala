@@ -20,7 +20,7 @@ import static junit.framework.TestCase.assertFalse;
  */
 public class DeleteInOperationsRunSteps {
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
     @When("^I click on yes button$")
     public void clickOkButton() {

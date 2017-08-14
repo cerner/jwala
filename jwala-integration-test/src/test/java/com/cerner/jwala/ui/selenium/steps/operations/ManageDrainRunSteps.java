@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
  */
 public class ManageDrainRunSteps {
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
     @When("^I click on the drain button for all webservers in the group$")
     public void clickGroupDrain() {

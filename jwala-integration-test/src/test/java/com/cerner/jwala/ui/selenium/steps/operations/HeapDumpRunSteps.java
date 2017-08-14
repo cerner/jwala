@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class HeapDumpRunSteps {
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
     @Then("^I see heap dump popup$")
     public void verifyHeapDumpPopup() {

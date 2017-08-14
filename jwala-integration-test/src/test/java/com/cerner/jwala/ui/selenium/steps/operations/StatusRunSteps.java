@@ -22,7 +22,7 @@ import static junit.framework.TestCase.assertNotNull;
  */
 public class StatusRunSteps {
     @Autowired
-    JwalaUi jwalaUi;
+    private JwalaUi jwalaUi;
 
     @Autowired
     @Qualifier("parameterProperties")
