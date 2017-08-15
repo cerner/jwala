@@ -41,7 +41,6 @@ import com.cerner.jwala.ws.rest.v1.service.jvm.JvmServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.jvm.impl.JvmServiceRestImpl;
 import com.cerner.jwala.ws.rest.v1.service.webserver.WebServerServiceRest;
 import com.cerner.jwala.ws.rest.v1.service.webserver.impl.WebServerServiceRestImpl;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +57,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -90,7 +88,6 @@ public class GroupServiceImplDeployTest {
 
     private AuthenticatedUser mockAuthUser = mock(AuthenticatedUser.class);
     private User mockUser = mock(User.class);
-    private String httpdConfDirPath;
 
     public GroupServiceImplDeployTest() {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
@@ -102,16 +99,10 @@ public class GroupServiceImplDeployTest {
         PowerMockito.mockStatic(JwalaUtils.class);
         PowerMockito.when(JwalaUtils.getHostAddress("TestHost")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
-        httpdConfDirPath = ApplicationProperties.get("remote.jwala.data.dir") + "/httpd";
-        // assertTrue(new File(httpdConfDirPath).mkdirs());
-        new File(httpdConfDirPath).mkdirs();
-        // assertTrue(new File(generatedResourceDir).mkdirs());
-        new File(httpdConfDirPath).mkdirs();
     }
 
     @After
     public void tearDown() throws IOException {
-        FileUtils.deleteDirectory(new File(httpdConfDirPath));
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
