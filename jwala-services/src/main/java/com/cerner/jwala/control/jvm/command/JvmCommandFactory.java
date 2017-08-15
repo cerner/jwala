@@ -41,6 +41,7 @@ import static com.cerner.jwala.control.AemControl.Properties.*;
 @Component
 public class JvmCommandFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmCommandFactory.class);
+    public static final String SLASH_HEAP_DUMP = "/heap-dump";
 
     private HashMap<String, JvmCommand> commands;
 
@@ -184,9 +185,11 @@ public class JvmCommandFactory {
 
         final String dumpLiveStr = ApplicationProperties.getAsBoolean(PropertyKeys.JMAP_DUMP_LIVE_ENABLED.name()) ? "live," : "\"\"";
 
-        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(),
-                ApplicationProperties.get(PropertyKeys.REMOTE_JAWALA_DATA_DIR), dumpFile, dumpLiveStr, jvmRootDir,
-                jvm.getJvmName());
+        final String heapDumpDir = jvm.getTomcatMedia().getRemoteDir().normalize().toString() + "/" + jvm.getJvmName() +
+                                   SLASH_HEAP_DUMP;
+
+        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), heapDumpDir, dumpFile,
+                               dumpLiveStr , jvmRootDir, jvm.getJvmName());
     }
 
     /**
