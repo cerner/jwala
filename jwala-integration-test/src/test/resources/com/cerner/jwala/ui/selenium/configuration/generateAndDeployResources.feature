@@ -29,7 +29,7 @@ Scenario: Deploy and Run a Web Application
       | group      | seleniumGroup        |
     And I created a web server with the following parameters:
       | webserverName      | seleniumWebserver   |
-      | hostName           | host1           |
+      | hostName           | host1               |
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
       | group              | seleniumGroup       |
@@ -88,8 +88,28 @@ Scenario: Deploy and Run a Web Application
 
     Given I am in the Operations tab
     And I expand the group operation's "seleniumGroup" group
+
     When I click the generate web application button of "seleniumWebapp"
     Then I see "seleniumWebapp" web application got deployed successfully
 
     When I click the "Generate Web Servers" button of group "seleniumGroup"
     Then I see that the web servers were successfully generated for group "seleniumGroup"
+
+    When I click the "Generate JVMs" button of group "seleniumGroup"
+    Then I see that the JVMs were successfully generated for group "seleniumGroup"
+
+    When I click "Start Web Servers" button of group "seleniumGroup"
+    Then I see the state of "seleniumWebserver" of group "seleniumGroup" is "STARTED"
+
+    When I click "Stop Web Servers" button of group "seleniumGroup"
+    Then I see the state of "seleniumWebserver" of group "seleniumGroup" is "STOPPED"
+
+
+
+
+
+
+
+
+
+
