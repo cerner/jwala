@@ -22,11 +22,9 @@ public class SeleniumTestHelper {
 
     private static final String SELENIUM_PROPERTY_PATH = "selenium.property.path";
     private static final String TEST_PROPERTIES = "selenium/test.properties";
-    private static final String JWALA_PROPERTIES = "selenium/jwala.properties";
-    private static Properties jwalaProperties;
 
     /**
-     * Crate an instance of a {@link WebDriver} to facilitate browser based testing
+     * Create an instance of a {@link WebDriver} to facilitate browser based testing
      * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
      */
