@@ -64,7 +64,6 @@ public class TestConfig {
     @Bean
     public JSch getJsch(@Qualifier("seleniumTestProperties") final Properties properties) throws JSchException {
         final JSch jsch = new JSch();
-        // jsch.setKnownHosts(properties.getProperty("ssh.known.host").toString());
         return jsch;
     }
 
