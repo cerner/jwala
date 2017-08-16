@@ -1,5 +1,37 @@
 Feature: deploying a resource template with error produces the appropriate errors
 
+  Scenario: Resource error in webapp-MetaData
+    Given I logged in
+    And I am in the configuration tab
+    And I created a group with the name "seleniumGroup"
+    And I created a web app with the following parameters:
+      | webappName  | seleniumWebapp |
+      | contextPath | /hello         |
+      | group       | seleniumGroup  |
+
+    And I am in the resource tab
+    And I expanded component "seleniumGroup"
+    And I expanded component "Web Apps"
+    And I clicked on component "seleniumWebapp"
+    And I clicked on add resource
+    And I check Upload Meta Data File
+    And I choose the meta data file "hctProperties.json"
+    And I choose the resource file "hctProperties.tpl"
+    And I click the upload resource dialog ok button
+    Then  I check for resource "hct.properties"
+
+    Then I select resource file "hct.properties"
+    And I click "Meta Data" tab
+    And I enter garbage value in metadata
+    When I click save button of "content_Meta_Data"
+    Then I verify metaData error
+    And I click on ok button
+    And I clicked on component "hct.properties"
+    And I click "Meta Data" tab
+    And I erase garbage value
+    And I click save button of "content_Meta_Data"
+    And I wait for "Saved"
+
   Scenario: Resource error in webapp-template
     Given I logged in
     And I am in the configuration tab
@@ -11,10 +43,8 @@ Feature: deploying a resource template with error produces the appropriate error
 
     And I am in the resource tab
     And I expanded component "seleniumGroup"
-
     And I expanded component "Web Apps"
     And I clicked on component "seleniumWebapp"
-
     And I clicked on add resource
     And I check Upload Meta Data File
     And I choose the meta data file "hctProperties.json"
