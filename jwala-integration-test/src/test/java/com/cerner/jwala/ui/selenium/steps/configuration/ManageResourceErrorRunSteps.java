@@ -42,7 +42,8 @@ public class ManageResourceErrorRunSteps {
 
     @And("^I see save button of \"(.*)\" again$")
     public void seeSaveButton(String label) {
-        jwalaUi.waitUntilElementIsClickable(By.xpath("//*[@title='Save' and contains(outerHTML," + label + ")]"));
+        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[text()='Saved']"));
+        jwalaUi.waitUntilElementIsClickable(By.xpath("//*[@title='Save' and contains(@data-reactid,'" + label + "')]"), 600);
     }
 
     @Then("^I verify metaData error$")
@@ -76,5 +77,13 @@ public class ManageResourceErrorRunSteps {
     public void verifyErrorWebApp(String file, String webApp) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file + " for WebApp:" + webApp + "')]"));
     }
+
+    @Then("^I verify error for file1 \"(.*)\" and file2 \"(.*)\" and web app \"(.*)\"$")
+    public void verifyErrorWebAppMultipleResources(String file1, String file2, String webApp) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file1 + " for WebApp:" + webApp + "')]"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file2 + " for WebApp:" + webApp + "')]"));
+
+    }
+
 
 }

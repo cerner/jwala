@@ -1,5 +1,126 @@
 Feature: deploying a resource template with error produces the appropriate errors
 
+  Scenario: deploy an individual  web-server resource with error-template and multiple resources
+    Given I logged in
+    And I am in the configuration tab
+    And I created a group with the name "seleniumGroup"
+    And I created a media with the following parameters:
+      | mediaName       | apache-httpd-2.4.20     |
+      | mediaType       | Apache HTTPD            |
+      | archiveFilename | apache-httpd-2.4.20.zip |
+      | remoteDir       | media.remote.dir        |
+    And I created a web server with the following parameters:
+      | webserverName      | seleniumWebserver   |
+      | hostName           | host1               |
+      | portNumber         | 80                  |
+      | httpsPort          | 443                 |
+      | group              | seleniumGroup       |
+      | apacheHttpdMediaId | apache-httpd-2.4.20 |
+      | statusPath         | /apache_pb.png      |
+    And I created a web app with the following parameters:
+      | webappName  | seleniumWebapp |
+      | contextPath | /hello         |
+      | group       | seleniumGroup  |
+
+    And I am in the resource tab
+    And I expanded component "seleniumGroup"
+    And I expanded component "Web Servers"
+    And I clicked on component "seleniumWebserver"
+    And I clicked on add resource
+    And I fill in the "Deploy Name" field with "httpd.conf"
+    And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserver"
+    And I choose the resource file "httpdconf.tpl"
+    And I click the upload resource dialog ok button
+    Then I check for resource "httpd.conf"
+
+    And I clicked on add resource
+    And I fill in the "Deploy Name" field with "index.html"
+    And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserver"
+    And I choose the resource file "IndexHtmlTemplate_2_4_20.tpl"
+    And I click the upload resource dialog ok button
+    Then I check for resource "index.html"
+
+    Then I select resource file "httpd.conf"
+    And I click "Template" tab
+    And I enter garbage value in template at text "# This is the main Apache HTTP server configuration file"
+    And I click save button of "content_Template"
+    And I wait for "Saved"
+    And I see save button of "content_Template" again
+
+    And I clicked on component "seleniumWebserver"
+    Then I select resource file "index.html"
+    And I click "Template" tab
+    And I enter garbage value in template at text "HTTPD"
+    And I click save button of "content_Template"
+    And I wait for "Saved"
+
+    When I am in the Operations tab
+    And I expanded operations Group "seleniumGroup"
+    And I choose the row of the component with name "seleniumWebserver" and click button "Generate the httpd.conf and deploy as a service"
+    And I verify many resource deploy error for file "httpd.conf" and file "index.html" and webserver "seleniumWebserver"
+
+  Scenario: Resource error in webapp-template-multiple resources-Operations
+    Given I logged in
+    And I am in the configuration tab
+    And I created a group with the name "seleniumGroup"
+    And I created a media with the following parameters:
+      | mediaName       | jdk1.8.0_92      |
+      | mediaType       | JDK              |
+      | archiveFilename | jdk1.8.0_92.zip  |
+      | remoteDir       | media.remote.dir |
+    And I created a media with the following parameters:
+      | mediaName       | apache-tomcat-7.0.55     |
+      | mediaType       | Apache Tomcat            |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | remoteDir       | media.remote.dir         |
+    And I created a jvm with the following parameters:
+      | jvmName    | seleniumJvm          |
+      | tomcat     | apache-tomcat-7.0.55 |
+      | jdk        | jdk1.8.0_92          |
+      | hostName   | host1                |
+      | portNumber | 9000                 |
+      | group      | seleniumGroup        |
+    And I created a web app with the following parameters:
+      | webappName  | seleniumWebapp |
+      | contextPath | /hello         |
+      | group       | seleniumGroup  |
+
+    And I am in the resource tab
+    And I expanded component "seleniumGroup"
+    And I expanded component "Web Apps"
+    And I clicked on component "seleniumWebapp"
+    And I clicked on add resource
+    And I check Upload Meta Data File
+    And I choose the meta data file "hctProperties.json"
+    And I choose the resource file "hctProperties.tpl"
+    And I click the upload resource dialog ok button
+    Then  I check for resource "hct.properties"
+
+    And I clicked on add resource
+    And I check Upload Meta Data File
+    And I choose the meta data file "hctRoleMappingProperties.json"
+    And I choose the resource file "hctRoleMappingProperties.tpl"
+    And I click the upload resource dialog ok button
+    Then  I check for resource "hctRoleMapping.properties"
+
+    Then I select resource file "hct.properties"
+    And I click "Template" tab
+    And I enter garbage value in template at text "domain"
+    And I click save button of "content_Template"
+    And I wait for "Saved"
+
+    And I see save button of "content_Template" again
+    Then I select resource file "hctRoleMapping.properties"
+    And I click "Template" tab
+    And I enter garbage value in template at text "FooBar"
+    And I click save button of "content_Template"
+    And I wait for "Saved"
+
+    And I am in the Operations tab
+    And I expanded operations Group "seleniumGroup"
+    And I generate webapp "seleniumWebapp"
+    And I verify error for file1 "hct.properties" and file2 "hctRoleMapping.properties" and web app "seleniumWebapp"
+
   Scenario: Resource error in webapp-MetaData
     Given I logged in
     And I am in the configuration tab
@@ -708,6 +829,7 @@ Feature: deploying a resource template with error produces the appropriate error
     And I click save button of "content_Template"
     And I wait for "Saved"
 
+    And I see save button of "content_Template" again
     And I clicked on component "setenv.bat"
     And I click "Template" tab
     And I enter garbage value in template at text "SET JAVA_HOME"
@@ -763,67 +885,3 @@ Feature: deploying a resource template with error produces the appropriate error
     And I click deploy option
     And I click on yes button
     And I verify resource deploy error for file "httpd.conf" and webserver "seleniumWebserver"
-
-
-  Scenario: deploy an individual  web-server resource with error-template and multiple resources
-    Given I logged in
-    And I am in the configuration tab
-    And I created a group with the name "seleniumGroup"
-    And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a web server with the following parameters:
-      | webserverName      | seleniumWebserver   |
-      | hostName           | host1               |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | seleniumGroup       |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    And I created a web app with the following parameters:
-      | webappName  | seleniumWebapp |
-      | contextPath | /hello         |
-      | group       | seleniumGroup  |
-
-    And I am in the resource tab
-    And I expanded component "seleniumGroup"
-    And I expanded component "Web Servers"
-    And I clicked on component "seleniumWebserver"
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "httpd.conf"
-    And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserver"
-    And I choose the resource file "httpdconf.tpl"
-    And I click the upload resource dialog ok button
-    Then I check for resource "httpd.conf"
-
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "httpd2.conf"
-    And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserver"
-    And I choose the resource file "httpdconf.tpl"
-    And I click the upload resource dialog ok button
-    Then I check for resource "httpd2.conf"
-
-
-    Then I select resource file "httpd.conf"
-    And I click "Template" tab
-    And I enter garbage value in template at text "# This is the main Apache HTTP server configuration file"
-    And I click save button of "content_Template"
-    And I wait for "Saved"
-    And I see save button of "content_Template" again
-
-    And I expanded component "Web Servers"
-    And I expanded component "Web Servers"
-    And I clicked on component "seleniumWebserver"
-    Then I select resource file "httpd2.conf"
-    And I click "Template" tab
-    And I enter garbage value in template at text "# In particular, see"
-    And I click save button of "content_Template"
-    And I wait for "Saved"
-
-
-    When I am in the Operations tab
-    And I expanded operations Group "seleniumGroup"
-    And I choose the row of the component with name "seleniumWebserver" and click button "Generate the httpd.conf and deploy as a service"
-    And I verify many resource deploy error for file "httpd.conf" and file "httpd2.conf" and webserver "seleniumWebserver"
