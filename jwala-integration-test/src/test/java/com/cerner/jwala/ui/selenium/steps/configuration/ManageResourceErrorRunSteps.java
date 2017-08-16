@@ -21,7 +21,6 @@ public class ManageResourceErrorRunSteps {
     public void enterGarbageValueInMetaData() {
         jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
         jwalaUi.sendKeys(Keys.ENTER + "${{" + Keys.ENTER);
-
     }
 
     @When("^I enter garbage value in template at text \"(.*)\"$")
@@ -39,14 +38,12 @@ public class ManageResourceErrorRunSteps {
         jwalaUi.sendKeys(Keys.HOME);
         jwalaUi.sendKeys(Keys.chord(Keys.SHIFT, Keys.ARROW_DOWN));
         jwalaUi.sendKeys(Keys.DELETE);
-
     }
 
     @And("^I see save button of \"(.*)\" again$")
     public void seeSaveButton(String label) {
         jwalaUi.waitUntilElementIsClickable(By.xpath("//*[@title='Save' and contains(outerHTML," + label + ")]"));
     }
-
 
     @Then("^I verify metaData error$")
     public void verifyMetaDataError() {
@@ -62,7 +59,6 @@ public class ManageResourceErrorRunSteps {
     public void seeErrorForJvmMultipleResources(String file1, String file2, String jvm) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file1 + " for Jvm: " + jvm + "')]"));
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file2 + " for Jvm: " + jvm + "')]"));
-
     }
 
     @Then("^I verify resource deploy error for file \"(.*)\" and webserver \"(.*)\"$")
@@ -79,8 +75,6 @@ public class ManageResourceErrorRunSteps {
     @Then("^I verify error for resourceFile \"(.*)\" and web app \"(.*)\"$")
     public void verifyErrorWebApp(String file, String webApp) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file + " for WebApp:" + webApp + "')]"));
-        //TEMPLATE: Failed to bind data and properties to : hct.properties for WebApp:seleniumWebapp. Cause(s) of the failure is/are: Template parse error 'Ambiguous expression could be either a parameterless closure expression or an isolated open code block;
-
     }
 
 }
