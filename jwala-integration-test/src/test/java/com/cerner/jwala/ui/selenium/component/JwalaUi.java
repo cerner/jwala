@@ -133,6 +133,10 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.numberOfElementsToBe(by, 0));
     }
 
+    public void waitUntilElementIsClickable(final By by, final long timeout) {
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.elementToBeClickable(by));
+    }
+
     public void loadPath(final String path) {
         driver.get(getBaseUrl() + path);
     }
