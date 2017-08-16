@@ -51,7 +51,7 @@ public class ManageResourceErrorRunSteps {
     }
 
     @Then("^I verify resource deploy error for file \"(.*)\" and jvm \"(.*)\"$")
-    public void seeError(String file, String jvm) {
+    public void seeErrorForJvmSingleResource(String file, String jvm) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file + " for Jvm: " + jvm + "')]"));
     }
 
