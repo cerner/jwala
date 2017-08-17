@@ -26,7 +26,7 @@ public class UploadResourceRunSteps {
     private Properties paramProp;
 
     @Given("^I am in the resource tab$")
-    public void goToConfigurationTab() {
+    public void goToResourceTab() {
         jwalaUi.clickTab("Resources");
     }
 
@@ -41,7 +41,7 @@ public class UploadResourceRunSteps {
     }
 
     @When("^I click the add resource button$")
-    public void addResource() {
+    public void clickAddResourceBtn() {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
     }
 
@@ -56,13 +56,13 @@ public class UploadResourceRunSteps {
     }
 
     @And("^I choose the resource file \"(.*)\"$")
-    public void selectMediaArchiveFile(final String archiveFileName) {
+    public void selectResourceFile(final String archiveFileName) {
         final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
         jwalaUi.sendKeys(By.name("templateFile"), mediaPath.normalize().toString());
     }
 
     @And("^I click the upload resource dialog ok button$")
-    public void clickAddMediaOkDialogBtn() {
+    public void clickUploadResourceDlgOkBtn() {
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
 
@@ -78,7 +78,7 @@ public class UploadResourceRunSteps {
     }
 
     @Then("^I see that the resource got uploaded successfully$")
-    public void checkForResource() {
+    public void checkForSuccessfulResourceUpload() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
 }
