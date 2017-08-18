@@ -18,7 +18,6 @@ public class CreateGroupRunSteps {
 
     @Given("^I am in the group tab$")
     public void goToGroupTab() {
-        jwalaUi.sleep();
         jwalaUi.clickTab("Group");
     }
 
