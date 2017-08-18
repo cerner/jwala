@@ -1,11 +1,9 @@
-package com.cerner.jwala.ui.selenium.steps.operations;
+package com.cerner.jwala.ui.selenium.steps.operation;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertFalse;
@@ -14,6 +12,7 @@ import static org.junit.Assert.assertFalse;
  * Created by Sharvari Barve on 7/14/2017.
  */
 public class ManageDrainRunSteps {
+
     @Autowired
     private JwalaUi jwalaUi;
 

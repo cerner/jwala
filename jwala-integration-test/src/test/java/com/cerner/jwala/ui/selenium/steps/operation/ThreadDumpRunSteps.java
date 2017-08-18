@@ -1,4 +1,4 @@
-package com.cerner.jwala.ui.selenium.steps.operations;
+package com.cerner.jwala.ui.selenium.steps.operation;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.Then;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by Sharvari Barve on 7/18/2017.
  */
 public class ThreadDumpRunSteps {
+
     @Autowired
     private JwalaUi jwalaUi;
 
@@ -16,5 +17,4 @@ public class ThreadDumpRunSteps {
     public void verifyThreadDumpPage() {
         jwalaUi.isElementExists(By.xpath("/contains(text(),'Full thread dump Java HotSpot(TM) 64-Bit Server VM')"));
     }
-
 }

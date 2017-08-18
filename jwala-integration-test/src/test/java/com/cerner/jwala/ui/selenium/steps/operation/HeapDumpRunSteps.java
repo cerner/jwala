@@ -1,4 +1,4 @@
-package com.cerner.jwala.ui.selenium.steps.operations;
+package com.cerner.jwala.ui.selenium.steps.operation;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.Then;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by Sharvari Barve on 7/18/2017.
  */
 public class HeapDumpRunSteps {
+
     @Autowired
     private JwalaUi jwalaUi;
 
