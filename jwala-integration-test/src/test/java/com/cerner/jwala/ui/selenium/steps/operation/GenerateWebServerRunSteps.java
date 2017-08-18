@@ -21,7 +21,7 @@ public class GenerateWebServerRunSteps {
 
     @Then("^I see that the web servers were successfully generated for group \"(.*)\"$")
     public void checkForTheSuccessfulGenerationOfWebServers(final String groupName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the web servers for " + groupName + "']"), 300);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the web servers for " + groupName + "']"), 600);
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
 }
