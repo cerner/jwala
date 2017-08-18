@@ -14,7 +14,7 @@ Scenario: Deploy and Run a Web Application
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
       | archiveFilename | apache-tomcat-7.0.55.zip |
-      | remoteDir       | media.remote.dir         |
+      | remoteDir       | tomcat.media.remote.dir  |
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
       | mediaType       | Apache HTTPD            |
@@ -99,10 +99,10 @@ Scenario: Deploy and Run a Web Application
     Then I see that the JVMs were successfully generated for group "seleniumGroup"
 
     When I click "Start Web Servers" button of group "seleniumGroup"
-    Then I see the state of "seleniumWebserver" of group "seleniumGroup" is "STARTED"
+    Then I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
 
-    When I click "Stop Web Servers" button of group "seleniumGroup"
-    Then I see the state of "seleniumWebserver" of group "seleniumGroup" is "STOPPED"
+    When I click "Start JVMs" button of group "seleniumGroup"
+    Then I see the state of "seleniumJvm" JVM of group "seleniumGroup" is "STARTED"
 
 
 
