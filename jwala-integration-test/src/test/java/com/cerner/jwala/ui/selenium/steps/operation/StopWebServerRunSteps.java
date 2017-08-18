@@ -20,7 +20,7 @@ public class StopWebServerRunSteps {
                 "']]/following-sibling::tr//button[span[text()='Stop Web Servers']]"));
     }
 
-    @Then("I see the state of \"(.*)\" of group \"(.*)\" is \"STOPPED\"")
+    @Then("I see the state of \"(.*)\" web server of group \"(.*)\" is \"STOPPED\"")
     public void checkIfWebServerStateIsStopped(final String webServerName, final String groupName) {
         // used contains here to check for STOP since there are 2 stopped states e.g.
         // STOPPED and FORCED_STOPPED
