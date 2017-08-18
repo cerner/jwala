@@ -16,7 +16,7 @@ public class GenerateWebAppRunSteps {
 
     @When("^I click the generate web application button of \"(.*)\"$")
     public void clickGenerateWebAppBtnOfGroup(final String webAppName) {
-        jwalaUi.click(By.xpath("//tr/td[text()='" + webAppName + "']/following-sibling::td[3]/div/button[@title='Generate and deploy the webapp resources.']"));
+        jwalaUi.clickWhenReady(By.xpath("//tr/td[text()='" + webAppName + "']/following-sibling::td[3]/div/button[@title='Generate and deploy the webapp resources.']"));
     }
 
     @Then("^I see \"(.*)\" web application got deployed successfully$")

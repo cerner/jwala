@@ -16,7 +16,7 @@ public class GenerateWebServerRunSteps {
 
     @When("^I click the \"Generate Web Servers\" button of group \"(.*)\"$")
     public void clickGenerateWebServersBtnOfGroup(final String groupName) {
-        jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//button[span[text()='Generate Web Servers']]"));
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//button[span[text()='Generate Web Servers']]"));
     }
 
     @Then("^I see that the web servers were successfully generated for group \"(.*)\"$")

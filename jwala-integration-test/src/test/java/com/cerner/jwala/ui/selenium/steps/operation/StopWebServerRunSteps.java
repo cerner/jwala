@@ -16,7 +16,7 @@ public class StopWebServerRunSteps {
 
     @When("I click \"Stop Web Servers\" button of group \"(.*)\"")
     public void clickStopWebServersOfGroup(final String groupName) {
-        jwalaUi.click(By.xpath("//tr[td[text()='" + groupName +
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName +
                 "']]/following-sibling::tr//button[span[text()='Stop Web Servers']]"));
     }
 

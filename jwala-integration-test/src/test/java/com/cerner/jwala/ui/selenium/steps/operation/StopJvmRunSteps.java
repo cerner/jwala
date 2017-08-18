@@ -16,7 +16,7 @@ public class StopJvmRunSteps {
 
     @When("I click \"Stop JVMs\" button of group \"(.*)\"")
     public void clickStopJvmsOfGroup(final String groupName) {
-        jwalaUi.click(By.xpath("//tr[td[text()='" + groupName +
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName +
                 "']]/following-sibling::tr//button[span[text()='Stop JVMs']]"));
     }
 

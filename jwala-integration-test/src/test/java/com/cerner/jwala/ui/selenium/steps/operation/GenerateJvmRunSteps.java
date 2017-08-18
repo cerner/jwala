@@ -16,7 +16,7 @@ public class GenerateJvmRunSteps {
 
     @When("^I click the \"Generate JVMs\" button of group \"(.*)\"$")
     public void clickGenerateJvmsBtnOfGroup(final String groupName) {
-        jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//button[span[text()='Generate JVMs']]"));
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//button[span[text()='Generate JVMs']]"));
     }
 
     @Then("^I see that the JVMs were successfully generated for group \"(.*)\"$")
