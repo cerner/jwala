@@ -1,6 +1,11 @@
 package com.cerner.jwala.ui.selenium;
 
+import com.cerner.jwala.commandprocessor.jsch.impl.KeyedPooledJschChannelFactory;
+import com.cerner.jwala.common.scrubber.ScrubberService;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Jedd Cuison on 6/28/2017
  */
 @Configuration
-@ComponentScan({"com.cerner.jwala.ui.selenium.component"})
+@ComponentScan({"com.cerner.jwala.ui.selenium.component", "com.cerner.jwala.common.jsch"})
 public class TestConfig {
 
     private static final String WEB_DRIVER_CLASS = "webdriver.class";
@@ -54,5 +59,28 @@ public class TestConfig {
             prop.load(new FileInputStream(new File(propertyPath)));
         }
         return prop;
+    }
+
+    @Bean
+    public JSch getJsch(@Qualifier("seleniumTestProperties") final Properties properties) throws JSchException {
+        final JSch jsch = new JSch();
+        return jsch;
+    }
+
+    @Bean
+    public GenericKeyedObjectPool getGenericKeyedObjectPool(final JSch jsch) throws JSchException {
+        return new GenericKeyedObjectPool(new KeyedPooledJschChannelFactory(jsch));
+    }
+
+    @Bean
+    public ScrubberService getScrubberService() {
+        // We don't need to scrub anything in the logs since we don't do logging in our selenium tests as of the
+        // moment
+        return new ScrubberService() {
+            @Override
+            public String scrub(String raw) {
+                return raw;
+            }
+        };
     }
 }

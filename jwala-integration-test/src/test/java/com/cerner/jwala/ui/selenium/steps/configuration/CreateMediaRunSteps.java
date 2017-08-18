@@ -1,8 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
-import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -10,10 +8,8 @@ import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 
 /**
  * Created by Jedd Cuison on 6/30/2017
@@ -67,10 +63,5 @@ public class CreateMediaRunSteps {
     @Then("I see \"(.*)\" in the media table")
     public void checkForMedia(final String mediaName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + mediaName + "']"), 300);
-    }
-
-    @After
-    public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
-        SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
     }
 }

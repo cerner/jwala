@@ -24,7 +24,7 @@ public class SeleniumTestHelper {
     private static final String TEST_PROPERTIES = "selenium/test.properties";
 
     /**
-     * Crate an instance of a {@link WebDriver} to facilitate browser based testing
+     * Create an instance of a {@link WebDriver} to facilitate browser based testing
      * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
      */
