@@ -25,12 +25,7 @@ public class UploadResourceRunSteps {
     @Qualifier("parameterProperties")
     private Properties paramProp;
 
-    @Given("^I am in the resource tab$")
-    public void goToResourceTab() {
-        jwalaUi.clickTab("Resources");
-    }
-
-    @And("^I expand \"(.*)\" node$")
+    @Given("^I expand \"(.*)\" node$")
     public void expandNode(final String nodeName) {
         jwalaUi.expandNode(nodeName);
     }
