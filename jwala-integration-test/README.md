@@ -12,11 +12,11 @@
 ### in Gradle
 Running all tests
 ```ssh
-$ gradle test -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+$ gradle test -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe -PjwalaIntegrationTest
 ```
 Running a single test
 ```ssh
-$ gradle test -Dtest.single=ManageGroupTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+$ gradle test -Dtest.single=ManageGroupTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe -PjwalaIntegrationTest
 ```
 ### in the IDE
 In the run configurations set the VM options to

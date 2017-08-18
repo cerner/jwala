@@ -5,5 +5,6 @@ include "jwala-common",
         "jwala-webservices",
         "jwala-tomcat",
         "jwala-tomcat-agent",
-        "jwala-h2-embedded"
+        "jwala-h2-embedded",
+        "jwala-integration-test"
 
