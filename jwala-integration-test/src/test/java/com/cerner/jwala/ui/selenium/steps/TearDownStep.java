@@ -1,5 +1,8 @@
 package com.cerner.jwala.ui.selenium.steps;
 
+import static com.cerner.jwala.common.domain.model.webserver.WebServerReachableState.*;
+import static com.cerner.jwala.common.domain.model.jvm.JvmState.*;
+
 import com.cerner.jwala.common.exec.RemoteSystemConnection;
 import com.cerner.jwala.common.jsch.JschService;
 import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
@@ -18,6 +21,8 @@ import java.util.Properties;
  */
 public class TearDownStep {
 
+    private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
+
     @Autowired
     private JschService jschService;
 
@@ -25,14 +30,31 @@ public class TearDownStep {
     @Qualifier("seleniumTestProperties")
     private Properties props;
 
+    final Properties properties;
+    final String connectionStr;
+    final String userName;
+    final String password;
+
+    public TearDownStep() throws IOException, ClassNotFoundException {
+        properties = SeleniumTestHelper.getProperties();
+        Class.forName(properties.getProperty("jwala.db.driver"));
+        connectionStr = properties.getProperty("jwala.db.connection");
+        userName = properties.getProperty("jwala.db.userName");
+        password = properties.getProperty("jwala.db.password");
+
+        // indirectly required by JschServiceImpl via use of ApplicationProperties
+        System.setProperty("PROPERTIES_ROOT_PATH", this.getClass().getResource("/selenium/vars.properties").getPath()
+                .replace("/vars.properties", ""));
+    }
+
     @After
     public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
-        final List<ServerInfo> webServerNameList;
-        final List<ServerInfo> jvmNameList;
+        final List<ServiceInfo> webServerNameList;
+        final List<ServiceInfo> jvmNameList;
 
         try {
-            webServerNameList = getStoppedWebServers();
-            jvmNameList = getStoppedJvms();
+            webServerNameList = getWebServers();
+            jvmNameList = getJvms();
         } catch (final IOException | ClassNotFoundException | SQLException e) {
             throw new TearDownException("There was an error in retrieving the list of web servers from the database!", e);
         }
@@ -40,21 +62,37 @@ public class TearDownStep {
         final String sshUser = props.getProperty("ssh.user.name");
         final String sshPwd = props.getProperty("ssh.user.pwd");
 
-        System.setProperty("PROPERTIES_ROOT_PATH", this.getClass().getResource("/selenium/vars.properties").getPath()
-                .replace("/vars.properties", ""));
-        for (final ServerInfo serverInfo : webServerNameList) {
-            final RemoteSystemConnection remoteSystemConnection
-                    = new RemoteSystemConnection(sshUser, sshPwd, serverInfo.host, 22);
-            jschService.runShellCommand(remoteSystemConnection, "sc delete " + serverInfo.name, 300000);
-        }
+        for (final ServiceInfo serviceInfo : webServerNameList) {
+            deleteService(sshUser, sshPwd, serviceInfo);
+    }
 
-        for (final ServerInfo serverInfo : jvmNameList) {
-            final RemoteSystemConnection remoteSystemConnection
-                    = new RemoteSystemConnection(sshUser, sshPwd, serverInfo.host, 22);
-            jschService.runShellCommand(remoteSystemConnection, "sc delete " + serverInfo.name, 300000);
+        for (final ServiceInfo serviceInfo : jvmNameList) {
+            deleteService(sshUser, sshPwd, serviceInfo);
         }
 
         SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
+    }
+
+    /**
+     * Delete an OS service
+     * @param sshUser the ssh user
+     * @param sshPwd the ssh password
+     * @param serviceInfo information on the service to delete
+     */
+    private void deleteService(String sshUser, String sshPwd, ServiceInfo serviceInfo) {
+        final RemoteSystemConnection remoteSystemConnection
+                = new RemoteSystemConnection(sshUser, sshPwd, serviceInfo.host, 22);
+
+        if (serviceInfo.isStarted()) {
+            // Stop the service first so that service delete is executed by the OS asap
+            jschService.runShellCommand(remoteSystemConnection, "sc stop " + serviceInfo.name, 300000);
+        }
+
+        // If the service state is NEW, that means that the service has not yet been created so let's not issue a
+        // delete command to save some time
+        if (!serviceInfo.isNew()) {
+            jschService.runShellCommand(remoteSystemConnection, "sc delete " + serviceInfo.name, 300000);
+        }
     }
 
     /**
@@ -64,18 +102,14 @@ public class TearDownStep {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    private List<ServerInfo> getStoppedWebServers() throws IOException, ClassNotFoundException, SQLException {
-        final Properties properties = SeleniumTestHelper.getProperties();
-        Class.forName(properties.getProperty("jwala.db.driver"));
-        final String connectionStr = properties.getProperty("jwala.db.connection");
-        final String userName = properties.getProperty("jwala.db.userName");
-        final String password = properties.getProperty("jwala.db.password");
-        final List<ServerInfo> webServerNameList = new ArrayList<>();
+    private List<ServiceInfo> getWebServers() throws IOException, ClassNotFoundException, SQLException {
+        final List<ServiceInfo> webServerNameList = new ArrayList<>();
         try (final Connection conn = DriverManager.getConnection(connectionStr, userName, password)) {
             final Statement stmt = conn.createStatement();
-            final ResultSet resultSet = stmt.executeQuery("SELECT NAME, HOST FROM WEBSERVER WHERE STATE='WS_UNREACHABLE'");
+            final ResultSet resultSet = stmt.executeQuery("SELECT NAME, HOST, STATE FROM WEBSERVER");
             while (resultSet.next()) {
-                webServerNameList.add(new ServerInfo(resultSet.getString("NAME"), resultSet.getString("HOST")));
+                webServerNameList.add(new ServiceInfo(resultSet.getString("NAME"), resultSet.getString("HOST"),
+                        resultSet.getString("STATE")));
             }
         }
         return webServerNameList;
@@ -88,33 +122,39 @@ public class TearDownStep {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    private List<ServerInfo> getStoppedJvms() throws IOException, ClassNotFoundException, SQLException {
-        final Properties properties = SeleniumTestHelper.getProperties();
-        Class.forName(properties.getProperty("jwala.db.driver"));
-        final String connectionStr = properties.getProperty("jwala.db.connection");
-        final String userName = properties.getProperty("jwala.db.userName");
-        final String password = properties.getProperty("jwala.db.password");
-        final List<ServerInfo> jvmNameList = new ArrayList<>();
+    private List<ServiceInfo> getJvms() throws IOException, ClassNotFoundException, SQLException {
+        final List<ServiceInfo> jvmNameList = new ArrayList<>();
         try (final Connection conn = DriverManager.getConnection(connectionStr, userName, password)) {
             final Statement stmt = conn.createStatement();
-            final ResultSet resultSet = stmt.executeQuery("SELECT NAME, HOSTNAME FROM JVM WHERE STATE='JVM_STOPPED'");
+            final ResultSet resultSet = stmt.executeQuery("SELECT NAME, HOSTNAME, STATE FROM JVM");
             while (resultSet.next()) {
-                jvmNameList.add(new ServerInfo(resultSet.getString("NAME"), resultSet.getString("HOSTNAME")));
+                jvmNameList.add(new ServiceInfo(resultSet.getString("NAME"), resultSet.getString("HOSTNAME"),
+                        resultSet.getString("STATE")));
             }
         }
         return jvmNameList;
     }
 
     /**
-     * Wrapper to hold server and host name
+     * Wrapper to hold OS service name, host name and state
      */
-    private static class ServerInfo {
+    private static class ServiceInfo {
         final String name;
         final String host;
+        final String state;
 
-        public ServerInfo(final String name, final String host) {
+        public ServiceInfo(final String name, final String host, final String state) {
             this.name = name;
             this.host = host;
+            this.state = state;
+        }
+
+        boolean isStarted() {
+            return state.equalsIgnoreCase(WS_REACHABLE.name()) || state.equalsIgnoreCase(JVM_STARTED.name());
+        }
+
+        boolean isNew() {
+            return state.equalsIgnoreCase(WS_NEW.name()) || state.equalsIgnoreCase(JVM_NEW.name());
         }
     }
 }
