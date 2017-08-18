@@ -91,8 +91,8 @@
 
     <Connector 
       port="${jvm.httpsPort}"   
-	  SSLCertificateFile="${groups[0].jvms[0].tomcatMedia.remoteDir}/../data/security/id/${jvm.hostName}.cer"
-      SSLCertificateKeyFile="${groups[0].jvms[0].tomcatMedia.remoteDir}/../data/security/id/${jvm.hostName}.key"
+	  SSLCertificateFile="${jvm.tomcatMedia.remoteDir}/../data/security/id/${jvm.hostName}.cer"
+      SSLCertificateKeyFile="${jvm.tomcatMedia.remoteDir}/../data/security/id/${jvm.hostName}.key"
       SSLEnabled="true"
 
 	<% if (jvm.hostName.tokenize('.')[0].toLowerCase()=="usmlvv1cds0068") { %>
