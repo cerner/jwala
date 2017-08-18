@@ -21,8 +21,7 @@ public class GenerateJvmRunSteps {
 
     @Then("^I see that the JVMs were successfully generated for group \"(.*)\"$")
     public void checkForTheSuccessfulGenerationOfJvms(final String groupName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the JVMs for " + groupName + "']"), 600);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the JVMs for " + groupName + "']"), 1200);
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
-        jwalaUi.sleep();
     }
 }
