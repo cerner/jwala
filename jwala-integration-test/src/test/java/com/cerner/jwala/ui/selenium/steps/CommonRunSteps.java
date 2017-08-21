@@ -2,6 +2,8 @@ package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
+import com.cerner.jwala.ui.selenium.steps.operation.GenerateWebServerRunSteps;
+import com.cerner.jwala.ui.selenium.steps.operation.StartWebServerRunSteps;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +25,9 @@ public class CommonRunSteps {
     private Properties paramProp;
 
     @Autowired
+    private NavigationRunSteps navigationRunSteps;
+
+    @Autowired
     private LoginRunSteps loginRunSteps;
 
     @Autowired
@@ -39,6 +44,15 @@ public class CommonRunSteps {
 
     @Autowired
     private CreateJvmRunSteps createJvmRunSteps;
+
+    @Autowired
+    private UploadResourceRunSteps uploadResourceRunSteps;
+
+    @Autowired
+    private GenerateWebServerRunSteps generateWebServerRunSteps;
+
+    @Autowired
+    private StartWebServerRunSteps startWebServerRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -124,6 +138,36 @@ public class CommonRunSteps {
         createJvmRunSteps.setGroups(groups);
         createJvmRunSteps.clickOkBtn();
         createJvmRunSteps.checkForJvm(parameters.get("jvmName"));
+    }
+
+    @Given("^I created a web server resource with the following parameters:$")
+    public void createWebServerResources(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("Web Servers");
+        uploadResourceRunSteps.clickNode(parameters.get("webServer"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+    }
+
+    @Given("^I generated the web servers of group \"(.*)\"$")
+    public void generateWebServersOfGroup(final String groupName) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(groupName);
+        generateWebServerRunSteps.clickGenerateWebServersBtnOfGroup(groupName);
+        generateWebServerRunSteps.checkForTheSuccessfulGenerationOfWebServers(groupName);
+    }
+
+    @Given("^I started web server \"(.*)\" of group \"(.*)\"$")
+    public void startWebServersOfGroup(final String webServerName, final String groupName) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(groupName);
+        startWebServerRunSteps.clickStartWebServersOfGroup(groupName);
+        startWebServerRunSteps.checkIfWebServerStateIsStarted(webServerName, groupName);
     }
 
     /**
