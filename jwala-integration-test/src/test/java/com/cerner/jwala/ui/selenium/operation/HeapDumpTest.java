@@ -1,4 +1,4 @@
-package com.cerner.jwala.ui.selenium.operations;
+package com.cerner.jwala.ui.selenium.operation;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = {"classpath:com/cerner/jwala/ui/selenium/operations/httpdConf.feature"},
+        features = {"classpath:com/cerner/jwala/ui/selenium/operations/heapDump.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class HttpdConfTest {
+public class HeapDumpTest {
 }

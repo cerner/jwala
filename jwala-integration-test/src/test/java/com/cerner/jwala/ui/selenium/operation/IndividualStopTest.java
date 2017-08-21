@@ -1,4 +1,4 @@
-package com.cerner.jwala.ui.selenium.operations;
+package com.cerner.jwala.ui.selenium.operation;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;

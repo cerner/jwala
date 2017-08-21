@@ -1,15 +1,15 @@
-package com.cerner.jwala.ui.selenium.operations;
+package com.cerner.jwala.ui.selenium.operation;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 /**
- * Created by Sharvari Barve on 6/27/2017
+ * Created by Sharvari Barve on 7/14/2017.
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = {"classpath:com/cerner/jwala/ui/selenium/operations/wsStatus.feature"},
+        features = {"classpath:com/cerner/jwala/ui/selenium/operations/httpdConf.feature"},
         glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class StatusTest {
+public class HttpdConfTest {
 }
