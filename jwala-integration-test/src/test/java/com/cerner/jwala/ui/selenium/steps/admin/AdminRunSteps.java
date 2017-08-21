@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Sharvari Barve on 7/21/2017.
  */
 public class AdminRunSteps {
-    
+
     @Autowired
     private JwalaUi jwalaUi;
 
@@ -72,8 +72,8 @@ public class AdminRunSteps {
         assertNotNull(header);
     }
 
-    @And("^I verify text \"(.*)\"$")
-    public void verifyText(String s) {
-        jwalaUi.isElementExists(By.xpath("//p[contains(text(),'" + s + "']"));
+    @And("^I verify succesful Encryption message$")
+    public void verifyText() {
+        jwalaUi.isElementExists(By.xpath("//p[contains(text(),'Encryption Succeeded']"));
     }
 }
