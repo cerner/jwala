@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by Sharvari Barve on 7/18/2017.
@@ -20,12 +21,23 @@ public class DeleteInOperationsRunSteps {
 
     @When("^I click the delete button of web server \"(.*)\" under group \"(.*)\" in the operations tab$")
     public void clickWebServerDelete(final String webServerName, final String groupName) {
-        jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + webServerName + "']/following-sibling::td//button[@title='Delete Web Server']"));
+    }
+
+    @When("^I click the delete button of JVM \"(.*)\" under group \"(.*)\" in the operations tab$")
+    public void clickJvmDelete(final String jvmName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+                + jvmName + "']/following-sibling::td//button[@title='Delete JVM']"));
     }
 
     @And("^I click the operation's confirm delete web server dialog yes button$")
     public void clickConfirmWebServerDeleteYesButton() {
+        jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
+    }
+
+    @And("^I click the operation's confirm delete jvm dialog yes button$")
+    public void clickConfirmJvmDeleteYesButton() {
         jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
     }
 
@@ -35,23 +47,25 @@ public class DeleteInOperationsRunSteps {
                 " first before attempting to delete it')"));
     }
 
-
-
-
-    /*** code below may need refactoring since steps should be concise to avoid step collisions ***/
-
-    @Then("^I don't see delete error$")
-    public void verifyNoError() {
-        assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'Please stop')")));
+    @Then("^I don't see an error dialog box that tells me to stop the jvm \"(.*)\"$")
+    public void verifyAbsenceOfDeleteError(final String jvmName) {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Please stop JVM " + jvmName +
+                " first before attempting to delete it')]"));
     }
 
-    @Then("^I see element in operations table\"(.*)\"$")
-    public void verifyElementPresent(String name) {
-        Assert.assertTrue(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
+    @Then("^I see a popup that tells me about the succesful delete for jvm \"(.*)\" and jwala refresh for operations page$")
+    public void verifyRefreshPopup(String jvm) {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'JVM " + jvm + " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.')]"));
     }
 
-    @Then("^I don't see \"(.*)\"$")
-    public void verifyElementNotPresent(String name) {
-        Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
+    @Then("^I click ok on refresh page popup$")
+    public void clickOkRefresh() {
+        jwalaUi.click(By.xpath("//*[text()='Ok']"));
+    }
+
+    @Then("^I verify element \"(.*)\" is succesfully deleted from group \"(.*)\"$")
+    public void verifyElementNotPresent(String elementName, String groupName) {
+        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+                + elementName + "']"));
     }
 }
