@@ -94,5 +94,5 @@ Feature: Heap Dump
     And I click start on jvm "seleniumJvm" of the group "seleniumGroup"
     And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
     And I see the state of "seleniumJvm" JVM of group "seleniumGroup" is "STARTED"
-    When I click on heap dump of jvm "seleniumJvm"
+    When I click on heap dump of jvm "seleniumJvm" of group "seleniumGroup"
     Then I see heap dump popup for jvm "seleniumJvm"

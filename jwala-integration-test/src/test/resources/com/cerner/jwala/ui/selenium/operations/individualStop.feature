@@ -23,11 +23,12 @@ Feature: Stop an  individual webserver or a jvm
       | deployName   | httpd.conf                 |
       | deployPath   | httpd.resource.deploy.path |
       | templateName | httpdconf.tpl              |
+      And I am in the Operations tab
+      And I expand group operation's "seleniumGroup" group
     And I generate the webserver "seleniumWebserver" of the group "seleniumGroup"
     And I check that the web server "seleniumWebserver" was successfully generated
     And I click start on webserver "seleniumWebserver" of the group "seleniumGroup"
     And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
-
     And I click stop on webserver "seleniumWebserver" of the group "seleniumGroup"
     And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STOPPED"
 
@@ -47,11 +48,7 @@ Feature: Stop an  individual webserver or a jvm
         | mediaType       | Apache Tomcat            |
         | archiveFilename | apache-tomcat-7.0.55.zip |
         | remoteDir       | media.remote.dir         |
-      And I created a media with the following parameters:
-        | mediaName       | apache-httpd-2.4.20     |
-        | mediaType       | Apache HTTPD            |
-        | archiveFilename | apache-httpd-2.4.20.zip |
-        | remoteDir       | media.remote.dir        |
+
       And I created a jvm with the following parameters:
         | jvmName    | seleniumJvm          |
         | tomcat     | apache-tomcat-7.0.55 |
@@ -59,26 +56,11 @@ Feature: Stop an  individual webserver or a jvm
         | hostName   | host1                |
         | portNumber | 9000                 |
         | group      | seleniumGroup        |
-      And I created a web server with the following parameters:
-        | webserverName      | seleniumWebserver   |
-        | hostName           | host1               |
-        | portNumber         | 80                  |
-        | httpsPort          | 443                 |
-        | group              | seleniumGroup       |
-        | apacheHttpdMediaId | apache-httpd-2.4.20 |
-        | statusPath         | /apache_pb.png      |
 
       And I created a web app with the following parameters:
         | webappName  | seleniumWebapp |
         | contextPath | /hello         |
         | group       | seleniumGroup  |
-
-      And I created a web server resource with the following parameters:
-        | group        | seleniumGroup              |
-        | webServer    | seleniumWebserver          |
-        | deployName   | httpd.conf                 |
-        | deployPath   | httpd.resource.deploy.path |
-        | templateName | httpdconf.tpl              |
 
       And I created a jvm resource and metadata with the following parameters:
         | group        | seleniumGroup  |
@@ -119,12 +101,8 @@ Feature: Stop an  individual webserver or a jvm
       And I expand the group operation's "seleniumGroup" group
       And I click the generate web application button of "seleniumWebapp"
       And I see "seleniumWebapp" web application got deployed successfully
-      And I generate the webserver "seleniumWebserver" of the group "seleniumGroup"
-      And I check that the web server "seleniumWebserver" was successfully generated
       And I generate the jvm "seleniumJvm" of the group "seleniumGroup"
       And I see the individual JVM "seleniumJvm" was successfully generated
-      And I started web server "seleniumWebserver" of group "seleniumGroup"
       And I click start on jvm "seleniumJvm" of the group "seleniumGroup"
-      And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
      And I click stop on jvm "seleniumJvm" of the group "seleniumGroup"
      And I see the state of "seleniumJvm" JVM of the group as "STOPPED"
