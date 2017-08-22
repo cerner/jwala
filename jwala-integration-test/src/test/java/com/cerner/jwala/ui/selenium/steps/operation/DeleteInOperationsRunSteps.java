@@ -49,8 +49,8 @@ public class DeleteInOperationsRunSteps {
 
     @Then("^I don't see an error dialog box that tells me to stop the jvm \"(.*)\"$")
     public void verifyAbsenceOfDeleteError(final String jvmName) {
-        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Please stop JVM " + jvmName +
-                " first before attempting to delete it')]"));
+        assertFalse(jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Please stop JVM " + jvmName +
+                " first before attempting to delete it')]")));
     }
 
     @Then("^I see a popup that tells me about the succesful delete for jvm \"(.*)\" and jwala refresh for operations page$")

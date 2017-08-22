@@ -1,7 +1,6 @@
 Feature: Delete JVM, web server in operations page
 
   Scenario: Delete started webserver
-
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
@@ -24,8 +23,10 @@ Feature: Delete JVM, web server in operations page
       | deployName   | httpd.conf                 |
       | deployPath   | httpd.resource.deploy.path |
       | templateName | httpdconf.tpl              |
-    And I check for resource "httpd.conf"
-    And I generated the web servers of group "seleniumGroup"
+    And I am in the Operations tab
+    And I expand the group operation's "seleniumGroup" group
+    And I generate the webserver "seleniumWebserver" of the group "seleniumGroup"
+    And I check that the web server "seleniumWebserver" was successfully generated
     And I started web server "seleniumWebserver" of group "seleniumGroup"
     And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
     When I click the delete button of web server "seleniumWebserver" under group "seleniumGroup" in the operations tab
@@ -60,6 +61,5 @@ Feature: Delete JVM, web server in operations page
     Then I don't see an error dialog box that tells me to stop the jvm "seleniumJvm"
     And I see a popup that tells me about the succesful delete for jvm "seleniumJvm" and jwala refresh for operations page
     And I click ok on refresh page popup
+    And I expand the group operation's "seleniumGroup" group
     And I verify element "seleniumJvm" is succesfully deleted from group "seleniumGroup"
-
-
