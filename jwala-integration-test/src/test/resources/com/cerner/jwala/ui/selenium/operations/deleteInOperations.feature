@@ -1,6 +1,7 @@
 Feature: Delete JVM, web server in operations page
 
-  Scenario: Delete started webserver
+Scenario: Delete started webserver
+
     Given I logged in
     And I am in the configuration tab
     And I created a group with the name "seleniumGroup"
@@ -18,21 +19,20 @@ Feature: Delete JVM, web server in operations page
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
     And I created a web server resource with the following parameters:
-      | group        | seleniumGroup              |
-      | webServer    | seleniumWebserver          |
-      | deployName   | httpd.conf                 |
-      | deployPath   | httpd.resource.deploy.path |
-      | templateName | httpdconf.tpl              |
-    And I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    And I generate the webserver "seleniumWebserver" of the group "seleniumGroup"
-    And I check that the web server "seleniumWebserver" was successfully generated
+        | group       | seleniumGroup              |
+        | webServer   | seleniumWebserver          |
+        | deployName  | httpd.conf                 |
+        | deployPath  | httpd.resource.deploy.path |
+        | templateName| httpdconf.tpl              |
+    And I generated the web servers of group "seleniumGroup"
     And I started web server "seleniumWebserver" of group "seleniumGroup"
-    And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
-    When I click the delete button of web server "seleniumWebserver" under group "seleniumGroup" in the operations tab
+    When I click the "Delete Web Server" button of web server "seleniumWebserver" under group "seleniumGroup" in the operations tab
     And I click the operation's confirm delete web server dialog yes button
     Then I see an error dialog box that tells me to stop the web server "seleniumWebServer"
 
+
+  # The scenario below needs to be refactored
+  @ignore
   Scenario: delete new  jvm
     Given I logged in
     And I am in the configuration tab

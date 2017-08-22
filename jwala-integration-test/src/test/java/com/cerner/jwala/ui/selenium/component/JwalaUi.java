@@ -55,17 +55,14 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
     }
 
+    /**
+     * Expand a node, do nothing if it is already expanded
+     * @param nodeLabel the node label
+     */
     public void expandNode(final String nodeLabel) {
-        try {
-            final WebElement webElement = driver.findElement(
-                    By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/plus.png']"));
-            webElement.click();
-        } catch (final NoSuchElementException e) {
-            // We don't ignore the error and assume that the item is already expanded since the proper test assumption
-            // is that the initial state of an item is relevant
-            final String msg =
-                    MessageFormat.format("Failed to expand tree item {0} since it may already be expanded!", nodeLabel);
-            throw new UploadResourceRunStepException(msg, e);
+        final By by = By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/plus.png']");
+        if (isElementExists(by)) {
+            driver.findElement(by).click();
         }
     }
 

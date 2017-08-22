@@ -74,6 +74,11 @@ public class UploadResourceRunSteps {
         jwalaUi.sendKeys(By.name("metaDataFile"), mediaPath.normalize().toString());
     }
 
+    @And("^I click the assign JVMs check box$")
+    public void clickAssignToJvmsCheckbox() {
+        jwalaUi.click(By.name("assignToJvms"));
+    }
+
     @Then("^I see that the resource got uploaded successfully$")
     public void checkForSuccessfulResourceUpload() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
