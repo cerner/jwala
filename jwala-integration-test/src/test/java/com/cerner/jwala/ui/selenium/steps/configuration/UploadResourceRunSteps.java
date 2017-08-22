@@ -27,11 +27,13 @@ public class UploadResourceRunSteps {
 
     @Given("^I expand \"(.*)\" node$")
     public void expandNode(final String nodeName) {
+        if(!checkIfNodeIsAlreadyExpanded(nodeName))
         jwalaUi.expandNode(nodeName);
     }
 
     @And("^I click \"(.*)\" node$")
     public void clickNode(final String nodeLabel) {
+        jwalaUi.sleep();
         jwalaUi.clickNode(nodeLabel);
     }
 
@@ -76,4 +78,15 @@ public class UploadResourceRunSteps {
     public void checkForSuccessfulResourceUpload() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
+
+    @Then("^I check for resource \"(.*)\"$")
+    public void checkIfResourceIsPresent(String resourceName) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//span[text()='" + resourceName + "']"));
+    }
+
+    private boolean checkIfNodeIsAlreadyExpanded(String nodeLabel) {
+        return jwalaUi.isElementExists(
+                By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/minus.png']"));
+    }
 }
+

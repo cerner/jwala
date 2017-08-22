@@ -24,4 +24,15 @@ public class GenerateWebServerRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the web servers for " + groupName + "']"), 600);
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
+
+    @When("^I generate the webserver \"(.*)\" of the group \"(.*)\"$")
+    public void generateIndividualWebserver(final String webserver, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + webserver + "']/following-sibling::td//button[@title='Generate the httpd.conf and deploy as a service']"));
+    }
+
+    @Then("^I check that the web server \"(.*)\" was successfully generated$")
+    public void checkForSuccessfulGenerationOfAWebserver(final String webserver) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully installed the service, and generated and deployed configuration file(s).']"), 600);
+        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+    }
 }

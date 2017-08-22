@@ -5,6 +5,7 @@ import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import com.cerner.jwala.ui.selenium.steps.operation.GenerateWebServerRunSteps;
 import com.cerner.jwala.ui.selenium.steps.operation.StartWebServerRunSteps;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -152,6 +153,51 @@ public class CommonRunSteps {
         uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
         uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
         uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+        uploadResourceRunSteps.checkIfResourceIsPresent(parameters.get("deployName"));
+    }
+
+    @Given("^I created a jvm resource with the following parameters:$")
+    public void createJvmResources(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.clickNode(parameters.get("jvm"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+        uploadResourceRunSteps.checkIfResourceIsPresent(parameters.get("resourceName"));
+    }
+
+    @Given("^I created a jvm resource and metadata with the following parameters:$")
+    public void createJvmResourcesWithMetaData(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.clickNode(parameters.get("jvm"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.clickUploadMetaDataFile();
+        uploadResourceRunSteps.selectMetaDataFile(parameters.get("metaDataFile"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+        uploadResourceRunSteps.checkIfResourceIsPresent(parameters.get("deployName"));
+    }
+
+    @Given("^I created a web app resource with the following parameters:$")
+    public void createWebAppResources(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("Web Apps");
+        uploadResourceRunSteps.clickNode(parameters.get("webApp"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
     }
 
     @Given("^I generated the web servers of group \"(.*)\"$")
@@ -170,8 +216,10 @@ public class CommonRunSteps {
         startWebServerRunSteps.checkIfWebServerStateIsStarted(webServerName, groupName);
     }
 
+
     /**
      * Gets the value from the properties file
+     *
      * @param key the property key
      * @return the value of the property, if null the key is returned instead
      */

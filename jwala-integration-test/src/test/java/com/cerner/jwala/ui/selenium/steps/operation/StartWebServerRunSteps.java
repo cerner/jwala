@@ -25,4 +25,11 @@ public class StartWebServerRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + webServerName + "']/following-sibling::td//span[text()='STARTED']"), 120);
     }
+
+    @When("^I click start on webserver \"(.*)\" of the group \"(.*)\"$")
+    public void clickStartIndvidualWebserver(final String webserverName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"+ webserverName + "']/following-sibling::td//button[@title='Start']"));
+    }
+
+
 }

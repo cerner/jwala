@@ -24,4 +24,16 @@ public class GenerateJvmRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the JVMs for " + groupName + "']"), 1200);
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
     }
+
+    @When("^I generate the jvm \"(.*)\" of the group \"(.*)\"$")
+    public void generateIndividualJvm(final String jvm, String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + jvm + "']/following-sibling::td//button[@title='Generate JVM resources files and deploy as a service']"));
+    }
+
+    @Then("^I see the individual JVM \"(.*)\" was successfully generated$")
+    public void checkForSuccessfulGenerationIndividualJvm(final String groupName) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated and deployed JVM resource files']"), 1200);
+        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+    }
+
 }

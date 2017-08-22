@@ -20,82 +20,78 @@ Feature: Status
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | media.remote.dir        |
     And I created a jvm with the following parameters:
-      | jvmName    | seleniumJvmStatus    |
+      | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
       | jdk        | jdk1.8.0_92          |
       | hostName   | host1                |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
     And I created a web server with the following parameters:
-      | webserverName      | seleniumWebserverStatus |
-      | hostName           | host1                   |
-      | portNumber         | 80                      |
-      | httpsPort          | 443                     |
-      | group              | seleniumGroup           |
-      | apacheHttpdMediaId | apache-httpd-2.4.20     |
-      | statusPath         | /apache_pb.png          |
+      | webserverName      | seleniumWebserver   |
+      | hostName           | host1               |
+      | portNumber         | 80                  |
+      | httpsPort          | 443                 |
+      | group              | seleniumGroup       |
+      | apacheHttpdMediaId | apache-httpd-2.4.20 |
+      | statusPath         | /apache_pb.png      |
 
     And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
 
-    And I am in the resource tab
-    And I expanded component "seleniumGroup"
-    And I expanded component "Web Servers"
-    And I clicked on component "seleniumWebserverStatus"
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "httpd.conf"
-    And I fill in the webserver "Deploy Path" field with "httpd.resource.deploy.path" for web server "seleniumWebserverStatus"
-    And I choose the resource file "httpdconf.tpl"
-    And I click the upload resource dialog ok button
-    Then I check for resource "httpd.conf"
+    And I created a web server resource with the following parameters:
+      | group        | seleniumGroup              |
+      | webServer    | seleniumWebserver          |
+      | deployName   | httpd.conf                 |
+      | deployPath   | httpd.resource.deploy.path |
+      | templateName | httpdconf.tpl              |
 
-    And I expanded component "JVMs"
-    And I clicked on component "seleniumJvmStatus"
-    And I clicked on add resource
-    And I check Upload Meta Data File
-    And I choose the meta data file "hello.xml.json"
-    And I choose the resource file "hello.xml.tpl"
-    And I click the upload resource dialog ok button
-    Then I check for resource "hello.xml"
+    And I created a jvm resource and metadata with the following parameters:
+      | group        | seleniumGroup  |
+      | jvm          | seleniumJvm    |
+      | deployName   | hello.xml      |
+      | metaDataFile | hello.xml.json |
+      | templateName | hello.xml.tpl  |
 
-    And I clicked on add resource
-    And I check Upload Meta Data File
-    And I choose the meta data file "setenv.bat.json"
-    And I choose the resource file "setenv.bat.tpl"
-    And I click the upload resource dialog ok button
-    Then I check for resource "setenv.bat"
+    And I created a jvm resource and metadata with the following parameters:
+      | group        | seleniumGroup  |
+      | jvm          | seleniumJvm    |
+      | deployName   | hello.xml      |
+      | metaDataFile | hello.xml.json |
+      | templateName | hello.xml.tpl  |
 
-    And I clicked on add resource
-    And I check Upload Meta Data File
-    And I choose the meta data file "server.xml.json"
-    And I choose the resource file "server.xml.tpl"
-    And I click the upload resource dialog ok button
-    Then I check for resource "server.xml"
+    And I created a jvm resource and metadata with the following parameters:
+      | group        | seleniumGroup   |
+      | jvm          | seleniumJvm     |
+      | deployName   | setenv.bat      |
+      | metaDataFile | setenv.bat.json |
+      | templateName | setenv.bat.tpl  |
 
-    And I expanded component "Web Apps"
-    And I clicked on component "seleniumWebapp"
-    And I clicked on add resource
-    And I fill in the "Deploy Name" field with "hello-world.war"
-    And I fill in the "Deploy Path" field with "webapp.resource.deploy.path"
-    And I choose the resource file "hello-world.war"
-    And I click the upload resource dialog ok button
-    Then I check for resource "hello-world.war"
+    And I created a jvm resource and metadata with the following parameters:
+      | group        | seleniumGroup   |
+      | jvm          | seleniumJvm     |
+      | deployName   | server.xml      |
+      | metaDataFile | server.xml.json |
+      | templateName | server.xml.tpl  |
+
+    And I created a web app resource with the following parameters:
+      | group        | seleniumGroup               |
+      | webApp       | seleniumWebapp              |
+      | deployName   | hello-world.war             |
+      | deployPath   | webapp.resource.deploy.path |
+      | templateName | hello-world.war             |
 
     And I am in the Operations tab
-    And I expanded operations Group "seleniumGroup"
-    And I generate webapp "seleniumWebapp"
-    And I wait for popup string "seleniumWebapp resource files deployed successfully"
-    And I click on ok button
-    And I generate all webservers
-    And I wait for popup string "Successfully generated the web servers for seleniumGroup"
-    And I click on ok button
-    And I start all webservers
-    And I generate all jvms
-    And I wait for popup string "Successfully generated the JVMs for seleniumGroup"
-    And I click on ok button
-    And I start all jvms
-    And I wait for component "seleniumWebserverStatus" state "STARTED"
-    When I choose the row of the component with name "seleniumWebserverStatus" and click text "status"
+    And I expand the group operation's "seleniumGroup" group
+    And I click the generate web application button of "seleniumWebapp"
+    And I see "seleniumWebapp" web application got deployed successfully
+    And I generate the webserver "seleniumWebserver" of the group "seleniumGroup"
+    And I check that the web server "seleniumWebserver" was successfully generated
+    And I generate the jvm "seleniumJvm" of the group "seleniumGroup"
+    And I see the individual JVM "seleniumJvm" was successfully generated
+    And I started web server "seleniumWebserver" of group "seleniumGroup"
+    And I click start on jvm "seleniumJvm" of the group "seleniumGroup"
+    And I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
+    When I click the button for the status of web-server "seleniumGroup" in the group "seleniumGroup"
     Then I see the load balancer page with app "hello" and host "host1" and port "9000"

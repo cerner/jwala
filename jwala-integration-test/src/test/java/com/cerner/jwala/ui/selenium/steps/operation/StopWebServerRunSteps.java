@@ -27,4 +27,10 @@ public class StopWebServerRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + webServerName + "']/following-sibling::td//span[contains(text(), 'STOP')]"), 120);
     }
+
+    @When("^I click stop on webserver \"(.*)\" of the group \"(.*)\"$")
+    public void clickStopIndvidualWebserver(final String webserverName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + webserverName + "']/following-sibling::td//button[@title='Start']"));
+    }
 }
+

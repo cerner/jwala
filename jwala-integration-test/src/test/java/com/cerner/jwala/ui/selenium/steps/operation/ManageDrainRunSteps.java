@@ -14,7 +14,7 @@ import static org.junit.Assert.assertFalse;
 /**
  * Created by Sharvari Barve on 7/14/2017.
  */
-public class DrainRunSteps {
+public class ManageDrainRunSteps {
 
     @Autowired
     @Qualifier("parameterProperties")
@@ -25,7 +25,17 @@ public class DrainRunSteps {
 
     @When("^I click on the drain button for all webservers in the group$")
     public void clickGroupDrainForWebServers() {
-        jwalaUi.click(By.xpath("//button[span[text()='Drain Web Servers']]"));
+        jwalaUi.clickWhenReady(By.xpath("//button[span[text()='Drain Web Servers']]"));
+    }
+
+    @When("^I click on the drain button for the jvm \"(.*)\" within group \"(.*)\"$")
+    public void clickDrain(String jvmName,String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling:://tr/td[text()='" + jvmName + "']/following-sibling::td[5]/div/button[@title='Drain']"));
+    }
+
+    @When("^I click on the drain button for the webserver \"(.*)\" within group \"(.*)\"$")
+    public void clickDrainForWebserver(String webserver, String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling:://tr/td[text()='" + webserver + "']/following-sibling::td[5]/div/button[@title='Drain']"));
     }
 
     @Then("^I see the drain message for webserver \"(.*)\" and host \"(.*)\"$")
@@ -33,9 +43,10 @@ public class DrainRunSteps {
         jwalaUi.isElementExists(By.xpath("//td[text()='" + webserverName + "']/following-sibling::td[contains(text(),'Drain request for https://" + host + "')]"));
     }
 
-    @Then("^I see drain error for jvm \"(.*)\"$")
-    public void verifyDrainError(String jvmName) {
-        jwalaUi.isElementExists(By.xpath("//*contains(text(),'must be STARTED before attempting to drain users')"));
+    @Then("^I see drain error for jvm \"(.*)\" with webserver \"(.*)\" in group \"(.*)\"$")
+    public void verifyDrainError(String jvmName, String webserverName, String groupName) {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Drain JVM " + jvmName + "')]"));
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'The target Web Server " + webserverName + " in group " + groupName + " must be STARTED before attempting to drain users')]"));
     }
 
     @Then("^I do not see drain error for webserver \"(.*)\"$")

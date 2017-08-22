@@ -27,4 +27,12 @@ public class StopJvmRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + jvmName + "']/following-sibling::td//span[contains(text(), 'STOP')]"), 120);
     }
+
+    @When("^I click stop on jvm \"(.*)\" of group \"(.*)\"$")
+    public void clickStopIndvidualJvm(final String jvmName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + jvmName + "']/following-sibling::td//button[@title='Stop']"));
+
+    }
+
+
 }
