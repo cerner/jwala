@@ -1,5 +1,5 @@
 {
-  "deployPath" : "${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}",
+  "deployPath" : "${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}",
   "templateName" : "HttpdConfTemplate.tpl",
   "deployFileName" : "httpd.conf",
   "contentType" : "text/plain",
