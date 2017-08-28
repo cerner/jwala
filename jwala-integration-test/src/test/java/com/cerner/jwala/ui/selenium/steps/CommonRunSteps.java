@@ -2,6 +2,7 @@ package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
+import com.cerner.jwala.ui.selenium.steps.operation.*;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +24,9 @@ public class CommonRunSteps {
     private Properties paramProp;
 
     @Autowired
+    private NavigationRunSteps navigationRunSteps;
+
+    @Autowired
     private LoginRunSteps loginRunSteps;
 
     @Autowired
@@ -39,6 +43,24 @@ public class CommonRunSteps {
 
     @Autowired
     private CreateJvmRunSteps createJvmRunSteps;
+
+    @Autowired
+    private UploadResourceRunSteps uploadResourceRunSteps;
+
+    @Autowired
+    private GenerateWebServerRunSteps generateWebServerRunSteps;
+
+    @Autowired
+    private StartWebServerRunSteps startWebServerRunSteps;
+
+    @Autowired
+    private GenerateWebAppRunSteps generateWebAppRunSteps;
+
+    @Autowired
+    private GenerateJvmRunSteps generateJvmRunSteps;
+
+    @Autowired
+    private StartJvmRunSteps startJvmRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -65,7 +87,7 @@ public class CommonRunSteps {
 
     @Given("^I created a media with the following parameters:$")
     public void createMedia(final Map<String, String> parameters) {
-        createMediaRunSteps.goToMediaTab();
+        navigationRunSteps.goToMediaTab();
         createMediaRunSteps.clickAddMediaBtn();
         createMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
         createMediaRunSteps.setMediaName(parameters.get("mediaName"));
@@ -78,7 +100,7 @@ public class CommonRunSteps {
 
     @Given("^I created a web app with the following parameters:$")
     public void createWebApp(final Map<String, String> parameters) {
-        createWebAppRunSteps.goToWebAppsTab();
+        navigationRunSteps.goToWebAppsTab();
         createWebAppRunSteps.clickAddWebAppBtn();
         createWebAppRunSteps.checkForWebAppDialog();
         createWebAppRunSteps.setWebAppName(parameters.get("webappName"));
@@ -124,6 +146,79 @@ public class CommonRunSteps {
         createJvmRunSteps.setGroups(groups);
         createJvmRunSteps.clickOkBtn();
         createJvmRunSteps.checkForJvm(parameters.get("jvmName"));
+    }
+
+    @Given("^I created a JVM resource with the following parameters:$")
+    public void createJvmResources(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.clickNode(parameters.get("jvm"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+    }
+
+    @Given("^I created a web app resource with the following parameters:$")
+    public void createWebAppResources(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("Web Apps");
+        uploadResourceRunSteps.clickNode(parameters.get("webApp"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickAssignToJvmsCheckbox();
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+    }
+
+    @Given("^I created a web server resource with the following parameters:$")
+    public void createWebServerResources(final Map<String, String> parameters) {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("Web Servers");
+        uploadResourceRunSteps.clickNode(parameters.get("webServer"));
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+    }
+
+    @Given("^I generated the web servers of \"(.*)\" group$")
+    public void generateWebServersOfGroup(final String groupName) {
+        generateWebServerRunSteps.clickGenerateWebServersBtnOfGroup(groupName);
+        generateWebServerRunSteps.checkForTheSuccessfulGenerationOfWebServers(groupName);
+    }
+
+    @Given("^I started \"(.*)\" web server of \"(.*)\" group$")
+    public void startWebServersOfGroup(final String webServerName, final String groupName) {
+        startWebServerRunSteps.clickStartWebServersOfGroup(groupName);
+        startWebServerRunSteps.checkIfWebServerStateIsStarted(webServerName, groupName);
+    }
+
+    @Given("^I generated the JVMs of \"(.*)\" group$")
+    public void generateJvmOfGroup(final String groupName) {
+        generateJvmRunSteps.clickGenerateJvmsBtnOfGroup(groupName);
+        generateJvmRunSteps.checkForSuccessfulGenerationIndividualJvm();
+    }
+
+    @Given("^I started \"(.*)\" JVM of \"(.*)\" group$")
+    public void startJvmOfGroup(final String jvmName, final String groupName) {
+        startJvmRunSteps.clickStartJvmsOfGroup(groupName);
+        startJvmRunSteps.checkIfJvmStateIsStarted(jvmName, groupName);
+    }
+
+    @Given("I generated \"(.*)\" web app of \"(.*)\" group$")
+    public void generateWebAppOfGroup(final String webAppName, final String groupName) {
+        generateWebAppRunSteps.clickGenerateWebAppBtnOfGroup(webAppName, groupName);
+        generateWebAppRunSteps.checkForSuccessfulResourceDeployment(webAppName);
     }
 
     /**

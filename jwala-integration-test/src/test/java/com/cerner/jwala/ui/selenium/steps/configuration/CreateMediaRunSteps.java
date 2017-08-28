@@ -2,7 +2,6 @@ package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
@@ -18,11 +17,6 @@ public class CreateMediaRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
-
-    @Given("^I am in the media tab$")
-    public void goToMediaTab() {
-        jwalaUi.clickTab("Media");
-    }
 
     @When("^I click the add media button$")
     public void clickAddMediaBtn() {

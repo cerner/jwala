@@ -3,7 +3,7 @@ Feature: Add, Edit and Delete a Web Server
 Scenario: Add Web Server
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I created a media with the following parameters:
             |mediaName      |apache-httpd-2.4.20    |
             |mediaType      |Apache HTTPD           |

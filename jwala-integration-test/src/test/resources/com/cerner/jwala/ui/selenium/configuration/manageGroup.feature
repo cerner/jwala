@@ -3,7 +3,7 @@ Feature: Add, Edit and Delete a Group
 Scenario: Add a group
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     When I click the add group button
     And I see the group add dialog
