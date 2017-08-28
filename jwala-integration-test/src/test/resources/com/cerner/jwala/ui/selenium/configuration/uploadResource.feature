@@ -3,7 +3,7 @@ Feature: Upload a Resource
 Scenario: Upload a JVM Resource
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92     |
@@ -53,7 +53,7 @@ Scenario: Upload a JVM Resource
 Scenario: Upload a Web Server Resource
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
@@ -83,7 +83,7 @@ Scenario: Upload a Web Server Resource
 Scenario: Upload a Web Application Resource
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |

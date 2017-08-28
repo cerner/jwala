@@ -5,7 +5,7 @@ Feature: Search Items
 Scenario: Search for a Group in the Group Table
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "MMMGroup"
     And I created a group with the name "ZZZGroup"
@@ -17,11 +17,11 @@ Scenario: Search for a Group in the Group Table
 Scenario: Search for a Web Application in the Web Application Table
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I am in the web apps tab
+    And I am in the Web Apps tab
     And I created a web app with the following parameters:
       | webappName  | application  |
       | contextPath | /contextPath |
@@ -38,7 +38,7 @@ Scenario: Search for a Web Application in the Web Application Table
 Scenario: Search for a Media in the Media Table
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | apache-httpd-2.4.20     |
@@ -58,7 +58,7 @@ Scenario: Search for a Media in the Media Table
 Scenario: Search for a Web Server in the Web Server Table
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -94,7 +94,7 @@ Scenario: Search for a Web Server in the Web Server Table
 Scenario: Search for JVM in the JVM Table
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"

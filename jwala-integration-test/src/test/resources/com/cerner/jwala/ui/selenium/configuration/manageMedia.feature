@@ -3,7 +3,7 @@ Feature: Add, Edit and Delete a Media
 Scenario: Add a media
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the media tab
     When I click the add media button
     And I see the media add dialog

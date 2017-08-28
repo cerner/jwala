@@ -2,7 +2,6 @@ package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +18,6 @@ public class CreateWebAppRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
-
-    @Given("^I am in the web apps tab$")
-    public void goToWebAppsTab() {
-        jwalaUi.clickTab("Web Apps");
-    }
 
     @When("^I click the add web app button$")
     public void clickAddWebAppBtn() {

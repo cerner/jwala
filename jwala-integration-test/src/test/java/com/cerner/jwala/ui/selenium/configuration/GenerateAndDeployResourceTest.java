@@ -10,5 +10,5 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/configuration/generateAndDeployResources.feature"},
-        glue = {"com.cerner.jwala.ui.selenium.steps"}, tags = {"~@ignore"})
+        glue = {"com.cerner.jwala.ui.selenium.steps"}, tags = {"~@ignore"}, strict = true)
 public class GenerateAndDeployResourceTest {}

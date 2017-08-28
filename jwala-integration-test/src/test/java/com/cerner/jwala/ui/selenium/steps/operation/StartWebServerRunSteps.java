@@ -20,6 +20,12 @@ public class StartWebServerRunSteps {
                 "']]/following-sibling::tr//button[span[text()='Start Web Servers']]"));
     }
 
+    @When("^I click the start button of \"(.*)\" webserver of \"(.*)\" group$")
+    public void clickStartIndvidualWebserver(final String webserverName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+                + webserverName + "']/following-sibling::td//button[@title='Start']"));
+    }
+
     @Then("I see the state of \"(.*)\" web server of group \"(.*)\" is \"STARTED\"")
     public void checkIfWebServerStateIsStarted(final String webServerName, final String groupName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
