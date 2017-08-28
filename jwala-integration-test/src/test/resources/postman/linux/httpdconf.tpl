@@ -200,7 +200,7 @@ SSLSessionCache shmcb:logs/ssl_cache_shm
 #SSLPassPhraseDialog "exec:../app/data/security/apache/authorize.bat"
 
 <%
-  def scriptname = vars.'remote.jwala.data.dir' + "/security/scripts/httpd_helper";
+  def scriptname = vars.'webServer.apacheHttpdMedia.remoteDir' + "/app/data/security/scripts/httpd_helper";
 %>
 
 <%

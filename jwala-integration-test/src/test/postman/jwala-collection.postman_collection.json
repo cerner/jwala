@@ -3199,7 +3199,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${vars.'webServer.apacheHttpdMedia.remoteDir'}/app/data/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -5512,7 +5512,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['webServer.apacheHttpdMedia.remoteDir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5551,7 +5551,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'webServer.apacheHttpdMedia.remoteDir'}/app/data/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
