@@ -3,8 +3,8 @@ Feature: Web Server Status
 Scenario: Check the status of a started web server
 
     Given I logged in
-    And I am in the configuration tab
-    And I created a group with the name "seleniumGroup"
+
+    And I am in the Configuration tab
 
     # create media
     And I created a media with the following parameters:
@@ -24,6 +24,7 @@ Scenario: Check the status of a started web server
         | remoteDir       | media.remote.dir        |
 
     # create entities
+    And I created a group with the name "seleniumGroup"
     And I created a jvm with the following parameters:
         | jvmName    | seleniumJvm          |
         | tomcat     | apache-tomcat-7.0.55 |
@@ -45,7 +46,6 @@ Scenario: Check the status of a started web server
         | group       | seleniumGroup  |
 
     # create resources
-    And I am in the resource tab
     And I created a JVM resource with the following parameters:
         | group       | seleniumGroup                   |
         | jvm         | seleniumJvm                     |
@@ -77,24 +77,18 @@ Scenario: Check the status of a started web server
         | deployPath  | webapp.resource.deploy.path |
         | templateName| hello-world.war             |
 
-    # generate and start
-    Given I am in the Operations tab
+    And I am in the Operations tab
     And I expand the group operation's "seleniumGroup" group
 
-    When I click the generate web application button of "seleniumWebapp"
-    Then I see "seleniumWebapp" web application got deployed successfully
+    # generate
+    And I generated "seleniumWebapp" web app of "seleniumGroup" group
+    And I generated the web servers of "seleniumGroup" group
+    And I generated the JVMs of "seleniumGroup" group
 
-    When I click the "Generate Web Servers" button of group "seleniumGroup"
-    Then I see that the web servers were successfully generated for group "seleniumGroup"
+    # start
+    And I started "seleniumWebserver" web server of "seleniumGroup" group
+    And I started "seleniumJvm" JVM of "seleniumGroup" group
 
-    When I click the "Generate JVMs" button of group "seleniumGroup"
-    Then I see that the JVMs were successfully generated for group "seleniumGroup"
-
-    When I click "Start Web Servers" button of group "seleniumGroup"
-    Then I see the state of "seleniumWebserver" web server of group "seleniumGroup" is "STARTED"
-
-    When I click "Start JVMs" button of group "seleniumGroup"
-    Then I see the state of "seleniumJvm" JVM of group "seleniumGroup" is "STARTED"
-
+    # do the test
     When I click the "status" link of web server "seleniumWebserver" under group "seleniumGroup" in the operations tab
     Then I see the load balancer page with web app "seleniumWebapp" and host "host1" and port "9000"

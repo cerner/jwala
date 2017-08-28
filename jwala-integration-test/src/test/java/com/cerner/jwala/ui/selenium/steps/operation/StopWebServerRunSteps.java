@@ -20,17 +20,18 @@ public class StopWebServerRunSteps {
                 "']]/following-sibling::tr//button[span[text()='Stop Web Servers']]"));
     }
 
+    @When("^I click the stop button of \"(.*)\" webserver of \"(.*)\" group$")
+    public void clickStopIndvidualWebserver(final String webserverName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+                + webserverName + "']/following-sibling::td//button[@title='Stop']"));
+    }
+
     @Then("I see the state of \"(.*)\" web server of group \"(.*)\" is \"STOPPED\"")
     public void checkIfWebServerStateIsStopped(final String webServerName, final String groupName) {
         // used contains here to check for STOP since there are 2 stopped states e.g.
         // STOPPED and FORCED_STOPPED
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + webServerName + "']/following-sibling::td//span[contains(text(), 'STOP')]"), 120);
-    }
-
-    @When("^I click stop on webserver \"(.*)\" of the group \"(.*)\"$")
-    public void clickStopIndvidualWebserver(final String webserverName, final String groupName) {
-        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + webserverName + "']/following-sibling::td//button[@title='Start']"));
     }
 }
 

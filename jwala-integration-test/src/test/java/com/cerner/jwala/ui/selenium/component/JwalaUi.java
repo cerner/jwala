@@ -1,10 +1,7 @@
 package com.cerner.jwala.ui.selenium.component;
 
 import com.cerner.jwala.ui.selenium.steps.UploadResourceRunStepException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -126,6 +123,21 @@ public class JwalaUi {
         try {
             driver.findElement(by);
         } catch (final NoSuchElementException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check if an element exists
+     * @param by locates the element
+     * @param timeout timeout in seconds
+     * @return true if element exists
+     */
+    public boolean isElementExists(final By by, final long timeout) {
+        try {
+            waitUntilElementIsVisible(by, timeout);
+        } catch (final TimeoutException e) {
             return false;
         }
         return true;

@@ -10,6 +10,5 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/operations/heapDump.feature"},
-        glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class HeapDumpTest {
-}
+        glue = {"com.cerner.jwala.ui.selenium.steps"}, strict = true)
+public class HeapDumpTest {}

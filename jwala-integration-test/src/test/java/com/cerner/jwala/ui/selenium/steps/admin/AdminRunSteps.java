@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Properties;
 
 import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Sharvari Barve on 7/21/2017.
@@ -47,7 +46,7 @@ public class AdminRunSteps {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[8]/textarea"));
         String textInTheBox = element.getAttribute("value");
         assertNotNull(textInTheBox);
-        assert (textInTheBox.contains(text));
+        assert textInTheBox.contains(text);
     }
 
     @Then("^I see the text \"(.*)\" in manifest box$")
@@ -55,7 +54,7 @@ public class AdminRunSteps {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[10]/textarea"));
         String textInTheBox = element.getAttribute("value");
         assertNotNull(textInTheBox);
-        assert (textInTheBox.contains(text));
+        assert textInTheBox.contains(text);
     }
 
     @And("^I see the implementation version \"(.*)\" in manifest box$")
@@ -63,7 +62,7 @@ public class AdminRunSteps {
         WebElement element = jwalaUi.getWebElement(By.xpath("//p[10]/textarea"));
         String textInTheBox = element.getAttribute("value");
         assertNotNull(textInTheBox);
-        assert (textInTheBox.contains(paramProp.getProperty(text)));
+        assert textInTheBox.contains(paramProp.getProperty(text));
     }
 
     @And("^I verify header with text \"(.*)\"$")

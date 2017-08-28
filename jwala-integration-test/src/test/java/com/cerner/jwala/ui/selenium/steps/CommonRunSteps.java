@@ -2,9 +2,7 @@ package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
-import com.cerner.jwala.ui.selenium.steps.operation.GenerateWebAppRunSteps;
-import com.cerner.jwala.ui.selenium.steps.operation.GenerateWebServerRunSteps;
-import com.cerner.jwala.ui.selenium.steps.operation.StartWebServerRunSteps;
+import com.cerner.jwala.ui.selenium.steps.operation.*;
 import cucumber.api.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,6 +56,12 @@ public class CommonRunSteps {
     @Autowired
     private GenerateWebAppRunSteps generateWebAppRunSteps;
 
+    @Autowired
+    private GenerateJvmRunSteps generateJvmRunSteps;
+
+    @Autowired
+    private StartJvmRunSteps startJvmRunSteps;
+
     @Given("^I logged in$")
     public void logIn() {
         loginRunSteps.loadLoginPage();
@@ -83,7 +87,7 @@ public class CommonRunSteps {
 
     @Given("^I created a media with the following parameters:$")
     public void createMedia(final Map<String, String> parameters) {
-        createMediaRunSteps.goToMediaTab();
+        navigationRunSteps.goToMediaTab();
         createMediaRunSteps.clickAddMediaBtn();
         createMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
         createMediaRunSteps.setMediaName(parameters.get("mediaName"));
@@ -96,7 +100,7 @@ public class CommonRunSteps {
 
     @Given("^I created a web app with the following parameters:$")
     public void createWebApp(final Map<String, String> parameters) {
-        createWebAppRunSteps.goToWebAppsTab();
+        navigationRunSteps.goToWebAppsTab();
         createWebAppRunSteps.clickAddWebAppBtn();
         createWebAppRunSteps.checkForWebAppDialog();
         createWebAppRunSteps.setWebAppName(parameters.get("webappName"));
@@ -187,26 +191,32 @@ public class CommonRunSteps {
         uploadResourceRunSteps.checkForSuccessfulResourceUpload();
     }
 
-    @Given("^I generated the web servers of group \"(.*)\"$")
+    @Given("^I generated the web servers of \"(.*)\" group$")
     public void generateWebServersOfGroup(final String groupName) {
-        navigationRunSteps.goToOperationsTab();
-        navigationRunSteps.expandGroupInOperationsTab(groupName);
         generateWebServerRunSteps.clickGenerateWebServersBtnOfGroup(groupName);
         generateWebServerRunSteps.checkForTheSuccessfulGenerationOfWebServers(groupName);
     }
 
-    @Given("^I started web server \"(.*)\" of group \"(.*)\"$")
+    @Given("^I started \"(.*)\" web server of \"(.*)\" group$")
     public void startWebServersOfGroup(final String webServerName, final String groupName) {
-        navigationRunSteps.goToOperationsTab();
-        navigationRunSteps.expandGroupInOperationsTab(groupName);
         startWebServerRunSteps.clickStartWebServersOfGroup(groupName);
         startWebServerRunSteps.checkIfWebServerStateIsStarted(webServerName, groupName);
     }
 
-    @Given("I generated the \"(.*)\" web app of group \"(.*)\"$")
+    @Given("^I generated the JVMs of \"(.*)\" group$")
+    public void generateJvmOfGroup(final String groupName) {
+        generateJvmRunSteps.clickGenerateJvmsBtnOfGroup(groupName);
+        generateJvmRunSteps.checkForSuccessfulGenerationIndividualJvm();
+    }
+
+    @Given("^I started \"(.*)\" JVM of \"(.*)\" group$")
+    public void startJvmOfGroup(final String jvmName, final String groupName) {
+        startJvmRunSteps.clickStartJvmsOfGroup(groupName);
+        startJvmRunSteps.checkIfJvmStateIsStarted(jvmName, groupName);
+    }
+
+    @Given("I generated \"(.*)\" web app of \"(.*)\" group$")
     public void generateWebAppOfGroup(final String webAppName, final String groupName) {
-        navigationRunSteps.goToOperationsTab();
-        navigationRunSteps.expandGroupInOperationsTab(groupName);
         generateWebAppRunSteps.clickGenerateWebAppBtnOfGroup(webAppName, groupName);
         generateWebAppRunSteps.checkForSuccessfulResourceDeployment(webAppName);
     }

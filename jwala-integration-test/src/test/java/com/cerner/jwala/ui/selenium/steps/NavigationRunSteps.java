@@ -13,9 +13,24 @@ public class NavigationRunSteps {
     @Autowired
     private JwalaUi jwalaUi;
 
+    @Given("^I am in the Configuration tab$")
+    public void goToConfigurationTab() {
+        jwalaUi.clickTab("Configuration");
+    }
+
+    @Given("^I am in the Web Apps tab$")
+    public void goToWebAppsTab() {
+        jwalaUi.clickTab("Web Apps");
+    }
+
     @Given("^I am in the resource tab$")
     public void goToResourceTab() {
         jwalaUi.clickTab("Resources");
+    }
+
+    @Given("^I am in the media tab$")
+    public void goToMediaTab() {
+        jwalaUi.clickTab("Media");
     }
 
     @Given("^I am in the Operations tab$")

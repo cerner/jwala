@@ -21,7 +21,7 @@ public class HeapDumpRunSteps {
     @Autowired
     private JwalaUi jwalaUi;
 
-    @When("^I click on heap dump of jvm \"(.*)\" of group \"(.*)\"$")
+    @When("^I click on heap dump of \"(.*)\" jvm of \"(.*)\" group$")
     public void clickHeapDump(String jvmName, String groupName) {
         jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + jvmName + "']/following-sibling::td//button[@title='Heap Dump']"));
     }

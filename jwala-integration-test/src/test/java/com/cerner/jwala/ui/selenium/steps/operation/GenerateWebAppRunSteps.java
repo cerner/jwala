@@ -22,7 +22,7 @@ public class GenerateWebAppRunSteps {
 
     @When("^I click the generate web application button of \"(.*)\" web app under group \"(.*)\"$")
     public void clickGenerateWebAppBtnOfGroup(final String webAppName, final String groupName) {
-        jwalaUi.click(By.xpath("//tr[td[text()='" + webAppName + "']]/following-sibling::tr//td[text()='" + groupName +
+        jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + webAppName +
                 "']/following-sibling::td//button[@title='Generate and deploy the webapp resources.']"));
     }
 

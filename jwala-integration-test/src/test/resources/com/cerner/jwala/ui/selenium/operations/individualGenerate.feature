@@ -1,88 +1,90 @@
 Feature: Generate
 
+    Scenario: Generate a JVM
 
-  Scenario:Generate a Jvm
     Given I logged in
-    And I am in the configuration tab
+
+    And I am in the Configuration tab
+
+    # create media
+    And I created a media with the following parameters:
+        | mediaName       | jdk1.8.0_92     |
+        | mediaType       | JDK             |
+        | archiveFilename | jdk1.8.0_92.zip |
+        | remoteDir       | media.remote.dir|
+    And I created a media with the following parameters:
+        | mediaName       | apache-tomcat-7.0.55     |
+        | mediaType       | Apache Tomcat            |
+        | archiveFilename | apache-tomcat-7.0.55.zip |
+        | remoteDir       | tomcat.media.remote.dir  |
+
+    # create entities
     And I created a group with the name "seleniumGroup"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92      |
-      | mediaType       | JDK              |
-      | archiveFilename | jdk1.8.0_92.zip  |
-      | remoteDir       | media.remote.dir |
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55     |
-      | mediaType       | Apache Tomcat            |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-      | remoteDir       | media.remote.dir         |
     And I created a jvm with the following parameters:
-      | jvmName    | seleniumJvm          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
-      | hostName   | host1                |
-      | portNumber | 9000                 |
-      | group      | seleniumGroup        |
+        | jvmName    | seleniumJvm          |
+        | tomcat     | apache-tomcat-7.0.55 |
+        | jdk        | jdk1.8.0_92          |
+        | hostName   | host1                |
+        | portNumber | 9000                 |
+        | group      | seleniumGroup        |
 
-    And I created a jvm resource and metadata with the following parameters:
-      | group        | seleniumGroup  |
-      | jvm          | seleniumJvm    |
-      | deployName   | hello.xml      |
-      | metaDataFile | hello.xml.json |
-      | templateName | hello.xml.tpl  |
-
-    And I created a jvm resource and metadata with the following parameters:
-      | group        | seleniumGroup  |
-      | jvm          | seleniumJvm    |
-      | deployName   | hello.xml      |
-      | metaDataFile | hello.xml.json |
-      | templateName | hello.xml.tpl  |
-
-    And I created a jvm resource and metadata with the following parameters:
-      | group        | seleniumGroup   |
-      | jvm          | seleniumJvm     |
-      | deployName   | setenv.bat      |
-      | metaDataFile | setenv.bat.json |
-      | templateName | setenv.bat.tpl  |
-
-    And I created a jvm resource and metadata with the following parameters:
-      | group        | seleniumGroup   |
-      | jvm          | seleniumJvm     |
-      | deployName   | server.xml      |
-      | metaDataFile | server.xml.json |
-      | templateName | server.xml.tpl  |
+    # create resources
+    And I created a JVM resource with the following parameters:
+        | group       | seleniumGroup                   |
+        | jvm         | seleniumJvm                     |
+        | deployName  | setenv.bat                      |
+        | deployPath  | jvm.setenv.resource.deploy.path |
+        | templateName| setenv.bat.tpl                  |
+    And I created a JVM resource with the following parameters:
+        | group       | seleniumGroup                       |
+        | jvm         | seleniumJvm                         |
+        | deployName  | server.xml                          |
+        | deployPath  | jvm.server.xml.resource.deploy.path |
+        | templateName| server.xml.tpl                      |
 
     And I am in the Operations tab
     And I expand the group operation's "seleniumGroup" group
-    And I generate the jvm "seleniumJvm" of the group "seleniumGroup"
-    And I see the individual JVM "seleniumJvm" was successfully generated
 
-  Scenario:Generate a Webserver
+    # do the test
+    When I generate "seleniumJvm" JVM of "seleniumGroup" group
+    Then I see the JVM was successfully generated
+
+
+    Scenario: Generate a Webserver
 
     Given I logged in
-    And I am in the configuration tab
-    And I created a group with the name "seleniumGroup"
+
+    And I am in the Configuration tab
+
+    # create media
     And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+        | mediaName       | apache-httpd-2.4.20     |
+        | mediaType       | Apache HTTPD            |
+        | archiveFilename | apache-httpd-2.4.20.zip |
+        | remoteDir       | media.remote.dir        |
+
+    # create entities
+    And I created a group with the name "seleniumGroup"
     And I created a web server with the following parameters:
-      | webserverName      | seleniumWebserver   |
-      | hostName           | host1               |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | seleniumGroup       |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
+        | webserverName      | seleniumWebserver   |
+        | hostName           | host1               |
+        | portNumber         | 80                  |
+        | httpsPort          | 443                 |
+        | group              | seleniumGroup       |
+        | apacheHttpdMediaId | apache-httpd-2.4.20 |
+        | statusPath         | /apache_pb.png      |
+
+    # create resources
     And I created a web server resource with the following parameters:
-      | group        | seleniumGroup              |
-      | webServer    | seleniumWebserver          |
-      | deployName   | httpd.conf                 |
-      | deployPath   | httpd.resource.deploy.path |
-      | templateName | httpdconf.tpl              |
-    And I generate the webserver "seleniumWebserver" of the group "seleniumGroup"
-    Then I check that the web server "seleniumWebserver" was successfully generated
+        | group       | seleniumGroup              |
+        | webServer   | seleniumWebserver          |
+        | deployName  | httpd.conf                 |
+        | deployPath  | httpd.resource.deploy.path |
+        | templateName| httpdconf.tpl              |
 
+    And I am in the Operations tab
+    And I expand the group operation's "seleniumGroup" group
 
-
-
+    # do the test
+    When I generate "seleniumWebserver" web server of "seleniumGroup" group
+    Then I see the web server was successfully generated

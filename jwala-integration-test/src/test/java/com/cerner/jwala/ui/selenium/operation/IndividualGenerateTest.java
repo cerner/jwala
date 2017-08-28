@@ -10,6 +10,5 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = {"classpath:com/cerner/jwala/ui/selenium/operations/individualGenerate.feature"},
-        glue = {"com.cerner.jwala.ui.selenium.steps"})
-public class IndividualGenerateTest {
-}
+        glue = {"com.cerner.jwala.ui.selenium.steps"}, tags = {"~@ignore"}, strict = true)
+public class IndividualGenerateTest {}

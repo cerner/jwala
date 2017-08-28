@@ -18,7 +18,7 @@ public class WebServerControlRunSteps {
     private JwalaUi jwalaUi;
 
     @When("^I click the \"(.*)\" button of web server \"(.*)\" under group \"(.*)\" in the operations tab$")
-    public void clickWebServerDeleteBtn(final String buttonTitle, final String webServerName, final String groupName) {
+    public void clickControlWebServerBtn(final String buttonTitle, final String webServerName, final String groupName) {
         jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + webServerName + "']/following-sibling::td//button[@title='" + buttonTitle + "']"));
     }
@@ -38,5 +38,12 @@ public class WebServerControlRunSteps {
     public void deleteError(final String webServerName) {
         jwalaUi.isElementExists(By.xpath("/contains(text()='Please stop web server " + webServerName +
                 " first before attempting to delete it')"));
+    }
+
+    @Then("^I see that \"(.*)\" web server got deleted successfully from the operations tab$")
+    public void verifyIfDeleteWebServerIsSuccessful(final String webServerName) {
+        jwalaUi.waitUntilElementIsVisible(
+                By.xpath("//div[text()='Web server " + webServerName
+                        + " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.']"));
     }
 }

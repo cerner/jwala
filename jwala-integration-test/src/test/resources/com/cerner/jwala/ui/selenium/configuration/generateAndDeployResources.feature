@@ -1,10 +1,16 @@
 Feature: Generate and Deploy Resource
+    Uses the Generate Web Servers to deploy a web server
+    Uses the Generate JVMs to deploy a JVM
+    Uses the Start Web Servers button to start a web server
+    Uses the Stop JVMs button to stop a JVM
 
 Scenario: Deploy and Run a Web Application
 
     Given I logged in
-    And I am in the configuration tab
-    And I created a group with the name "seleniumGroup"
+
+    And I am in the Configuration tab
+
+    # create media
     And I created a media with the following parameters:
       | mediaName       | jdk1.8.0_92     |
       | mediaType       | JDK             |
@@ -20,6 +26,9 @@ Scenario: Deploy and Run a Web Application
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | media.remote.dir        |
+
+    # create entities
+    And I created a group with the name "seleniumGroup"
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
@@ -35,60 +44,48 @@ Scenario: Deploy and Run a Web Application
       | group              | seleniumGroup       |
       | apacheHttpdMediaId | apache-httpd-2.4.20 |
       | statusPath         | /apache_pb.png      |
-
     And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
 
+    # create resources
     And I am in the resource tab
-
-    And I expand "seleniumGroup" node
-    And I expand "Web Servers" node
-    And I click "seleniumWebserver" node
-    When I click the add resource button
-    And I fill in the "Deploy Name" field with "httpd.conf"
-    And I fill in the "Deploy Path" field with "httpd.resource.deploy.path"
-    And I choose the resource file "httpdconf.tpl"
-    And I click the upload resource dialog ok button
-    Then I see that the resource got uploaded successfully
-
-    Given I expand "JVMs" node
-    And I click "seleniumJvm" node
-
-    When I click the add resource button
-    And I check Upload Meta Data File
-    And I choose the meta data file "hello.xml.json"
-    And I choose the resource file "hello.xml.tpl"
-    And I click the upload resource dialog ok button
-    Then I see that the resource got uploaded successfully
-
-    When I click the add resource button
-    And I check Upload Meta Data File
-    And I choose the meta data file "setenv.bat.json"
-    And I choose the resource file "setenv.bat.tpl"
-    And I click the upload resource dialog ok button
-    Then I see that the resource got uploaded successfully
-
-    When I click the add resource button
-    And I check Upload Meta Data File
-    And I choose the meta data file "server.xml.json"
-    And I choose the resource file "server.xml.tpl"
-    And I click the upload resource dialog ok button
-    Then I see that the resource got uploaded successfully
-
-    Given I expand "Web Apps" node
-    And I click "seleniumWebapp" node
-    When I click the add resource button
-    And I fill in the "Deploy Name" field with "hello-world.war"
-    And I fill in the "Deploy Path" field with "webapp.resource.deploy.path"
-    And I choose the resource file "hello-world.war"
-    And I click the upload resource dialog ok button
-    Then I see that the resource got uploaded successfully
+    And I created a JVM resource with the following parameters:
+        | group       | seleniumGroup                   |
+        | jvm         | seleniumJvm                     |
+        | deployName  | setenv.bat                      |
+        | deployPath  | jvm.setenv.resource.deploy.path |
+        | templateName| setenv.bat.tpl                  |
+    And I created a JVM resource with the following parameters:
+        | group       | seleniumGroup                       |
+        | jvm         | seleniumJvm                         |
+        | deployName  | server.xml                          |
+        | deployPath  | jvm.server.xml.resource.deploy.path |
+        | templateName| server.xml.tpl                      |
+    And I created a web server resource with the following parameters:
+        | group       | seleniumGroup              |
+        | webServer   | seleniumWebserver          |
+        | deployName  | httpd.conf                 |
+        | deployPath  | httpd.resource.deploy.path |
+        | templateName| httpdconf.tpl              |
+    And I created a web app resource with the following parameters:
+        | group       | seleniumGroup                       |
+        | webApp      | seleniumWebapp                      |
+        | deployName  | hello.xml                           |
+        | deployPath  | webapp.context.resource.deploy.path |
+        | templateName| hello.xml.tpl                       |
+    And I created a web app resource with the following parameters:
+        | group       | seleniumGroup               |
+        | webApp      | seleniumWebapp              |
+        | deployName  | hello-world.war             |
+        | deployPath  | webapp.resource.deploy.path |
+        | templateName| hello-world.war             |
 
     Given I am in the Operations tab
     And I expand the group operation's "seleniumGroup" group
 
+    # do the test
     When I click the generate web application button of "seleniumWebapp"
     Then I see "seleniumWebapp" web application got deployed successfully
 
@@ -103,10 +100,6 @@ Scenario: Deploy and Run a Web Application
 
     When I click "Start JVMs" button of group "seleniumGroup"
     Then I see the state of "seleniumJvm" JVM of group "seleniumGroup" is "STARTED"
-
-
-
-
 
 
 
