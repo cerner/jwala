@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PreDestroy;
 import java.text.MessageFormat;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -238,5 +239,19 @@ public class JwalaUi {
 
     public WebElement getWebElement(By by) {
         return driver.findElement(by);
+    }
+
+    /**
+     * Go to another browser tab/window
+     * @param currentTabHandle the current browser tab/winow handle
+     */
+    public void switchToOtherTab(final String currentTabHandle) {
+        final Set<String> windowHandles = driver.getWindowHandles();
+        for (final String windowHandle: windowHandles) {
+            if (!windowHandle.equals(currentTabHandle)) {
+                driver.switchTo().window(windowHandle);
+                break;
+            }
+        }
     }
 }

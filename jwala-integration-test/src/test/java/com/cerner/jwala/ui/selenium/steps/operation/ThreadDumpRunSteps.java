@@ -14,14 +14,22 @@ public class ThreadDumpRunSteps {
     @Autowired
     private JwalaUi jwalaUi;
 
+    private String origWindowHandle;
+
     @When("^I click thread dump of jvm \"(.*)\" of the group \"(.*)\"$")
     public void clickThreadDump(String jvmName, String groupName){
+        origWindowHandle = jwalaUi.getWebDriver().getWindowHandle();
         jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + jvmName + "']/following-sibling::td//button[@title='Thread Dump']"));
     }
 
     @Then("^I see the thread dump page$")
     public void verifyThreadDumpPage() {
-        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Full thread dump Java HotSpot(TM) 64-Bit Server VM')]"));
+        jwalaUi.switchToOtherTab(origWindowHandle);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//pre[contains(text(), 'Full thread dump')]"));
+        if (origWindowHandle != null) {
+            jwalaUi.getWebDriver().close();
+            jwalaUi.getWebDriver().switchTo().window(origWindowHandle);
+        }
     }
 }

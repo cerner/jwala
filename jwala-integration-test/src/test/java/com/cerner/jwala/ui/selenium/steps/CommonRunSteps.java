@@ -206,6 +206,12 @@ public class CommonRunSteps {
     @Given("^I generated the JVMs of \"(.*)\" group$")
     public void generateJvmOfGroup(final String groupName) {
         generateJvmRunSteps.clickGenerateJvmsBtnOfGroup(groupName);
+        generateJvmRunSteps.checkForTheSuccessfulGenerationOfJvms(groupName);
+    }
+
+    @Given("^I generated \"(.*)\" JVM of \"(.*)\" group$")
+    public void generateJvmOfGroup(final String jvmName, final String groupName) {
+        generateJvmRunSteps.generateIndividualJvm(jvmName, groupName);
         generateJvmRunSteps.checkForSuccessfulGenerationIndividualJvm();
     }
 

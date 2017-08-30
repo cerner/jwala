@@ -31,6 +31,6 @@ public class StopJvmRunSteps {
         // used contains here to check for STOP since there are 2 stopped states e.g.
         // STOPPED and FORCED_STOPPED
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
-                + jvmName + "']/following-sibling::td//span[contains(text(), 'STOP')]"), 120);
+                + jvmName + "']/following-sibling::td//span[contains(text(), 'STOPPED')]"), 120);
     }
 }
