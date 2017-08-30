@@ -49,8 +49,7 @@ Feature: Generate
     When I generate "seleniumJvm" JVM of "seleniumGroup" group
     Then I see the JVM was successfully generated
 
-
-    Scenario: Generate a Webserver
+Scenario: Generate a Webserver
 
     Given I logged in
 

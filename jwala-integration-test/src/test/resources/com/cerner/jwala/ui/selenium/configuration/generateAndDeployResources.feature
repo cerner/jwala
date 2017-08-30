@@ -82,7 +82,7 @@ Scenario: Deploy and Run a Web Application
         | deployPath  | webapp.resource.deploy.path |
         | templateName| hello-world.war             |
 
-    Given I am in the Operations tab
+    And I am in the Operations tab
     And I expand the group operation's "seleniumGroup" group
 
     # do the test
@@ -100,9 +100,3 @@ Scenario: Deploy and Run a Web Application
 
     When I click "Start JVMs" button of group "seleniumGroup"
     Then I see the state of "seleniumJvm" JVM of group "seleniumGroup" is "STARTED"
-
-
-
-
-
-

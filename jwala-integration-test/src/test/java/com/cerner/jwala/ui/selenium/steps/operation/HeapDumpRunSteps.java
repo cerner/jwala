@@ -26,15 +26,15 @@ public class HeapDumpRunSteps {
         jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='" + jvmName + "']/following-sibling::td//button[@title='Heap Dump']"));
     }
 
-
     @Then("^I see heap dump popup for jvm \"(.*)\"$")
-    public void verifyHeapDumpPopup(String jvm) {
-        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Dumping heap to " + paramProp.get("resource.deploy.path") + "/" + jvm + "/" + "heapDump" + "']"));
-        jwalaUi.isElementExists(By.xpath("/contains(text(),'Heap dump file created')"));
+    public void verifyHeapDumpPopup(final String jvmName) {
+        assert jwalaUi.isElementExists(By.xpath("//div[contains(text(),'Dumping heap to')]"), 60);
+        assert jwalaUi.isElementExists(By.xpath("//div[contains(text(),'Heap dump file created')]"));
+        assert jwalaUi.isElementExists(By.xpath("//div[contains(text(),'" + jvmName + "')]"));
     }
 
     @Then("^I see heap dump error for jvm$")
     public void verfiyHeapDumpError() {
-        jwalaUi.isElementExists(By.xpath("/contains(text(),'Oops! Something went wrong! The JVM might not have been started.')"));
+        assert jwalaUi.isElementExists(By.xpath("/contains(text(),'Oops! Something went wrong! The JVM might not have been started.')"));
     }
 }

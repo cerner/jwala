@@ -46,4 +46,12 @@ public class NavigationRunSteps {
             jwalaUi.click(By.xpath("//td[text()='" + groupName + "']/preceding-sibling::td"));
         }
     }
+
+    /**
+     * A generic ok button click to close a message box
+     */
+    @Given("^I click the ok button$")
+    public void clickOkBtn() {
+        jwalaUi.click(By.xpath("//button/span[text()='Ok']"));
+    }
 }
