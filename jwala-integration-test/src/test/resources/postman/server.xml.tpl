@@ -91,19 +91,11 @@
 
     <Connector 
       port="${jvm.httpsPort}"   
-	  SSLCertificateFile="${jvm.tomcatMedia.remoteDir}/../data/security/id/${jvm.hostName}.cer"
-      SSLCertificateKeyFile="${jvm.tomcatMedia.remoteDir}/../data/security/id/${jvm.hostName}.key"
+      SSLCertificateFile="${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/server.crt"
+      SSLCertificateKeyFile="${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/server.key"
       SSLEnabled="true"
-
-	<% if (jvm.hostName.tokenize('.')[0].toLowerCase()=="usmlvv1cds0068") { %>
-	SSLPassword="\${enc:9hQ4KpxpM8e/VX3KkT2VYg==}" 
-	<% } else if (jvm.hostName.tokenize('.')[0].toLowerCase()=="usmlvv1cds0069") { %>
-	SSLPassword="\${enc:2mSe/FS9WcArFYK73S35dA==}" 
-	<% } else { %>
-	SSLPassword="" 
-	<% } %>
-
-      acceptCount="100" 
+      SSLPassword=""
+      acceptCount="100"
       clientAuth="false" 
       disableUploadTimeout="true" 
       enableLookups="false" 

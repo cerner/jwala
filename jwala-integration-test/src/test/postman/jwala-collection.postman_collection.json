@@ -982,6 +982,82 @@
 					"response": []
 				},
 				{
+					"name": "upload self-signed cert",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/server.crt.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/server.crt.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/server.crt.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "upload self-signed cert key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/server.key.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/server.key.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/server.key.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "upload catalina.properties template",
 					"event": [
 						{
@@ -1423,6 +1499,60 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/conf/server.xml",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "generate and deploy group jvm file: server.crt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName\");",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/conf/server.crt",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "generate and deploy group jvm file: server.key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName\");",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/conf/server.key",
 						"method": "PUT",
 						"header": [],
 						"body": {
