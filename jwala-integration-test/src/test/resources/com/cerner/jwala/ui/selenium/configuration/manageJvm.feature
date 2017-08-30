@@ -3,7 +3,7 @@ Feature: Add, Edit and Delete a JVM
 Scenario: Add JVM
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I created a media with the following parameters:
             |mediaName      |jdk1.8.0_92     |
             |mediaType      |JDK             |

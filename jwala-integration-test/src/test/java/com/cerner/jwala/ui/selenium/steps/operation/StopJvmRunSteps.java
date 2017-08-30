@@ -20,6 +20,12 @@ public class StopJvmRunSteps {
                 "']]/following-sibling::tr//button[span[text()='Stop JVMs']]"));
     }
 
+    @When("^I click the stop button of \"(.*)\" jvm of \"(.*)\" group$")
+    public void clickStopIndvidualJvm(final String jvmName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+                + jvmName + "']/following-sibling::td//button[@title='Stop']"));
+    }
+
     @Then("I see the state of \"(.*)\" JVM of group \"(.*)\" is \"STOPPED\"")
     public void checkIfJvmStateIsStopped(final String jvmName, final String groupName) {
         // used contains here to check for STOP since there are 2 stopped states e.g.

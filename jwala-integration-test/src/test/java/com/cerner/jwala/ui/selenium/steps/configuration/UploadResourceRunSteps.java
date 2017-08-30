@@ -25,18 +25,15 @@ public class UploadResourceRunSteps {
     @Qualifier("parameterProperties")
     private Properties paramProp;
 
-    @Given("^I am in the resource tab$")
-    public void goToResourceTab() {
-        jwalaUi.clickTab("Resources");
-    }
-
-    @And("^I expand \"(.*)\" node$")
+    @Given("^I expand \"(.*)\" node$")
     public void expandNode(final String nodeName) {
+        if(!checkIfNodeIsAlreadyExpanded(nodeName))
         jwalaUi.expandNode(nodeName);
     }
 
     @And("^I click \"(.*)\" node$")
     public void clickNode(final String nodeLabel) {
+        jwalaUi.sleep();
         jwalaUi.clickNode(nodeLabel);
     }
 
@@ -77,8 +74,24 @@ public class UploadResourceRunSteps {
         jwalaUi.sendKeys(By.name("metaDataFile"), mediaPath.normalize().toString());
     }
 
+    @And("^I click the assign JVMs check box$")
+    public void clickAssignToJvmsCheckbox() {
+        jwalaUi.click(By.name("assignToJvms"));
+    }
+
     @Then("^I see that the resource got uploaded successfully$")
     public void checkForSuccessfulResourceUpload() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//input[contains(@class, 'noSelect')]/following-sibling::span"));
     }
+
+    @Then("^I check for resource \"(.*)\"$")
+    public void checkIfResourceIsPresent(String resourceName) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//span[text()='" + resourceName + "']"));
+    }
+
+    private boolean checkIfNodeIsAlreadyExpanded(String nodeLabel) {
+        return jwalaUi.isElementExists(
+                By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/minus.png']"));
+    }
 }
+

@@ -1,10 +1,7 @@
 package com.cerner.jwala.ui.selenium.component;
 
 import com.cerner.jwala.ui.selenium.steps.UploadResourceRunStepException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -55,17 +52,14 @@ public class JwalaUi {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
     }
 
+    /**
+     * Expand a node, do nothing if it is already expanded
+     * @param nodeLabel the node label
+     */
     public void expandNode(final String nodeLabel) {
-        try {
-            final WebElement webElement = driver.findElement(
-                    By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/plus.png']"));
-            webElement.click();
-        } catch (final NoSuchElementException e) {
-            // We don't ignore the error and assume that the item is already expanded since the proper test assumption
-            // is that the initial state of an item is relevant
-            final String msg =
-                    MessageFormat.format("Failed to expand tree item {0} since it may already be expanded!", nodeLabel);
-            throw new UploadResourceRunStepException(msg, e);
+        final By by = By.xpath("//li[span[text()='" + nodeLabel + "']]/img[@src='public-resources/img/icons/plus.png']");
+        if (isElementExists(by)) {
+            driver.findElement(by).click();
         }
     }
 
@@ -134,6 +128,21 @@ public class JwalaUi {
         return true;
     }
 
+    /**
+     * Check if an element exists
+     * @param by locates the element
+     * @param timeout timeout in seconds
+     * @return true if element exists
+     */
+    public boolean isElementExists(final By by, final long timeout) {
+        try {
+            waitUntilElementIsVisible(by, timeout);
+        } catch (final TimeoutException e) {
+            return false;
+        }
+        return true;
+    }
+
     public void sendKeys(final CharSequence val) {
         driver.switchTo().activeElement().sendKeys(val);
     }
@@ -190,6 +199,19 @@ public class JwalaUi {
     public void selectItem(final By by, final String itemName) {
         final Select select = new Select(driver.findElement(by));
         select.selectByVisibleText(itemName);
+    }
+    public void clickComponentForUpload(String component) {
+        final WebElement webElement =
+                driver.findElement(By.xpath("//li[span[text()='" + component + "']]/span"));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(webElement));
+        webElement.click();
+    }
+
+    public void clickAddResource() {
+        final WebElement webElement =
+                driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
+        new WebDriverWait(driver, 100).until(ExpectedConditions.visibilityOf(webElement));
+        webElement.click();
     }
 
     /**

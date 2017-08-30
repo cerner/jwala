@@ -25,4 +25,9 @@ public class StartJvmRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + jvmName + "']/following-sibling::td//span[text()='STARTED']"), 120);
     }
+
+    @When("^I click start on jvm \"(.*)\" of the group \"(.*)\"$")
+    public void clickStartIndvidualJvm(final String jvmName, final String groupName) {
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"+ jvmName + "']/following-sibling::td//button[@title='Start']"));    }
+
 }

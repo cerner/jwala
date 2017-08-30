@@ -9,7 +9,7 @@ Feature: Sort Table
 Scenario: Sort Group by Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "MMMGroup"
     And I created a group with the name "ZZZGroup"
@@ -23,11 +23,11 @@ Scenario: Sort Group by Name
 Scenario: Sort Web Applications by Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
-    And I am in the web apps tab
+    And I am in the Web Apps tab
     And I created a web app with the following parameters:
       | webappName  | AAAApp       |
       | contextPath | aContextPath |
@@ -45,7 +45,7 @@ Scenario: Sort Web Applications by Name
 Scenario: Sort Media by Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
@@ -66,7 +66,7 @@ Scenario: Sort Media by Name
 Scenario: Sort Media by Type
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
@@ -87,7 +87,7 @@ Scenario: Sort Media by Type
 Scenario: Sort Media by Remote Directory
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the media tab
     And I created a media with the following parameters:
       | mediaName       | aaaMedia                |
@@ -108,7 +108,7 @@ Scenario: Sort Media by Remote Directory
 Scenario: Sort Web Servers by Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -152,7 +152,7 @@ Scenario: Sort Web Servers by Name
 Scenario: Sort Web Servers by Host Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -188,7 +188,7 @@ Scenario: Sort Web Servers by Host Name
 Scenario: Sort Web Servers by HTTP Port
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -224,7 +224,7 @@ Scenario: Sort Web Servers by HTTP Port
 Scenario: Sort Seb Servers by HTTPS Port
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -259,7 +259,7 @@ Scenario: Sort Seb Servers by HTTPS Port
 Scenario: Sort Web Servers by Group Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "aGroup"
     And I created a group with the name "zGroup"
@@ -294,7 +294,7 @@ Scenario: Sort Web Servers by Group Name
 Scenario: Sort Web Servers by Apache HTTPD Media
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a media with the following parameters:
@@ -333,7 +333,7 @@ Scenario: Sort Web Servers by Apache HTTPD Media
 Scenario: Sort JVMs by Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -371,7 +371,7 @@ Scenario: Sort JVMs by Name
 Scenario: Sort JVMs by Group Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "aaagroup1"
     And I created a group with the name "yyygroup1"
@@ -409,7 +409,7 @@ Scenario: Sort JVMs by Group Name
 Scenario: Sort JVMs by Host Name
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -447,7 +447,7 @@ Scenario: Sort JVMs by Host Name
 Scenario: Sort JVMs by HTTP Port
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -484,7 +484,7 @@ Scenario: Sort JVMs by HTTP Port
 Scenario: Sort JVMs by JDK
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -526,7 +526,7 @@ Scenario: Sort JVMs by JDK
 Scenario: Sort jvms by HTTPS Port
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -563,7 +563,7 @@ Scenario: Sort jvms by HTTPS Port
 Scenario: Sort JVMs by Tomcat Media
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"

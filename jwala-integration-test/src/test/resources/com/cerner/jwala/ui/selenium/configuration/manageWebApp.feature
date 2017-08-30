@@ -3,9 +3,9 @@ Feature: Add, Edit and Delete a Web Server
 Scenario: Add Web Application
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I created a group with the name "GROUP_FOR_ADD_WEBAPP_TEST"
-    And I am in the web apps tab
+    And I am in the Web Apps tab
     When I click the add web app button
     And I see the web app add dialog
     And I fill in the web app "Name" field with "WEBAPP_X"

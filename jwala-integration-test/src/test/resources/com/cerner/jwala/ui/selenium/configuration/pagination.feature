@@ -3,7 +3,7 @@ Feature: Pagination
 Scenario: Web Server Pagination
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
@@ -246,7 +246,7 @@ Scenario: Web Server Pagination
 Scenario: Group Pagination
 
     Given I logged in
-    And I am in the configuration tab
+    And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "Group1"
     And I created a group with the name "Group2"
