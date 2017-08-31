@@ -5,7 +5,7 @@
 # $3 - Jwala service name (without the version)
 # $4 - stop-service.sh location (this is needed to prevent intermittent file not found error)
 
-export JWALA_VERSION=`$1/bin/cat $2/jwala.version.txt|$1/bin/grep -oP "([0-9]{1,}\.)+[0-9]{1,}"`
+export JWALA_VERSION=`$1/bin/cat $2/jwala.version.txt|$1/bin/grep jwala.new.running.version|$1/bin/awk -F'=' '{print $2}'`
 export TOMCAT_VERSION=`$1/bin/ls $2/jwala-$JWALA_VERSION|$1/bin/grep -oP "([0-9]{1,}\.)+[0-9]{1,}"`
 export DB_HOME=$2/jwala-$JWALA_VERSION/apache-tomcat-$TOMCAT_VERSION/data/db
 export JWALA_SERVICE_NAME=$3-$JWALA_VERSION
