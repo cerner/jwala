@@ -40,7 +40,7 @@ public class CreateMediaRunSteps {
 
     @And("^I choose the media archive file \"(.*)\"$")
     public void selectMediaArchiveFile(final String archiveFileName) {
-        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
+        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("media.source.dir") + "/" + archiveFileName);
         jwalaUi.sendKeys(By.name("mediaArchiveFile"), mediaPath.normalize().toString());
     }
 
