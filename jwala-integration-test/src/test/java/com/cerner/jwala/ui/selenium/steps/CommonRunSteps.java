@@ -121,8 +121,8 @@ public class CommonRunSteps {
         createWebServerRunSteps.setStatusPath(parameters.get("statusPath"));
         String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
-        createWebServerRunSteps.setHttpPort(parameters.get("portNumber"));
-        createWebServerRunSteps.setHttpsPort(parameters.get("httpsPort"));
+        createWebServerRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
+        createWebServerRunSteps.setHttpsPort(getPropertyValue(parameters.get("httpsPort")));
         createWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
         createWebServerRunSteps.selectGroup(parameters.get("group"));
         createWebServerRunSteps.clickAddWebServerDialogOkBtn();
@@ -138,7 +138,7 @@ public class CommonRunSteps {
         createJvmRunSteps.clickStatusPath();
         String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
-        createJvmRunSteps.setHttpPort(parameters.get("portNumber"));
+        createJvmRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
         createJvmRunSteps.selectJdk(parameters.get("jdk"));
         createJvmRunSteps.selectTomcat(parameters.get("tomcat"));
         List<String> groups = new ArrayList<>();

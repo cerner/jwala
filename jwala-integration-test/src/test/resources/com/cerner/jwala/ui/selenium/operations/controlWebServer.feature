@@ -18,8 +18,8 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     And I created a web server with the following parameters:
         | webserverName      | CONTROL-WEBSERVER-TEST-W   |
         | hostName           | host1                      |
-        | portNumber         | 80                         |
-        | httpsPort          | 443                        |
+        | portNumber         | ws.http.port               |
+        | httpsPort          | ws.https.port              |
         | group              | CONTROL-WEBSERVER-TEST-G   |
         | apacheHttpdMediaId | apache-httpd-2.4.20        |
         | statusPath         | /apache_pb.png             |
@@ -52,7 +52,7 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
 
     # test status
     When I click the "status" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
-    Then I see the load balancer page with web app "CONTROL-WEBSERVER-TEST-A" and host "host1" and port "9000"
+    Then I see the load balancer page
 
     # test view httpd.conf
     When I click the "httpd.conf" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab

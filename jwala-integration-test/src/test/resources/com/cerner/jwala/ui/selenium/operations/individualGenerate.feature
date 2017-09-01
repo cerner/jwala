@@ -25,7 +25,7 @@ Feature: Generate
         | tomcat     | apache-tomcat-7.0.55 |
         | jdk        | jdk1.8.0_92          |
         | hostName   | host1                |
-        | portNumber | 9000                 |
+        | portNumber | jvm.http.port        |
         | group      | seleniumGroup        |
 
     # create resources
@@ -67,8 +67,8 @@ Scenario: Generate a Webserver
     And I created a web server with the following parameters:
         | webserverName      | seleniumWebserver   |
         | hostName           | host1               |
-        | portNumber         | 80                  |
-        | httpsPort          | 443                 |
+        | portNumber         | ws.http.port        |
+        | httpsPort          | ws.https.port       |
         | group              | seleniumGroup       |
         | apacheHttpdMediaId | apache-httpd-2.4.20 |
         | statusPath         | /apache_pb.png      |
