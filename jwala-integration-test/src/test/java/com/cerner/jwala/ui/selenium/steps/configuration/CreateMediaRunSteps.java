@@ -23,7 +23,7 @@ public class CreateMediaRunSteps {
         // Click when ready was used because this step can be called immediately after a media upload
         // in which case if it was executed by the machine fast enough, the gray out effect is still
         // in place which will lead to a "not clickable at point" error
-        jwalaUi.clickWhenReady(By.xpath("//span[text()='Add']"));
+        jwalaUi.clickWhenReady(By.xpath("//button[span[text()='Add']]"));
     }
 
     @And("^I see the media add dialog$")
