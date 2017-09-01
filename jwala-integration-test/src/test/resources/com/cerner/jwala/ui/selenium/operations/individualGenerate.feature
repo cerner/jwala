@@ -71,7 +71,7 @@ Scenario: Generate a Webserver
         | httpsPort          | ws.https.port       |
         | group              | seleniumGroup       |
         | apacheHttpdMediaId | apache-httpd-2.4.20 |
-        | statusPath         | /apache_pb.png      |
+        | statusPath         | ws.status.path      |
 
     # create resources
     And I created a web server resource with the following parameters:

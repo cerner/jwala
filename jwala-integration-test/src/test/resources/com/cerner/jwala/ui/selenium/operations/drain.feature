@@ -39,7 +39,7 @@ Feature: Drain
         | httpsPort          | ws.https.port       |
         | group              | seleniumGroup       |
         | apacheHttpdMediaId | apache-httpd-2.4.20 |
-        | statusPath         | /apache_pb.png      |
+        | statusPath         | ws.status.path      |
     And I created a web app with the following parameters:
         | webappName  | seleniumWebapp |
         | contextPath | /hello         |

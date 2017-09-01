@@ -22,7 +22,7 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
         | httpsPort          | ws.https.port              |
         | group              | CONTROL-WEBSERVER-TEST-G   |
         | apacheHttpdMediaId | apache-httpd-2.4.20        |
-        | statusPath         | /apache_pb.png             |
+        | statusPath         | ws.status.path             |
 
     # create resources
     And I created a web server resource with the following parameters:
