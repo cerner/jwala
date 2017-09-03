@@ -19,7 +19,7 @@ import static org.junit.Assert.assertFalse;
 /**
  * Created by SB053052 on 9/2/2017.
  */
-public class ControlResourcesRunSteps {
+public class HandleResourceRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
@@ -36,11 +36,6 @@ public class ControlResourcesRunSteps {
     @And("^I select the resource file \"([^\"]*)\"$")
     public void clickResource(String resource) {
         jwalaUi.click(By.xpath("//span[text()='" + resource + "']"));
-    }
-
-    @Then("^I verify external property override message$")
-    public void verifyOverrideMsg() {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//span[text()='Only one external properties file can be uploaded. Any existing ones will be overwritten.']"));
     }
 
     @When("^I expand \"(.*)\" node in data tree$")
@@ -77,7 +72,7 @@ public class ControlResourcesRunSteps {
         saveElement.click();
     }
 
-    @When("^I wait for  notification \"(.*)\"")
+    @When("^I wait for notification \"(.*)\"")
     public void waitForNotification(String notification) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='" + notification + "']"));
     }
