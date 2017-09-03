@@ -55,18 +55,26 @@ public class HandleResourceRunSteps {
         jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
     }
 
+    /**
+     * @param text
+     * @param file
+     * @param textPosition Inserts a value in the edit box of a resource at a specific position in the file
+     */
 
-    @When("^I enter value \"(.*)\" in the edit box for the file \"(.*)\"$")
-    public void enterInEditBox(String text, String file) {
-        jwalaUi.click(By.xpath("//*[text()='{']"));
+    @When("^I enter value \"(.*)\" in the edit box for the file \"(.*)\" at text \"(.*)\"$")
+    public void enterInEditBox(String text, String file, String textPosition) {
+        jwalaUi.click(By.xpath("//*[text()='" + textPosition + "']"));
         jwalaUi.sendKeys(Keys.DELETE);
         jwalaUi.sendKeys("{");
         jwalaUi.sendKeys(Keys.ENTER);
         jwalaUi.sendKeys(text + ",");
     }
 
+    /*
+        clicks the save button of the template or the metadata, as the xpath returns both the elements
+     */
     @When("^I click save button of edit box of \"(.*)\"$")
-    public void saveButton(String tab) {
+    public void clickSaveButton(String tab) {
         List<WebElement> elements = jwalaUi.getWebDriver().findElements(By.xpath("//span[contains(@class, 'ui-icon-disk') and @title='Save']"));
         WebElement saveElement = tab.equals("Template") ? elements.get(0) : elements.get(1);
         saveElement.click();
