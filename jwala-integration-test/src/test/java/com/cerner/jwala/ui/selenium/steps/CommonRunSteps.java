@@ -7,6 +7,7 @@ import com.cerner.jwala.ui.selenium.steps.operation.*;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import org.openqa.selenium.By;
+import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -67,6 +68,9 @@ public class CommonRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
+
+    @Autowired
+    private HandleResourceRunSteps handleResourceRunSteps;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -236,6 +240,15 @@ public class CommonRunSteps {
     @Then("^I don't see the click status tooltip$")
     public void clickStatusTooltipIsNotVisible() {
         jwalaUi.waitUntilElementIsNotVisible(By.xpath("//div[contains(@class, 'ui-tooltip')]"), 30);
+    }
+
+    @When("^I enter text in resource edit box and save with the following parameters:$")
+    public void enterValueAndSave(Map<String,String> parameters){
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab(parameters.get("tab"));
+        handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
+        handleResourceRunSteps.clickSaveButton(parameters.get("tab"));
+        handleResourceRunSteps.waitForNotification("Saved");
     }
 
     /**

@@ -28,6 +28,37 @@ public class HandleResourceRunSteps {
     @Qualifier("parameterProperties")
     private Properties paramProp;
 
+    @When("^I select resource file \"(.*)\"$")
+    public void selectFile(String fileName) {
+        jwalaUi.click(By.xpath("//span[text()='" + fileName + "']"));
+    }
+
+    @When("^I right click resource file \"(.*)\"$")
+    public void rightClickFile(String fileName) {
+        jwalaUi.rightClick(By.xpath("//span[text()='" + fileName + "']"));
+    }
+
+    @When("^I click resource deploy option$")
+    public void clickDeploy() {
+        jwalaUi.click(By.xpath("//*[text()='deploy']"));
+    }
+
+    @When("^I click resource deploy to a host option$")
+    public void clickDeployToAHost() {
+        jwalaUi.click(By.xpath("//*[text()='a host']"));
+    }
+
+    @When("^I click resource deploy All option$")
+    public void clickDeployAll() {
+        jwalaUi.click(By.xpath("//*[text()='all hosts']"));
+    }
+
+    @Then("^I click yes button to deploy a resource popup")
+    public void confirmDeployPopup() {
+        jwalaUi.click(By.xpath("//*[text()='Yes']"));
+    }
+
+
     @When("^I click \"(.*)\" component$")
     public void selectComponent(String component) {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(text(),'" + component + "')]"));
@@ -40,7 +71,7 @@ public class HandleResourceRunSteps {
 
     @When("^I expand \"(.*)\" node in data tree$")
     public void expandPropertyDataTree(String property) {
-        jwalaUi.click(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + property + "') ]/preceding-sibling::span"));
+        jwalaUi.clickWhenReady(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + property + "') ]/preceding-sibling::span"));
     }
 
     @Then("^I verify dataTree has the key-value pair as \"(.*)\" and \"(.*)\" respectively$")
@@ -57,12 +88,11 @@ public class HandleResourceRunSteps {
 
     /**
      * @param text
-     * @param file
      * @param textPosition Inserts a value in the edit box of a resource at a specific position in the file
      */
 
-    @When("^I enter value \"(.*)\" in the edit box for the file \"(.*)\" at text \"(.*)\"$")
-    public void enterInEditBox(String text, String file, String textPosition) {
+    @When("^I enter value \"(.*)\" in the edit box at text \"(.*)\"$")
+    public void enterInEditBox(String text, String textPosition) {
         jwalaUi.click(By.xpath("//*[text()='" + textPosition + "']"));
         jwalaUi.sendKeys(Keys.DELETE);
         jwalaUi.sendKeys("{");
@@ -106,4 +136,8 @@ public class HandleResourceRunSteps {
     }
 
 
+    @And("^I click \"([^\"]*)\" tab$")
+    public void clickTab(String tab) {
+        jwalaUi.clickTab(tab);
+    }
 }
