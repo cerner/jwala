@@ -213,6 +213,10 @@ public class JwalaUi {
         webElement.click();
     }
 
+    public void waitUntilElementIsClickable(final By by, final long timeout) {
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.elementToBeClickable(by));
+    }
+
     public void clickAddResource() {
         final WebElement webElement =
                 driver.findElement(By.xpath("//span[contains(@class, 'ui-icon-plusthick')]"));
