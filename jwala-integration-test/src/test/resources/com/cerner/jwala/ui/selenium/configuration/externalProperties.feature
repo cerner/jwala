@@ -41,7 +41,7 @@ Feature: External property
     And I select the resource file "ext.properties"
     And I add property "team=ctp"
     And I click save button of edit box of "Template"
-    And I wait for  notification "Saved"
+    And I wait for notification "Saved"
     And I verify edit "team=ctp"
 
   Scenario: Delete external Property
