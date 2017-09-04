@@ -72,6 +72,9 @@ public class CommonRunSteps {
     @Autowired
     private HandleResourceRunSteps handleResourceRunSteps;
 
+    @Autowired
+    private ResourceErrorHandlingRunSteps resourceErrorHandlingRunSteps;
+
     @Given("^I logged in$")
     public void logIn() {
         loginRunSteps.loadLoginPage();
@@ -245,10 +248,20 @@ public class CommonRunSteps {
     @When("^I enter text in resource edit box and save with the following parameters:$")
     public void enterValueAndSave(Map<String,String> parameters){
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
-        handleResourceRunSteps.clickTab(parameters.get("tab"));
+        handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
         handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
-        handleResourceRunSteps.clickSaveButton(parameters.get("tab"));
-        handleResourceRunSteps.waitForNotification("Saved");
+        handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
+        //not included waiting for saved here as if there is an error ,we get an error instead of notification
+        //and if we include a condition to check for error, by the time of checking is completed, the notification disappears
+    }
+
+    @When("^I delete the line in the resource file with the following parameters:$")
+    public void deleteLine(Map<String,String> parameters){
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
+        //needed to save chrome popup from an unsaved file
+        resourceErrorHandlingRunSteps.removeGarbageValue(parameters.get("textLine"));
+        handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
     }
 
     /**

@@ -93,11 +93,10 @@ public class HandleResourceRunSteps {
 
     @When("^I enter value \"(.*)\" in the edit box at text \"(.*)\"$")
     public void enterInEditBox(String text, String textPosition) {
-        jwalaUi.click(By.xpath("//*[text()='" + textPosition + "']"));
-        jwalaUi.sendKeys(Keys.DELETE);
-        jwalaUi.sendKeys("{");
+        jwalaUi.clickWhenReady(By.xpath("//*[text()='" + textPosition + "']"));
         jwalaUi.sendKeys(Keys.ENTER);
-        jwalaUi.sendKeys(text + ",");
+        jwalaUi.sendKeys(text);
+        jwalaUi.sendKeys(Keys.ENTER);
     }
 
     /*
@@ -139,5 +138,19 @@ public class HandleResourceRunSteps {
     @And("^I click \"([^\"]*)\" tab$")
     public void clickTab(String tab) {
         jwalaUi.clickTab(tab);
+    }
+
+    @And("^I check for unable to save error$")
+    public boolean checkForUnableToSaveError() {
+        return jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Unable to save')]"));
+    }
+
+    /*
+        Needed if resources are immediately saved one after the other, resulting in a saved notifcation hovering over the saved button
+     */
+    @And("^I wait for the save button to be visible again$")
+    public void waitForSaveButton() {
+        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[contains(text(),'Saved')]"));
+      jwalaUi.waitUntilElementIsClickable(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"),60);
     }
 }
