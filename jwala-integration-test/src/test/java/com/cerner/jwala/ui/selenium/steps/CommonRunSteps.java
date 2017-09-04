@@ -274,7 +274,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
         handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
-        //not included waiting for notification here as if there is an error ,we get an error instead of notification
+        //not included waiting for saved notification here as if there is an error ,we get an error instead of notification
         //and if we include a condition to check for error, by the time of checking is completed, the notification disappears
     }
 
@@ -303,7 +303,6 @@ public class CommonRunSteps {
 
     /**
      * Gets the value from the properties file
-     *
      * @param key the property key
      * @return the value of the property, if null the key is returned instead
      */
