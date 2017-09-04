@@ -4,6 +4,8 @@ import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import com.cerner.jwala.ui.selenium.steps.operation.*;
+import cucumber.api.PendingException;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import org.openqa.selenium.By;
@@ -74,6 +76,7 @@ public class CommonRunSteps {
 
     @Autowired
     private ResourceErrorHandlingRunSteps resourceErrorHandlingRunSteps;
+
 
     @Given("^I logged in$")
     public void logIn() {
@@ -245,18 +248,38 @@ public class CommonRunSteps {
         jwalaUi.waitUntilElementIsNotVisible(By.xpath("//div[contains(@class, 'ui-tooltip')]"), 30);
     }
 
+    @And("^I generate and start the webserver with the following parameters:$")
+    public void generateAndStartWebserver(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateWebServerRunSteps.generateIndividualWebserver(parameters.get("webserverName"), parameters.get("group"));
+        generateWebServerRunSteps.checkForSuccessfulGenerationOfAWebserver();
+        startWebServersOfGroup(parameters.get("webserverName"), parameters.get("group"));
+        startWebServerRunSteps.checkIfWebServerStateIsStarted(parameters.get("webserverName"), parameters.get("group"));
+    }
+
+    @And("^I generate and start the jvm with the following parameters:$")
+    public void generateAndStartJvm(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateJvmRunSteps.generateIndividualJvm(parameters.get("jvmName"), parameters.get("group"));
+        generateJvmRunSteps.checkForSuccessfulGenerationIndividualJvm();
+        startJvmOfGroup(parameters.get("jvmName"), parameters.get("group"));
+        startJvmRunSteps.checkIfJvmStateIsStarted(parameters.get("jvmName"), parameters.get("group"));
+    }
+
     @When("^I enter text in resource edit box and save with the following parameters:$")
-    public void enterValueAndSave(Map<String,String> parameters){
+    public void enterValueAndSave(Map<String, String> parameters) {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
         handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
-        //not included waiting for saved here as if there is an error ,we get an error instead of notification
+        //not included waiting for notification here as if there is an error ,we get an error instead of notification
         //and if we include a condition to check for error, by the time of checking is completed, the notification disappears
     }
 
     @When("^I delete the line in the resource file with the following parameters:$")
-    public void deleteLine(Map<String,String> parameters){
+    public void deleteLine(Map<String, String> parameters) {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
         //needed to save chrome popup from an unsaved file
@@ -264,12 +287,38 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
     }
 
+    @And("^I enter attribute in the file MetaData with the following parameters:$")
+    public void enterAttributeInMetaData(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentName"));
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab("Meta Data");
+        handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
+        handleResourceRunSteps.clickSaveButton("Meta Data");
+        handleResourceRunSteps.waitForNotification("Saved");
+    }
+
     /**
      * Gets the value from the properties file
+     *
      * @param key the property key
      * @return the value of the property, if null the key is returned instead
      */
     private String getPropertyValue(final String key) {
         return paramProp.getProperty(key) == null ? key : paramProp.getProperty(key);
+    }
+
+    @And("^I go to the file in resources with the following parameters:$")
+    public void goToResource(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentName"));
+        handleResourceRunSteps.selectFile(parameters.get("fileName"));
+
     }
 }
