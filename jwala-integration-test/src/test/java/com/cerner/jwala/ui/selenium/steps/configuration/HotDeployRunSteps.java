@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by SB053052 on 9/4/2017.
+ * Created by Sharvari Barve on 9/4/2017.
  */
 public class HotDeployRunSteps {
 
@@ -25,13 +25,13 @@ public class HotDeployRunSteps {
     @Autowired
     @Qualifier("parameterProperties")
     private Properties paramProp;
-    
+
     @Then("^I verify successful deploy$")
     public void verifySuccesfulDeploy() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'Deploy successful!')]"));
     }
 
-    @Then("^I verify error message for file \"(.*)\" for jvm \"(.*)\"$")
+    @Then("^I verify deploy error message for file \"(.*)\" and jvm \"(.*)\"$")
     public void verifyErrorMessageIndividiualJvm(String file, String jvm) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'The target JVM " + jvm + " must be stopped or the resource " + file + " must be set to hotDeploy=true before attempting to update the resource files')]"));
     }
@@ -44,6 +44,11 @@ public class HotDeployRunSteps {
     @Then("^I verify deploy error message for webserver \"(.*)\" in operations$")
     public void verifyErrorMessageWebserverOperations(String wsName) {
         jwalaUi.isElementExists(By.xpath("The target Web Server " + wsName + " must be stopped before attempting to update the resource file"));
+    }
+
+    @Then("^I verify deploy error message for jvm \"(.*)\" in operations$")
+    public void verifyErrorMessageJVMOperations(String jvmName) {
+        jwalaUi.isElementExists(By.xpath("The target JVM " + jvmName + " must be stopped before attempting to update the resource file"));
     }
 
     @Then("^I verify error message for group \"(.*)\" for jvm file \"(.*)\" with one of JVMs as \"(.*)\"$")

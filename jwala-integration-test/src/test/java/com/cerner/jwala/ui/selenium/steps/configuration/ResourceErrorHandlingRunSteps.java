@@ -18,18 +18,6 @@ public class ResourceErrorHandlingRunSteps {
     @Autowired
     private JwalaUi jwalaUi;
 
-    @When("^I enter garbage value in metadata$")
-    public void enterGarbageValueInMetaData() {
-        jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
-        jwalaUi.sendKeys(Keys.ENTER + "${{" + Keys.ENTER);
-    }
-
-    @When("^I enter garbage value in template at text \"(.*)\"$")
-    public void enterGarbageTemplate(String fileContent) {
-        jwalaUi.click(By.xpath("//*[contains(text(),'" + fileContent + "')]"));
-        jwalaUi.sendKeys(Keys.ENTER + "${{" + Keys.ENTER);
-    }
-
     /*
     This is necessary to prevent popup from an unsaved file
      */
@@ -39,12 +27,6 @@ public class ResourceErrorHandlingRunSteps {
         jwalaUi.sendKeys(Keys.HOME);
         jwalaUi.sendKeys(Keys.chord(Keys.SHIFT, Keys.ARROW_DOWN));
         jwalaUi.sendKeys(Keys.DELETE);
-    }
-
-    @And("^I see save button of \"(.*)\" again$")
-    public void seeSaveButton(String label) {
-        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[text()='Saved']"));
-        jwalaUi.waitUntilElementIsClickable(By.xpath("//*[@title='Save' and contains(@data-reactid,'" + label + "')]"), 600);
     }
 
     @Then("^I verify metaData error$")
@@ -98,7 +80,7 @@ public class ResourceErrorHandlingRunSteps {
     }
 
     @And("^I click ok to resource error popup$")
-    public void clickOkToResourceError(){
+    public void clickOkToResourceError() {
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
 }
