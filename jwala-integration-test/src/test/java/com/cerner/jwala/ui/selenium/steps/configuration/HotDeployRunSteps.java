@@ -25,57 +25,7 @@ public class HotDeployRunSteps {
     @Autowired
     @Qualifier("parameterProperties")
     private Properties paramProp;
-
-    @When("^I enter hot Deploy value \"(.*)\" in the edit box for the file \"(.*)\"$")
-    public void checkForHotDeploy(String text, String file) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[text()='{']"));
-
-        List<WebElement> elements = jwalaUi.getWebDriver().findElements(By.xpath("//span[contains(text(),'hotDeploy')]"));
-        if (elements.size() > 0) {
-            WebElement finalElement = elements.get(0);
-        }
-        if (elements.size() == 0) {
-            jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
-            jwalaUi.sendKeys(Keys.DELETE);
-            jwalaUi.sendKeys("{");
-            jwalaUi.sendKeys(Keys.ENTER);
-            jwalaUi.sendKeys(text + ",");
-        } else {
-            WebElement hotDeployElement = jwalaUi.getWebElement(By.xpath("//span[contains(text(), 'hotDeploy')]"));
-            hotDeployElement.findElement(By.xpath("..")).findElement(By.xpath("..")).click();
-            int i = 5;
-            while (i >= 0) {
-                jwalaUi.sendKeys(Keys.BACK_SPACE);
-                i--;
-            }
-            String value = "true";
-            jwalaUi.sendKeys(value);
-            jwalaUi.sendKeys(Keys.ENTER);
-
-        }
-    }
-
-    @When("^I enter deployToAllJvms value \"(.*)\" in the edit box for the file \"(.*)\"$")
-    public void checkForDeployToAllJvms(String text, String file) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[text()='{']"));
-
-        List<WebElement> elements = jwalaUi.getWebDriver().findElements(By.xpath("//span[contains(text(),'deployToJvms')]"));
-        if (elements.size() > 0) {
-            WebElement finalElement = elements.get(0);
-        }
-        WebElement jvmElement = jwalaUi.getWebElement(By.xpath("//span[contains(text(), 'deployToJvms')]"));
-        jvmElement.findElement(By.xpath("..")).findElement(By.xpath("..")).click();
-        int i = 5;
-        while (i >= 0) {
-            jwalaUi.sendKeys(Keys.BACK_SPACE);
-            i--;
-        }
-        String value = "true";
-        jwalaUi.sendKeys(value);
-        jwalaUi.sendKeys(Keys.ENTER);
-
-    }
-
+    
     @Then("^I verify successful deploy$")
     public void verifySuccesfulDeploy() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'Deploy successful!')]"));
