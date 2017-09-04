@@ -1,6 +1,7 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -32,9 +33,9 @@ public class ResourceErrorHandlingRunSteps {
     /*
     This is necessary to prevent popup from an unsaved file
      */
-    @When("^I erase garbage value$")
-    public void removeGarbageValue() {
-        jwalaUi.clickWhenReady(By.xpath("//*[contains(text(),'{{')]"));
+    @When("^I erase garbage value \"(.*)\"$")
+    public void removeGarbageValue(String text) {
+        jwalaUi.clickWhenReady(By.xpath("//*[contains(text(),'" + text + "')]"));
         jwalaUi.sendKeys(Keys.HOME);
         jwalaUi.sendKeys(Keys.chord(Keys.SHIFT, Keys.ARROW_DOWN));
         jwalaUi.sendKeys(Keys.DELETE);
@@ -86,4 +87,18 @@ public class ResourceErrorHandlingRunSteps {
     }
 
 
+    @And("^I click ok button to unable to save popup$")
+    public void clickOkToUnableToSave() {
+        jwalaUi.click(By.xpath("//*[text()='Ok']"));
+    }
+
+    @And("^I verify unable to save error$")
+    public void verifyUnableToSave() {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Unable to save changes until the meta data errors are fixed: Unexpected token')]"));
+    }
+
+    @And("^I click ok to resource error popup$")
+    public void clickOkToResourceError(){
+        jwalaUi.click(By.xpath("//*[text()='Ok']"));
+    }
 }
