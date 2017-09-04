@@ -17,7 +17,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Created by SB053052 on 9/2/2017.
+ * Created by Sharvari Barve on 9/2/2017.
  */
 public class HandleResourceRunSteps {
 
@@ -154,6 +154,7 @@ public class HandleResourceRunSteps {
         jwalaUi.waitUntilElementIsClickable(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"), 60);
     }
 
+    @And("^I enter attribute in metaData with key as \"(.*)\" and value as \"(.*)\"$")
     public void enterAttribute(String key, String value) {
         jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
         jwalaUi.sendKeys(Keys.DELETE);

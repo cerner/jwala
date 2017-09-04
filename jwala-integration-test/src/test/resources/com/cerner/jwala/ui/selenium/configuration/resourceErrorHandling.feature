@@ -9,6 +9,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | mediaType       | Apache HTTPD            |
       | archiveFilename | apache-httpd-2.4.20.zip |
       | remoteDir       | media.remote.dir        |
+
     And I created a web server with the following parameters:
       | webserverName      | seleniumWebserver   |
       | hostName           | host1               |
@@ -51,11 +52,13 @@ Feature: deploying a resource template with error produces the appropriate error
       | mediaType       | JDK              |
       | archiveFilename | jdk1.8.0_92.zip  |
       | remoteDir       | media.remote.dir |
+
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
       | archiveFilename | apache-tomcat-7.0.55.zip |
       | remoteDir       | media.remote.dir         |
+
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
@@ -152,11 +155,13 @@ Feature: deploying a resource template with error produces the appropriate error
       | mediaType       | JDK              |
       | archiveFilename | jdk1.8.0_92.zip  |
       | remoteDir       | media.remote.dir |
+
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
       | archiveFilename | apache-tomcat-7.0.55.zip |
       | remoteDir       | media.remote.dir         |
+
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
@@ -171,7 +176,6 @@ Feature: deploying a resource template with error produces the appropriate error
       | deployName   | server.xml                          |
       | deployPath   | jvm.server.xml.resource.deploy.path |
       | templateName | server.xml.tpl                      |
-
     And I enter text in resource edit box and save with the following parameters:
       | fileName | server.xml |
       | tabLabel | Meta Data  |
@@ -184,8 +188,3 @@ Feature: deploying a resource template with error produces the appropriate error
       | tabLabel | Meta Data  |
       | textLine | {{         |
     And I wait for notification "Saved"
-
-
-  
-
-
