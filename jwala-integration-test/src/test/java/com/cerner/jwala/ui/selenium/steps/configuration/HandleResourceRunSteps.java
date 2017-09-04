@@ -151,6 +151,14 @@ public class HandleResourceRunSteps {
     @And("^I wait for the save button to be visible again$")
     public void waitForSaveButton() {
         jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[contains(text(),'Saved')]"));
-      jwalaUi.waitUntilElementIsClickable(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"),60);
+        jwalaUi.waitUntilElementIsClickable(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"), 60);
+    }
+
+    public void enterAttribute(String key, String value) {
+        jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
+        jwalaUi.sendKeys(Keys.DELETE);
+        jwalaUi.sendKeys("{");
+        jwalaUi.sendKeys(Keys.ENTER);
+        jwalaUi.sendKeys(key + ":" + value + ",");
     }
 }
