@@ -42,11 +42,6 @@ Feature: HotDeploy a resource file
     And I click yes button to deploy a resource popup
     Then I verify deploy error message for file "server.xml" and jvm "seleniumJvm"
 
-   #test jvm-operations-deploy error
-    Given I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    When I generate "seleniumJvm" JVM of "seleniumGroup" group
-    Then I verify deploy error message for jvm "seleniumJvm" in operations
     And I go to the file in resources with the following parameters:
       | componentName | seleniumJvm   |
       | componentType | JVMs          |
@@ -104,10 +99,7 @@ Feature: HotDeploy a resource file
     And I click resource deploy option
     And I click yes button to deploy a resource popup
     Then I verify deploy error message for ws file "httpd.conf" for webserver "seleniumWebserver"
-    Given I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    When I generate "seleniumWebserver" web server of "seleniumGroup" group
-    Then I verify deploy error message for webserver "seleniumWebserver" in operations
+
     And I enter attribute in the file MetaData with the following parameters:
       | componentName  | seleniumWebserver |
       | componentType  | Web Servers       |
