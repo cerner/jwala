@@ -20,7 +20,7 @@ import java.util.Properties;
  */
 public class SeleniumTestHelper {
 
-    private static final String SELENIUM_PROPERTY_PATH = "selenium.property.path";
+    private static final String TEST_PROPERTY_PATH = "test.property.path";
     private static final String TEST_PROPERTIES = "selenium/test.properties";
 
     /**
@@ -62,7 +62,7 @@ public class SeleniumTestHelper {
 
     public static Properties getProperties() throws IOException {
         final Properties properties = new Properties();
-        final String propertyPath = System.getProperty(SELENIUM_PROPERTY_PATH);
+        final String propertyPath = System.getProperty(TEST_PROPERTY_PATH);
         if (StringUtils.isEmpty(propertyPath)) {
             properties.load(SeleniumTestHelper.class.getClassLoader().getResourceAsStream(TEST_PROPERTIES));
         } else {

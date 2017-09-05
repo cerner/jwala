@@ -254,4 +254,14 @@ public class JwalaUi {
             }
         }
     }
+
+    /**
+     * Looks for an element
+     * @param by describes the element to look for
+     * @return the underlying web element
+     * throws NoSuchElementException if element was not found
+     */
+    public WebElement find(final By by) {
+        return driver.findElement(by);
+    }
 }

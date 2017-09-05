@@ -54,4 +54,9 @@ public class NavigationRunSteps {
     public void clickOkBtn() {
         jwalaUi.click(By.xpath("//button/span[text()='Ok']"));
     }
+
+    @Given("^I am in the admin tab$")
+    public void goToAdminTab() {
+        jwalaUi.clickTab("Admin");
+    }
 }

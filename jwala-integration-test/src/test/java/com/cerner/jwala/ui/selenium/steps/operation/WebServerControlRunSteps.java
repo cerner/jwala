@@ -69,8 +69,8 @@ public class WebServerControlRunSteps {
         }
     }
 
-    @Then("^I see the load balancer page with web app \"(.*)\" and host \"(.*)\" and port \"(.*)\"$")
-    public void verfiyLoadBalancerPage(String app, String host, String port) throws IOException {
+    @Then("^I see the load balancer page$")
+    public void verfiyLoadBalancerPage() throws IOException {
         jwalaUi.switchToOtherTab(origWindowHandle);
         jwalaUi.waitUntilElementIsVisible(By.xpath("//h1[contains(text(), 'Load Balancer Manager for')]"), 60);
         if (origWindowHandle != null) {

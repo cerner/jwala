@@ -1,23 +1,20 @@
-Feature: admin
+Feature: Admin Utilities
 
-  Scenario: Encrypting a password
+Scenario: Test encryption, properties reload and manifest.mf
+
     Given I logged in
     And I am in the admin tab
-    When I fill in the data to be encrypted "password"
-    And I click "Encrypt" button
-    Then I verify succesful Encryption message
 
-  Scenario: Properties
-    Given I logged in
-    And I am in the admin tab
-    When I click "Reload" button
-    And I verify header with text "Properties Management"
-    And I see the text "commands.scripts-path" in properties management box
+    # test encryption
+    When I fill in the "data to be secured" field with "password"
+    And I click the admin's tab ">>> Encrypt >>>" button
+    Then I see the "Encryption Succeeded" message
 
-  Scenario: Manifest.mf
-    Given I logged in
-    When I am in the admin tab
-    Then I verify header with text "MANIFEST.MF"
-    And I see the text "Implementation-Title=jwala-webapp" in manifest box
-    And I see the implementation version "implementation-version" in manifest box
-    
+    # test properties management
+    And I see the "Properties Management" heading
+    And I see "jgroups.cluster.name" in the "Properties Management" text box
+
+    # test manifest.mf content
+    And I see the "MANIFEST.MF" heading
+    And I see "Implementation-Title" in the "MANIFEST.MF" text box
+    And I see "Implementation-Version" in the "MANIFEST.MF" text box
