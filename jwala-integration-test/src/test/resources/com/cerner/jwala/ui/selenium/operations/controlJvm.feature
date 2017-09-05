@@ -54,11 +54,13 @@ Scenario: Do a happy path start, thread dump, heap dump, stop and deletion of a 
 
     # thread dump
     When I click thread dump of jvm "CONTROL-JVM-TEST-J" of the group "CONTROL-JVM-TEST-G"
-    Then I see the thread dump page
+    Then I don't see the click status tooltip
+    And I see the thread dump page
 
     # test heap dump
     When I click on heap dump of "CONTROL-JVM-TEST-J" jvm of "CONTROL-JVM-TEST-G" group
-    Then I see heap dump popup for jvm "CONTROL-JVM-TEST-J"
+    Then I don't see the click status tooltip
+    And I see heap dump popup for jvm "CONTROL-JVM-TEST-J"
 
     # we need to close the heap dump message box
     Given I click the ok button
