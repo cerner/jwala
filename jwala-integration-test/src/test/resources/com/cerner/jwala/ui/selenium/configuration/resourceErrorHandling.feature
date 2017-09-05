@@ -38,20 +38,19 @@ Feature: deploying a resource template with error produces the appropriate error
       | tabLabel | Template  |
       | text     | ${{       |
       | position | Context   |
-    And I click the ok button
+    And I click the ok button to override JVM Templates
     And I wait for notification "Saved"
 
     And I right click resource file "hello.xml"
     And I click resource deploy option
     And I click resource deploy to a host option
-    And I click the ok button
-    And I verify error for resourceFile "hello.xml" and web app "seleniumWebapp"
-    And I click ok to resource error popup
+    And I click ok to deploy to a host
+    And I verify and confirm error popup for resourceFile "hello.xml" and web app "seleniumWebapp"
 
-    When I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    And I click the generate web application button of "seleniumWebapp" web app under group "seleniumGroup"
-    Then I verify error for resourceFile "hello.xml" and web app "seleniumWebapp"
+    When I try to generate the webapp with the following parameters:
+      | webAppName | seleniumWebapp |
+      | group      | seleniumGroup  |
+    Then I verify and confirm error popup for resourceFile "hello.xml" and web app "seleniumWebapp"
 
   Scenario: deploy an individual  web-server resource with error-template-from resource and Operations
     Given I logged in
@@ -88,12 +87,11 @@ Feature: deploying a resource template with error produces the appropriate error
     And I right click resource file "httpd.conf"
     And I click resource deploy option
     And I click yes button to deploy a resource popup
-    And I verify resource deploy error for file "httpd.conf" and webserver "seleniumWebserver"
-    And I click ok to resource error popup
-    Given I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    When I generate "seleniumWebserver" web server of "seleniumGroup" group
-    Then I verify resource deploy error for file "httpd.conf" and webserver "seleniumWebserver"
+    And I verify and confirm resource deploy error popup for file "httpd.conf" and webserver "seleniumWebserver"
+    When I try to generate webserver with the following parameters:
+      | webserverName | seleniumWebserver |
+      | group         | seleniumGroup     |
+    Then I verify and confirm resource deploy error popup for file "httpd.conf" and webserver "seleniumWebserver"
 
 
   Scenario: deploying an resource with a garbage value in multiple resources in Jvm
@@ -151,12 +149,11 @@ Feature: deploying a resource template with error produces the appropriate error
     And I right click resource file "setenv.bat"
     And I click resource deploy option
     And I click yes button to deploy a resource popup
-    And I verify resource deploy error for file "setenv.bat" and jvm "seleniumJvm"
-    And I click ok to resource error popup
-    When I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    And I generate "seleniumJvm" JVM of "seleniumGroup" group
-    Then I verify multiple resource deploy error for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
+    And I verify and confirm resource deploy error popup for file "setenv.bat" and jvm "seleniumJvm"
+    When I try to generate jvm with the following parameters:
+      | jvmName | seleniumJvm   |
+      | group   | seleniumGroup |
+    Then I verify and confirm multiple resource deploy error popup for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
 
 
   Scenario: deploying an resource with a garbage value in  jvm resource
@@ -193,10 +190,10 @@ Feature: deploying a resource template with error produces the appropriate error
       | text     | ${{        |
       | position | <!--       |
     And I wait for notification "Saved"
-    When I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    And I generate "seleniumJvm" JVM of "seleniumGroup" group
-    Then I verify resource deploy error for file "server.xml" and jvm "seleniumJvm"
+    When I try to generate jvm with the following parameters:
+      | jvmName | seleniumJvm   |
+      | group   | seleniumGroup |
+    Then I verify and confirm resource deploy error popup for file "server.xml" and jvm "seleniumJvm"
 
   Scenario: deploying an resource with a garbage value in individual jvm resource-meta data
     Given I logged in
@@ -233,8 +230,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | tabLabel | Meta Data  |
       | text     | {{         |
       | position | {          |
-    And I verify unable to save error
-    And I click ok button to unable to save popup
+    And I verify and confirm to unable to save error popup
     And I delete the line in the resource file with the following parameters:
       | fileName | server.xml |
       | tabLabel | Meta Data  |

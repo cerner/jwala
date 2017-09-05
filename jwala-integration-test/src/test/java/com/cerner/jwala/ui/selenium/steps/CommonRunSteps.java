@@ -268,6 +268,30 @@ public class CommonRunSteps {
         startJvmRunSteps.checkIfJvmStateIsStarted(parameters.get("jvmName"), parameters.get("group"));
     }
 
+    /*
+      The methods below don't have the check for success, so we can use them both for error checking and succesfuly deploy
+     */
+    @And("^I try to generate webserver with the following parameters:$")
+    public void attemptToGenerateWebserver(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateWebServerRunSteps.generateIndividualWebserver(parameters.get("webserverName"), parameters.get("group"));
+    }
+
+    @And("^I try to generate jvm with the following parameters:$")
+    public void attemptToGenerateJvm(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateJvmRunSteps.generateIndividualJvm(parameters.get("jvmName"), parameters.get("group"));
+    }
+
+    @And("^I try to generate the webapp with the following parameters:$")
+    public void attemptToGenerateWebapp(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateWebAppRunSteps.clickGenerateWebAppBtnOfGroup(parameters.get("webAppName"), parameters.get("group"));
+    }
+
     @When("^I enter text in resource edit box and save with the following parameters:$")
     public void enterValueAndSave(Map<String, String> parameters) {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
@@ -323,5 +347,19 @@ public class CommonRunSteps {
         uploadResourceRunSteps.clickNode(parameters.get("componentName"));
         handleResourceRunSteps.selectFile(parameters.get("fileName"));
 
+    }
+
+    @And("^I created a group JVM resource with the following parameters:$")
+    public void createGroupJvmResource(Map<String,String> parameters) throws Throwable {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.clickNode("JVMS");
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
     }
 }
