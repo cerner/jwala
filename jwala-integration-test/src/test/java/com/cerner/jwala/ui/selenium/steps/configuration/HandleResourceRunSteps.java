@@ -162,4 +162,8 @@ public class HandleResourceRunSteps {
         jwalaUi.sendKeys(Keys.ENTER);
         jwalaUi.sendKeys(key + ":" + value + ",");
     }
+    @And("^I click ok to override$")
+    public void clickOkToOverride()  {
+        jwalaUi.click(By.xpath("//*[text()='Ok']"));
+    }
 }

@@ -298,11 +298,15 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickTab("Meta Data");
         handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
         handleResourceRunSteps.clickSaveButton("Meta Data");
+        if(parameters.get("override").equals("true")){
+            handleResourceRunSteps.clickOkToOverride();
+        }
         handleResourceRunSteps.waitForNotification("Saved");
     }
 
     /**
      * Gets the value from the properties file
+     *
      * @param key the property key
      * @return the value of the property, if null the key is returned instead
      */

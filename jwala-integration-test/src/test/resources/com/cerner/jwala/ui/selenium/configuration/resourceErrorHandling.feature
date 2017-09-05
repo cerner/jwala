@@ -1,5 +1,58 @@
 Feature: deploying a resource template with error produces the appropriate errors
 
+  Scenario: Deploy webapp resource with error
+    Given I logged in
+    And I am in the Configuration tab
+    And I created a group with the name "seleniumGroup"
+    And I created a media with the following parameters:
+      | mediaName       | jdk1.8.0_92      |
+      | mediaType       | JDK              |
+      | archiveFilename | jdk1.8.0_92.zip  |
+      | remoteDir       | media.remote.dir |
+
+    And I created a media with the following parameters:
+      | mediaName       | apache-tomcat-7.0.55     |
+      | mediaType       | Apache Tomcat            |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | remoteDir       | media.remote.dir         |
+    And I created a jvm with the following parameters:
+      | jvmName    | seleniumJvm          |
+      | tomcat     | apache-tomcat-7.0.55 |
+      | jdk        | jdk1.8.0_92          |
+      | hostName   | host1                |
+      | portNumber | 9000                 |
+      | group      | seleniumGroup        |
+    And I created a web app with the following parameters:
+      | webappName  | seleniumWebapp |
+      | contextPath | /hello         |
+      | group       | seleniumGroup  |
+    And I created a web app resource with the following parameters:
+      | group        | seleniumGroup                       |
+      | webApp       | seleniumWebapp                      |
+      | deployName   | hello.xml                           |
+      | deployPath   | webapp.context.resource.deploy.path |
+      | templateName | hello.xml.tpl                       |
+
+    And I enter text in resource edit box and save with the following parameters:
+      | fileName | hello.xml |
+      | tabLabel | Template  |
+      | text     | ${{       |
+      | position | Context   |
+    And I click the ok button
+    And I wait for notification "Saved"
+
+    And I right click resource file "hello.xml"
+    And I click resource deploy option
+    And I click resource deploy to a host option
+    And I click the ok button
+    And I verify error for resourceFile "hello.xml" and web app "seleniumWebapp"
+    And I click ok to resource error popup
+
+    When I am in the Operations tab
+    And I expand the group operation's "seleniumGroup" group
+    And I click the generate web application button of "seleniumWebapp" web app under group "seleniumGroup"
+    Then I verify error for resourceFile "hello.xml" and web app "seleniumWebapp"
+
   Scenario: deploy an individual  web-server resource with error-template-from resource and Operations
     Given I logged in
     And I am in the Configuration tab
@@ -106,7 +159,7 @@ Feature: deploying a resource template with error produces the appropriate error
     Then I verify multiple resource deploy error for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
 
 
-  Scenario: deploying an resource with a garbage value in group jvm resource
+  Scenario: deploying an resource with a garbage value in  jvm resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
@@ -139,12 +192,11 @@ Feature: deploying a resource template with error produces the appropriate error
       | tabLabel | Template   |
       | text     | ${{        |
       | position | <!--       |
-
+    And I wait for notification "Saved"
     When I am in the Operations tab
     And I expand the group operation's "seleniumGroup" group
     And I generate "seleniumJvm" JVM of "seleniumGroup" group
     Then I verify resource deploy error for file "server.xml" and jvm "seleniumJvm"
-
 
   Scenario: deploying an resource with a garbage value in individual jvm resource-meta data
     Given I logged in
