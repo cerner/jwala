@@ -40,7 +40,7 @@ Feature: HotDeploy a resource file
     When I right click resource file "server.xml"
     And I click resource deploy option
     And I click yes button to deploy a resource popup
-    Then I verify deploy error message for file "server.xml" and jvm "seleniumJvm"
+    Then I confirm deploy error message popup for file "server.xml" and jvm "seleniumJvm"
 
     And I go to the file in resources with the following parameters:
       | componentName | seleniumJvm   |
@@ -61,7 +61,7 @@ Feature: HotDeploy a resource file
     When I right click resource file "server.xml"
     And I click resource deploy option
     And I click yes button to deploy a resource popup
-    Then I verify and confirm successful deploy
+    Then I confirm successful deploy popup
 
   Scenario: Hot Deploy an individual web-server resource
     Given I logged in
@@ -98,7 +98,7 @@ Feature: HotDeploy a resource file
     When I right click resource file "httpd.conf"
     And I click resource deploy option
     And I click yes button to deploy a resource popup
-    Then I verify deploy error message for ws file "httpd.conf" for webserver "seleniumWebserver"
+    Then I confirm deploy error message popup for ws file "httpd.conf" for webserver "seleniumWebserver"
 
     And I enter attribute in the file MetaData with the following parameters:
       | componentName  | seleniumWebserver |
@@ -112,7 +112,7 @@ Feature: HotDeploy a resource file
     When I right click resource file "httpd.conf"
     And I click resource deploy option
     And I click yes button to deploy a resource popup
-    Then I verify and confirm successful deploy
+    Then I confirm successful deploy popup
 
 
   Scenario: Deploy webapp-resource
@@ -164,11 +164,11 @@ Feature: HotDeploy a resource file
     And I click resource deploy option
     And I click resource deploy to a host option
     And I confirm the resource deploy to a host popup
-    Then I verify error message for group "seleniumGroup" for app file "hello.xml" with one of JVMs as "seleniumJvm"
+    Then I confirm error message popup for group "seleniumGroup" for app file "hello.xml" with one of JVMs as "seleniumJvm"
     When I try to generate the webapp with the following parameters:
       | webAppName | seleniumWebapp |
       | group      | seleniumGroup  |
-    Then I verify webapp generate error in operations for jvm "seleniumJvm"
+    Then I confirm webapp generate error popup in operations for jvm "seleniumJvm"
     And I enter attribute in the file MetaData with the following parameters:
       | componentName  | seleniumWebapp |
       | componentType  | Web Apps       |
@@ -185,7 +185,7 @@ Feature: HotDeploy a resource file
     And I click resource deploy option
     And I click resource deploy to a host option
     And I confirm the resource deploy to a host popup
-    Then I verify and confirm successful deploy
+    Then I confirm successful deploy popup
 
     #Test deploy to all host-succesful
     When I right click resource file "hello.xml"
@@ -193,10 +193,10 @@ Feature: HotDeploy a resource file
     And I click resource deploy option
     And I click resource deploy All option
     And I click yes button to deploy a resource popup
-    Then I verify and confirm successful deploy
+    Then I confirm successful deploy popup
 
     #Test operations webapp deploy-succesful
     When I try to generate the webapp with the following parameters:
       | webAppName | seleniumWebapp |
       | group      | seleniumGroup  |
-    Then I verify and confirm that webapp "seleniumWebapp" is succesfully deployed in Operations page
+    Then I confirm webapp "seleniumWebapp" is succesfully deployed in Operations page popup
