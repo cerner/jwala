@@ -1,9 +1,12 @@
 package com.cerner.jwala.ui.selenium.steps;
 
 import com.cerner.jwala.ui.selenium.TestConfig;
+import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import com.cerner.jwala.ui.selenium.steps.operation.*;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -61,6 +64,9 @@ public class CommonRunSteps {
 
     @Autowired
     private StartJvmRunSteps startJvmRunSteps;
+
+    @Autowired
+    private JwalaUi jwalaUi;
 
     @Given("^I logged in$")
     public void logIn() {
@@ -225,6 +231,11 @@ public class CommonRunSteps {
     public void generateWebAppOfGroup(final String webAppName, final String groupName) {
         generateWebAppRunSteps.clickGenerateWebAppBtnOfGroup(webAppName, groupName);
         generateWebAppRunSteps.checkForSuccessfulResourceDeployment(webAppName);
+    }
+
+    @Then("^I don't see the click status tooltip$")
+    public void clickStatusTooltipIsNotVisible() {
+        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//div[contains(@class, 'ui-tooltip')]"), 30);
     }
 
     /**
