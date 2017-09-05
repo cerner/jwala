@@ -29,7 +29,7 @@ Feature: Deleting a resource
     Then I check for resource "httpd.conf"
     When I click check-box for resourceFile "httpd.conf"
     And I click the resource delete icon
-    And I click yes button to delete a resource
+    And I confirm delete a resource popup
     Then I don't see "httpd.conf"
 
   Scenario: Delete an group  web-server resource
@@ -59,7 +59,7 @@ Feature: Deleting a resource
     Then I check for resource "httpd.conf"
     When I click check-box for resourceFile "httpd.conf"
     And I click the resource delete icon
-    And I click yes button to delete a resource
+    And I confirm delete a resource popup
     Then I don't see "httpd.conf"
 
   Scenario: Delete a resource -individual jvm
@@ -94,7 +94,7 @@ Feature: Deleting a resource
     And I select the resource file "setenv.bat"
     And I click check-box for resourceFile "setenv.bat"
     And I click the resource delete icon
-    And I click yes button to delete a resource
+    And I confirm delete a resource popup
     Then I don't see "setenv.bat"
 
   Scenario: Delete a resource- group jvm( Tests hierarchy too)
@@ -119,12 +119,13 @@ Feature: Deleting a resource
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
 
-    And I created a JVM resource with the following parameters:
+    And I created a group JVM resource with the following parameters:
       | group        | seleniumGroup                   |
-      | jvm          | seleniumJvm                     |
       | deployName   | setenv.bat                      |
       | deployPath   | jvm.setenv.resource.deploy.path |
       | templateName | setenv.bat.tpl                  |
+    And I click check-box for resourceFile "setenv.bat"
+    And I confirm delete a resource popup
     Then I don't see "setenv.bat"
     When I click "seleniumJvm" component
     Then I check for resource "setenv.bat"
@@ -148,6 +149,6 @@ Feature: Deleting a resource
     When I click "seleniumWebapp" component
     And I click check-box for resourceFile "hello.xml"
     And I click the resource delete icon
-    And I click yes button to delete a resource
+    And I confirm delete a resource popup
     Then I don't see "hello.xml"
 

@@ -129,8 +129,9 @@ public class HandleResourceRunSteps {
         jwalaUi.clickWhenReady(By.xpath("//li/span[text()='" + resourceFile + "']/preceding-sibling::input[@type='checkbox']"));
     }
 
-    @And("^I click yes button to delete a resource$")
+    @And("^I confirm delete a resource popup$")
     public void deleteResource() {
+        jwalaUi.isElementExists(By.xpath("//[contains(text(),'Are you sure you want to delete the selected resource template(s) ?')]"));
         jwalaUi.click(By.xpath("//button/span[text()='Yes']"));
     }
 
@@ -162,8 +163,31 @@ public class HandleResourceRunSteps {
         jwalaUi.sendKeys(Keys.ENTER);
         jwalaUi.sendKeys(key + ":" + value + ",");
     }
+
     @And("^I click ok to override$")
-    public void clickOkToOverride()  {
+    public void clickOkToOverride() {
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
+
+    /*
+      Text is divided into multiple spans hence checking only partial text
+     */
+    @And("^I click the ok button to override JVM Templates$")
+    public void overrideJvmTemplates() {
+        jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Saving will overwrite all')]"));
+        clickOk();
+
+    }
+
+    @And("^I confirm the resource deploy to a host popup$")
+    public void confirmDeployToAHost(){
+        jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Select a host')]"));
+        clickOk();
+
+    }
+
+    private void clickOk() {
+        jwalaUi.click(By.xpath("//*[text()='Ok']"));
+    }
+
 }
