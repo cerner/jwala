@@ -21,12 +21,12 @@ Scenario: Do a happy path start, thread dump, heap dump, stop and deletion of a 
     # create entities
     And I created a group with the name "CONTROL-JVM-TEST-G"
     And I created a jvm with the following parameters:
-        | jvmName    | CONTROL-JVM-TEST-J          |
+        | jvmName    | CONTROL-JVM-TEST-J   |
         | tomcat     | apache-tomcat-7.0.55 |
         | jdk        | jdk1.8.0_92          |
         | hostName   | host1                |
-        | portNumber | 9000                 |
-        | group      | CONTROL-JVM-TEST-G        |
+        | portNumber | jvm.http.port        |
+        | group      | CONTROL-JVM-TEST-G   |
 
     # create resources
     And I created a JVM resource with the following parameters:

@@ -10,18 +10,9 @@
 # How to Run Tests
 
 ### in Gradle
-Running all tests
+Running a test
 ```ssh
-$ gradle test -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe -PjwalaIntegrationTest
-```
-Running a single test
-```ssh
-$ gradle test -Dtest.single=ManageGroupTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe -PjwalaIntegrationTest
-```
-### in the IDE
-In the run configurations set the VM options to
-```ssh
--Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+$ gradle clean test -Dtest.single=JwalaUiMainTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=d:/jwala-ui-integ-test-support-files/drivers/chromedriver.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test.properties -PjwalaIntegrationTest
 ```
 
 # Jwala Db Backup Scripts

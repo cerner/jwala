@@ -54,7 +54,7 @@ public class UploadResourceRunSteps {
 
     @And("^I choose the resource file \"(.*)\"$")
     public void selectResourceFile(final String archiveFileName) {
-        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
+        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("resource.template.dir") + "/" + archiveFileName);
         jwalaUi.sendKeys(By.name("templateFile"), mediaPath.normalize().toString());
     }
 
@@ -70,7 +70,7 @@ public class UploadResourceRunSteps {
 
     @And("^I choose the meta data file \"(.*)\"$")
     public void selectMetaDataFile(final String archiveFileName) {
-        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
+        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("resource.template.dir") + "/" + archiveFileName);
         jwalaUi.sendKeys(By.name("metaDataFile"), mediaPath.normalize().toString());
     }
 
