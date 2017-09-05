@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,11 @@ public class TestConfig {
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
     private static final String TEST_PROPERTY_PATH = "test.property.path";
     private static final String PARAMETERS_PROPERTIES = "selenium/test.properties";
+
+    public TestConfig() throws SQLException, IOException, ClassNotFoundException {
+        // make sure the db is clean before running the tests
+        SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
+    }
 
     @Bean(name = "seleniumTestProperties")
     public Properties getProperties() throws IOException {
