@@ -354,7 +354,7 @@ public class CommonRunSteps {
         navigationRunSteps.goToResourceTab();
         uploadResourceRunSteps.expandNode(parameters.get("group"));
         uploadResourceRunSteps.expandNode("JVMs");
-        uploadResourceRunSteps.clickNode("JVMS");
+        uploadResourceRunSteps.clickNode("JVMs");
         uploadResourceRunSteps.clickAddResourceBtn();
         uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
         uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
