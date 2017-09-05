@@ -41,11 +41,13 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     # test start
     When I click the start button of "CONTROL-WEBSERVER-TEST-W" webserver of "CONTROL-WEBSERVER-TEST-G" group
     Then I see the state of "CONTROL-WEBSERVER-TEST-W" web server of group "CONTROL-WEBSERVER-TEST-G" is "STARTED"
+    And I don't see the click status tooltip
 
     # negative test, try to delete a started web server
     When I click the "Delete Web Server" button of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
     And I click the operation's confirm delete "CONTROL-WEBSERVER-TEST-W" web server dialog yes button
-    Then I see an error dialog box that tells me to stop the web server "CONTROL-WEBSERVER-TEST-W"
+    Then I don't see the click status tooltip
+    And I see an error dialog box that tells me to stop the web server "CONTROL-WEBSERVER-TEST-W"
 
     # we need to close the expected delete web server error message box
     Given I click the ok button
