@@ -58,8 +58,8 @@ public class HotDeployRunSteps {
     }
 
     @Then("^I confirm error message popup for group \"(.*)\" for jvm file \"(.*)\" with one of JVMs as \"(.*)\"$")
-    public void verifyErrorMessageGroupJvm(String group, String file, String jvm) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'Failed to deploy file " + file + " for group " + group + " since the following JVMs are running and the file is not configured for hot deploy: [" + jvm + "]')]"));
+    public void verifyErrorMessageGroupJvm(String group, String resourceName, String jvm) {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'Failed to deploy file " + resourceName + " for group " + group + ": not all JVMs were stopped - the following JVMs were started and the resource was not configured with hotDeploy=true: [" + jvm + "]')]"));
         clickOkButton();
     }
 
@@ -84,7 +84,7 @@ public class HotDeployRunSteps {
 
     @Then("^I confirm webapp \"([^\"]*)\" is succesfully deployed in Operations page popup$")
     public void verifySuccesfulOperationsDeploy(String webappName) throws Throwable {
-        jwalaUi.isElementExists(By.xpath("//*[text()='"+webappName+" resource files deployed successfully'"));
+        jwalaUi.isElementExists(By.xpath("//*[text()='" + webappName + " resource files deployed successfully'"));
         clickOkButton();
 
     }
@@ -101,7 +101,7 @@ public class HotDeployRunSteps {
         clickOkButton();
     }
 
-    private void clickOkButton(){
+    private void clickOkButton() {
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
 }
