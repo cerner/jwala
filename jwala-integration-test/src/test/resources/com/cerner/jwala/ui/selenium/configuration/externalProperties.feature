@@ -54,5 +54,5 @@ Feature: External property
     And I click the ok button
     And I click check-box for resourceFile "ext.properties"
     And I click the resource delete icon
-    And I click yes button to delete a resource
+    And I confirm delete a resource popup
     And I don't see "ext.properties"

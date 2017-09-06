@@ -1,5 +1,53 @@
 Feature: HotDeploy a resource file
 
+  Scenario: Hot Deploy an individual web-server resource
+    Given I logged in
+    And I am in the Configuration tab
+    And I created a group with the name "seleniumGroup"
+    And I created a media with the following parameters:
+      | mediaName       | apache-httpd-2.4.20     |
+      | mediaType       | Apache HTTPD            |
+      | archiveFilename | apache-httpd-2.4.20.zip |
+      | remoteDir       | media.remote.dir        |
+    And I created a web server with the following parameters:
+      | webserverName      | seleniumWebserver   |
+      | hostName           | host1               |
+      | portNumber         | 80                  |
+      | httpsPort          | 443                 |
+      | group              | seleniumGroup       |
+      | apacheHttpdMediaId | apache-httpd-2.4.20 |
+      | statusPath         | /apache_pb.png      |
+    And I created a web server resource with the following parameters:
+      | group        | seleniumGroup              |
+      | webServer    | seleniumWebserver          |
+      | deployName   | httpd.conf                 |
+      | deployPath   | httpd.resource.deploy.path |
+      | templateName | httpdconf.tpl              |
+    And I generate and start the webserver with the following parameters:
+      | webserverName | seleniumWebserver |
+      | group         | seleniumGroup     |
+    And I go to the file in resources with the following parameters:
+      | componentName | seleniumWebserver |
+      | componentType | Web Servers       |
+      | fileName      | httpd.conf        |
+      | group         | seleniumGroup     |
+
+    When I attempt to deploy the resource "httpd.conf"
+    Then I confirm deploy error message popup for ws file "httpd.conf" for webserver "seleniumWebserver"
+
+    And I enter attribute in the file MetaData with the following parameters:
+      | componentName  | seleniumWebserver |
+      | componentType  | Web Servers       |
+      | fileName       | httpd.conf        |
+      | group          | seleniumGroup     |
+      | attributeKey   | "hotDeploy"       |
+      | attributeValue | true              |
+      | override       | false             |
+    And I wait for notification "Saved"
+    When I attempt to deploy the resource "httpd.conf"
+    Then I confirm successful deploy popup
+
+
   Scenario: Deploy webapp/Jvm-resource
     Given I logged in
     And I am in the Configuration tab
@@ -50,10 +98,9 @@ Feature: HotDeploy a resource file
       | componentType | Web Apps       |
       | group         | seleniumGroup  |
       | fileName      | hello.xml      |
-    When I right click resource file "hello.xml"
-    And I click resource deploy option
-    And I click resource deploy to a host option
-    And I confirm the resource deploy to a host popup
+    When I attempt to deploy the web app resource with the following parameters:
+      | fileName     | hello.xml  |
+      | deployOption | individual |
     Then I confirm error message popup for group "seleniumGroup" for jvm file "hello.xml" with one of JVMs as "seleniumJvm"
     And I go to the file in resources with the following parameters:
       | componentName | seleniumJvm   |
@@ -62,9 +109,7 @@ Feature: HotDeploy a resource file
       | group         | seleniumGroup |
 
    #test jvm deploy-resources-error
-    When I right click resource file "server.xml"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
+    When I attempt to deploy the resource "server.xml"
     Then I confirm deploy error message popup for file "server.xml" and jvm "seleniumJvm"
 
     #test webapp-error -operations
@@ -85,18 +130,15 @@ Feature: HotDeploy a resource file
 
 
   #Test deploy to a host-succesful
-    When I right click resource file "hello.xml"
-    And I click resource deploy option
-    And I click resource deploy to a host option
-    And I confirm the resource deploy to a host popup
+    When I attempt to deploy the web app resource with the following parameters:
+      | fileName     | hello.xml  |
+      | deployOption | individual |
     Then I confirm successful deploy popup
 
   #Test deploy to all host-succesful
-    When I right click resource file "hello.xml"
-    And I click resource deploy option
-    And I click resource deploy option
-    And I click resource deploy All option
-    And I click yes button to deploy a resource popup
+    When I attempt to deploy the web app resource with the following parameters:
+      | fileName     | hello.xml |
+      | deployOption | all       |
     Then I confirm successful deploy popup
 
   #Test operations webapp deploy-succesful
@@ -112,9 +154,7 @@ Feature: HotDeploy a resource file
       | group   | seleniumGroup  |
       | file    | hello.xml      |
 
-    When I right click resource file "hello.xml"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
+    When I attempt to deploy the resource "hello.xml"
     Then I confirm successful deploy popup
 
     And I go to the file in resources with the following parameters:
@@ -133,11 +173,10 @@ Feature: HotDeploy a resource file
     And I wait for notification "Saved"
 
    #test deploy-resources jvm-succesful
-    When I right click resource file "server.xml"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
+    When I attempt to deploy the resource "server.xml"
     Then I confirm successful deploy popup
 
+    #test deploy group jvm resource
     And I enter attribute in the group file MetaData with the following parameters:
       | componentType  | JVMs          |
       | fileName       | setenv.bat    |
@@ -149,56 +188,4 @@ Feature: HotDeploy a resource file
     When I right click resource file "setenv.bat"
     And I click resource deploy option
     And I confirm overriding individual instances popup for resourceFile "setenv.bat"
-    Then I confirm successful deploy popup
-
-
-  Scenario: Hot Deploy an individual web-server resource
-    Given I logged in
-    And I am in the Configuration tab
-    And I created a group with the name "seleniumGroup"
-    And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a web server with the following parameters:
-      | webserverName      | seleniumWebserver   |
-      | hostName           | host1               |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | seleniumGroup       |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    And I created a web server resource with the following parameters:
-      | group        | seleniumGroup              |
-      | webServer    | seleniumWebserver          |
-      | deployName   | httpd.conf                 |
-      | deployPath   | httpd.resource.deploy.path |
-      | templateName | httpdconf.tpl              |
-    And I generate and start the webserver with the following parameters:
-      | webserverName | seleniumWebserver |
-      | group         | seleniumGroup     |
-    And I go to the file in resources with the following parameters:
-      | componentName | seleniumWebserver |
-      | componentType | Web Servers       |
-      | fileName      | httpd.conf        |
-      | group         | seleniumGroup     |
-
-    When I right click resource file "httpd.conf"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
-    Then I confirm deploy error message popup for ws file "httpd.conf" for webserver "seleniumWebserver"
-
-    And I enter attribute in the file MetaData with the following parameters:
-      | componentName  | seleniumWebserver |
-      | componentType  | Web Servers       |
-      | fileName       | httpd.conf        |
-      | group          | seleniumGroup     |
-      | attributeKey   | "hotDeploy"       |
-      | attributeValue | true              |
-      | override       | false             |
-    And I wait for notification "Saved"
-    When I right click resource file "httpd.conf"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
     Then I confirm successful deploy popup

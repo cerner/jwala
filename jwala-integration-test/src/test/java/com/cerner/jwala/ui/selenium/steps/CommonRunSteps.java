@@ -362,7 +362,7 @@ public class CommonRunSteps {
     }
 
     @And("^I created a group JVM resource with the following parameters:$")
-    public void createGroupJvmResource(Map<String,String> parameters) throws Throwable {
+    public void createGroupJvmResource(Map<String, String> parameters) throws Throwable {
         navigationRunSteps.goToResourceTab();
         uploadResourceRunSteps.expandNode(parameters.get("group"));
         uploadResourceRunSteps.expandNode("JVMs");
@@ -389,5 +389,28 @@ public class CommonRunSteps {
         //click ok to override popup
         handleResourceRunSteps.clickOk();
         handleResourceRunSteps.waitForNotification("Saved");
+    }
+
+    @And("^I attempt to deploy the resource \"(.*)\"$")
+    public void deployFile(String file) {
+        handleResourceRunSteps.selectFile(file);
+        handleResourceRunSteps.rightClickFile(file);
+        handleResourceRunSteps.clickDeploy();
+        handleResourceRunSteps.confirmDeployPopup();
+    }
+
+    @And("^I attempt to deploy the web app resource with the following parameters:$")
+    public void deployWebappFile(Map<String, String> parameters) {
+        handleResourceRunSteps.selectFile(parameters.get("fileName"));
+        handleResourceRunSteps.rightClickFile(parameters.get("fileName"));
+        handleResourceRunSteps.clickDeploy();
+        if ("all".equals(parameters.get("deployOption"))) {
+            handleResourceRunSteps.clickDeployAll();
+            handleResourceRunSteps.clickYes();
+        } else {
+            handleResourceRunSteps.clickDeployToAHost();
+            handleResourceRunSteps.clickOk();
+        }
+
     }
 }
