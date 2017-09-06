@@ -54,7 +54,6 @@ public class HotDeployRunSteps {
     public void verifyErrorMessageJVMOperations(String jvmName) {
         jwalaUi.isElementExists(By.xpath("The target JVM " + jvmName + " must be stopped before attempting to update the resource file"));
         clickOkButton();
-
     }
 
     @Then("^I confirm error message popup for group \"(.*)\" for jvm file \"(.*)\" with one of JVMs as \"(.*)\"$")
@@ -86,7 +85,6 @@ public class HotDeployRunSteps {
     public void verifySuccesfulOperationsDeploy(String webappName) throws Throwable {
         jwalaUi.isElementExists(By.xpath("//*[text()='" + webappName + " resource files deployed successfully'"));
         clickOkButton();
-
     }
 
     @Then("^I confirm jvm resource files are successfuly deployed in Operations page popup$")

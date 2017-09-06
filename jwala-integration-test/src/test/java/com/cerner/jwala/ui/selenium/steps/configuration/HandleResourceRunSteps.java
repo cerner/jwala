@@ -58,7 +58,6 @@ public class HandleResourceRunSteps {
         jwalaUi.click(By.xpath("//*[text()='Yes']"));
     }
 
-
     @When("^I click \"(.*)\" component$")
     public void selectComponent(String component) {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(text(),'" + component + "')]"));
@@ -69,13 +68,11 @@ public class HandleResourceRunSteps {
         jwalaUi.click(By.xpath("//span[text()='" + resource + "']"));
     }
 
-
     @When("^I add property \"(.*)\"$")
     public void addProperty(String property) {
         jwalaUi.click(By.xpath("//div[contains(@class, 'CodeMirror') and contains(@class, 'cm-s-default')]"));
         jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
     }
-
 
     @And("^I expand \"(.*)\" node in data tree$")
     public void expandPropertyDataTree(String property) {
@@ -87,7 +84,6 @@ public class HandleResourceRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + key + "') ]"));
         jwalaUi.waitUntilElementIsVisible(By.xpath("//span[contains(@class,'nodeVal') and contains(text(),'" + value + "')]"));
     }
-
 
     /**
      * @param text
@@ -138,7 +134,6 @@ public class HandleResourceRunSteps {
         jwalaUi.click(By.xpath("//button/span[text()='Yes']"));
     }
 
-
     @And("^I click \"([^\"]*)\" tab$")
     public void clickTab(String tab) {
         jwalaUi.clickTab(tab);
@@ -154,7 +149,7 @@ public class HandleResourceRunSteps {
      */
     @And("^I wait for the save button to be visible again$")
     public void waitForSaveButton() {
-        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[contains(text(),'Saved')]"));
+        jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[contains(text(),'Saved')]"), 30);
         jwalaUi.waitUntilElementIsClickable(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"), 60);
     }
 
@@ -174,27 +169,26 @@ public class HandleResourceRunSteps {
     public void overrideJvmTemplates() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Saving will overwrite all')]"));
         clickOk();
-
     }
 
     @And("^I confirm the resource deploy to a host popup$")
     public void confirmDeployToAHost() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Select a host')]"));
         clickOk();
-
     }
 
     @And("^I confirm overriding individual instances popup for resourceFile \"(.*)\"$")
-    public void confirmOverride(String resource){
-        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Any previous customizations to an individual instance of \""+resource+"\" will be overwritten.')]"));
+    public void confirmOverride(String resource) {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Any previous customizations to an individual instance of \"" + resource + "\" will be overwritten.')]"));
         clickYes();
     }
 
-    public void clickYes(){ jwalaUi.click(By.xpath("//*[text()='Yes']")); }
+    public void clickYes() {
+        jwalaUi.click(By.xpath("//*[text()='Yes']"));
+    }
 
     public void clickOk() {
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
-
 
 }

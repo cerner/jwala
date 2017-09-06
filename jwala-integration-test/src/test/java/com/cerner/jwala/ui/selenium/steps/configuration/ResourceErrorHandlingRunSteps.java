@@ -72,9 +72,7 @@ public class ResourceErrorHandlingRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file1 + " for WebApp:" + webApp + "')]"));
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'TEMPLATE: Failed to bind data and properties to : " + file2 + " for WebApp:" + webApp + "')]"));
         clickOk();
-
     }
-
 
     @And("^I confirm to unable to save error popup$")
     public void verifyUnableToSave() {
