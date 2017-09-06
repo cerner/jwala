@@ -185,7 +185,5 @@ Feature: HotDeploy a resource file
       | attributeValue | true          |
       | override       | true          |
 
-    When I right click resource file "setenv.bat"
-    And I click resource deploy option
-    And I confirm overriding individual instances popup for resourceFile "setenv.bat"
+    When I attempt to deploy the jvm group resource "setenv.bat"
     Then I confirm successful deploy popup
