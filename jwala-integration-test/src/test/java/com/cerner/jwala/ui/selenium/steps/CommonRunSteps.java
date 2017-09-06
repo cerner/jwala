@@ -428,6 +428,5 @@ public class CommonRunSteps {
         navigationRunSteps.goToOperationsTab();
         navigationRunSteps.expandGroupInOperationsTab(groupName);
         generateJvmRunSteps.clickGenerateJvmsBtnOfGroup(groupName);
-        generateJvmRunSteps.confirmGenerateJvmUnderAGroup(groupName);
     }
 }

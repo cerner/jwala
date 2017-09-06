@@ -206,7 +206,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | group   | seleniumGroup |
     Then I confirm multiple resource deploy error popup for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
 
-  Scenario: an resource with a garbage value in group jvm resource
+      Scenario: an resource with a garbage value in group jvm resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
@@ -236,7 +236,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | deployPath   | jvm.server.xml.resource.deploy.path |
       | templateName | server.xml.tpl                      |
 
-  #Test error-deploy from resources-MetaData error
+#Test error-deploy from resources-MetaData error
     And I enter text in resource edit box and save with the following parameters:
       | fileName | server.xml |
       | tabLabel | Meta Data  |
@@ -258,10 +258,10 @@ Feature: deploying a resource template with error produces the appropriate error
     And I click the ok button to override JVM Templates
     And I wait for notification "Saved"
 
-  #Test error-deploy from resources-Template error
+#Test error-deploy from resources-Template error
     When I attempt to deploy the jvm group resource "server.xml"
     Then I confirm resource deploy error popup for file "server.xml" and jvm "seleniumJvm"
 
-   #Test error-deploy from operations-Template error
+ #Test error-deploy from operations-Template error
     When I attempt to generate JVMs of group "seleniumGroup"
     Then I confirm resource deploy error popup for file "server.xml" and jvm "seleniumJvm"
