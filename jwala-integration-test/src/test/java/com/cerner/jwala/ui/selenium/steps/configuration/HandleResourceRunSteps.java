@@ -150,7 +150,7 @@ public class HandleResourceRunSteps {
     @And("^I wait for the save button to be visible again$")
     public void waitForSaveButton() {
         jwalaUi.waitUntilElementIsNotVisible(By.xpath("//*[contains(text(),'Saved')]"), 30);
-        jwalaUi.waitUntilElementIsClickable(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"), 60);
+        jwalaUi.clickWhenReady(By.xpath("//*[contains(@class, 'ui-icon-disk') and @title='Save']"), 60);
     }
 
     @And("^I enter attribute in metaData with key as \"(.*)\" and value as \"(.*)\"$")

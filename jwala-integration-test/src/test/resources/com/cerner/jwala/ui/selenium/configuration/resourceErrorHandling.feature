@@ -109,7 +109,7 @@ Feature: deploying a resource template with error produces the appropriate error
     And I wait for notification "Saved"
 
 
-    #previous metaData garbage value is erased
+    #previous metaData invalid characters value is erased
     And I enter text in resource edit box and save with the following parameters:
       | fileName | httpd.conf |
       | tabLabel | Template   |
@@ -128,7 +128,7 @@ Feature: deploying a resource template with error produces the appropriate error
     Then I confirm resource deploy error popup for file "httpd.conf" and webserver "seleniumWebserver"
 
 
-  Scenario: an resource with a garbage value in individual jvm resource
+  Scenario: a resource with a invalid characters value in individual jvm resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
@@ -206,7 +206,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | group   | seleniumGroup |
     Then I confirm multiple resource deploy error popup for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
 
-      Scenario: an resource with a garbage value in group jvm resource
+      Scenario: a resource with a invalid characters value in group jvm resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
