@@ -1,6 +1,8 @@
 package com.cerner.jwala.ui.selenium.steps.operation;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
+import cucumber.api.PendingException;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
@@ -34,5 +36,12 @@ public class GenerateJvmRunSteps {
     public void checkForSuccessfulGenerationIndividualJvm() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated and deployed JVM resource files']"), 1200);
         jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+    }
+
+    @And("^I click the yes to generate JVMs under a group \"(.*)\"$")
+    public void confirmGenerateJvmUnderAGroup(String groupName) {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Are you sure you want to generate all JVMs under']"));
+        jwalaUi.isElementExists(By.xpath("//span[text()='"+groupName+"']"));
+        jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
     }
 }

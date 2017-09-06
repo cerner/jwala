@@ -399,6 +399,15 @@ public class CommonRunSteps {
         handleResourceRunSteps.confirmDeployPopup();
     }
 
+    @And("^I attempt to deploy the jvm group resource \"(.*)\"$")
+    public void deployJvmGroupFile(String file) {
+        handleResourceRunSteps.selectFile(file);
+        handleResourceRunSteps.rightClickFile(file);
+        handleResourceRunSteps.clickDeploy();
+        handleResourceRunSteps.confirmOverride(file);
+    }
+
+
     @And("^I attempt to deploy the web app resource with the following parameters:$")
     public void deployWebappFile(Map<String, String> parameters) {
         handleResourceRunSteps.selectFile(parameters.get("fileName"));
@@ -412,5 +421,13 @@ public class CommonRunSteps {
             handleResourceRunSteps.clickOk();
         }
 
+    }
+
+    @When("^I attempt to generate JVMs of group \"([^\"]*)\"$")
+    public void attemptToGenerateJvmsOfGroup(String groupName) throws Throwable {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(groupName);
+        generateJvmRunSteps.clickGenerateJvmsBtnOfGroup(groupName);
+        generateJvmRunSteps.confirmGenerateJvmUnderAGroup(groupName);
     }
 }
