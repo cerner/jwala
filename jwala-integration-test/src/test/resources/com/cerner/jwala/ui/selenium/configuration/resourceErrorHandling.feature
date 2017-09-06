@@ -41,10 +41,14 @@ Feature: deploying a resource template with error produces the appropriate error
     And I click the ok button to override JVM Templates
     And I wait for notification "Saved"
 
-    And I right click resource file "hello.xml"
-    And I click resource deploy option
-    And I click resource deploy to a host option
-    And I confirm the resource deploy to a host popup
+    And I attempt to deploy the web app resource with the following parameters:
+      | fileName     | hello.xml |
+      | deployOption | all       |
+    And I confirm error popup for resourceFile "hello.xml" and web app "seleniumWebapp"
+
+    And I attempt to deploy the web app resource with the following parameters:
+      | fileName     | hello.xml |
+      | deployOption | single    |
     And I confirm error popup for resourceFile "hello.xml" and web app "seleniumWebapp"
 
     When I try to generate the webapp with the following parameters:
@@ -84,9 +88,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | text     | ${{        |
       | position | #          |
     And I wait for notification "Saved"
-    And I right click resource file "httpd.conf"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
+    And I attempt to deploy the resource "httpd.conf"
     And I confirm resource deploy error popup for file "httpd.conf" and webserver "seleniumWebserver"
     When I try to generate webserver with the following parameters:
       | webserverName | seleniumWebserver |
@@ -146,10 +148,8 @@ Feature: deploying a resource template with error produces the appropriate error
       | text     | ${{                                                                                      |
       | position | SET CATALINA_HOME=${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir} |
     And I wait for notification "Saved"
-    And I right click resource file "setenv.bat"
-    And I click resource deploy option
-    And I click yes button to deploy a resource popup
-    And I confirm resource deploy error popup for file "setenv.bat" and jvm "seleniumJvm"
+    When I attempt to deploy the resource "setenv.bat"
+    Then I confirm resource deploy error popup for file "setenv.bat" and jvm "seleniumJvm"
     When I try to generate jvm with the following parameters:
       | jvmName | seleniumJvm   |
       | group   | seleniumGroup |
@@ -195,7 +195,7 @@ Feature: deploying a resource template with error produces the appropriate error
       | group   | seleniumGroup |
     Then I confirm resource deploy error popup for file "server.xml" and jvm "seleniumJvm"
 
-  Scenario: deploying an resource with a garbage value in individual jvm resource-meta data
+  Scenario: an resource with a garbage value in individual jvm resource-meta data
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
