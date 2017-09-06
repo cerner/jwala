@@ -323,7 +323,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
         handleResourceRunSteps.clickSaveButton("Meta Data");
         if(parameters.get("override").equals("true")){
-            handleResourceRunSteps.clickOkToOverride();
+            handleResourceRunSteps.clickOk();
         }
         handleResourceRunSteps.waitForNotification("Saved");
     }
@@ -349,6 +349,18 @@ public class CommonRunSteps {
 
     }
 
+    @And("^I go to the web-app file in resources under individual jvm with the following parameters:$")
+    public void goToResourceWebappUnderJvm(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.expandNode(parameters.get("jvmName"));
+        uploadResourceRunSteps.clickNode(parameters.get("app"));
+        handleResourceRunSteps.selectFile(parameters.get("file"));
+
+    }
+
     @And("^I created a group JVM resource with the following parameters:$")
     public void createGroupJvmResource(Map<String,String> parameters) throws Throwable {
         navigationRunSteps.goToResourceTab();
@@ -361,5 +373,21 @@ public class CommonRunSteps {
         uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
         uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
         uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+    }
+
+    @And("^I enter attribute in the group file MetaData with the following parameters:$")
+    public void enterAttributeInGroupMetaData(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentType"));
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab("Meta Data");
+        handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
+        handleResourceRunSteps.clickSaveButton("Meta Data");
+        //click ok to override popup
+        handleResourceRunSteps.clickOk();
+        handleResourceRunSteps.waitForNotification("Saved");
     }
 }

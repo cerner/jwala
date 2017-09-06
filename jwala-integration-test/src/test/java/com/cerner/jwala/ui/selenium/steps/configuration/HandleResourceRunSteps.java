@@ -33,27 +33,27 @@ public class HandleResourceRunSteps {
         jwalaUi.click(By.xpath("//span[text()='" + fileName + "']"));
     }
 
-    @When("^I right click resource file \"(.*)\"$")
+    @And("^I right click resource file \"(.*)\"$")
     public void rightClickFile(String fileName) {
         jwalaUi.rightClick(By.xpath("//span[text()='" + fileName + "']"));
     }
 
-    @When("^I click resource deploy option$")
+    @And("^I click resource deploy option$")
     public void clickDeploy() {
         jwalaUi.click(By.xpath("//*[text()='deploy']"));
     }
 
-    @When("^I click resource deploy to a host option$")
+    @And("^I click resource deploy to a host option$")
     public void clickDeployToAHost() {
         jwalaUi.click(By.xpath("//*[text()='a host']"));
     }
 
-    @When("^I click resource deploy All option$")
+    @And("^I click resource deploy All option$")
     public void clickDeployAll() {
         jwalaUi.click(By.xpath("//*[text()='all hosts']"));
     }
 
-    @Then("^I click yes button to deploy a resource popup")
+    @And("^I click yes button to deploy a resource popup")
     public void confirmDeployPopup() {
         jwalaUi.click(By.xpath("//*[text()='Yes']"));
     }
@@ -69,7 +69,15 @@ public class HandleResourceRunSteps {
         jwalaUi.click(By.xpath("//span[text()='" + resource + "']"));
     }
 
-    @When("^I expand \"(.*)\" node in data tree$")
+
+    @When("^I add property \"(.*)\"$")
+    public void addProperty(String property) {
+        jwalaUi.click(By.xpath("//div[contains(@class, 'CodeMirror') and contains(@class, 'cm-s-default')]"));
+        jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
+    }
+
+
+    @And("^I expand \"(.*)\" node in data tree$")
     public void expandPropertyDataTree(String property) {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + property + "') ]/preceding-sibling::span"));
     }
@@ -80,11 +88,6 @@ public class HandleResourceRunSteps {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//span[contains(@class,'nodeVal') and contains(text(),'" + value + "')]"));
     }
 
-    @When("^I add property \"(.*)\"$")
-    public void addProperty(String property) {
-        jwalaUi.click(By.xpath("//div[contains(@class, 'CodeMirror') and contains(@class, 'cm-s-default')]"));
-        jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
-    }
 
     /**
      * @param text
@@ -102,19 +105,19 @@ public class HandleResourceRunSteps {
     /*
         clicks the save button of the template or the metadata, as the xpath returns both the elements
      */
-    @When("^I click save button of edit box of \"(.*)\"$")
+    @And("^I click save button of edit box of \"(.*)\"$")
     public void clickSaveButton(String tab) {
         List<WebElement> elements = jwalaUi.getWebDriver().findElements(By.xpath("//span[contains(@class, 'ui-icon-disk') and @title='Save']"));
         WebElement saveElement = tab.equals("Template") ? elements.get(0) : elements.get(1);
         saveElement.click();
     }
 
-    @When("^I wait for notification \"(.*)\"")
+    @Then("^I wait for notification \"(.*)\"")
     public void waitForNotification(String notification) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='" + notification + "']"));
     }
 
-    @Then("^I verify edit \"(.*)\"$")
+    @And("^I verify edit \"(.*)\"$")
     public void verifyText(String text) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[contains(.,'" + text + "')]"));
     }
@@ -124,12 +127,12 @@ public class HandleResourceRunSteps {
         jwalaUi.click(By.xpath("//*[@title='delete']"));
     }
 
-    @When("^I click check-box for resourceFile \"(.*)\"$")
+    @And("^I click check-box for resourceFile \"(.*)\"$")
     public void selectResourceCheckBox(String resourceFile) {
         jwalaUi.clickWhenReady(By.xpath("//li/span[text()='" + resourceFile + "']/preceding-sibling::input[@type='checkbox']"));
     }
 
-    @And("^I confirm delete a resource popup$")
+    @Then("^I confirm delete a resource popup$")
     public void deleteResource() {
         jwalaUi.isElementExists(By.xpath("//[contains(text(),'Are you sure you want to delete the selected resource template(s) ?')]"));
         jwalaUi.click(By.xpath("//button/span[text()='Yes']"));
@@ -164,11 +167,6 @@ public class HandleResourceRunSteps {
         jwalaUi.sendKeys(key + ":" + value + ",");
     }
 
-    @And("^I click ok to override$")
-    public void clickOkToOverride() {
-        jwalaUi.click(By.xpath("//*[text()='Ok']"));
-    }
-
     /*
       Text is divided into multiple spans hence checking only partial text
      */
@@ -180,14 +178,23 @@ public class HandleResourceRunSteps {
     }
 
     @And("^I confirm the resource deploy to a host popup$")
-    public void confirmDeployToAHost(){
+    public void confirmDeployToAHost() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Select a host')]"));
         clickOk();
 
     }
 
-    private void clickOk() {
+    @And("^I confirm overriding individual instances popup for resourceFile \"(.*)\"$")
+    public void confirmOverride(String resource){
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Any previous customizations to an individual instance of \""+resource+"\" will be overwritten.')]"));
+        clickYes();
+    }
+
+    public void clickYes(){ jwalaUi.click(By.xpath("//*[text()='Yes']")); }
+
+    public void clickOk() {
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
+
 
 }
