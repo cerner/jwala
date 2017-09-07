@@ -115,15 +115,8 @@ LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
 SSLSessionCache shmcb:logs/ssl_cache_shm
 #Note: we are not password protecting our keys
 #SSLPassPhraseDialog "exec:../app/data/security/apache/authorize.bat"
-<%
-  def scriptname = vars.'remote.jwala.data.dir' + "/security/scripts/httpd_helper";
-%>
 
-  <%
-      scriptname = "|" + scriptname + ".cmd";
-  %>
-
-SSLPassPhraseDialog "${scriptname}"
+SSLPassPhraseDialog "|${webServer.apacheHttpdMedia.remoteDir.toString().replaceAll("\\\\", "/")}/app/data/security/scripts/httpd_helper.cmd"
 
 #IPINS
 LoadModule rewrite_module modules/mod_rewrite.so
@@ -139,9 +132,9 @@ LoadModule rewrite_module modules/mod_rewrite.so
     </Directory>
 
 #IPINS
-RewriteEngine on      
-RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)      
-RewriteRule .* - [F]    
+RewriteEngine on
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+RewriteRule .* - [F]
 
 SSLEngine on
 SSLOptions +StrictRequire
@@ -192,8 +185,8 @@ SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
 #SSLCipherSuite SHA1 preferred over MD5
 
 SSLSessionCacheTimeout 300
-SSLCertificateFile D:/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.cer
-SSLCertificateKeyFile D:/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.key
+SSLCertificateFile D:/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}-passphrase.cer
+SSLCertificateKeyFile D:/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}-passphrase.key
 
 
 SSLVerifyClient none
@@ -236,10 +229,10 @@ ProxyPassReverse ${it.webAppContext.replaceAll(" ", "")} balancer://lb-${it.name
 DocumentRoot "htdocs"
 
 #IPINS
-RewriteEngine on      
+RewriteEngine on
 IncludeOptional ../app/data/httpd/*urlrewriterules.conf
-RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)      
-RewriteRule .* - [F]    
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+RewriteRule .* - [F]
 
 SSLEngine off
 
@@ -303,19 +296,19 @@ LoadModule deflate_module modules/mod_deflate.so
         AddOutputFilterByType DEFLATE application/json
         AddOutputFilterByType DEFLATE application/javascript
         AddOutputFilterByType DEFLATE application/x-javascript
- 
+
         AddOutputFilterByType DEFLATE application/x-httpd-php
         AddOutputFilterByType DEFLATE application/x-httpd-fastphp
         AddOutputFilterByType DEFLATE application/x-httpd-eruby
- 
+
         DeflateCompressionLevel 9
- 
+
 # Netscape 4.X has some problems
         BrowserMatch ^Mozilla/4 gzip-only-text/html
- 
+
 # Netscape 4.06-4.08 have some more problems
         BrowserMatch ^Mozilla/4\.0[678] no-gzip
- 
+
 # MSIE masquerades as Netscape, but it is fine
         BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
 </IfModule>
@@ -680,7 +673,7 @@ SSLRandomSeed connect builtin
 #RequestHeader unset DNT env=bad_DNT
 #</IfModule>
 
-<IfModule mpm_winnt_module> 
-ThreadsPerChild 1000 
-MaxConnectionsPerChild 0 
+<IfModule mpm_winnt_module>
+ThreadsPerChild 1000
+MaxConnectionsPerChild 0
 </IfModule>
