@@ -53,12 +53,8 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     Given I click the ok button
 
     # test status
-    # This test is disabled for now since if the HTTP and HTTPS ports are used are other than 80 and 443, the status
-    # link will not work when the browser (specifically Chrome) redirects HTTP to HTTPS since the port is not changed
-    # to the SSL port e.g. http://host:85/status -> https://host:85 (notice that the protocol changed but not the port).
-    # This has to be investigated further and resolved before enabling this test.
-    # When I click the "status" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
-    # Then I see the load balancer page
+    When I click the "status" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
+    Then I see the load balancer page
 
     # test view httpd.conf
     When I click the "httpd.conf" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
