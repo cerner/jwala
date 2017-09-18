@@ -2,6 +2,7 @@ package com.cerner.jwala.ui.selenium;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
@@ -22,6 +23,8 @@ public class SeleniumTestHelper {
 
     private static final String TEST_PROPERTY_PATH = "test.property.path";
     private static final String TEST_PROPERTIES = "selenium/test.properties";
+    private static final String DEFAULT_BROWSER_WIDTH = "1500";
+    private static final String DEFAULT_BROWSER_HEIGHT = "1000";
 
     /**
      * Create an instance of a {@link WebDriver} to facilitate browser based testing
@@ -35,6 +38,19 @@ public class SeleniumTestHelper {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             throw new SeleniumTestCaseException(e);
         }
+
+        // Set the size of the browser
+        final Properties properties;
+        try {
+             properties = SeleniumTestHelper.getProperties();
+        } catch (IOException e) {
+            throw new SeleniumTestCaseException(e);
+        }
+        final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
+        final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));
+        Dimension dimension = new Dimension(width, height);
+        driver.manage().window().setSize(dimension);
+
         return driver;
     }
 
