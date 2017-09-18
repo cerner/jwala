@@ -352,11 +352,11 @@ sonarRunner {
         property 'sonar.host.url',  project.properties['sonarHostUrl']
         property 'sonar.jdbc.url', project.properties['sonarJDBCUrl']
         property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
-        property 'sonar.jdbc.username', 'sonar'
+        property 'sonar.jdbc.username', 'root'
         property 'sonar.jdbc.password', 'sonar'
         property 'sonar.dynamicAnalysis', 'reuseReports'
         properties["sonar.projectKey"] = 'cto.tco.toc'
-        properties["sonar.projectName"] = 'tomcat operations center'
+        properties["sonar.projectName"] = 'JWALA'
         properties["sonar.projectVersion"] =  '1.0.0'
     }
 }
@@ -389,7 +389,7 @@ sonarqube {
         property 'sonar.host.url',  project.properties['sonarHostUrl']
         property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
         property 'sonar.projectKey', 'cto.tco.toc'
-	    property 'sonar.projectName', 'tomcat operations center'
+	    property 'sonar.projectName', 'JWALA'
         property 'sonar.projectVersion', '1.0.0'
 	}
 
