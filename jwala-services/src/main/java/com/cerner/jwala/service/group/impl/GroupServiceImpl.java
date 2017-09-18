@@ -346,13 +346,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public String previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template, ResourceGroup resourceGroup) {
+    public String previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template, ResourceGroup resourceGroup, String appName) {
         final Set<Jvm> jvms = groupPersistenceService.getGroup(groupName).getJvms();
         Jvm jvm = jvms != null && !jvms.isEmpty() ? jvms.iterator().next() : null;
-        String metaDataStr = groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, resourceTemplateName);
         try {
-            ResourceTemplateMetaData metaData = resourceService.getTokenizedMetaData(resourceTemplateName, jvm, metaDataStr);
-            Application app = applicationService.getApplication(metaData.getEntity().getTarget());
+            Application app = applicationService.getApplication(appName);
             app.setParentJvm(jvm);
             return resourceService.generateResourceFile(resourceTemplateName, template, resourceGroup, app,
                     ResourceGeneratorType.PREVIEW);
@@ -366,8 +364,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public String getGroupAppResourceTemplateMetaData(String groupName, String fileName) {
-        return groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, fileName);
+    public String getGroupAppResourceTemplateMetaData(String groupName, String fileName, String appName) {
+        return groupPersistenceService.getGroupAppResourceTemplateMetaData(groupName, fileName, appName);
     }
 
     @Override

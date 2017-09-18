@@ -9,6 +9,7 @@ public class RemoteSystemConnection implements Serializable {
     private final String host;
     private final Integer port;
     private final char[] encryptedPassword;
+    private final String password;
 
     public RemoteSystemConnection(final String theUser,
                                   final char[] theEncryptedPassword,
@@ -18,6 +19,18 @@ public class RemoteSystemConnection implements Serializable {
         host = theHost;
         port = thePort;
         encryptedPassword = theEncryptedPassword != null ? Arrays.copyOf(theEncryptedPassword, theEncryptedPassword.length) : new char[]{};
+        password = null;
+    }
+
+    public RemoteSystemConnection(final String theUser,
+                                  final String thePassword,
+                                  final String theHost,
+                                  final Integer thePort) {
+        user = theUser;
+        host = theHost;
+        port = thePort;
+        password = thePassword;
+        encryptedPassword = null;
     }
 
     public String getUser() {
@@ -33,7 +46,14 @@ public class RemoteSystemConnection implements Serializable {
     }
 
     public char[] getEncryptedPassword() {
+        if (encryptedPassword == null) {
+            return null;
+        }
         return Arrays.copyOf(encryptedPassword, encryptedPassword.length);
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @Override

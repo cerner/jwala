@@ -10,16 +10,24 @@
 # How to Run Tests
 
 ### in Gradle
-Running all tests
+Running a test
 ```ssh
-$ gradle test -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+$ gradle clean test -Dtest.single=JwalaUiMainTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=d:/jwala-ui-integ-test-support-files/drivers/chromedriver.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test.properties -PjwalaIntegrationTest
 ```
-Running a single test
-```ssh
-$ gradle test -Dtest.single=ManageGroupTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+
+For IE
+
 ```
-### in the IDE
-In the run configurations set the VM options to
-```ssh
--Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=C:/selenium/chromedriver.exe
+ gradle clean test -Dtest.single=SecurityTest -Dwebdriver.class=org.openqa.selenium.ie.InternetExplorerDriver -Dwebdriver.ie.driver=d:/jwala-ui-integ-test-support-files/drivers/IEDriverServer32.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test-localhost.properties -PjwalaIntegrationTest
 ```
+
+# Jwala Db Backup Scripts
+
+These scripts were meant to be used to backup a Jwala instance's before running Selenium tests then restore the db
+afterwards
+
+- jwala-backup-db.sh backs up the db to $DB_HOME/jwala.h2.db.bak
+- jwala-restore-db.sh copies $DB_HOME/jwala.h2.db.bak back to $DB_HOME/jwala.h2.db
+
+> Note: Please be aware that before editing these scripts that they require Unix\OSX line endings or they will have errors
+on execution

@@ -11,10 +11,7 @@ import com.cerner.jwala.common.domain.model.jvm.JvmState;
 import com.cerner.jwala.common.domain.model.media.Media;
 import com.cerner.jwala.common.domain.model.media.MediaType;
 import com.cerner.jwala.common.domain.model.path.Path;
-import com.cerner.jwala.common.domain.model.resource.ResourceContent;
-import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
-import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
-import com.cerner.jwala.common.domain.model.resource.ResourceTemplateMetaData;
+import com.cerner.jwala.common.domain.model.resource.*;
 import com.cerner.jwala.common.domain.model.user.User;
 import com.cerner.jwala.common.domain.model.webserver.WebServer;
 import com.cerner.jwala.common.exception.InternalErrorException;
@@ -47,6 +44,7 @@ import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
+import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
 import com.jcraft.jsch.JSchException;
@@ -113,7 +111,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         initMocks(this);
         FileUtils.forceMkdir(new File(ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + JUNIT_JVM));
 
-        reset(Config.mockJvmPersistenceService, Config.mockGroupService, Config.mockApplicationService,
+        reset(Config.mockJvmPersistenceService, Config.mockGroupService, Config.mockApplicationService, Config.mockHistoryFacadeService,
                 Config.mockMessagingTemplate, Config.mockGroupStateNotificationService, Config.mockResourceService,
                 Config.mockClientFactoryHelper, Config.mockJvmControlService, Config.mockBinaryDistributionService,
                 Config.mockBinaryDistributionLockManager, Config.mockJvmStateService, Config.mockWebServerPersistenceService, Config.mockGroupPersistenceService);
@@ -139,6 +137,39 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(createJvmAndAddToGroupsRequest, times(1)).validate();
         verify(Config.mockJvmPersistenceService, times(1)).createJvm(createJvmRequest);
 
+        System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
+    }
+
+    @Test
+    public void testCreateDefaultTemplates() throws IOException {
+        System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, "./src/test/resources");
+
+        final Entity mockEntity = mock(Entity.class);
+        final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", new HashSet<Group>());
+        Set<Jvm> jvms = new HashSet<>();
+        jvms.add(jvm);
+        List<Application> applications = new LinkedList<>();
+        Group group = new Group(new Identifier<Group>(99L), "Test", jvms);
+        Application application = new Application(new Identifier<Application>(99L), "testApplication", null, null, null, false, false, false, null, null);
+        List<String> templateNames = new ArrayList<String>();
+        templateNames.add("testTEmplate");
+        applications.add(application);
+        ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
+        when(mockMetaData.getDeployFileName()).thenReturn("testFile");
+        when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mockMetaData);
+        when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
+        when(Config.mockGroupPersistenceService.getGroupJvmResourceTemplate(anyString(), anyString())).thenReturn("test");
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(group);
+        when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(templateNames);
+        when(Config.mockApplicationService.findApplications(any())).thenReturn(applications);
+        when(mockMetaData.getEntity()).thenReturn(mockEntity);
+        when(mockEntity.getDeployToJvms()).thenReturn(false);
+
+        jvmService.createDefaultTemplates(jvm.getJvmName(), group);
+
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupJvmsResourceTemplateNames(anyString());
+        verify(Config.mockGroupPersistenceService, times(1)).getGroupJvmResourceTemplate(anyString(), anyString());
+        verify(Config.mockResourceService,times(1)).getMetaData(anyString());
         System.clearProperty(ApplicationProperties.PROPERTIES_ROOT_PATH);
     }
 
@@ -208,6 +239,13 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         List<String> appTemplateNames = new ArrayList<>();
         appTemplateNames.add("app-template-name");
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", groupSet);
+        Set<Jvm> jvms = new HashSet<>();
+        jvms.add(jvm);
+        List<Application> applications = new LinkedList<>();
+        Group group = new Group(new Identifier<Group>(99L), "Test", jvms);
+        Application application = new Application(new Identifier<Application>(99L), "testApplication", null, null, null, false, false, false, null, null);
+        templateNames.add("testTEmplate");
+        applications.add(application);
 
         ResourceTemplateMetaData mockMetaData = mock(ResourceTemplateMetaData.class);
         when(mockMetaData.getDeployFileName()).thenReturn("app-context.xml");
@@ -222,11 +260,13 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockGroupService.getGroupJvmResourceTemplate(anyString(), anyString(), any(ResourceGroup.class), anyBoolean())).thenReturn("<server>xml</server>");
         when(Config.mockGroupService.getGroupJvmResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"deployPath\":\"c:/fake/path\", \"deployFileName\":\"server-deploy.xml\"}");
         when(Config.mockGroupService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(appTemplateNames);
-        when(Config.mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString())).thenReturn("{\"deployPath\":\"c:/fake/app/path\", \"deployFileName\":\"app-context.xml\", \"entity\":{\"deployToJvms\":\"true\", \"target\":\"app-target\"}}");
+        when(Config.mockGroupService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"deployPath\":\"c:/fake/app/path\", \"deployFileName\":\"app-context.xml\", \"entity\":{\"deployToJvms\":\"true\", \"target\":\"app-target\"}}");
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), Matchers.anyObject(), anyString())).thenReturn(mockMetaData);
         when(createJvmRequest.getJvmName()).thenReturn("TestJvm");
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
         when(Config.mockWebServerPersistenceService.findWebServerByName(anyString())).thenThrow(NoResultException.class);
+        when(Config.mockApplicationService.findApplications(any())).thenReturn(applications);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(group);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -253,6 +293,15 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         List<String> appTemplateNames = new ArrayList<>();
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", groupSet);
 
+        Set<Jvm> jvms = new HashSet<>();
+        jvms.add(jvm);
+        List<Application> applications = new LinkedList<>();
+        Group group = new Group(new Identifier<Group>(99L), "Test", jvms);
+        Application application = new Application(new Identifier<Application>(99L), "testApplication", null, null, null, false, false, false, null, null);
+        templateNames.add("testTEmplate");
+        applications.add(application);
+
+
         when(createJvmAndAddToGroupsRequest.getCreateCommand()).thenReturn(createJvmRequest);
         when(Config.mockJvmPersistenceService.createJvm(any(CreateJvmRequest.class))).thenReturn(jvm);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
@@ -265,6 +314,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(mock(ResourceTemplateMetaData.class));
         when(Config.mockGroupPersistenceService.getGroupJvmResourceTemplate(anyString(), anyString())).thenReturn("<Server></Server>");
+        when(Config.mockApplicationService.findApplications(any())).thenReturn(applications);
+        when(Config.mockGroupPersistenceService.getGroup(anyString())).thenReturn(group);
 
         jvmService.createJvm(createJvmAndAddToGroupsRequest, Config.mockUser);
 
@@ -324,6 +375,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         appTemplateNames.add("app-template-name");
         final Jvm jvm = new Jvm(new Identifier<Jvm>(99L), "testJvm", groupSet);
 
+
         when(createJvmAndAddToGroupsRequest.getCreateCommand()).thenReturn(createJvmRequest);
         when(Config.mockJvmPersistenceService.createJvm(any(CreateJvmRequest.class))).thenReturn(jvm);
         when(Config.mockJvmPersistenceService.getJvm(any(Identifier.class))).thenReturn(jvm);
@@ -333,6 +385,12 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(Config.mockGroupPersistenceService.getGroupJvmsResourceTemplateNames(anyString())).thenReturn(templateNames);
         when(Config.mockGroupPersistenceService.getGroupAppsResourceTemplateNames(anyString())).thenReturn(appTemplateNames);
         when(Config.mockResourceService.getMetaData(anyString())).thenThrow(new IOException());
+
+        List<Application> applications = new LinkedList<>();
+        Application application = new Application(new Identifier<Application>(99L), "testApplication", null, null, null, false, false, false, null, null);
+        templateNames.add("testTemplate");
+        applications.add(application);
+        when(Config.mockApplicationService.findApplications(any())).thenReturn(applications);
 
         when(createJvmRequest.getJvmName()).thenReturn("TestJvm");
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenThrow(NoResultException.class);
@@ -374,7 +432,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test(expected = JvmServiceException.class)
-    public void testUpdateJvmNameShouldFail(){
+    public void testUpdateJvmNameShouldFail() {
         final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
         final String oldjvmName = "old-jvm-name";
         final String newjvmName = "new-jvm-name";
@@ -388,7 +446,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test(expected = JvmServiceException.class)
-    public void testUpdateJvmNamethrowJvmServiceException(){
+    public void testUpdateJvmNamethrowJvmServiceException() {
         final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
         final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
 
@@ -411,7 +469,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
     @Test
-    public void testUpdateJvmNameShouldWork(){
+    public void testUpdateJvmNameShouldWork() {
         final UpdateJvmRequest updateJvmRequest = mock(UpdateJvmRequest.class);
         final Set<AddJvmToGroupRequest> addCommands = createMockedAddRequests(5);
         when(updateJvmRequest.getAssignmentCommands()).thenReturn(addCommands);
@@ -835,7 +893,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         when(mockExecData.getReturnCode()).thenReturn(new ExecReturnCode(0));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class), anyString(), any(ResourceGeneratorType.class))).thenReturn("<server>xml</server>");
-        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}", "some template content"));
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", org.apache.tika.mime.MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
         when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class))).thenReturn("<server>xml</server>");
         when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(), anyString(), anyBoolean())).thenReturn(mockExecData);
@@ -893,7 +951,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
-        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}", "some template content"));
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", org.apache.tika.mime.MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, false));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
         jvmService.generateAndDeployFile("jvmName", "fileName", Config.mockUser);
@@ -904,7 +962,7 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
-        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}", "some template content"));
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenReturn(new ResourceTemplateMetaData("template-name", org.apache.tika.mime.MediaType.APPLICATION_XML, "deploy-file-name", "deploy-path", null, false, true, true));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
 
@@ -914,12 +972,12 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
-    @Test (expected = JvmServiceException.class)
+    @Test(expected = JvmServiceException.class)
     public void testGenerateAndDeployFileJvmStartedHotDeployTrueThrowsIOException() throws IOException {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
         when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(11111L));
-        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}","some template content"));
+        when(Config.mockResourceService.getResourceContent(any(ResourceIdentifier.class))).thenReturn(new ResourceContent("{\"fake\":\"meta-data\"}", "some template content"));
         when(Config.mockResourceService.getTokenizedMetaData(anyString(), any(Jvm.class), anyString())).thenThrow(new IOException("Test throwing the IOException during tokenization"));
         when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
 

@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "201c3ea2-6433-1479-13e3-b98e35ecdb2b",
+		"_postman_id": "212f0f97-79e4-4abf-73fa-c6a1dea3fd3e",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -35,14 +35,12 @@
 								{
 									"key": "userName",
 									"value": "jhgkjb",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "password",
 									"value": "afgsdf",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -74,14 +72,12 @@
 								{
 									"key": "userName",
 									"value": "{{userName}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "password",
 									"value": "{{Password}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -444,27 +440,23 @@
 								{
 									"key": "name",
 									"value": "{{JdkMediaName}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "type",
 									"value": "JDK",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "mediaArchiveFile",
 									"type": "file",
-									"enabled": true,
 									"src": "{{jdkMediaSrc}}",
 									"value": ""
 								},
 								{
 									"key": "remoteDir",
 									"value": "{{mediaRemoteDir}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -497,27 +489,23 @@
 								{
 									"key": "name",
 									"value": "{{ApacheHttpdMediaName}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "type",
 									"value": "APACHE",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "mediaArchiveFile",
 									"type": "file",
-									"enabled": true,
 									"src": "{{apacheHttpdMediaSrc}}",
 									"value": ""
 								},
 								{
 									"key": "remoteDir",
 									"value": "{{mediaRemoteDir}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -550,27 +538,23 @@
 								{
 									"key": "name",
 									"value": "{{TomcatMediaName}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "type",
 									"value": "TOMCAT",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "mediaArchiveFile",
 									"type": "file",
-									"enabled": true,
 									"src": "{{tomcatMediaSrc}}",
 									"value": ""
 								},
 								{
 									"key": "remoteDir",
 									"value": "{{mediaRemoteDir}}/app/instances",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -831,13 +815,11 @@
 									"key": "assignToJvms",
 									"value": "true",
 									"type": "text",
-									"enabled": true,
 									"warning": ""
 								},
 								{
 									"key": "templateFile",
 									"type": "file",
-									"enabled": true,
 									"warning": "",
 									"src": "../resources/postman/hello-world.war",
 									"value": ""
@@ -846,7 +828,6 @@
 									"key": "deployPath",
 									"value": "{{mediaRemoteDir}}/app/webapps",
 									"type": "text",
-									"enabled": true,
 									"warning": ""
 								}
 							]
@@ -909,14 +890,12 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/httpd.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/{{targetOs}}/httpdconf.tpl",
 									"value": ""
 								}
@@ -949,14 +928,12 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/setenv.sh.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/setenv.sh.tpl",
 									"value": ""
 								}
@@ -989,15 +966,127 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/server.xml.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/server.xml.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "upload self-signed cert",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/server.crt.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/server.crt.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/server.crt.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "upload self-signed cert key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/server.key.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/server.key.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/server.key.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "upload catalina.properties template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/catalina.properties.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/catalina.properties.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/catalina.properties.tpl",
 									"value": ""
 								}
 							]
@@ -1029,14 +1118,12 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/hello.xml.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/hello.xml.tpl",
 									"value": ""
 								}
@@ -1069,7 +1156,6 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/hello.xml.json",
 									"value": ""
 								}
@@ -1102,14 +1188,12 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/hello.xml.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/hello.xml.tpl",
 									"value": ""
 								}
@@ -1174,7 +1258,6 @@
 								{
 									"key": "file",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/test.json",
 									"value": ""
 								}
@@ -1200,7 +1283,24 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}?byName=true",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{GroupName}}?byName=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{GroupName}}"
+							],
+							"query": [
+								{
+									"key": "byName",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -1231,19 +1331,7 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
-								{
-									"key": "tplFile",
-									"type": "file",
-									"enabled": true,
-									"src": "../resources/postman/hello.xml.tpl",
-									"value": ""
-								},
-								{
-									"key": "",
-									"value": "",
-									"type": "text",
-									"enabled": true
-								}
+								{}
 							]
 						},
 						"description": ""
@@ -1301,19 +1389,7 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
-								{
-									"key": "tplFile",
-									"type": "file",
-									"enabled": true,
-									"src": "../resources/postman/hello.xml.tpl",
-									"value": ""
-								},
-								{
-									"key": "",
-									"value": "",
-									"type": "text",
-									"enabled": true
-								}
+								{}
 							]
 						},
 						"description": ""
@@ -1343,19 +1419,16 @@
 								{
 									"key": "deployPath",
 									"value": "${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "contentType",
 									"value": "text/xml",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "templateFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/hello.xml.tpl",
 									"value": ""
 								}
@@ -1388,14 +1461,12 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/tomcat-users.json",
 									"value": ""
 								},
 								{
 									"key": "templateFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/tomcat-users.xml",
 									"value": ""
 								}
@@ -1428,6 +1499,60 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/conf/server.xml",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "generate and deploy group jvm file: server.crt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName\");",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/conf/server.crt",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "generate and deploy group jvm file: server.key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName\");",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/conf/server.key",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -1605,7 +1730,28 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}/apps/conf/hello-world.war/{{WebappName}}?hostName={{host}}",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{GroupName}}/apps/conf/hello-world.war/{{WebappName}}?hostName={{host}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{GroupName}}",
+								"apps",
+								"conf",
+								"hello-world.war",
+								"{{WebappName}}"
+							],
+							"query": [
+								{
+									"key": "hostName",
+									"value": "{{host}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -1639,7 +1785,6 @@
 								{
 									"key": "templateFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/ext.properties",
 									"value": ""
 								}
@@ -2056,7 +2201,28 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0?hostName={{host}}",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0?hostName={{host}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{HealthCheckGroup}}",
+								"apps",
+								"conf",
+								"{{HealthCheckWar}}",
+								"HEALTH-CHECK-4.0"
+							],
+							"query": [
+								{
+									"key": "hostName",
+									"value": "{{host}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -2131,7 +2297,24 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmNetworkServiceId}}?hardDelete=true",
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JvmNetworkServiceId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JvmNetworkServiceId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -2171,27 +2354,23 @@
 								{
 									"key": "name",
 									"value": "Test-Error",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "type",
 									"value": "JDK",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								},
 								{
 									"key": "mediaArchiveFile",
 									"type": "file",
-									"enabled": true,
 									"src": "../resources/postman/Error.zip",
 									"value": ""
 								},
 								{
 									"key": "remoteDir",
 									"value": "{{mediaRemoteDir}}",
-									"type": "text",
-									"enabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -2215,7 +2394,23 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media?_=1484341627027",
+						"url": {
+							"raw": "{{url}}/v1.0/media?_=1484341627027",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"media"
+							],
+							"query": [
+								{
+									"key": "_",
+									"value": "1484341627027"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -2352,7 +2547,26 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/jvmCommand?jvmId={{JvmId}}&operation=threadDump",
+						"url": {
+							"raw": "{{url}}/jvmCommand?jvmId={{JvmId}}&operation=threadDump",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"jvmCommand"
+							],
+							"query": [
+								{
+									"key": "jvmId",
+									"value": "{{JvmId}}"
+								},
+								{
+									"key": "operation",
+									"value": "threadDump"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -2569,7 +2783,25 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmId}}/commands?wait=TRUE",
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JvmId}}/commands?wait=TRUE",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JvmId}}",
+								"commands"
+							],
+							"query": [
+								{
+									"key": "wait",
+									"value": "TRUE"
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -2701,7 +2933,26 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/webServerCommand?webServerId={{WebserverId}}&operation=viewHttpdConf",
+						"url": {
+							"raw": "{{url}}/webServerCommand?webServerId={{WebserverId}}&operation=viewHttpdConf",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"webServerCommand"
+							],
+							"query": [
+								{
+									"key": "webServerId",
+									"value": "{{WebserverId}}"
+								},
+								{
+									"key": "operation",
+									"value": "viewHttpdConf"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3078,7 +3329,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"deployPath\" : \"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
+							"raw": "{\r\n  \"deployPath\" : \"${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}\",\r\n  \"templateName\" : \"HttpdConfTemplate.tpl\",\r\n  \"deployFileName\" : \"httpd.conf\",\r\n  \"contentType\" : \"text/plain\",\r\n  \"hotDeploy\":true,\r\n  \"entity\" : {\r\n    \"type\" : \"GROUPED_WEBSERVERS\",\r\n    \"group\" : \"{{GroupName}}\",\r\n    \"target\" : \"{{GroupName}}\"\r\n  }\r\n}"
 						},
 						"description": ""
 					},
@@ -3238,7 +3489,24 @@
 				{
 					"name": "get group by name",
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}?byName=true",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{GroupName}}?byName=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{GroupName}}"
+							],
+							"query": [
+								{
+									"key": "byName",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3777,6 +4045,62 @@
 					"response": []
 				},
 				{
+					"name": "get all group states",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.message === \"SUCCESS\";",
+									"tests[\"Successful GET\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/state",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get  group state by name ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert response body\"] = jsonData.message === \"SUCCESS\";",
+									"tests[\"Successful GET\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/state",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "get other group membership details of the children of type JVM",
 					"event": [
 						{
@@ -3790,7 +4114,27 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/children/otherGroup/connectionDetails?groupChildType=JVM",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{GroupId}}/children/otherGroup/connectionDetails?groupChildType=JVM",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{GroupId}}",
+								"children",
+								"otherGroup",
+								"connectionDetails"
+							],
+							"query": [
+								{
+									"key": "groupChildType",
+									"value": "JVM"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3815,7 +4159,27 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/children/otherGroup/connectionDetails?groupChildType=WEB_SERVER",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{GroupId}}/children/otherGroup/connectionDetails?groupChildType=WEB_SERVER",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{GroupId}}",
+								"children",
+								"otherGroup",
+								"connectionDetails"
+							],
+							"query": [
+								{
+									"key": "groupChildType",
+									"value": "WEB_SERVER"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4152,7 +4516,25 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/exists/fileName?jvmName={{HealthCheckJvm}}",
+						"url": {
+							"raw": "{{url}}/v1.0/resources/exists/fileName?jvmName={{HealthCheckJvm}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"resources",
+								"exists",
+								"fileName"
+							],
+							"query": [
+								{
+									"key": "jvmName",
+									"value": "{{HealthCheckJvm}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4180,7 +4562,25 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/exists/fileName?webappName={{HealthCheckApp}}",
+						"url": {
+							"raw": "{{url}}/v1.0/resources/exists/fileName?webappName={{HealthCheckApp}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"resources",
+								"exists",
+								"fileName"
+							],
+							"query": [
+								{
+									"key": "webappName",
+									"value": "{{HealthCheckApp}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4208,7 +4608,25 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/exists/fileName?webserverName={{HealthCheckWebServer}}",
+						"url": {
+							"raw": "{{url}}/v1.0/resources/exists/fileName?webserverName={{HealthCheckWebServer}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"resources",
+								"exists",
+								"fileName"
+							],
+							"query": [
+								{
+									"key": "webserverName",
+									"value": "{{HealthCheckWebServer}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4759,7 +5177,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/HEALTH CHECK 4.0/apps/resources/preview/hct.properties",
+						"url": "{{url}}/v1.0/groups/HEALTH CHECK 4.0/apps/resources/preview/hct.properties/{{WebappName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5049,7 +5467,25 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=FALSE",
+						"url": {
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=FALSE",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"webservers",
+								"{{WebserverId}}",
+								"commands"
+							],
+							"query": [
+								{
+									"key": "wait",
+									"value": "FALSE"
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -5206,7 +5642,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars['remote.jwala.data.dir'\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${webServer.apacheHttpdMedia.remoteDir\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5245,7 +5681,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"httpdconf.tpl\",\r\n        \"contentType\":\"text/plain\",\r\n        \"deployPath\":\"${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}\",\r\n        \"deployFileName\":\"httpd.conf\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_WEBSERVERS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5292,7 +5728,28 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0?hostName={{host}}",
+						"url": {
+							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0?hostName={{host}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"groups",
+								"{{HealthCheckGroup}}",
+								"apps",
+								"conf",
+								"{{HealthCheckWar}}",
+								"HEALTH-CHECK-4.0"
+							],
+							"query": [
+								{
+									"key": "hostName",
+									"value": "{{host}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5597,7 +6054,24 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/2?hardDelete=false",
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/2?hardDelete=false",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"2"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "false"
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -5747,7 +6221,24 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmId}}?hardDelete=false",
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JvmId}}?hardDelete=false",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JvmId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "false"
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -5772,7 +6263,24 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmId}}?hardDelete=true",
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JvmId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JvmId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6041,7 +6549,28 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/applications/fileExists?filePath=D:\\stp\\app\\webapps\\{{HealthCheckWar}}&hostName={{host}}",
+						"url": {
+							"raw": "{{url}}/v1.0/applications/fileExists?filePath=D:\\stp\\app\\webapps\\{{HealthCheckWar}}&hostName={{host}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"applications",
+								"fileExists"
+							],
+							"query": [
+								{
+									"key": "filePath",
+									"value": "D:\\stp\\app\\webapps\\{{HealthCheckWar}}"
+								},
+								{
+									"key": "hostName",
+									"value": "{{host}}"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -6066,7 +6595,22 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/devMode?val=true",
+						"url": {
+							"raw": "{{url}}/devMode?val=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"devMode"
+							],
+							"query": [
+								{
+									"key": "val",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -6144,7 +6688,25 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=TRUE",
+						"url": {
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=TRUE",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"webservers",
+								"{{WebserverId}}",
+								"commands"
+							],
+							"query": [
+								{
+									"key": "wait",
+									"value": "TRUE"
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -6175,7 +6737,24 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/webservers/{{WebserverId}}?hardDelete=true",
+						"url": {
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"webservers",
+								"{{WebserverId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {

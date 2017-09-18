@@ -80,7 +80,7 @@ public interface GroupService {
 
     String getGroupAppResourceTemplate(String groupName, String appName, String resourceTemplateName, boolean tokensReplaced, ResourceGroup resourceGroup);
 
-    String getGroupAppResourceTemplateMetaData(String groupName, String fileName);
+    String getGroupAppResourceTemplateMetaData(String groupName, String fileName, String appName);
 
     String getGroupJvmResourceTemplateMetaData(String groupName, String fileName);
 
@@ -88,7 +88,7 @@ public interface GroupService {
 
     String updateGroupAppResourceTemplate(String groupName, String appName, String resourceTemplateName, String content);
 
-    String previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template, ResourceGroup resourceGroup);
+    String previewGroupAppResourceTemplate(String groupName, String resourceTemplateName, String template, ResourceGroup resourceGroup, String appName);
 
     CommandOutput deployGroupAppTemplate(String groupName, String fileName, Application application, Jvm jvm);
 

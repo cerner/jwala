@@ -352,11 +352,11 @@ sonarRunner {
         property 'sonar.host.url',  project.properties['sonarHostUrl']
         property 'sonar.jdbc.url', project.properties['sonarJDBCUrl']
         property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
-        property 'sonar.jdbc.username', 'root'
-        property 'sonar.jdbc.password', 'sonar'
+        property 'sonar.jdbc.username', project.properties['sonarUser']
+        property 'sonar.jdbc.password', project.properties['sonarPassword']
         property 'sonar.dynamicAnalysis', 'reuseReports'
         properties["sonar.projectKey"] = 'cto.tco.toc'
-        properties["sonar.projectName"] = 'JWALA'
+        properties["sonar.projectName"] = project.properties['projectName']
         properties["sonar.projectVersion"] =  '1.0.0'
     }
 }
@@ -389,7 +389,7 @@ sonarqube {
         property 'sonar.host.url',  project.properties['sonarHostUrl']
         property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
         property 'sonar.projectKey', 'cto.tco.toc'
-	    property 'sonar.projectName', 'JWALA'
+	    property 'sonar.projectName', project.properties['projectName']
         property 'sonar.projectVersion', '1.0.0'
 	}
 
@@ -453,4 +453,14 @@ subprojects {
                 "$buildDir\\fortify\\${project.name}.mbs"
     }
 
+}
+
+// Excludes running of jwala-integration-test's via test task unless one specifies jwalaIntegrationTest property e.g.
+// gradle -PjwalaIntegrationTest
+project('jwala-integration-test') {
+    test {
+        onlyIf {
+            project.hasProperty("jwalaIntegrationTest")
+        }
+    }
 }

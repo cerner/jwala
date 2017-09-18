@@ -1,0 +1,5 @@
+userName,password,result
+correct-user,correct-password,mainPage
+correct-user,wrong-password,loginErrorMessage
+wrong-user,correct-password,loginErrorMessage
+wrong-user,wrong-password,loginErrorMessage
