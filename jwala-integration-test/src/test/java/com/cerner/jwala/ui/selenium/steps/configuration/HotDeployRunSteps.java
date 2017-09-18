@@ -81,7 +81,7 @@ public class HotDeployRunSteps {
         clickOkButton();
     }
 
-    @Then("^I confirm webapp \"([^\"]*)\" is succesfully deployed in Operations page popup$")
+    @Then("^I confirm webapp \"([^\"]*)\" is successfully deployed in Operations page popup$")
     public void verifySuccesfulOperationsDeploy(String webappName) throws Throwable {
         jwalaUi.isElementExists(By.xpath("//*[text()='" + webappName + " resource files deployed successfully'"));
         clickOkButton();
