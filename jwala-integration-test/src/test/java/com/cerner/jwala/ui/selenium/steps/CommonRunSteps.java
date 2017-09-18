@@ -4,7 +4,6 @@ import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import com.cerner.jwala.ui.selenium.steps.operation.*;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
