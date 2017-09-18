@@ -6,7 +6,7 @@ Feature: External property
     And I am in the resource tab
     When I click "Ext Properties" component
     And I click the add resource button
-    And I choose the resource file "hctProperties.tpl"
+    And I choose the resource file "hct.properties.tpl"
     And I click the ok button
     Then I check for resource "ext.properties"
     When I expand "ext" node in data tree
@@ -18,11 +18,11 @@ Feature: External property
     And I am in the resource tab
     When I click "Ext Properties" component
     And I click the add resource button
-    And I choose the resource file "hctProperties.tpl"
+    And I choose the resource file "hct.properties.tpl"
     And I click the ok button
     When I click "Ext Properties" component
     And I click the add resource button
-    And I choose the resource file "hctRoleMappingProperties.tpl"
+    And I choose the resource file "htc-role-mapping.properties.tpl"
     Then I verify external property override message
     And I click the ok button
     And I check for resource "ext.properties"
@@ -36,7 +36,7 @@ Feature: External property
     And I am in the resource tab
     When I click "Ext Properties" component
     And I click the add resource button
-    And I choose the resource file "hctProperties.tpl"
+    And I choose the resource file "hct.properties.tpl"
     And I click the ok button
     And I select the resource file "ext.properties"
     And I add property "team=ctp"
@@ -50,7 +50,7 @@ Feature: External property
     And I am in the resource tab
     When I click "Ext Properties" component
     And I click the add resource button
-    And I choose the resource file "hctProperties.tpl"
+    And I choose the resource file "hct.properties.tpl"
     And I click the ok button
     And I click check-box for resourceFile "ext.properties"
     And I click the resource delete icon
