@@ -4,9 +4,11 @@ import com.cerner.jwala.ui.selenium.TestConfig;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import com.cerner.jwala.ui.selenium.steps.configuration.*;
 import com.cerner.jwala.ui.selenium.steps.operation.*;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import org.openqa.selenium.By;
+import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -67,6 +69,13 @@ public class CommonRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
+
+    @Autowired
+    private HandleResourceRunSteps handleResourceRunSteps;
+
+    @Autowired
+    private ResourceErrorHandlingRunSteps resourceErrorHandlingRunSteps;
+
 
     @Given("^I logged in$")
     public void logIn() {
@@ -238,12 +247,185 @@ public class CommonRunSteps {
         jwalaUi.waitUntilElementIsNotVisible(By.xpath("//div[contains(@class, 'ui-tooltip')]"), 30);
     }
 
+    @And("^I generate and start the webserver with the following parameters:$")
+    public void generateAndStartWebserver(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateWebServerRunSteps.generateIndividualWebserver(parameters.get("webserverName"), parameters.get("group"));
+        generateWebServerRunSteps.checkForSuccessfulGenerationOfAWebserver();
+        startWebServersOfGroup(parameters.get("webserverName"), parameters.get("group"));
+        startWebServerRunSteps.checkIfWebServerStateIsStarted(parameters.get("webserverName"), parameters.get("group"));
+    }
+
+    @And("^I generate and start the jvm with the following parameters:$")
+    public void generateAndStartJvm(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateJvmRunSteps.generateIndividualJvm(parameters.get("jvmName"), parameters.get("group"));
+        generateJvmRunSteps.checkForSuccessfulGenerationIndividualJvm();
+        startJvmOfGroup(parameters.get("jvmName"), parameters.get("group"));
+        startJvmRunSteps.checkIfJvmStateIsStarted(parameters.get("jvmName"), parameters.get("group"));
+    }
+
+    /*
+      The methods below don't have the check for success, so we can use them both for error checking and succesfuly deploy
+     */
+    @And("^I try to generate webserver with the following parameters:$")
+    public void attemptToGenerateWebserver(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateWebServerRunSteps.generateIndividualWebserver(parameters.get("webserverName"), parameters.get("group"));
+    }
+
+    @And("^I try to generate jvm with the following parameters:$")
+    public void attemptToGenerateJvm(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateJvmRunSteps.generateIndividualJvm(parameters.get("jvmName"), parameters.get("group"));
+    }
+
+    @And("^I try to generate the webapp with the following parameters:$")
+    public void attemptToGenerateWebapp(Map<String, String> parameters) {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(parameters.get("group"));
+        generateWebAppRunSteps.clickGenerateWebAppBtnOfGroup(parameters.get("webAppName"), parameters.get("group"));
+    }
+
+    @When("^I enter text in resource edit box and save with the following parameters:$")
+    public void enterValueAndSave(Map<String, String> parameters) {
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
+        handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
+        handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
+        //not included waiting for saved notification here as if there is an error ,we get an error instead of notification
+        //and if we include a condition to check for error, by the time of checking is completed, the notification disappears
+    }
+
+    @When("^I delete the line in the resource file with the following parameters:$")
+    public void deleteLine(Map<String, String> parameters) {
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
+        //needed to save chrome popup from an unsaved file
+        resourceErrorHandlingRunSteps.removeGarbageValue(parameters.get("textLine"));
+        handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
+    }
+
+    @And("^I enter attribute in the file MetaData with the following parameters:$")
+    public void enterAttributeInMetaData(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentName"));
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab("Meta Data");
+        handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
+        handleResourceRunSteps.clickSaveButton("Meta Data");
+        if(parameters.get("override").equals("true")){
+            handleResourceRunSteps.clickOk();
+        }
+        handleResourceRunSteps.waitForNotification("Saved");
+    }
+
     /**
      * Gets the value from the properties file
+     *
      * @param key the property key
      * @return the value of the property, if null the key is returned instead
      */
     private String getPropertyValue(final String key) {
         return paramProp.getProperty(key) == null ? key : paramProp.getProperty(key);
+    }
+
+    @And("^I go to the file in resources with the following parameters:$")
+    public void goToResource(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentName"));
+        handleResourceRunSteps.selectFile(parameters.get("fileName"));
+
+    }
+
+    @And("^I go to the web-app file in resources under individual jvm with the following parameters:$")
+    public void goToResourceWebappUnderJvm(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.expandNode(parameters.get("jvmName"));
+        uploadResourceRunSteps.clickNode(parameters.get("app"));
+        handleResourceRunSteps.selectFile(parameters.get("file"));
+
+    }
+
+    @And("^I created a group JVM resource with the following parameters:$")
+    public void createGroupJvmResource(Map<String, String> parameters) throws Throwable {
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode("JVMs");
+        uploadResourceRunSteps.clickNode("JVMs");
+        uploadResourceRunSteps.clickAddResourceBtn();
+        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
+        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
+        uploadResourceRunSteps.checkForSuccessfulResourceUpload();
+    }
+
+    @And("^I enter attribute in the group file MetaData with the following parameters:$")
+    public void enterAttributeInGroupMetaData(Map<String, String> parameters) {
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentType"));
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab("Meta Data");
+        handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
+        handleResourceRunSteps.clickSaveButton("Meta Data");
+        //click ok to override popup
+        handleResourceRunSteps.clickOk();
+        handleResourceRunSteps.waitForNotification("Saved");
+    }
+
+    @And("^I attempt to deploy the resource \"(.*)\"$")
+    public void deployFile(String file) {
+        handleResourceRunSteps.selectFile(file);
+        handleResourceRunSteps.rightClickFile(file);
+        handleResourceRunSteps.clickDeploy();
+        handleResourceRunSteps.confirmDeployPopup();
+    }
+
+    @And("^I attempt to deploy the jvm group resource \"(.*)\"$")
+    public void deployJvmGroupFile(String file) {
+        handleResourceRunSteps.selectFile(file);
+        handleResourceRunSteps.rightClickFile(file);
+        handleResourceRunSteps.clickDeploy();
+        handleResourceRunSteps.confirmOverride(file);
+    }
+
+
+    @And("^I attempt to deploy the web app resource with the following parameters:$")
+    public void deployWebappFile(Map<String, String> parameters) {
+        handleResourceRunSteps.selectFile(parameters.get("fileName"));
+        handleResourceRunSteps.rightClickFile(parameters.get("fileName"));
+        handleResourceRunSteps.clickDeploy();
+        if ("all".equals(parameters.get("deployOption"))) {
+            handleResourceRunSteps.clickDeployAll();
+            handleResourceRunSteps.clickYes();
+        } else {
+            handleResourceRunSteps.clickDeployToAHost();
+            handleResourceRunSteps.clickOk();
+        }
+
+    }
+
+    @When("^I attempt to generate JVMs of group \"([^\"]*)\"$")
+    public void attemptToGenerateJvmsOfGroup(String groupName) throws Throwable {
+        navigationRunSteps.goToOperationsTab();
+        navigationRunSteps.expandGroupInOperationsTab(groupName);
+        generateJvmRunSteps.clickGenerateJvmsBtnOfGroup(groupName);
     }
 }

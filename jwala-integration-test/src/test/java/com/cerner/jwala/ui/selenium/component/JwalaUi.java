@@ -54,6 +54,15 @@ public class JwalaUi {
     }
 
     /**
+     * Waits until the element is clickable
+     * @param by
+     * @param timeout
+     */
+    public void clickWhenReady(final By by, final long timeout) {
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.elementToBeClickable(by));
+    }
+
+    /**
      * Expand a node, do nothing if it is already expanded
      * @param nodeLabel the node label
      */
