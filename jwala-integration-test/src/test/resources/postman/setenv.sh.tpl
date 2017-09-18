@@ -23,7 +23,7 @@ export ATOMIKOS_OPTS="-Dcom.atomikos.icatch.tm_unique_name=${jvm.jvmName}"
 
 export STP_PS_LOC="/opt/ctp/app/properties/propertySource.properties"
 
-export CATALINA_OPTS="-XX:PermSize=512m -XX:MaxPermSize=512m -DSTP_HOME=\${STP_HOME} -Dgsm.classloader.url=\${STP_HOME}/app/lib/ctp_platform_tc7-1.2.14/gsm -Dcom.siemens.cto.infrastructure.properties.propertySourceLocations=\${STP_PS_LOC}"
+export CATALINA_OPTS="-XX:PermSize=512m -XX:MaxPermSize=512m -DSTP_HOME=\${STP_HOME} -Dgsm.classloader.url=\${STP_HOME}/app/lib/ctp_platform_tc7-1.2.20/gsm -Dcom.siemens.cto.infrastructure.properties.propertySourceLocations=\${STP_PS_LOC}"
 
 export PROPERTIES_ROOT_PATH="/opt/ctp/app/properties"
 export STP_OPTS="-DPROPERTIES_ROOT_PATH=\${PROPERTIES_ROOT_PATH}"

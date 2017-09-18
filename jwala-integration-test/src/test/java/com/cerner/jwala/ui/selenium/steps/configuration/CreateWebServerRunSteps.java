@@ -1,17 +1,13 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
-import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
@@ -46,6 +42,11 @@ public class CreateWebServerRunSteps {
         jwalaUi.sendKeys(By.name("hostName"), hostName);
     }
 
+    @And("^I fill in the \"Status Path\" field with \"(.*)\"$")
+    public void setStatusPath(final String statusPath) {
+        jwalaUi.getWebElement(By.name("statusPath")).sendKeys(Keys.chord(Keys.CONTROL, "a"), statusPath);
+    }
+
     @And("^I fill in the \"HTTP Port\" field with \"(.*)\"$")
     public void setHttpPort(final String httpPort) {
         jwalaUi.sendKeys(By.name("portNumber"), httpPort);
@@ -78,11 +79,6 @@ public class CreateWebServerRunSteps {
 
     @Then("^I see \"(.*)\" in the webserver table$")
     public void checkForWebServer(final String webServerName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webServerName + "']"));
-    }
-
-    @After
-    public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
-        SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webServerName + "']"), 60);
     }
 }

@@ -195,6 +195,16 @@ SSLSessionCache shmcb:logs/ssl_cache_shm
 #Note: we are not password protecting our keys
 #SSLPassPhraseDialog "exec:../app/data/security/apache/authorize.bat"
 
+<%
+  def scriptname = webServer.apacheHttpdMedia.remoteDir + "/app/data/security/scripts/httpd_helper";
+%>
+
+<%
+scriptname = "|:" + scriptname + ".cmd " + webServer.apacheHttpdMedia.remoteDir + "/" + webServer.apacheHttpdMedia.rootDir;
+%>
+
+SSLPassPhraseDialog "${scriptname}"
+
 #IPINS
 LoadModule rewrite_module modules/mod_rewrite.so
 
@@ -253,7 +263,7 @@ SSLRequireSSL
 </Directory>
 
 # Apply rewrite rules to 443 virtual host
-IncludeOptional  ${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}/*urlrewriterules.conf
+IncludeOptional  ${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}/*urlrewriterules.conf
 
 # TLS1 is supported because corporate group policy currently disables TLS1.2 and TLS1.1 in IE
 SSLProtocol -all +TLSv1.2 +TLSv1
@@ -267,8 +277,8 @@ SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
 #SSLCipherSuite SHA1 preferred over MD5
 
 SSLSessionCacheTimeout 300
-SSLCertificateFile ${vars.'remote.jwala.data.dir'}/security/id/${webServer.host}.cer
-SSLCertificateKeyFile ${vars.'remote.jwala.data.dir'}/security/id/${webServer.host}.key
+SSLCertificateFile ${webServer.apacheHttpdMedia.remoteDir}/app/data/security/id/${webServer.host}.cer
+SSLCertificateKeyFile ${webServer.apacheHttpdMedia.remoteDir}/app/data/security/id/${webServer.host}.key
 
 SSLVerifyClient none
 
@@ -279,7 +289,7 @@ SSLProxyVerifyDepth 2
 
 # Do not check expiration, to avoid outages
 SSLProxyCheckPeerExpire off
-SSLProxyCACertificatePath ${vars.'remote.jwala.data.dir'}/security/openssl/
+SSLProxyCACertificatePath ${webServer.apacheHttpdMedia.remoteDir}/app/data/security/openssl/
 
 #The following option must be set if you have a locally signed certificate
 SSLProxyVerify optional_no_ca
@@ -311,7 +321,7 @@ DocumentRoot "htdocs"
 
 #IPINS
 RewriteEngine on      
-IncludeOptional ${vars.'remote.jwala.data.dir'}/httpd/${webServer.name}/*urlrewriterules.conf
+IncludeOptional ${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}/*urlrewriterules.conf
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)      
 RewriteRule .* - [F]    
 

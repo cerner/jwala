@@ -754,6 +754,7 @@ var XmlTabs = React.createClass({
                         if (deployToJvms !== undefined && (!deployToJvms || deployToJvms === "false")){
                             this.props.groupService.previewGroupAppResourceFile( this.state.entity.group.name,
                                                                                  this.state.resourceTemplateName,
+                                                                                 this.state.entity.name,
                                                                                  this.refs.codeMirrorComponent.getText(),
                                                                                  this.previewSuccessCallback,
                                                                                  this.previewErrorCallback);
