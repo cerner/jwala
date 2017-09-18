@@ -15,6 +15,12 @@ Running a test
 $ gradle clean test -Dtest.single=JwalaUiMainTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=d:/jwala-ui-integ-test-support-files/drivers/chromedriver.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test.properties -PjwalaIntegrationTest
 ```
 
+For IE
+
+```
+ gradle clean test -Dtest.single=SecurityTest -Dwebdriver.class=org.openqa.selenium.ie.InternetExplorerDriver -Dwebdriver.ie.driver=d:/jwala-ui-integ-test-support-files/drivers/IEDriverServer32.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test-localhost.properties -PjwalaIntegrationTest
+```
+
 # Jwala Db Backup Scripts
 
 These scripts were meant to be used to backup a Jwala instance's before running Selenium tests then restore the db
