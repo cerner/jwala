@@ -129,23 +129,23 @@ Feature: HotDeploy a resource file
 
 
 
-  #Test deploy to a host-succesful
+    # test for successful deployment to a host
     When I attempt to deploy the web app resource with the following parameters:
       | fileName     | hello.xml  |
       | deployOption | individual |
     Then I confirm successful deploy popup
 
-  #Test deploy to all host-succesful
+    # test for successful deployment to all hosts
     When I attempt to deploy the web app resource with the following parameters:
       | fileName     | hello.xml |
       | deployOption | all       |
     Then I confirm successful deploy popup
 
-  #Test operations webapp deploy-succesful
+    # test successful deployment of a web app via the operations tab
     When I try to generate the webapp with the following parameters:
       | webAppName | seleniumWebapp |
       | group      | seleniumGroup  |
-    Then I confirm webapp "seleniumWebapp" is succesfully deployed in Operations page popup
+    Then I confirm webapp "seleniumWebapp" is successfully deployed in Operations page popup
 
     #test web app-resource under Jvm
     And I go to the web-app file in resources under individual jvm with the following parameters:
@@ -172,7 +172,7 @@ Feature: HotDeploy a resource file
       | override       | false         |
     And I wait for notification "Saved"
 
-   #test deploy-resources jvm-succesful
+    # test for successful deployment of jvm a resource
     When I attempt to deploy the resource "server.xml"
     Then I confirm successful deploy popup
 
