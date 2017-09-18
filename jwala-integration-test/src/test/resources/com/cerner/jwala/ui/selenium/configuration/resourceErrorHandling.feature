@@ -196,10 +196,10 @@ Feature: deploying a resource template with error produces the appropriate error
       | deployPath   | jvm.setenv.resource.deploy.path |
       | templateName | setenv.bat.tpl                  |
     And I enter text in resource edit box and save with the following parameters:
-      | fileName | setenv.bat                                                                               |
-      | tabLabel | Template                                                                                 |
-      | text     | ${{                                                                                      |
-      | position | SET CATALINA_HOME=${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir} |
+      | fileName | setenv.bat      |
+      | tabLabel | Template        |
+      | text     | ${{             |
+      | position | CALL:stpSetHome |
     And I wait for notification "Saved"
     When I try to generate jvm with the following parameters:
       | jvmName | seleniumJvm   |
