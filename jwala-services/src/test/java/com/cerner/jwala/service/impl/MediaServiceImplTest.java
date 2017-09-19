@@ -85,7 +85,7 @@ public class MediaServiceImplTest {
         mediaFileDataMap.put("content", new BufferedInputStream(new ByteArrayInputStream("the content".getBytes())));
 
         when(Config.mockMediaRepositoryService.upload(anyString(), any(InputStream.class)))
-                .thenReturn("./src/test/resources/binaries/apache-tomcat-test.zip");
+                .thenReturn("./build/apache-tomcat-test.zip");
         final Set<String> rootDirSet = new HashSet<>();
         rootDirSet.add("apache-tomcat-8.5.9");
         when(Config.mockFileUtility.getZipRootDirs(eq("./src/test/resources/binaries/apache-tomcat-test.zip")))
@@ -122,7 +122,6 @@ public class MediaServiceImplTest {
         mediaService.create(dataMap, mediaFileDataMap);
         verify(Config.mockMediaDao).create(any(JpaMedia.class));
     }
-
 
     @Test (expected = FileUtilityException.class)
     public void testCreateWithExistingBinaryFailsForNonExistentFile() throws IOException {
@@ -244,6 +243,32 @@ public class MediaServiceImplTest {
     @Test
     public void testGetMediaTypes() {
         assertEquals(MediaType.values().length, mediaService.getMediaTypes().length);
+    }
+
+    @Test
+    public void testCreateMediaWithFullFilename() {
+        final Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("name", "tomcat");
+        dataMap.put("type", "TOMCAT");
+        dataMap.put("remoteDir", "c:/tomcat");
+
+        final Map<String, Object> mediaFileDataMap = new HashMap<>();
+        mediaFileDataMap.put("filename", "c:\\test\\apache-tomcat-8.5.9.zip"); // full filename includes the path
+        mediaFileDataMap.put("content", new BufferedInputStream(new ByteArrayInputStream("the content".getBytes())));
+
+        // The expected file name parameter is "apache-tomcat-8.5.9.zip" since MediaService's create passes
+        // the file name without the path to RepositoryService's upload method.
+        // Therefore anyString() can't and shouldn't be used or the test will be invalid even if it passes!
+        when(Config.mockMediaRepositoryService.upload(eq("apache-tomcat-8.5.9.zip"), any(InputStream.class)))
+                .thenReturn("./build/apache-tomcat-test.zip");
+
+        final Set<String> rootDirSet = new HashSet<>();
+        rootDirSet.add("apache-tomcat-8.5.9");
+        when(Config.mockFileUtility.getZipRootDirs(eq("./src/test/resources/binaries/apache-tomcat-test.zip")))
+                .thenReturn(rootDirSet);
+        when(Config.mockMediaDao.findByNameAndType(anyString(), any(MediaType.class))).thenThrow(NoResultException.class);
+        mediaService.create(dataMap, mediaFileDataMap);
+        verify(Config.mockMediaDao).create(any(JpaMedia.class));
     }
 
     @Configuration
