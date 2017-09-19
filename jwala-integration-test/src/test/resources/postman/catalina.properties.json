@@ -1,0 +1,11 @@
+{
+        "templateName":"catalina.properties.tpl",
+        "contentType":"text/xml",
+        "deployPath":"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf",
+        "deployFileName":"catalina.properties",
+        "entity":{
+           "type":"GROUPED_JVMS",
+           "group":"Postman-Test-Group",
+           "target":"Postman-Test-Group"
+        }
+}

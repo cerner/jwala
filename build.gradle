@@ -454,3 +454,13 @@ subprojects {
     }
 
 }
+
+// Excludes running of jwala-integration-test's via test task unless one specifies jwalaIntegrationTest property e.g.
+// gradle -PjwalaIntegrationTest
+project('jwala-integration-test') {
+    test {
+        onlyIf {
+            project.hasProperty("jwalaIntegrationTest")
+        }
+    }
+}

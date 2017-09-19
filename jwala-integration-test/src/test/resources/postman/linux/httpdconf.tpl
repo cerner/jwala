@@ -198,6 +198,12 @@ LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
 SSLSessionCache shmcb:logs/ssl_cache_shm
 #Note: we are not password protecting our keys
 #SSLPassPhraseDialog "exec:../app/data/security/apache/authorize.bat"
+<%
+  def remoteDir = webServer.apacheHttpdMedia.remoteDir;
+  def scriptname = "/app/data/security/scripts/httpd_helper";
+%>
+
+SSLPassPhraseDialog "exec:${remoteDir}${scriptname}.sh"
 
 #IPINS
 LoadModule rewrite_module modules/mod_rewrite.so

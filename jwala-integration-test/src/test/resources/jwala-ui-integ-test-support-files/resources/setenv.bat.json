@@ -1,0 +1,12 @@
+{
+        "templateName":"setenv.tpl",
+        "contentType":"text/plain",
+        "deployPath":"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/bin",
+        "deployFileName":"setenv.bat",
+        "entity":{
+                "type":"GROUPED_JVMS",
+                "group":"seleniumGroup",
+                "target":"seleniumGroup"
+        }
+}
+
