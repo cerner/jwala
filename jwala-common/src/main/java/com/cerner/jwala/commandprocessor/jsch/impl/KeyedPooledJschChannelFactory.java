@@ -68,11 +68,10 @@ public class KeyedPooledJschChannelFactory extends BaseKeyedPooledObjectFactory<
         final Session session = jsch.getSession(remoteSystemConnection.getUser(), remoteSystemConnection.getHost(),
                 remoteSystemConnection.getPort());
         final char[] encryptedPassword = remoteSystemConnection.getEncryptedPassword();
-        if (encryptedPassword != null) {
-            session.setPassword(new DecryptPassword().decrypt(encryptedPassword));
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "password,gssapi-with-mic,publickey,keyboard-interactive");
-        }
+        session.setPassword(encryptedPassword == null ? remoteSystemConnection.getPassword()
+                : new DecryptPassword().decrypt(encryptedPassword));
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setConfig("PreferredAuthentications", "password,gssapi-with-mic,publickey,keyboard-interactive");
         return session;
     }
 

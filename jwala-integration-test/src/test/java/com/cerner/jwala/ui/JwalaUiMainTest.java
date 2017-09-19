@@ -10,5 +10,5 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(format = {"pretty", "html:build/cucumber-report", "json:build/cucumber-report.json"},
                  features = {"classpath:com/cerner/jwala/ui/selenium"},
-                 glue = {"com.cerner.jwala.ui.selenium.steps"})
+                 glue = {"com.cerner.jwala.ui.selenium.steps"}, tags = {"~@ignore"}, strict = true)
 public class JwalaUiMainTest {}

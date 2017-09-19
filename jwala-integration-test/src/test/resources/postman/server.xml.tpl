@@ -90,12 +90,12 @@
     -->
 
     <Connector 
-      port="${jvm.httpsPort}" 
-	  SSLCertificateFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.cer"
-      SSLCertificateKeyFile="${vars['remote.jwala.data.dir']}/../../app/data/security/id/${jvm.hostName}.key"
+      port="${jvm.httpsPort}"   
+      SSLCertificateFile="${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/server.crt"
+      SSLCertificateKeyFile="${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/server.key"
       SSLEnabled="true"
-      SSLPassword="" 
-      acceptCount="100" 
+      SSLPassword=""
+      acceptCount="100"
       clientAuth="false" 
       disableUploadTimeout="true" 
       enableLookups="false" 

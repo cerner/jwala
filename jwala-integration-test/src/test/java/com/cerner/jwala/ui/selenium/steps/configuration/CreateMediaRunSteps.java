@@ -1,19 +1,14 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
-import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.java.After;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 
 /**
  * Created by Jedd Cuison on 6/30/2017
@@ -23,14 +18,12 @@ public class CreateMediaRunSteps {
     @Autowired
     private JwalaUi jwalaUi;
 
-    @Given("^I am in the media tab$")
-    public void goToMediaTab() {
-        jwalaUi.clickTab("Media");
-    }
-
     @When("^I click the add media button$")
     public void clickAddMediaBtn() {
-        jwalaUi.click(By.xpath("//span[text()='Add']"));
+        // Click when ready was used because this step can be called immediately after a media upload
+        // in which case if it was executed by the machine fast enough, the gray out effect is still
+        // in place which will lead to a "not clickable at point" error
+        jwalaUi.clickWhenReady(By.xpath("//button[span[text()='Add']]"));
     }
 
     @And("^I see the media add dialog$")
@@ -50,7 +43,7 @@ public class CreateMediaRunSteps {
 
     @And("^I choose the media archive file \"(.*)\"$")
     public void selectMediaArchiveFile(final String archiveFileName) {
-        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("file.upload.dir") + "/" + archiveFileName);
+        final Path mediaPath = Paths.get(jwalaUi.getProperties().getProperty("media.source.dir") + "/" + archiveFileName);
         jwalaUi.sendKeys(By.name("mediaArchiveFile"), mediaPath.normalize().toString());
     }
 
@@ -66,11 +59,6 @@ public class CreateMediaRunSteps {
 
     @Then("I see \"(.*)\" in the media table")
     public void checkForMedia(final String mediaName) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + mediaName + "']"));
-    }
-
-    @After
-    public void afterScenario() throws SQLException, IOException, ClassNotFoundException {
-        SeleniumTestHelper.runSqlScript(this.getClass().getClassLoader().getResource("./selenium/cleanup.sql").getPath());
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + mediaName + "']"), 300);
     }
 }

@@ -21,7 +21,6 @@ public enum PropertyKeys {
     PATHS_RESOURCE_TEMPLATES("paths.resource-templates"),
     PORT("ssh.port"),
     PRIVATE_KEY_FILE("ssh.privateKeyFile"),
-    REMOTE_JAWALA_DATA_DIR("remote.jwala.data.dir"),
     REMOTE_PATHS_TOMCAT_ROOT_CORE("remote.paths.tomcat.root.core"),
     REMOTE_SCRIPT_DIR("remote.commands.user-scripts"),
     SCRIPTS_PATH("commands.scripts-path"),
