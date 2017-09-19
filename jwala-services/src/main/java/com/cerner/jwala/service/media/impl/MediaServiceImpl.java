@@ -83,7 +83,7 @@ public class MediaServiceImpl implements MediaService {
 
         // filename can be the full path or just the name that is why we need to convert it to Paths
         // to extract the base name e.g. c:/jdk.zip -> jdk.zip or jdk.zip -> jdk.zip
-        final String filename = Paths.get((String) mediaFileDataMap.get("filename")).getFileName().toString();
+        final String filename = FilenameUtils.getName((String) mediaFileDataMap.get("filename"));
 
         try {
             mediaDao.findByNameAndType(media.getName(), media.getType());
