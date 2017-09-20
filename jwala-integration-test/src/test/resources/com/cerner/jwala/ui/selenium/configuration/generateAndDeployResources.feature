@@ -86,7 +86,7 @@ Scenario: Deploy and Run a Web Application
     And I expand the group operation's "seleniumGroup" group
 
     # do the test
-    When I click the generate web application button of "seleniumWebapp"
+    When I click the generate web application button of "seleniumWebapp" web app under group "seleniumGroup"
     Then I see "seleniumWebapp" web application got deployed successfully
 
     When I click the "Generate Web Servers" button of group "seleniumGroup"
