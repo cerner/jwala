@@ -55,8 +55,8 @@ public class JwalaUi {
 
     /**
      * Waits until the element is clickable
-     * @param by
-     * @param timeout
+     * @param by {@link By}
+     * @param timeout timeout in seconds
      */
     public void clickWhenReady(final By by, final long timeout) {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.elementToBeClickable(by));
