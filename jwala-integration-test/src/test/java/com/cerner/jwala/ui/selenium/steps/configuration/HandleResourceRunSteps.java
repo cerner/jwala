@@ -69,7 +69,7 @@ public class HandleResourceRunSteps {
     public void addProperty(String property) {
         jwalaUi.waitUntilElementIsNotVisible(
                 By.xpath("//div[text()='Please select a JVM, Web Server or Web Application and a resource']"), 5);
-        jwalaUi.click(By.xpath("//div[contains(@class, 'CodeMirror') and contains(@class, 'cm-s-default')]"));
+        jwalaUi.click(By.xpath("//div[@class='CodeMirror-lines']"));
         jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
     }
 
