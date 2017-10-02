@@ -1,7 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 import java.util.Properties;
-
-import static org.junit.Assert.assertFalse;
 
 /**
  * Created by Sharvari Barve on 9/2/2017.
@@ -63,7 +60,7 @@ public class HandleResourceRunSteps {
         jwalaUi.clickWhenReady(By.xpath("//span[contains(text(),'" + component + "')]"));
     }
 
-    @And("^I select the resource file \"([^\"]*)\"$")
+    @And("^I select the resource file \"(.*)\"$")
     public void clickResource(String resource) {
         jwalaUi.click(By.xpath("//span[text()='" + resource + "']"));
     }
