@@ -51,8 +51,7 @@ public class JwalaUi {
     public void clickWhenReady(final By by) {
         webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".AppBusyScreen")));
         final WebElement webElement = webDriverWait.until(ExpectedConditions.elementToBeClickable(by));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", webElement);
-        webElement.click();
+        scrollIntoView(webElement);
     }
 
     /**
@@ -165,6 +164,14 @@ public class JwalaUi {
 
     public void click(final By by) {
         final WebElement webElement = driver.findElement(by);
+        scrollIntoView(webElement);
+    }
+
+    /**
+     * Scrolls an element into view
+     * @param webElement the element
+     */
+    private void scrollIntoView(WebElement webElement) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", webElement);
         webElement.click();
     }
