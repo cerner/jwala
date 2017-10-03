@@ -191,7 +191,7 @@ public class JwalaUi {
      * @param timeout timeout in seconds
      */
     public void waitUntilElementIsVisible(final By by, final long timeout) {
-        new WebDriverWait(driver, timeout).until(ExpectedConditions.numberOfElementsToBe(by, 1));
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     /**
