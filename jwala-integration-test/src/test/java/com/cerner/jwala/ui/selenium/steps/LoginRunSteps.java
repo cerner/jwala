@@ -42,6 +42,11 @@ public class LoginRunSteps {
 
     @Then("^I should see the main page$")
     public void validateResult() {
-        jwalaUi.waitUntilElementIsVisible(By.className("banner-logout"));
+        try {
+            jwalaUi.waitUntilElementIsVisible(By.className("banner-logout"));
+        } catch (RuntimeException e) {
+            jwalaUi.screenShot("c:\\scratch\\screenshot.png");
+            throw new RuntimeException("Main page not shown!", e);
+        }
     }
 }
