@@ -50,13 +50,15 @@ public class JwalaUi {
      */
     public void clickWhenReady(final By by) {
         webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".AppBusyScreen")));
-        webDriverWait.until(ExpectedConditions.elementToBeClickable(by)).click();
+        final WebElement webElement = webDriverWait.until(ExpectedConditions.elementToBeClickable(by));
+        scrollIntoView(webElement);
+        webElement.click();
     }
 
     /**
      * Waits until the element is clickable
-     * @param by
-     * @param timeout
+     * @param by {@link By}
+     * @param timeout timeout in seconds
      */
     public void clickWhenReady(final By by, final long timeout) {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.elementToBeClickable(by));
@@ -162,7 +164,17 @@ public class JwalaUi {
     }
 
     public void click(final By by) {
-        driver.findElement(by).click();
+        final WebElement webElement = driver.findElement(by);
+        scrollIntoView(webElement);
+        webElement.click();
+    }
+
+    /**
+     * Scrolls an element into view
+     * @param webElement the element
+     */
+    private void scrollIntoView(WebElement webElement) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
     public void waitUntilElementIsVisible(final By by) {
@@ -180,7 +192,7 @@ public class JwalaUi {
      * @param timeout timeout in seconds
      */
     public void waitUntilElementIsVisible(final By by, final long timeout) {
-        new WebDriverWait(driver, timeout).until(ExpectedConditions.numberOfElementsToBe(by, 1));
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     /**

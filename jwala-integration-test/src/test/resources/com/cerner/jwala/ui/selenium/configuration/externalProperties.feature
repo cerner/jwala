@@ -42,7 +42,7 @@ Feature: External property
     And I add property "team=ctp"
     And I click save button of edit box of "Template"
     And I wait for notification "Saved"
-    And I verify edit "team=ctp"
+    Then I verify edit "team=ctp"
 
   Scenario: Delete external Property
     Given I logged in
@@ -55,4 +55,4 @@ Feature: External property
     And I click check-box for resourceFile "ext.properties"
     And I click the resource delete icon
     And I confirm delete a resource popup
-    And I don't see "ext.properties"
+    Then I don't see "ext.properties"
