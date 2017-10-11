@@ -1,4 +1,66 @@
-Feature: deploying a resource template with error produces the appropriate errors
+Feature: Testing errors caused by invalid template, meta data or file type
+
+  Scenario: Deploy a war file compressed using 7z
+    Given I logged in
+    And I am in the Configuration tab
+    And I created a group with the name "seleniumGroup"
+    And I created a media with the following parameters:
+      | mediaName       | jdk1.8.0_92      |
+      | mediaType       | JDK              |
+      | archiveFilename | jdk1.8.0_92.zip  |
+      | remoteDir       | media.remote.dir |
+    And I created a media with the following parameters:
+      | mediaName       | apache-tomcat-7.0.55     |
+      | mediaType       | Apache Tomcat            |
+      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | remoteDir       | media.remote.dir         |
+    And I created a jvm with the following parameters:
+      | jvmName    | seleniumJvm          |
+      | tomcat     | apache-tomcat-7.0.55 |
+      | jdk        | jdk1.8.0_92          |
+      | hostName   | host1                |
+      | portNumber | 9000                 |
+      | group      | seleniumGroup        |
+    And I created a JVM resource with the following parameters:
+      | group        | seleniumGroup                       |
+      | jvm          | seleniumJvm                         |
+      | deployName   | server.xml                          |
+      | deployPath   | jvm.server.xml.resource.deploy.path |
+      | templateName | server.xml.tpl                      |
+    And I created a group JVM resource with the following parameters:
+      | group        | seleniumGroup                   |
+      | deployName   | setenv.bat                      |
+      | deployPath   | jvm.setenv.resource.deploy.path |
+      | templateName | setenv.bat.tpl                  |
+    And I am in the Operations tab
+    And I expand the group operation's "seleniumGroup" group
+    And I generate "seleniumJvm" JVM of "seleniumGroup" group
+    And I see the JVM was successfully generated
+    And I am in the Configuration tab
+    And I created a web app with the following parameters:
+      | webappName  | seleniumWebapp |
+      | contextPath | /hello         |
+      | group       | seleniumGroup  |
+    And I created a web app resource with the following parameters:
+      | group        | seleniumGroup               |
+      | webApp       | seleniumWebapp              |
+      | deployName   | hello-world.war             |
+      | deployPath   | webapp.resource.deploy.path |
+      | templateName | hello-world7z.war           |
+    And I enter attribute in the file MetaData with the following parameters:
+      | componentName  | seleniumWebapp  |
+      | componentType  | Web Apps        |
+      | fileName       | hello-world.war |
+      | group          | seleniumGroup   |
+      | attributeKey   | "unpack"        |
+      | attributeValue | true            |
+      | override       | true            |
+    And I wait for notification "Saved"
+    When I attempt to deploy the web app resource with the following parameters:
+      | fileName     | hello-world.war  |
+      | deployOption | individual |
+    Then I see unable to unzip the war file with deployPath "webapp.resource.deploy.path" and name as "hello-world"
+
 
   Scenario: Deploy webapp resource with error
     Given I logged in

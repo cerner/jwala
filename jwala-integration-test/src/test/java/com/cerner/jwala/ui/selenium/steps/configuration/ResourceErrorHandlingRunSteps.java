@@ -7,9 +7,9 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;import org.springframework.beans.factory.annotation.Qualifier;
 
-import static org.junit.Assert.assertTrue;
+import java.util.Properties;import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Sharvari Barve on 8/14/2017.
@@ -17,6 +17,10 @@ import static org.junit.Assert.assertTrue;
 public class ResourceErrorHandlingRunSteps {
     @Autowired
     private JwalaUi jwalaUi;
+
+    @Autowired
+    @Qualifier("parameterProperties")
+    private Properties paramProp;
 
     /*
     This is necessary to prevent popup from an unsaved file
@@ -77,6 +81,14 @@ public class ResourceErrorHandlingRunSteps {
     @And("^I confirm to unable to save error popup$")
     public void verifyUnableToSave() {
         jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Unable to save changes until the meta data errors are fixed: Unexpected token')]"));
+        clickOk();
+    }
+
+    @Then("^I see unable to unzip the war file with deployPath \"(.*)\" and name as \"(.*)\"$")
+    public void verifyUnableToUnzipError(String path, String resourceName) {
+        String properPath = (paramProp.getProperty(path) == null) ? path : paramProp.getProperty(path);
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'cannot unzip from " + properPath + "/" + resourceName + ".war" + " to " + properPath
+                + "/" + resourceName + "')]"));
         clickOk();
     }
 
