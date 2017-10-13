@@ -21,13 +21,13 @@ if $linux; then
     else
         echo unzip -q -o "${COMPRESSED_FILE}" -d "${DESTINATION_DIR}" ${EXCLUDE_PARAM}
         unzip -q -o "${COMPRESSED_FILE}" -d "${DESTINATION_DIR}" ${EXCLUDE_PARAM}
-        UNZIP_RETURN_CODE=$?
-        if [ $UNZIP_RETURN_CODE != 0 ]; then
+    fi
+
+    UNZIP_RETURN_CODE=$?
+    if [ $UNZIP_RETURN_CODE != 0 ]; then
         echo "Failure to unzip file"
         #no empty directory is created in linux
         exit $UNZIP_RETURN_CODE
-        fi
-
     fi
     echo rm ${COMPRESSED_FILE}
     rm ${COMPRESSED_FILE}
