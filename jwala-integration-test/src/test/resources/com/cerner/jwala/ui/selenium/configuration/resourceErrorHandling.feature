@@ -43,7 +43,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
     When I attempt to deploy the web app resource with the following parameters:
       | fileName     | hello-world.war  |
       | deployOption | individual |
-    Then I verify failure to to unzip the war file with deployPath "webapp.resource.deploy.path" and name as "hello-world"
+    Then I verify failure to unzip the war file with deployPath "webapp.resource.deploy.path" and name as "hello-world"
 
 
   Scenario: Deploy webapp resource with error
