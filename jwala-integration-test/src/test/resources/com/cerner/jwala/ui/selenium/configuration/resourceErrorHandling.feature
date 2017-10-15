@@ -21,22 +21,6 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | hostName   | host1                |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
-    And I created a JVM resource with the following parameters:
-      | group        | seleniumGroup                       |
-      | jvm          | seleniumJvm                         |
-      | deployName   | server.xml                          |
-      | deployPath   | jvm.server.xml.resource.deploy.path |
-      | templateName | server.xml.tpl                      |
-    And I created a group JVM resource with the following parameters:
-      | group        | seleniumGroup                   |
-      | deployName   | setenv.bat                      |
-      | deployPath   | jvm.setenv.resource.deploy.path |
-      | templateName | setenv.bat.tpl                  |
-    And I am in the Operations tab
-    And I expand the group operation's "seleniumGroup" group
-    And I generate "seleniumJvm" JVM of "seleniumGroup" group
-    And I see the JVM was successfully generated
-    And I am in the Configuration tab
     And I created a web app with the following parameters:
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
