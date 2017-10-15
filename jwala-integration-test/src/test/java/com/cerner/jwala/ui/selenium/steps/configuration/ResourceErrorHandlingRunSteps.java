@@ -84,7 +84,7 @@ public class ResourceErrorHandlingRunSteps {
         clickOk();
     }
 
-    @Then("^I see unable to unzip the war file with deployPath \"(.*)\" and name as \"(.*)\"$")
+    @Then("^I verify failure to to unzip the war file with deployPath \"(.*)\" and name as \"(.*)\"$")
     public void verifyUnableToUnzipError(String path, String resourceName) {
         String properPath = (paramProp.getProperty(path) == null) ? path : paramProp.getProperty(path);
         jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'cannot unzip from " + properPath + "/" + resourceName + ".war" + " to " + properPath
