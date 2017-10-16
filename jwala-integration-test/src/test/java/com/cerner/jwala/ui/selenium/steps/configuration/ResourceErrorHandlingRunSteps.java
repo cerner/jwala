@@ -7,9 +7,11 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.springframework.beans.factory.annotation.Autowired;import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Properties;import static org.junit.Assert.assertTrue;
+import java.util.Properties;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Sharvari Barve on 8/14/2017.
