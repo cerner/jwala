@@ -23,7 +23,7 @@ process_for_error_code(){
         echo "Failure to unzip file"
         rm $compressed_file
         #To make sure we delete only empty folder we use rmdir
-        if [ ${#destination_dir} != 0 ];then
+        if [ ${#destination_dir} != 0 ]; then
             rmdir $destination_dir
         fi
         exit $UNZIP_RETURN_CODE
