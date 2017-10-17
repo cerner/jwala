@@ -25,12 +25,12 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
-    And I created a web app resource with the following parameters:
-      | group        | seleniumGroup               |
-      | webApp       | seleniumWebapp              |
-      | deployName   | hello-world.war             |
-      | deployPath   | webapp.resource.deploy.path |
-      | templateName | hello-world7z.war           |
+  And I created a web app resource with the following parameters:
+      | group        | seleniumGroup                            |
+      | webApp       | seleniumWebapp                           |
+      | deployName   | hello-world.war                          |
+      | deployPath   | webapp.resource.deploy.path              |
+      | templateName | hello-world7z-unpack-error.war           |
     And I enter attribute in the file MetaData with the following parameters:
       | componentName  | seleniumWebapp  |
       | componentType  | Web Apps        |
