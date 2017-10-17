@@ -1,6 +1,7 @@
 package com.cerner.jwala.ui.selenium.component;
 
 import com.cerner.jwala.ui.selenium.steps.UploadResourceRunStepException;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
+import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.Set;
@@ -289,5 +292,18 @@ public class JwalaUi {
      */
     public WebElement find(final By by) {
         return driver.findElement(by);
+    }
+
+    /**
+     * Takes a screenshot
+     * @param imgPath the path where to save the screenshot
+     */
+    public void screenShot(final String imgPath) {
+        final File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(scrFile, new File(imgPath));
+        } catch (IOException e) {
+            throw new JwalaUiException("Screen shot failed!", e);
+        }
     }
 }
