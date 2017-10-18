@@ -82,7 +82,7 @@ public class HandleResourceRunSteps {
         jwalaUi.waitUntilElementIsNotVisible(
                 By.xpath("//div[text()='Please select a JVM, Web Server or Web Application and a resource']"), 5);
         jwalaUi.click(By.xpath("//div[@class='CodeMirror-lines']"));
-        jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
+        jwalaUi.sendKeysViaActions("\n" + property + "\n");
     }
 
     @And("^I expand \"(.*)\" node in data tree$")
