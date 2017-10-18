@@ -1,10 +1,9 @@
 package com.cerner.jwala.ui.selenium;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -34,7 +33,9 @@ public class SeleniumTestHelper {
     public static WebDriver createWebDriver(final String webDriverClass) {
         final WebDriver driver;
         try {
-            driver = (WebDriver) Class.forName(webDriverClass).getConstructor().newInstance();
+            final DesiredCapabilities dc = new DesiredCapabilities();
+            dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
+            driver = (WebDriver) Class.forName(webDriverClass).getConstructor(Capabilities.class).newInstance(dc);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             throw new SeleniumTestCaseException(e);
         }

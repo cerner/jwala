@@ -1,7 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Properties;
-import static org.junit.Assert.assertTrue;
+
 
 /**
  * Created by Sharvari Barve on 8/14/2017.
@@ -24,15 +23,15 @@ public class ResourceErrorHandlingRunSteps {
     @Qualifier("parameterProperties")
     private Properties paramProp;
 
-    /*
-    This is necessary to prevent popup from an unsaved file
-     */
+
     @When("^I erase garbage value \"(.*)\"$")
-    public void removeGarbageValue(String text) {
-        jwalaUi.clickWhenReady(By.xpath("//*[contains(text(),'" + text + "')]"));
-        jwalaUi.sendKeys(Keys.HOME);
-        jwalaUi.sendKeys(Keys.chord(Keys.SHIFT, Keys.ARROW_DOWN));
-        jwalaUi.sendKeys(Keys.DELETE);
+    public void deleteResourceEditorText(final String text) {
+        // Click the first occurrence of the element only
+        final String normalizedText = text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
+        By by = By.xpath("(//pre[contains(@class, 'CodeMirror-line')]//span[text()='" + normalizedText + "'])[1]");
+        jwalaUi.click(by);
+        jwalaUi.doubleClick();
+        jwalaUi.sendKeysViaActions(Keys.BACK_SPACE);
     }
 
     @Then("^I confirm metaData error popup$")

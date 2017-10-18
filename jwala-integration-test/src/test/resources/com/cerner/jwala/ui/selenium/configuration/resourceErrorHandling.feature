@@ -82,7 +82,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
     And I enter text in resource edit box and save with the following parameters:
       | fileName | hello.xml |
       | tabLabel | Template  |
-      | text     | ${{       |
+      | text     | \n${{\n   |
       | position | Context   |
     And I click the ok button to override JVM Templates
     And I wait for notification "Saved"
@@ -115,6 +115,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | group      | seleniumGroup  |
     Then I confirm error popup for resourceFile "hello.xml" and web app "seleniumWebapp"
 
+
   Scenario: deploy an individual  web-server resource with error-template-from resource and Operations
     Given I logged in
     And I am in the Configuration tab
@@ -145,15 +146,14 @@ Feature: Testing errors caused by invalid template, meta data or file type
     And I enter text in resource edit box and save with the following parameters:
       | fileName | httpd.conf |
       | tabLabel | Meta Data  |
-      | text     | {{         |
+      | text     | \n{{\n     |
       | position | {          |
     And I confirm to unable to save error popup
-    And I delete the line in the resource file with the following parameters:
-      | fileName | httpd.conf |
-      | tabLabel | Meta Data  |
-      | textLine | {{         |
-    And I wait for notification "Saved"
 
+    # Abandon changes
+    Given I click the "Ext Properties" topology node
+    And I press enter to confirm that I don't want to save changes to the resource
+    And I click the "seleniumWebserver" topology node
 
     #previous metaData invalid characters value is erased
     And I enter text in resource edit box and save with the following parameters:
@@ -174,7 +174,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
     Then I confirm resource deploy error popup for file "httpd.conf" and webserver "seleniumWebserver"
 
 
-  Scenario: a resource with a invalid characters value in individual jvm resource
+  Scenario: Test cases on the insertion of illegal characters for an individual JVM resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
@@ -207,22 +207,22 @@ Feature: Testing errors caused by invalid template, meta data or file type
 
     #Test error-deploy from resources-MetaData error
     And I enter text in resource edit box and save with the following parameters:
-      | fileName | server.xml |
-      | tabLabel | Meta Data  |
-      | text     | {{         |
-      | position | {          |
+      | fileName | server.xml     |
+      | tabLabel | Meta Data      |
+      | text     | \n{{\n         |
+      | position | {              |
     And I confirm to unable to save error popup
-    And I delete the line in the resource file with the following parameters:
-      | fileName | server.xml |
-      | tabLabel | Meta Data  |
-      | textLine | {{         |
-    And I wait for notification "Saved"
+
+    # Abandon changes
+    Given I click the "Ext Properties" topology node
+    And I press enter to confirm that I don't want to save changes to the resource
+    And I click the "seleniumJvm" topology node
 
     And I enter text in resource edit box and save with the following parameters:
-      | fileName | server.xml |
-      | tabLabel | Template   |
-      | text     | ${{        |
-      | position | <!--       |
+      | fileName | server.xml                                 |
+      | tabLabel | Template                                   |
+      | text     | \n${{\n                                    |
+      | position | Licensed to the Apache Software Foundation |
 
     #Test error-deploy from resources-Template error
     When I attempt to deploy the resource "server.xml"
@@ -241,18 +241,22 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | deployName   | setenv.bat                      |
       | deployPath   | jvm.setenv.resource.deploy.path |
       | templateName | setenv.bat.tpl                  |
+
     And I enter text in resource edit box and save with the following parameters:
       | fileName | setenv.bat      |
       | tabLabel | Template        |
-      | text     | ${{             |
+      | text     | \n${{\n         |
       | position | CALL:stpSetHome |
+
     And I wait for notification "Saved"
+
     When I try to generate jvm with the following parameters:
       | jvmName | seleniumJvm   |
       | group   | seleniumGroup |
     Then I confirm multiple resource deploy error popup for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
 
-      Scenario: a resource with a invalid characters value in group jvm resource
+
+  Scenario: Test cases on the insertion of illegal characters for a JVM section resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
@@ -282,32 +286,32 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | deployPath   | jvm.server.xml.resource.deploy.path |
       | templateName | server.xml.tpl                      |
 
-#Test error-deploy from resources-MetaData error
-    And I enter text in resource edit box and save with the following parameters:
-      | fileName | server.xml |
-      | tabLabel | Meta Data  |
-      | text     | {{         |
-      | position | {          |
-    And I confirm to unable to save error popup
-    And I delete the line in the resource file with the following parameters:
-      | fileName | server.xml |
-      | tabLabel | Meta Data  |
-      | textLine | {{         |
+    # Test error-deploy from resources-MetaData error
+    When I enter text in resource edit box and save with the following parameters:
+      | fileName | server.xml  |
+      | tabLabel | Meta Data   |
+      | text     | \n{{\n      |
+      | position | {           |
+    Then I confirm to unable to save error popup
 
+    # Abandon changes
+    Given I click the "Ext Properties" topology node
+    And I press enter to confirm that I don't want to save changes to the resource
+    And I click the "JVMs" topology node
+
+    # Insert illegal characters inside a comment
+    And I enter text in resource edit box and save with the following parameters:
+      | fileName | server.xml                                 |
+      | tabLabel | Template                                   |
+      | text     | \n${{\n                                    |
+      | position | Licensed to the Apache Software Foundation |
     And I click the ok button to override JVM Templates
     And I wait for notification "Saved"
-    And I enter text in resource edit box and save with the following parameters:
-      | fileName | server.xml |
-      | tabLabel | Template   |
-      | text     | ${{        |
-      | position | <!--       |
-    And I click the ok button to override JVM Templates
-    And I wait for notification "Saved"
 
-#Test error-deploy from resources-Template error
+    # Test error-deploy from resources-Template error
     When I attempt to deploy the jvm group resource "server.xml"
     Then I confirm resource deploy error popup for file "server.xml" and jvm "seleniumJvm"
 
- #Test error-deploy from operations-Template error
+    # Test error-deploy from operations-Template error
     When I attempt to generate JVMs of group "seleniumGroup"
     Then I confirm resource deploy error popup for file "server.xml" and jvm "seleniumJvm"

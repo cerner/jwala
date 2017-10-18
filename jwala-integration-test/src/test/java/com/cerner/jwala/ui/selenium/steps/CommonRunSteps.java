@@ -295,7 +295,7 @@ public class CommonRunSteps {
     public void enterValueAndSave(Map<String, String> parameters) {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
-        handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
+        handleResourceRunSteps.insertStrInTheResourceEditor(parameters.get("text"), parameters.get("position"));
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
         //not included waiting for saved notification here as if there is an error ,we get an error instead of notification
         //and if we include a condition to check for error, by the time of checking is completed, the notification disappears
@@ -306,7 +306,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
         //needed to save chrome popup from an unsaved file
-        resourceErrorHandlingRunSteps.removeGarbageValue(parameters.get("textLine"));
+        resourceErrorHandlingRunSteps.deleteResourceEditorText(parameters.get("textLine"));
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
     }
 
