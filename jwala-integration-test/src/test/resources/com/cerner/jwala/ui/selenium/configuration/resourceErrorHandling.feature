@@ -1,7 +1,5 @@
 Feature: Testing errors caused by invalid template, meta data or file type
 
-  # TODO: Fix me!
-  @ignore
   Scenario: Deploy a war file compressed using 7z
     Given I logged in
     And I am in the Configuration tab
