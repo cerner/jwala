@@ -169,11 +169,9 @@ public class HandleResourceRunSteps {
 
     @And("^I enter attribute in metaData with key as \"(.*)\" and value as \"(.*)\"$")
     public void enterAttribute(String key, String value) {
-        jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
-        jwalaUi.sendKeys(Keys.DELETE);
-        jwalaUi.sendKeys("{");
-        jwalaUi.sendKeys(Keys.ENTER);
-        jwalaUi.sendKeys(key + ":" + value + ",");
+        jwalaUi.clickWhenReady(By.xpath("(//pre[contains(@class, 'CodeMirror-line')]//span[text()='{'])[1]"));
+        jwalaUi.doubleClick();
+        jwalaUi.sendKeysViaActions("{\n" + key + ":" + value + ",");
     }
 
     /*
