@@ -25,7 +25,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | webappName  | seleniumWebapp |
       | contextPath | /hello         |
       | group       | seleniumGroup  |
-  And I created a web app resource with the following parameters:
+    And I created a web app resource with the following parameters:
       | group        | seleniumGroup                            |
       | webApp       | seleniumWebapp                           |
       | deployName   | hello-world.war                          |
