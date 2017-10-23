@@ -236,7 +236,7 @@ subprojects {
                         if (project.hasProperty("zipOs") && project.properties["zipOs"] == "linux") {
                             jwalaZipName = 'jwala-tomcat-linux'
                         }
-                        version = "${buildVersion}"
+                        version = "${buildVersion}-SNAPSHOT"
                         artifactId = "${jwalaZipName}"
                         artifact("$buildDir/${jwalaZipName}-${buildVersion}.zip")
                     }else {
