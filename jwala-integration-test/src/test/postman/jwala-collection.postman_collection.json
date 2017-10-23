@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "212f0f97-79e4-4abf-73fa-c6a1dea3fd3e",
+		"_postman_id": "2bacb824-696e-d885-b84f-f962bf94010f",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -2202,7 +2202,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0?hostName={{host}}",
+							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/healthcheck-webapp-1.0.3.war/{{HealthCheckApp}}?hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -2212,13 +2212,15 @@
 								"{{HealthCheckGroup}}",
 								"apps",
 								"conf",
-								"{{HealthCheckWar}}",
-								"HEALTH-CHECK-4.0"
+								"healthcheck-webapp-1.0.3.war",
+								"{{HealthCheckApp}}"
 							],
 							"query": [
 								{
 									"key": "hostName",
-									"value": "{{host}}"
+									"value": "{{host}}",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -2248,31 +2250,6 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/deploy",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "deploy conf with resource template name",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/conf/hct.xml;groupName={{HealthCheckGroup}};jvmName={{HealthCheckJvm}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -3223,7 +3200,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/HEALTH CHECK 4.0/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0",
+						"url": "{{url}}/v1.0/groups/{{groupName}}/apps/conf/hello-world.war/Postman-test-webapp",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -4261,7 +4238,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{HealthCheckJvm}}/resources/template/server.xml",
+						"url": "{{url}}/v1.0/jvms/{{JvmName}}/resources/template/server.xml",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4423,7 +4400,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/services/v2.0/jvms/{{HealthCheckJvm}}/commands",
+						"url": "{{url}}/services/v2.0/jvms/{{JvmName}}/commands",
 						"method": "POST",
 						"header": [
 							{
@@ -4517,7 +4494,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/resources/exists/fileName?jvmName={{HealthCheckJvm}}",
+							"raw": "{{url}}/v1.0/resources/exists/fileName?jvmName={{JvmName}}",
 							"host": [
 								"{{url}}"
 							],
@@ -4530,7 +4507,9 @@
 							"query": [
 								{
 									"key": "jvmName",
-									"value": "{{HealthCheckJvm}}"
+									"value": "{{JvmName}}",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -4563,7 +4542,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/resources/exists/fileName?webappName={{HealthCheckApp}}",
+							"raw": "{{url}}/v1.0/resources/exists/fileName?webappName={{WebappName}}",
 							"host": [
 								"{{url}}"
 							],
@@ -4576,7 +4555,9 @@
 							"query": [
 								{
 									"key": "webappName",
-									"value": "{{HealthCheckApp}}"
+									"value": "{{WebappName}}",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -4609,7 +4590,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/resources/exists/fileName?webserverName={{HealthCheckWebServer}}",
+							"raw": "{{url}}/v1.0/resources/exists/fileName?webserverName={{WebserverName}}",
 							"host": [
 								"{{url}}"
 							],
@@ -4622,7 +4603,9 @@
 							"query": [
 								{
 									"key": "webserverName",
-									"value": "{{HealthCheckWebServer}}"
+									"value": "{{WebserverName}}",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -4766,7 +4749,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/{{GroupName}}/HEALTH-CHECK-4.0/name",
+						"url": "{{url}}/v1.0/resources/{{GroupName}}/{{WebappName}}/name",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4934,7 +4917,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/HEALTH CHECK 4.0/HEALTH-CHECK-4.0/hct.xml",
+						"url": "{{url}}/v1.0/resources/{{HealthCheckGroup}}/{{HealthCheckApp}}/hct.xml",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4976,7 +4959,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"HEALTH CHECK 4.0\"}"
+							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"CTP-GROUP-2\"}"
 						},
 						"description": ""
 					},
@@ -5127,7 +5110,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/HEALTH CHECK 4.0/HEALTH-CHECK-4.0/apps/resources/template/hct.xml",
+						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/{{HealthCheckApp}}/apps/resources/template/hct.xml",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5177,7 +5160,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/HEALTH CHECK 4.0/apps/resources/preview/hct.properties/{{WebappName}}",
+						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/resources/preview/hct.properties/{{HealthCheckApp}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5729,7 +5712,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/HEALTH-CHECK-4.0?hostName={{host}}",
+							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/{{HealthCheckApp}}?hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -5740,12 +5723,14 @@
 								"apps",
 								"conf",
 								"{{HealthCheckWar}}",
-								"HEALTH-CHECK-4.0"
+								"{{HealthCheckApp}}"
 							],
 							"query": [
 								{
 									"key": "hostName",
-									"value": "{{host}}"
+									"value": "{{host}}",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -5978,7 +5963,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"webappId\":{{AppId}},\"name\":\"HEALTH-CHECK-4.0\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"loadBalanceAcrossServers\":true}"
+							"raw": "{\"webappId\":{{AppId}},\"name\":\"HEALTH-CHECK-4.0.1\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -5998,7 +5983,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/applications/HEALTH-CHECK-4.0/resources/template/hct.xml;groupName=HEALTH%20CHECK%204.0;jvmName={{HealthCheckJvm}}",
+						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/resources/template/hct.xml;groupName={{HealthCheckGroup}};jvmName={{HealthCheckJvm}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -6023,7 +6008,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/applications/HEALTH-CHECK-4.0/resources/template/hct.xml;groupName=HEALTH%20CHECK%204.0",
+						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/resources/template/hct.xml;groupName={{HealthCheckGroup}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
