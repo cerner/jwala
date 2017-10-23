@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "2bacb824-696e-d885-b84f-f962bf94010f",
+		"_postman_id": "9a89e52f-1e52-3d54-d4b2-400eba2511bf",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -2298,6 +2298,28 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "deploy conf with resource template name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/conf/hct.xml;groupName={{HealthCheckGroup}};jvmName=N9SF-LTST-{{HealthCheckGroup}}-{{host}}-1",
+						"method": "PUT",
+						"header": [],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -4959,7 +4981,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"CTP-GROUP-2\"}"
+							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"{{HealthCheckGroup}}\"}"
 						},
 						"description": ""
 					},
@@ -5690,7 +5712,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"templateName\":\"{{HealthCheckWar}}/${badSyntax\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"{{mediaRemoteDir}}/app/webapps\",\r\n    \"deployFileName\":\"{{HealthCheckWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"HEALTH CHECK 4.0\",\r\n        \"target\":\"HEALTH-CHECK-4.0\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
+							"raw": "{\r\n    \"templateName\":\"{{HealthCheckWar}}/\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"\",\r\n    \"deployFileName\":\"{{HealthCheckWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"{{HealthCheckGroup}}\",\r\n        \"target\":\"{{HealthCheckGroup}}\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
 						},
 						"description": ""
 					},
@@ -5704,15 +5726,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Assert response body\"] = jsonData.message === \"Failed to validate the following resources.\""
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
 								]
 							}
 						}
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/{{HealthCheckApp}}?hostName={{host}}",
+							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/{{HealthCheckApp}}?hostName={{host}}.usmlvv1d0a.smshsc.net",
 							"host": [
 								"{{url}}"
 							],
@@ -5728,7 +5749,7 @@
 							"query": [
 								{
 									"key": "hostName",
-									"value": "{{host}}",
+									"value": "{{host}}.usmlvv1d0a.smshsc.net",
 									"equals": true,
 									"description": ""
 								}
@@ -5801,12 +5822,12 @@
 				{
 					"name": "update health-check.war metadata copy",
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/{{HealthCheckWar}};group=HEALTH%20CHECK%204.0;webApp=HEALTH-CHECK-4.0",
+						"url": "{{url}}/v1.0/resources/template/metadata/{{HealthCheckWar}};group={{HealthCheckGroup}};webApp={{HealthCheckApp}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"templateName\":\"{{HealthCheckWar}}\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"{{mediaRemoteDir}}/app/webapps\",\r\n    \"deployFileName\":\"{{HealthCheckWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"HEALTH CHECK 4.0\",\r\n        \"target\":\"HEALTH-CHECK-4.0\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
+							"raw": "{\r\n    \"templateName\":\"{{HealthCheckWar}}\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"{{mediaRemoteDir}}/app/webapps\",\r\n    \"deployFileName\":\"{{HealthCheckWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"{{HealthCheckGroup}}\",\r\n        \"target\":\"{{HealthCheckGroup}}\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
 						},
 						"description": ""
 					},
