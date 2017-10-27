@@ -416,6 +416,41 @@
 					"response": []
 				},
 				{
+					"name": "create group2 for duplicate error check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"GroupId2\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Successful POST request\"] = responseCode.code === 201;",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "Postman-duplicate-group"
+						},
+						"description": "create group for duplicate group create error check"
+					},
+					"response": []
+				},
+				{
 					"name": "create JDK media for JVM",
 					"event": [
 						{
@@ -786,6 +821,39 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\"name\":\"Postman-test-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create webapp for existing webapp name check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"AppId2\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Successful POST request\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/applications",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"Postman-duplicate-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -2202,18 +2270,18 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/healthcheck-webapp-1.0.3.war/{{HealthCheckApp}}?hostName={{host}}",
+							"raw": "{{url}}/v1.0/groups/{{GroupName}}/apps/conf/{{helloWorldWar}}/{{WebappName}}?hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"v1.0",
 								"groups",
-								"{{HealthCheckGroup}}",
+								"{{GroupName}}",
 								"apps",
 								"conf",
-								"healthcheck-webapp-1.0.3.war",
-								"{{HealthCheckApp}}"
+								"{{helloWorldWar}}",
+								"{{WebappName}}"
 							],
 							"query": [
 								{
@@ -2298,28 +2366,6 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "deploy conf with resource template name",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/conf/hct.xml;groupName={{HealthCheckGroup}};jvmName=N9SF-LTST-{{HealthCheckGroup}}-{{host}}-1",
-						"method": "PUT",
-						"header": [],
-						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -2515,7 +2561,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media;name=jdk1.8.0_92",
+						"url": "{{url}}/v1.0/media;name=Postman-Test-Tomcat-Media",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4939,7 +4985,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/{{HealthCheckGroup}}/{{HealthCheckApp}}/hct.xml",
+						"url": "{{url}}/v1.0/resources/{{GroupName}}/{{WebappName}}/{{helloWorldWar}}",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -4981,7 +5027,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"{{HealthCheckGroup}}\"}"
+							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"Postman-duplicate-group\"}"
 						},
 						"description": ""
 					},
@@ -5001,12 +5047,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/resources/preview/hct.properties",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/resources/preview/hello.xml",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "active.directory.domain=usmlvv1d0a\r\nactive.directory.server.name=custldapsrv1.usmlvv1d0a.smshsc.net\r\nactive.directory.server.port=389\r\n\r\nrequest.queue.jms.listener.concurrency=1-1\r\nrequest.queue.jms.listener.receive.timeout=60000"
+							"raw": "<Context docBase=\"${jvm.tomcatMedia.remoteDir}/../webapps/hello-world.war\">\r\n</Context>"
 						},
 						"description": ""
 					},
@@ -5026,12 +5072,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}/webservers/resources/preview/hct.properties",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/webservers/resources/preview/hello.xml",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "active.directory.domain=usmlvv1d0a\r\nactive.directory.server.name=custldapsrv1.usmlvv1d0a.smshsc.net\r\nactive.directory.server.port=389\r\n\r\nrequest.queue.jms.listener.concurrency=1-1\r\nrequest.queue.jms.listener.receive.timeout=60000"
+							"raw": "<Context docBase=\"/webapps/hello-world.war\">\r\n</Context>"
 						},
 						"description": ""
 					},
@@ -5119,31 +5165,6 @@
 					"response": []
 				},
 				{
-					"name": "update group app resource template",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/{{HealthCheckApp}}/apps/resources/template/hct.xml",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "<Context docBase=\"{{mediaRemoteDir}}/app/webapps/{{HealthCheckWar}}\"\r\n>\r\n\r\n    <Listener className=\"com.siemens.cto.infrastructure.atomikos.AtomikosTaskManagerLifecycleListener\"/>\r\n\r\n    <Environment name=\"jvmInstanceName\"\r\n                 value=\"${jvm.jvmName}\"\r\n                 type=\"java.lang.String\"\r\n                 override=\"false\"/>\r\n\r\n    <Environment name=\"roleMappingProperties\"\r\n        value=\"C:/stp/app/properties/hctRoleMapping.properties\"\r\n        type=\"java.lang.String\"\r\n        override=\"false\" />\r\n\r\n    <Resource name=\"jdbc/hct-xa\"\r\n              auth=\"Container\"\r\n              type=\"com.atomikos.jdbc.AtomikosDataSourceBean\"\r\n              factory=\"com.siemens.cto.infrastructure.atomikos.EnhancedTomcatAtomikosBeanFactory\"\r\n              uniqueResourceName=\"AtomikosJndiXaDataSource2\"\r\n              xaDataSourceClassName=\"com.microsoft.sqlserver.jdbc.SQLServerXADataSource\"\r\n              xaProperties.user=\"\\${hct.db.user}\"\r\n              xaProperties.password=\"\\${hct.db.password.encrypted}\"\r\n              xaProperties.URL=\"jdbc:sqlserver://\\${hct.db.host};DatabaseName=\\${hct.db.name};SelectMethod=cursor;\"/>\r\n\r\n    <Resource factory=\"org.apache.naming.factory.BeanFactory\"\r\n              name=\"jdbc/hct-ds\"\r\n              type=\"com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean\"\r\n              url=\"jdbc:sqlserver://\\${hct.db.host};DatabaseName=\\${hct.db.name};SelectMethod=cursor;\"\r\n              driverClassName=\"com.microsoft.sqlserver.jdbc.SQLServerDriver\"\r\n              uniqueResourceName=\"healthCheck\"\r\n              user=\"\\${hct.db.user}\"\r\n              password=\"\\${hct.db.password.encrypted}\"/>\r\n\r\n    <Resource name=\"jms/hct-xacf\"\r\n              auth=\"Container\"\r\n              type=\"com.atomikos.jms.AtomikosConnectionFactoryBean\"\r\n              factory=\"com.siemens.cto.infrastructure.atomikos.EnhancedTomcatAtomikosBeanFactory\"\r\n              uniqueResourceName=\"AtomikosJndiJmsXaConnectionFactory-1.0\"\r\n              maxPoolSize=\"3\"\r\n              minPoolSize=\"1\"\r\n              ignoreSessionTransactedFlag=\"false\"\r\n              xaConnectionFactoryClassName=\"com.tibco.tibjms.TibjmsXAConnectionFactory\"\r\n              xaProperties.userName=\"\\${hct.ems.user}\"\r\n              xaProperties.userPassword=\"\\${hct.ems.password.encrypted}\"\r\n              xaProperties.serverUrl=\"\\${hct.ems.url}\"\r\n              xaProperties.connAttemptCount=\"100\"\r\n              xaProperties.connAttemptDelay=\"1000\"\r\n              xaProperties.reconnAttemptCount=\"100\"\r\n              xaProperties.reconnAttemptDelay=\"1000\"\r\n              xaProperties.SSLEnableVerifyHost=\"true\"\r\n              xaProperties.SSLEnableVerifyHostName=\"false\"\r\n              xaProperties.SSLTrustedCertificate=\"\\${STP_HOME}/app/data/security/ems/ctorootca.pem\" />\r\n\r\n    <Resource auth=\"Container\"\r\n              name=\"jms/hct-cf\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsConnectionFactory\"\r\n              serverUrl=\"\\${hct.ems.url}\"\r\n              userName=\"\\${hct.ems.user}\"\r\n              userPassword=\"\\${hct.ems.password.encrypted}\"\r\n              connAttemptCount=\"1\"\r\n              connAttemptDelay=\"1000\"\r\n              reconnAttemptCount=\"1\"\r\n              reconnAttemptDelay=\"1000\"\r\n              SSLEnableVerifyHost=\"true\"\r\n              SSLEnableVerifyHostName=\"false\"\r\n              SSLTrustedCertificate=\"\\${STP_HOME}/app/data/security/ems/ctorootca.pem\" />\r\n\r\n    <Resource auth=\"Container\"\r\n              name=\"jms/healthCheckServiceDestination\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.serviceQueue}\"/>\r\n\r\n    <Resource name=\"jms/healthCheckServiceReplyDestination\"\r\n              auth=\"Container\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.serviceReplyQueue}\"/>\r\n\r\n    <Resource name=\"jms/healthCheckStatusDestination\"\r\n              auth=\"Container\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.statusQueue}\"/>\r\n\r\n    <Resource name=\"wm/healthWorkManager\"\r\n              auth=\"Container\"\r\n              type=\"commonj.work.WorkManager\"\r\n              factory=\"de.myfoo.commonj.work.FooWorkManagerFactory\"\r\n              maxThreads=\"5\"/>\r\n\r\n    <Realm className=\"org.apache.catalina.realm.CombinedRealm\">\r\n        <Realm className=\"com.siemens.cto.security.tomcat.GsmRealm\" />\r\n        <Realm className=\"com.siemens.cto.security.tomcat.RoleMapperRealm\"\r\n            connectionURL=\"\\${hct.ldap.url}\"\r\n            authentication=\"simple\"\r\n            connectionName=\"\\${hct.ldap.connectionName}\"\r\n            connectionPassword=\"\\${hct.ldap.password.encrypted}\"\r\n            userBase=\"\\${hct.ldap.userBase}\"\r\n            userSearch=\"(sAMAccountName={0})\"\r\n            userRoleName=\"memberOf\"\r\n            userSubtree=\"true\"\r\n            roleBase=\"\\${hct.ldap.roleBase}\"\r\n            roleName=\"sAMAccountName\"\r\n            roleNested=\"true\"\r\n            roleSubtree=\"true\"\r\n            roleSearch=\"(member={0})\"\r\n            referrals=\"follow\" />\r\n    </Realm>\r\n</Context>"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "error: update group app resource template error",
 					"event": [
 						{
@@ -5182,12 +5203,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/resources/preview/hct.properties/{{HealthCheckApp}}",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}-update/apps/resources/preview/hello.xml/{{WebappName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "active.directory.domain=usmlvv1d0a\r\nactive.directory.server.name=custldapsrv1.usmlvv1d0a.smshsc.net\r\nactive.directory.server.port=389\r\n\r\nrequest.queue.jms.listener.concurrency=1-1\r\nrequest.queue.jms.listener.receive.timeout=60000"
+							"raw": "{\r\n  \"templateName\" : \"hello-world.war\",\r\n  \"contentType\" : \"application/zip\",\r\n  \"deployFileName\" : \"hello-world.war\",\r\n  \"deployPath\" : \"c:/ctp/app/webapps\",\r\n  \"entity\" : {\r\n    \"deployToJvms\" : true\r\n  },\r\n  \"unpack\" : false,\r\n  \"overwrite\" : true,\r\n  \"hotDeploy\" : false\r\n}"
 						},
 						"description": ""
 					},
@@ -5693,32 +5714,6 @@
 					"response": []
 				},
 				{
-					"name": "update health-check.war metadata with bad meta data syntax",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/{{HealthCheckWar}};group={{HealthCheckGroup}};webApp={{HealthCheckApp}}",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"templateName\":\"{{HealthCheckWar}}/\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"\",\r\n    \"deployFileName\":\"{{HealthCheckWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"{{HealthCheckGroup}}\",\r\n        \"target\":\"{{HealthCheckGroup}}\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "error deploying webapp metadata",
 					"event": [
 						{
@@ -5733,23 +5728,23 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/groups/{{HealthCheckGroup}}/apps/conf/{{HealthCheckWar}}/{{HealthCheckApp}}?hostName={{host}}.usmlvv1d0a.smshsc.net",
+							"raw": "{{url}}/v1.0/groups/{{GroupName}}/apps/conf/{{helloWorldWar}}/{{WebappName}}?hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"v1.0",
 								"groups",
-								"{{HealthCheckGroup}}",
+								"{{GroupName}}",
 								"apps",
 								"conf",
-								"{{HealthCheckWar}}",
-								"{{HealthCheckApp}}"
+								"{{helloWorldWar}}",
+								"{{WebappName}}"
 							],
 							"query": [
 								{
 									"key": "hostName",
-									"value": "{{host}}.usmlvv1d0a.smshsc.net",
+									"value": "{{host}}",
 									"equals": true,
 									"description": ""
 								}
@@ -5769,12 +5764,12 @@
 				{
 					"name": "update jvm child's metadata",
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/hct.xml;group=HEALTH%20CHECK%204.0;jvm={{HealthCheckJvm}};webApp=HEALTH-CHECK-4.0",
+						"url": "{{url}}/v1.0/resources/template/metadata/hello.xml;group={{GroupName}};jvm={{JvmName}};webApp={{WebappName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"hctXmlTemplate.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hct.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"HEALTH CHECK 4.0\",\r\n                \"target\":\"HEALTH-CHECK-4.0\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"hello.xml.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hello.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -5794,7 +5789,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/applications/HEALTH-CHECK-4.0/conf/hct.xml;groupName=HEALTH%20CHECK%204.0;jvmName={{HealthCheckJvm}}",
+						"url": "{{url}}/v1.0/applications/{{WebappName}}/conf/hct.xml;groupName={{GroupName}};jvmName={{JvmName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5984,57 +5979,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"webappId\":{{AppId}},\"name\":\"HEALTH-CHECK-4.0.1\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"loadBalanceAcrossServers\":true}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "update resource template",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/resources/template/hct.xml;groupName={{HealthCheckGroup}};jvmName={{HealthCheckJvm}}",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "<Context docBase=\"{{mediaRemoteDir}}/app/webapps/{{HealthCheckWar}}\"\r\n>\r\n\r\n    <Listener className=\"com.siemens.cto.infrastructure.atomikos.AtomikosTaskManagerLifecycleListener\"/>\r\n\r\n    <Environment name=\"jvmInstanceName\"\r\n                 value=\"${jvm.jvmName}\"\r\n                 type=\"java.lang.String\"\r\n                 override=\"false\"/>\r\n\r\n    <Environment name=\"roleMappingProperties\"\r\n        value=\"C:/stp/app/properties/hctRoleMapping.properties\"\r\n        type=\"java.lang.String\"\r\n        override=\"false\" />\r\n\r\n    <Resource name=\"jdbc/hct-xa\"\r\n              auth=\"Container\"\r\n              type=\"com.atomikos.jdbc.AtomikosDataSourceBean\"\r\n              factory=\"com.siemens.cto.infrastructure.atomikos.EnhancedTomcatAtomikosBeanFactory\"\r\n              uniqueResourceName=\"AtomikosJndiXaDataSource2\"\r\n              xaDataSourceClassName=\"com.microsoft.sqlserver.jdbc.SQLServerXADataSource\"\r\n              xaProperties.user=\"\\${hct.db.user}\"\r\n              xaProperties.password=\"\\${hct.db.password.encrypted}\"\r\n              xaProperties.URL=\"jdbc:sqlserver://\\${hct.db.host};DatabaseName=\\${hct.db.name};SelectMethod=cursor;\"/>\r\n\r\n    <Resource factory=\"org.apache.naming.factory.BeanFactory\"\r\n              name=\"jdbc/hct-ds\"\r\n              type=\"com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean\"\r\n              url=\"jdbc:sqlserver://\\${hct.db.host};DatabaseName=\\${hct.db.name};SelectMethod=cursor;\"\r\n              driverClassName=\"com.microsoft.sqlserver.jdbc.SQLServerDriver\"\r\n              uniqueResourceName=\"healthCheck\"\r\n              user=\"\\${hct.db.user}\"\r\n              password=\"\\${hct.db.password.encrypted}\"/>\r\n\r\n    <Resource name=\"jms/hct-xacf\"\r\n              auth=\"Container\"\r\n              type=\"com.atomikos.jms.AtomikosConnectionFactoryBean\"\r\n              factory=\"com.siemens.cto.infrastructure.atomikos.EnhancedTomcatAtomikosBeanFactory\"\r\n              uniqueResourceName=\"AtomikosJndiJmsXaConnectionFactory-1.0\"\r\n              maxPoolSize=\"3\"\r\n              minPoolSize=\"1\"\r\n              ignoreSessionTransactedFlag=\"false\"\r\n              xaConnectionFactoryClassName=\"com.tibco.tibjms.TibjmsXAConnectionFactory\"\r\n              xaProperties.userName=\"\\${hct.ems.user}\"\r\n              xaProperties.userPassword=\"\\${hct.ems.password.encrypted}\"\r\n              xaProperties.serverUrl=\"\\${hct.ems.url}\"\r\n              xaProperties.connAttemptCount=\"100\"\r\n              xaProperties.connAttemptDelay=\"1000\"\r\n              xaProperties.reconnAttemptCount=\"100\"\r\n              xaProperties.reconnAttemptDelay=\"1000\"\r\n              xaProperties.SSLEnableVerifyHost=\"true\"\r\n              xaProperties.SSLEnableVerifyHostName=\"false\"\r\n              xaProperties.SSLTrustedCertificate=\"\\${STP_HOME}/app/data/security/ems/ctorootca.pem\" />\r\n\r\n    <Resource auth=\"Container\"\r\n              name=\"jms/hct-cf\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsConnectionFactory\"\r\n              serverUrl=\"\\${hct.ems.url}\"\r\n              userName=\"\\${hct.ems.user}\"\r\n              userPassword=\"\\${hct.ems.password.encrypted}\"\r\n              connAttemptCount=\"1\"\r\n              connAttemptDelay=\"1000\"\r\n              reconnAttemptCount=\"1\"\r\n              reconnAttemptDelay=\"1000\"\r\n              SSLEnableVerifyHost=\"true\"\r\n              SSLEnableVerifyHostName=\"false\"\r\n              SSLTrustedCertificate=\"\\${STP_HOME}/app/data/security/ems/ctorootca.pem\" />\r\n\r\n    <Resource auth=\"Container\"\r\n              name=\"jms/healthCheckServiceDestination\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.serviceQueue}\"/>\r\n\r\n    <Resource name=\"jms/healthCheckServiceReplyDestination\"\r\n              auth=\"Container\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.serviceReplyQueue}\"/>\r\n\r\n    <Resource name=\"jms/healthCheckStatusDestination\"\r\n              auth=\"Container\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.statusQueue}\"/>\r\n\r\n    <Resource name=\"wm/healthWorkManager\"\r\n              auth=\"Container\"\r\n              type=\"commonj.work.WorkManager\"\r\n              factory=\"de.myfoo.commonj.work.FooWorkManagerFactory\"\r\n              maxThreads=\"5\"/>\r\n\r\n    <Realm className=\"org.apache.catalina.realm.CombinedRealm\">\r\n        <Realm className=\"com.siemens.cto.security.tomcat.GsmRealm\" />\r\n        <Realm className=\"com.siemens.cto.security.tomcat.RoleMapperRealm\"\r\n            connectionURL=\"\\${hct.ldap.url}\"\r\n            authentication=\"simple\"\r\n            connectionName=\"\\${hct.ldap.connectionName}\"\r\n            connectionPassword=\"\\${hct.ldap.password.encrypted}\"\r\n            userBase=\"\\${hct.ldap.userBase}\"\r\n            userSearch=\"(sAMAccountName={0})\"\r\n            userRoleName=\"memberOf\"\r\n            userSubtree=\"true\"\r\n            roleBase=\"\\${hct.ldap.roleBase}\"\r\n            roleName=\"sAMAccountName\"\r\n            roleNested=\"true\"\r\n            roleSubtree=\"true\"\r\n            roleSearch=\"(member={0})\"\r\n            referrals=\"follow\" />\r\n    </Realm>\r\n</Context>"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "update resource template when jvm is null",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/applications/{{HealthCheckApp}}/resources/template/hct.xml;groupName={{HealthCheckGroup}}",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "<Context docBase=\"{{mediaRemoteDir}}/app/webapps/{{HealthCheckWar}}\"\r\n>\r\n\r\n    <Listener className=\"com.siemens.cto.infrastructure.atomikos.AtomikosTaskManagerLifecycleListener\"/>\r\n\r\n    <Environment name=\"jvmInstanceName\"\r\n                 value=\"${jvm.jvmName}\"\r\n                 type=\"java.lang.String\"\r\n                 override=\"false\"/>\r\n\r\n    <Environment name=\"roleMappingProperties\"\r\n        value=\"C:/stp/app/properties/hctRoleMapping.properties\"\r\n        type=\"java.lang.String\"\r\n        override=\"false\" />\r\n\r\n    <Resource name=\"jdbc/hct-xa\"\r\n              auth=\"Container\"\r\n              type=\"com.atomikos.jdbc.AtomikosDataSourceBean\"\r\n              factory=\"com.siemens.cto.infrastructure.atomikos.EnhancedTomcatAtomikosBeanFactory\"\r\n              uniqueResourceName=\"AtomikosJndiXaDataSource2\"\r\n              xaDataSourceClassName=\"com.microsoft.sqlserver.jdbc.SQLServerXADataSource\"\r\n              xaProperties.user=\"\\${hct.db.user}\"\r\n              xaProperties.password=\"\\${hct.db.password.encrypted}\"\r\n              xaProperties.URL=\"jdbc:sqlserver://\\${hct.db.host};DatabaseName=\\${hct.db.name};SelectMethod=cursor;\"/>\r\n\r\n    <Resource factory=\"org.apache.naming.factory.BeanFactory\"\r\n              name=\"jdbc/hct-ds\"\r\n              type=\"com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean\"\r\n              url=\"jdbc:sqlserver://\\${hct.db.host};DatabaseName=\\${hct.db.name};SelectMethod=cursor;\"\r\n              driverClassName=\"com.microsoft.sqlserver.jdbc.SQLServerDriver\"\r\n              uniqueResourceName=\"healthCheck\"\r\n              user=\"\\${hct.db.user}\"\r\n              password=\"\\${hct.db.password.encrypted}\"/>\r\n\r\n    <Resource name=\"jms/hct-xacf\"\r\n              auth=\"Container\"\r\n              type=\"com.atomikos.jms.AtomikosConnectionFactoryBean\"\r\n              factory=\"com.siemens.cto.infrastructure.atomikos.EnhancedTomcatAtomikosBeanFactory\"\r\n              uniqueResourceName=\"AtomikosJndiJmsXaConnectionFactory-1.0\"\r\n              maxPoolSize=\"3\"\r\n              minPoolSize=\"1\"\r\n              ignoreSessionTransactedFlag=\"false\"\r\n              xaConnectionFactoryClassName=\"com.tibco.tibjms.TibjmsXAConnectionFactory\"\r\n              xaProperties.userName=\"\\${hct.ems.user}\"\r\n              xaProperties.userPassword=\"\\${hct.ems.password.encrypted}\"\r\n              xaProperties.serverUrl=\"\\${hct.ems.url}\"\r\n              xaProperties.connAttemptCount=\"100\"\r\n              xaProperties.connAttemptDelay=\"1000\"\r\n              xaProperties.reconnAttemptCount=\"100\"\r\n              xaProperties.reconnAttemptDelay=\"1000\"\r\n              xaProperties.SSLEnableVerifyHost=\"true\"\r\n              xaProperties.SSLEnableVerifyHostName=\"false\"\r\n              xaProperties.SSLTrustedCertificate=\"\\${STP_HOME}/app/data/security/ems/ctorootca.pem\" />\r\n\r\n    <Resource auth=\"Container\"\r\n              name=\"jms/hct-cf\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsConnectionFactory\"\r\n              serverUrl=\"\\${hct.ems.url}\"\r\n              userName=\"\\${hct.ems.user}\"\r\n              userPassword=\"\\${hct.ems.password.encrypted}\"\r\n              connAttemptCount=\"1\"\r\n              connAttemptDelay=\"1000\"\r\n              reconnAttemptCount=\"1\"\r\n              reconnAttemptDelay=\"1000\"\r\n              SSLEnableVerifyHost=\"true\"\r\n              SSLEnableVerifyHostName=\"false\"\r\n              SSLTrustedCertificate=\"\\${STP_HOME}/app/data/security/ems/ctorootca.pem\" />\r\n\r\n    <Resource auth=\"Container\"\r\n              name=\"jms/healthCheckServiceDestination\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.serviceQueue}\"/>\r\n\r\n    <Resource name=\"jms/healthCheckServiceReplyDestination\"\r\n              auth=\"Container\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.serviceReplyQueue}\"/>\r\n\r\n    <Resource name=\"jms/healthCheckStatusDestination\"\r\n              auth=\"Container\"\r\n              factory=\"org.apache.naming.factory.BeanFactory\"\r\n              type=\"com.tibco.tibjms.TibjmsQueue\"\r\n              address=\"\\${hct.ems.statusQueue}\"/>\r\n\r\n    <Resource name=\"wm/healthWorkManager\"\r\n              auth=\"Container\"\r\n              type=\"commonj.work.WorkManager\"\r\n              factory=\"de.myfoo.commonj.work.FooWorkManagerFactory\"\r\n              maxThreads=\"5\"/>\r\n\r\n    <Realm className=\"org.apache.catalina.realm.CombinedRealm\">\r\n        <Realm className=\"com.siemens.cto.security.tomcat.GsmRealm\" />\r\n        <Realm className=\"com.siemens.cto.security.tomcat.RoleMapperRealm\"\r\n            connectionURL=\"\\${hct.ldap.url}\"\r\n            authentication=\"simple\"\r\n            connectionName=\"\\${hct.ldap.connectionName}\"\r\n            connectionPassword=\"\\${hct.ldap.password.encrypted}\"\r\n            userBase=\"\\${hct.ldap.userBase}\"\r\n            userSearch=\"(sAMAccountName={0})\"\r\n            userRoleName=\"memberOf\"\r\n            userSubtree=\"true\"\r\n            roleBase=\"\\${hct.ldap.roleBase}\"\r\n            roleName=\"sAMAccountName\"\r\n            roleNested=\"true\"\r\n            roleSubtree=\"true\"\r\n            roleSearch=\"(member={0})\"\r\n            referrals=\"follow\" />\r\n    </Realm>\r\n</Context>"
+							"raw": "{\"webappId\":{{AppId}},\"name\":\"Postman-duplicate-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -6312,6 +6257,31 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/applications/{{AppId}}",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete second webapp created for update duplication check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/applications/{{AppId2}}",
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -6811,6 +6781,31 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupId}}",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete duplicate group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId2}}",
 						"method": "DELETE",
 						"header": [],
 						"body": {
