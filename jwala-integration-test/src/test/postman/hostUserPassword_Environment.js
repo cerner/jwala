@@ -145,6 +145,7 @@ var runPostman = function() {
         collection: require('./jwala-collection.postman_collection.json'),
                     environment: myEnvironment,
                     insecure: true,
+					bail: true,
         reporters: 'cli'
     }).on('start', function (err, args) { // on start of run, log to console
         console.log('running a collection...');

@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "9a89e52f-1e52-3d54-d4b2-400eba2511bf",
+		"_postman_id": "edfc3cba-91cf-f0ea-f921-204488fdd9b0",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1393,7 +1393,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/hello.xml;group={{HealthCheckGroup}};webServer={{HealthCheckWebServer}};jvm={{HealthCheckJvm}};webApp={{HealthCheckApp}}",
+						"url": "{{url}}/v1.0/resources/hello.xml;group={{GroupName}};webServer={{WebserverName}};jvm={{JvmName}};webApp={{WebappName}}",
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1451,7 +1451,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/hello.xml;group={{HealthCheckGroup}};webServer={{HealthCheckWebServer}};jvm={{HealthCheckJvm}};webApp={{HealthCheckApp}}",
+						"url": "{{url}}/v1.0/resources/hello.xml;group={{GroupName}};webServer={{WebserverName}};jvm={{JvmName}};webApp={{WebappName}}",
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -5763,8 +5763,19 @@
 				},
 				{
 					"name": "update jvm child's metadata",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/hello.xml;group={{GroupName}};jvm={{JvmName}};webApp={{WebappName}}",
+						"url": "{{url}}/v1.0/resources/template/metadata/hello.xml;group=JVMs;jvm={{JvmName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5801,28 +5812,25 @@
 					"response": []
 				},
 				{
-					"name": "update jvm child's metadata copy",
+					"name": "update hello-world.war metadata copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/hct.xml;group=HEALTH%20CHECK%204.0;jvm={{HealthCheckJvm}};webApp=HEALTH-CHECK-4.0",
+						"url": "{{url}}/v1.0/resources/template/metadata/{{helloWorldWar}};group={{GroupName}}-update;webApp={{WebappName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"hctXmlTemplate.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hct.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"HEALTH CHECK 4.0\",\r\n                \"target\":\"HEALTH-CHECK-4.0\"\r\n        }\r\n}\r\n\r\n"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "update health-check.war metadata copy",
-					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/{{HealthCheckWar}};group={{HealthCheckGroup}};webApp={{HealthCheckApp}}",
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"templateName\":\"{{HealthCheckWar}}\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"{{mediaRemoteDir}}/app/webapps\",\r\n    \"deployFileName\":\"{{HealthCheckWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"{{HealthCheckGroup}}\",\r\n        \"target\":\"{{HealthCheckGroup}}\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
+							"raw": "{\r\n    \"templateName\":\"{{helloWorldWar}}\",\r\n    \"contentType\":\"application/binary\",\r\n    \"deployPath\":\"{{mediaRemoteDir}}/app/webapps\",\r\n    \"deployFileName\":\"{{helloWorldWar}}\",\r\n    \"unpack\": false,\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_APPS\",\r\n        \"group\":\"{{GroupName}}\",\r\n        \"target\":\"{{GroupName}}\",\r\n        \"deployToJvms\":false\r\n    }\r\n}"
 						},
 						"description": ""
 					},
@@ -6526,7 +6534,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/applications/fileExists?filePath=D:\\stp\\app\\webapps\\{{HealthCheckWar}}&hostName={{host}}",
+							"raw": "{{url}}/v1.0/applications/fileExists?filePath=D:\\ctp\\app\\webapps\\{{helloWorldWar}}&hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -6538,11 +6546,15 @@
 							"query": [
 								{
 									"key": "filePath",
-									"value": "D:\\stp\\app\\webapps\\{{HealthCheckWar}}"
+									"value": "D:\\ctp\\app\\webapps\\{{helloWorldWar}}",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "hostName",
-									"value": "{{host}}"
+									"value": "{{host}}",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
