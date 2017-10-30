@@ -663,6 +663,39 @@
 					"response": []
 				},
 				{
+					"name": "create jvm2 for duplicate error check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JvmId2\", jsonData.applicationResponseContent.id.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"Postman-test-jvm2\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9100\",\"httpsPort\":\"9101\",\"redirectPort\":\"9102\",\"shutdownPort\":\"9103\",\"ajpPort\":\"9104\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "create jvm with network service account and no password",
 					"event": [
 						{
@@ -756,6 +789,39 @@
 						"body": {
 							"mode": "raw",
 							"raw": "[{\"webserverName\":\"Postman-test-webserver\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create webserver2 for duplicate error check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"WebserverId2\", jsonData.applicationResponseContent.id.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/webservers",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\"webserverName\":\"Postman-test-webserver2\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
 						},
 						"description": ""
 					},
@@ -2093,7 +2159,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverId\":{{WebserverId}},\"webserverName\":{{HealthCheckWebServer}},\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"},{\"groupId\":{{GroupId}}}]}]"
+							"raw": "[{\"webserverId\":{{WebserverId}},\"webserverName\":\"Postman-test-webserver2\",\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"},{\"groupId\":{{GroupId}}}]}]"
 						},
 						"description": ""
 					},
@@ -5277,7 +5343,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"{{HealthCheckJvm}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"}]}"
+							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"Postman-test-jvm2\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"}]}"
 						},
 						"description": "Update jvm with existing name"
 					},
@@ -5900,7 +5966,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"templateName\":\"CatalinaProperties.tpl\",\r\n    \"contentType\":\"text/plain\",\r\n    \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n    \"deployFileName\":\"catalina.properties\",\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_JVMS\", \r\n        \"group\":\"HEALTH CHECK 4.0\",\r\n        \"target\":\"HEALTH CHECK 4.0\"\r\n    }\r\n}\r\n"
+							"raw": "{\r\n    \"templateName\":\"CatalinaProperties.tpl\",\r\n    \"contentType\":\"text/plain\",\r\n    \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf\",\r\n    \"deployFileName\":\"catalina.properties\",\r\n    \"entity\":{\r\n        \"type\":\"GROUPED_JVMS\", \r\n        \"group\":\"{{GroupName}}\",\r\n        \"target\":\"{{GroupName}}\"\r\n    }\r\n}\r\n"
 						},
 						"description": ""
 					},
@@ -6428,6 +6494,94 @@
 							"raw": ""
 						},
 						"description": "no external propertiy file has been uploaded"
+					},
+					"response": []
+				},
+				{
+					"name": "delete second jvm created for duplication check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JvmId2}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JvmId2}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "delete webserver2 which checks update error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId2}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"webservers",
+								"{{WebserverId2}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				}
