@@ -5142,12 +5142,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}/webservers/resources/preview/hello.xml",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/webservers/resources/preview/{{resource}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "<Context docBase=\"/webapps/hello-world.war\">\r\n</Context>"
+							"raw": "<Context docBase=\"/webapps/{{helloWorldWar}}\">\r\n</Context>"
 						},
 						"description": ""
 					},
@@ -5273,12 +5273,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}-update/apps/resources/preview/hello.xml/{{WebappName}}",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}-update/apps/resources/preview/{{resource}}/{{WebappName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"templateName\" : \"hello-world.war\",\r\n  \"contentType\" : \"application/zip\",\r\n  \"deployFileName\" : \"hello-world.war\",\r\n  \"deployPath\" : \"c:/ctp/app/webapps\",\r\n  \"entity\" : {\r\n    \"deployToJvms\" : true\r\n  },\r\n  \"unpack\" : false,\r\n  \"overwrite\" : true,\r\n  \"hotDeploy\" : false\r\n}"
+							"raw": "{\r\n  \"templateName\" : \"{{helloWorldWar}}\",\r\n  \"contentType\" : \"application/zip\",\r\n  \"deployFileName\" : \"{{helloWorldWar}}\",\r\n  \"deployPath\" : \"${webApp.warDeployPath}\",\r\n  \"entity\" : {\r\n    \"deployToJvms\" : true\r\n  },\r\n  \"unpack\" : false,\r\n  \"overwrite\" : true,\r\n  \"hotDeploy\" : false\r\n}"
 						},
 						"description": ""
 					},
