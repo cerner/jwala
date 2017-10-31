@@ -14,7 +14,7 @@ var apacheHttpdUrl = args[6];
 var binariesDest = args[7];
 var mediaRemoteDir = args[8];
 var context = args[9];
-var hctWar = args[10];
+var helloWorldWar = args[10];
 
 var download = function(url, dest, cb) {
   var file = fs.createWriteStream(dest);
@@ -134,9 +134,9 @@ var runPostman = function() {
       "warning": ""
     });
     myEnvironment.values.push({
-          "key": "HealthCheckWar",
+          "key": "helloWorldWar",
           "type": "text",
-          "value": hctWar,
+          "value": helloWorldWar,
           "enabled": true,
           "warning": ""
     });
@@ -144,8 +144,7 @@ var runPostman = function() {
     newman.run({
         collection: require('./jwala-collection.postman_collection.json'),
                     environment: myEnvironment,
-                    insecure: true,
-                    bail: true,
+                    insecure: true, bail: true,
         reporters: 'cli'
     }).on('start', function (err, args) { // on start of run, log to console
         console.log('running a collection...');
