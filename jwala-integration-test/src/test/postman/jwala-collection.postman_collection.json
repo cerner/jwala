@@ -2631,7 +2631,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/media;name=Postman-Test-Tomcat-Media",
+						"url": "{{url}}/v1.0/media;name={{TomcatMediaName}}",
 						"method": "GET",
 						"header": [],
 						"body": {
