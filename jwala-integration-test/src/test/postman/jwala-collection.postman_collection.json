@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "edfc3cba-91cf-f0ea-f921-204488fdd9b0",
+		"_postman_id": "5c22a080-aa25-725f-7f50-10310f521d0e",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -416,7 +416,7 @@
 					"response": []
 				},
 				{
-					"name": "create group2 for duplicate error check",
+					"name": "create group2 ",
 					"event": [
 						{
 							"listen": "test",
@@ -425,7 +425,10 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"postman.setEnvironmentVariable(\"GroupId2\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"GroupName2\");",
 									"tests[\"Successful POST request\"] = responseCode.code === 201;",
+									"",
+									"",
 									"",
 									""
 								]
@@ -446,7 +449,7 @@
 							"mode": "raw",
 							"raw": "Postman-duplicate-group"
 						},
-						"description": "create group for duplicate group create error check"
+						"description": "create group to check the update to existing group name exception"
 					},
 					"response": []
 				},
@@ -663,7 +666,7 @@
 					"response": []
 				},
 				{
-					"name": "create jvm2 for duplicate error check",
+					"name": "create jvm2",
 					"event": [
 						{
 							"listen": "test",
@@ -672,7 +675,8 @@
 								"exec": [
 									"tests[\"Status code is 201\"] = responseCode.code === 201;",
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"JvmId2\", jsonData.applicationResponseContent.id.id);"
+									"postman.setEnvironmentVariable(\"JvmId2\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === postman.getEnvironmentVariable(\"JvmName2\");"
 								]
 							}
 						}
@@ -691,7 +695,7 @@
 							"mode": "raw",
 							"raw": "{\"jvmName\":\"Postman-test-jvm2\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9100\",\"httpsPort\":\"9101\",\"redirectPort\":\"9102\",\"shutdownPort\":\"9103\",\"ajpPort\":\"9104\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
-						"description": ""
+						"description": "create jvm to check the update to existing jvm name exception"
 					},
 					"response": []
 				},
@@ -795,7 +799,7 @@
 					"response": []
 				},
 				{
-					"name": "create webserver2 for duplicate error check",
+					"name": "create webserver2 ",
 					"event": [
 						{
 							"listen": "test",
@@ -823,7 +827,7 @@
 							"mode": "raw",
 							"raw": "[{\"webserverName\":\"Postman-test-webserver2\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
 						},
-						"description": ""
+						"description": "create webserver to check the update to existing webserver name exception"
 					},
 					"response": []
 				},
@@ -939,7 +943,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/hello-world.war;group={{GroupName}};webApp={{WebappName}}",
+						"url": "{{url}}/v1.0/resources/{{helloWorldWar}};group={{GroupName}};webApp={{WebappName}}",
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -3334,7 +3338,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{groupName}}/apps/conf/hello-world.war/Postman-test-webapp",
+						"url": "{{url}}/v1.0/groups/{{groupName}}/apps/conf/{{helloWorldWar}}/Postman-test-webapp",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5093,7 +5097,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"Postman-duplicate-group\"}"
+							"raw": "{\"id\":\"{{GroupName}}\",\"name\":\"{{GroupName2}}\"}"
 						},
 						"description": ""
 					},
@@ -5113,12 +5117,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/resources/preview/hello.xml",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/jvms/resources/preview/{{resource}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "<Context docBase=\"${jvm.tomcatMedia.remoteDir}/../webapps/hello-world.war\">\r\n</Context>"
+							"raw": "<Context docBase=\"${jvm.tomcatMedia.remoteDir}/../webapps/{{helloWorldWar}}\">\r\n</Context>"
 						},
 						"description": ""
 					},
@@ -5244,12 +5248,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupName}}/{{WebappName}}/apps/resources/template/hello.xml",
+						"url": "{{url}}/v1.0/groups/{{GroupName}}/{{WebappName}}/apps/resources/template/{{resource}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "<Context docBase=\"{{mediaRemoteDir}}/app/webapps/hello-world.war\">\r\n</Context>"
+							"raw": "<Context docBase=\"{{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}\">\r\n</Context>"
 						},
 						"description": "persistence error"
 					},
@@ -5343,7 +5347,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"Postman-test-jvm2\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"}]}"
+							"raw": "{\"jvmId\":\"{{JvmId}}\",\"systemProperties\":\"\",\"jvmName\":\"{{JvmName2}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9110\",\"httpsPort\":\"9111\",\"redirectPort\":\"9112\",\"shutdownPort\":\"-1\",\"ajpPort\":\"9113\",\"userName\":\"\",\"encryptedPassword\":\"\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"}]}"
 						},
 						"description": "Update jvm with existing name"
 					},
@@ -5841,12 +5845,12 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/hello.xml;group=JVMs;jvm={{JvmName}}",
+						"url": "{{url}}/v1.0/resources/template/metadata/{{resource}};group=JVMs;jvm={{JvmName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"templateName\":\"hello.xml.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"hello.xml\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
+							"raw": "{\r\n        \"templateName\":\"{{resource}}.tpl\",\r\n        \"contentType\":\"text/xml\",\r\n        \"deployPath\":\"${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/conf/stp/localhost\",\r\n        \"deployFileName\":\"{{resource}}\",\r\n        \"entity\":{\r\n                \"type\":\"GROUPED_APPS\",\r\n                \"group\":\"{{GroupName}}\",\r\n                \"target\":\"{{GroupName}}\"\r\n        }\r\n}"
 						},
 						"description": ""
 					},
@@ -6053,7 +6057,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"webappId\":{{AppId}},\"name\":\"Postman-duplicate-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"loadBalanceAcrossServers\":true}"
+							"raw": "{\"webappId\":{{AppId}},\"name\":\"{{WebappName2}}\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -6688,7 +6692,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/applications/fileExists?filePath=D:\\ctp\\app\\webapps\\{{helloWorldWar}}&hostName={{host}}",
+							"raw": "{{url}}/v1.0/applications/fileExists?filePath=${webApp.warDeployPath}\\{{helloWorldWar}}&hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -6700,7 +6704,7 @@
 							"query": [
 								{
 									"key": "filePath",
-									"value": "D:\\ctp\\app\\webapps\\{{helloWorldWar}}",
+									"value": "${webApp.warDeployPath}\\{{helloWorldWar}}",
 									"equals": true,
 									"description": ""
 								},
