@@ -31,3 +31,33 @@ afterwards
 
 > Note: Please be aware that before editing these scripts that they require Unix\OSX line endings or they will have errors
 on execution
+
+# How to Run using IE in Jenkins
+
+1. Have Jwala installed in the machine
+2. Install Git (default setup)
+3. Create d:\jenkins
+4. Copy jenkins.war in d:\jenkins (Please note that it is recommended that Master and Slave should have the same version)
+5. Copy JDK in d:\jenkins\java or whatever directory you choose
+6. Add the java's bin path to the Path environment
+7. Restart the server (slave)
+8. Go to Jenkins (Master) and log in
+9. Go to Manage Jenkins
+10. Click Manage Nodes
+11. Click New Node
+12. Specify the node name, select permanent agent the click ok
+13. Specify d:\jenkins for the root directory
+14. Select "Launch slave agents via SSH" for the Launch method
+15. Specify the host
+16. Specify the credentials
+17. Select "Non verifying Verification Strategy" for the Host Key Verification Strategy
+18. Click save
+19. Go to the newly created agent and click Launch agent
+20. Open the configuration of the job which runs cucumber/selenium tests in IE
+21. Check "Restrict where this project can be run"
+22. Specify the slave's name then click save
+23. Copy the jwala-ui-integ-test-support-files directory and its content to the slave (e.g. d:\jwala-ui-integ-test-support-files)
+23. Run the job, you should see the job under the slave Jenkins (node)
+
+
+
