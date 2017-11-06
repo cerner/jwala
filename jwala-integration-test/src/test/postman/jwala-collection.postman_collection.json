@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "c2e6b83d-d79b-1374-3c6e-7269c7191b9f",
+		"_postman_id": "5c22a080-aa25-725f-7f50-10310f521d0e",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -792,7 +792,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"Postman-test-webserver\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"82\",\"httpsPort\":\"445\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
+							"raw": "[{\"webserverName\":\"Postman-test-webserver\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
 						},
 						"description": ""
 					},
@@ -825,7 +825,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"Postman-test-webserver2\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"83\",\"httpsPort\":\"446\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
+							"raw": "[{\"webserverName\":\"Postman-test-webserver2\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
 						},
 						"description": "create webserver to check the update to existing webserver name exception"
 					},
@@ -3377,7 +3377,7 @@
 						}
 					],
 					"request": {
-						"url": "https://{{host}}:445/balancer-manager",
+						"url": "https://{{host}}/balancer-manager",
 						"method": "GET",
 						"header": [],
 						"body": {

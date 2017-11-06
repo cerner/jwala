@@ -39,6 +39,10 @@ export LOGIN_CONFIG="-Djava.security.auth.login.config=\${PROPERTIES_PATH}/jaas.
 
 export APR_OPTS="-Djava.library.path=\${CATALINA_HOME}/lib"
 
+export APP_DYNAMICS_OPTS="-javaagent:/opt/AppDynamics/current/javaagent.jar"
+export APP_DYNAMICS_OPTS="\${APP_DYNAMICS_OPTS} -Dappdynamics.agent.tierName=HEALTH-CHECK -Dappdynamics.agent.nodeName=${jvm.jvmName}"
+export APP_DYNAMICS_OPTS="\${APP_DYNAMICS_OPTS} -Dappdynamics.agent.logs.dir=/opt/AppDynamics/logs/"
+
 export PROD_OPTS="\${APR_OPTS} \${STP_OPTS} \${SSL_OPTS} \${JMX_OPTS} \${ATOMIKOS_OPTS} \${CATALINA_OPTS} \${LOG_OPTS} \${LOGIN_CONFIG} \${APP_DYNAMICS_OPTS}"
 
 export DEBUG_OPTS="\${PROD_OPTS}"
