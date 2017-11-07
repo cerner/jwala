@@ -995,7 +995,11 @@ public class ResourceServiceImpl implements ResourceService {
             }
         } else if (entity instanceof Application) {
             String templateContentApplication;
-            Application application = setApplicationWarDeployPath((Application) entity);
+            final Application entityApplication = (Application) entity;
+            Application application = setApplicationWarDeployPath(entityApplication);
+            if (entityApplication.getParentJvm() != null) {
+                application.setParentJvm(entityApplication.getParentJvm());
+            }
             if (application.getParentJvm() != null) {
                 templateContentApplication = applicationPersistenceService.getResourceTemplate(
                         application.getName(),
