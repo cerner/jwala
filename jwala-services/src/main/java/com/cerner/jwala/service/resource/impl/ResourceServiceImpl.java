@@ -164,8 +164,7 @@ public class ResourceServiceImpl implements ResourceService {
             jsonMap.put("contentType", getResourceMimeType(bufferedInputStream));
 
             resourceTemplateMetaData = getMetaData(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap));
-            if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
-                    MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
+            if (isContentTypeText(resourceTemplateMetaData)) {
                 Scanner scanner = new Scanner(bufferedInputStream).useDelimiter("\\A");
                 templateContent = scanner.hasNext() ? scanner.next() : "";
             } else {
@@ -753,7 +752,7 @@ public class ResourceServiceImpl implements ResourceService {
             } else {
                 commandOutput = distributionControlService.backupFileWithMove(hostName, destPath);
             }
-            if (!commandOutput.getReturnCode().wasSuccessful()) {
+            if (commandFailed(commandOutput)) {
                 String message = MessageFormat.format("Failed to backup source file {0} at destination {1} on host {2}", sourcePath, destPath, hostName);
                 LOGGER.error(message);
                 throw new ResourceServiceException(message);
@@ -891,36 +890,38 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public CommandOutput generateAndDeployFile(final ResourceIdentifier resourceIdentifier, final String entity, final String fileName, final String hostName) {
+        LOGGER.info("Generate and deploy file {} to host {} for entity {} with resource details {}", fileName, hostName, entity, resourceIdentifier);
+
         CommandOutput commandOutput = null;
         final String badStreamMessage = "Bad Stream: ";
         String resourceDestPath = null;
         String hostIPAddress = JwalaUtils.getHostAddress(hostName);
         try {
             validateSingleResourceForGeneration(resourceIdentifier);
-            final ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
-            final String metaDataStr = configTemplate.getMetaData();
+
             final Object selectedValue = resourceHandler.getSelectedValue(resourceIdentifier);
-            ResourceTemplateMetaData resourceTemplateMetaData = getTokenizedMetaData(fileName, selectedValue, metaDataStr);
-            String resourceSourceCopy;
+            ResourceTemplateMetaData resourceTemplateMetaData = getResourceTemplateMetaData(resourceIdentifier, fileName, selectedValue);
+
             final String deployFileName = resourceTemplateMetaData.getDeployFileName();
             final String deployPath = resourceTemplateMetaData.getDeployPath();
             if (deployPath != null && deployFileName != null) {
+                String resourceStagingPath;
                 resourceDestPath = deployPath + "/" + deployFileName;
                 binaryDistributionLockManager.writeLock(hostIPAddress + ":" + resourceDestPath);
-                if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
-                        MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-                    resourceSourceCopy = generateTemplateForTextResource(entity, fileName, selectedValue, deployFileName);
+                if (isContentTypeText(resourceTemplateMetaData)) {
+                    resourceStagingPath = generateTemplateForTextResource(entity, fileName, selectedValue, deployFileName);
                 } else {
-                    resourceSourceCopy = generateTemplateForNonTextResource(selectedValue, fileName);
+                    resourceStagingPath = generateTemplateForNonTextResource(selectedValue, fileName);
                 }
-                //Create resource dir
+
+                LOGGER.info("Deploy resource from {} to {} on host {}", resourceStagingPath, resourceDestPath, hostName);
                 commandOutput = distributionControlService.createDirectory(hostName, deployPath);
-                if (!commandOutput.getReturnCode().wasSuccessful()) {
+                if (commandFailed(commandOutput)) {
                     String errorMessage = MessageFormat.format("Failed to create directory {0} while deploying {1} to host {2}", deployPath, fileName, hostName);
                     LOGGER.error(errorMessage);
                     throw new ResourceServiceException(errorMessage);
                 }
-                commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData, selectedValue);
+                commandOutput = secureCopyFile(hostName, resourceStagingPath, resourceDestPath, resourceTemplateMetaData, selectedValue);
                 if (resourceTemplateMetaData.isUnpack()) {
                     doUnpack(hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
                 }
@@ -941,13 +942,28 @@ public class ResourceServiceImpl implements ResourceService {
         return commandOutput;
     }
 
+    private boolean commandFailed(CommandOutput commandOutput) {
+        return !commandOutput.getReturnCode().wasSuccessful();
+    }
+
+    private boolean isContentTypeText(ResourceTemplateMetaData resourceTemplateMetaData) {
+        return MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
+                MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType());
+    }
+
+    private ResourceTemplateMetaData getResourceTemplateMetaData(ResourceIdentifier resourceIdentifier, String fileName, Object selectedValue) throws IOException {
+        final ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
+        final String metaDataStr = configTemplate.getMetaData();
+        return getTokenizedMetaData(fileName, selectedValue, metaDataStr);
+    }
+
     private String generateTemplateForTextResource(String entity, String fileName, Object selectedValue, String deployFileName) throws IOException {
-        String resourceSourceCopy;
+        String resourceStagingPath;
         String fileContent = generateConfigFile(selectedValue, fileName);
         String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
-        resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
+        resourceStagingPath = resourcesNameDir + "/" + deployFileName;
         createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
-        return resourceSourceCopy;
+        return resourceStagingPath;
     }
 
     private void doUnpack(final String hostName, final String destPath) {
