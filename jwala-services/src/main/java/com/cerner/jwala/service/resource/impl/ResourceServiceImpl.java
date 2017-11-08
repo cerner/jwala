@@ -893,16 +893,14 @@ public class ResourceServiceImpl implements ResourceService {
     public CommandOutput generateAndDeployFile(final ResourceIdentifier resourceIdentifier, final String entity, final String fileName, final String hostName) {
         CommandOutput commandOutput = null;
         final String badStreamMessage = "Bad Stream: ";
-        String metaDataStr;
-        ResourceTemplateMetaData resourceTemplateMetaData;
         String resourceDestPath = null;
         String hostIPAddress = JwalaUtils.getHostAddress(hostName);
         try {
             validateSingleResourceForGeneration(resourceIdentifier);
-            ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
-            metaDataStr = configTemplate.getMetaData();
+            final ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
+            final String metaDataStr = configTemplate.getMetaData();
             final Object selectedValue = resourceHandler.getSelectedValue(resourceIdentifier);
-            resourceTemplateMetaData = getTokenizedMetaData(fileName, selectedValue, metaDataStr);
+            ResourceTemplateMetaData resourceTemplateMetaData = getTokenizedMetaData(fileName, selectedValue, metaDataStr);
             String resourceSourceCopy;
             final String deployFileName = resourceTemplateMetaData.getDeployFileName();
             final String deployPath = resourceTemplateMetaData.getDeployPath();
@@ -911,12 +909,9 @@ public class ResourceServiceImpl implements ResourceService {
                 binaryDistributionLockManager.writeLock(hostIPAddress + ":" + resourceDestPath);
                 if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
                         MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-                    String fileContent = generateConfigFile(selectedValue, fileName);
-                    String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
-                    resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
-                    createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
+                    resourceSourceCopy = generateTemplateForTextResource(entity, fileName, selectedValue, deployFileName);
                 } else {
-                    resourceSourceCopy = generateTemplateForNotText(selectedValue, fileName);
+                    resourceSourceCopy = generateTemplateForNonTextResource(selectedValue, fileName);
                 }
                 //Create resource dir
                 commandOutput = distributionControlService.createDirectory(hostName, deployPath);
@@ -946,6 +941,15 @@ public class ResourceServiceImpl implements ResourceService {
         return commandOutput;
     }
 
+    private String generateTemplateForTextResource(String entity, String fileName, Object selectedValue, String deployFileName) throws IOException {
+        String resourceSourceCopy;
+        String fileContent = generateConfigFile(selectedValue, fileName);
+        String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
+        resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
+        createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
+        return resourceSourceCopy;
+    }
+
     private void doUnpack(final String hostName, final String destPath) {
         try {
             binaryDistributionService.distributeUnzip(hostName);
@@ -960,7 +964,7 @@ public class ResourceServiceImpl implements ResourceService {
         }
     }
 
-    private <T> String generateTemplateForNotText(final T entity, final String fileName) {
+    private <T> String generateTemplateForNonTextResource(final T entity, final String fileName) {
         String template = "";
         if (entity instanceof Jvm) {
             template = jvmPersistenceService.getResourceTemplate(((Jvm) entity).getJvmName(), fileName);
@@ -997,9 +1001,6 @@ public class ResourceServiceImpl implements ResourceService {
             String templateContentApplication;
             final Application entityApplication = (Application) entity;
             Application application = setApplicationWarDeployPath(entityApplication);
-            if (entityApplication.getParentJvm() != null) {
-                application.setParentJvm(entityApplication.getParentJvm());
-            }
             if (application.getParentJvm() != null) {
                 templateContentApplication = applicationPersistenceService.getResourceTemplate(
                         application.getName(),
@@ -1042,7 +1043,11 @@ public class ResourceServiceImpl implements ResourceService {
         }
 
         ResourceContent warResourceContent = getApplicationWarResourceContent(application, warName, name);
-        return updateApplicationWarInfo(application, warName, name, warResourceContent);
+        Application retVal = updateApplicationWarInfo(application, warName, name, warResourceContent);
+        if (null != application.getParentJvm()) {
+            retVal.setParentJvm(application.getParentJvm());
+        }
+        return retVal;
     }
 
     private Application updateApplicationWarInfo(Application application, String warName, String name, ResourceContent warResourceContent) {
