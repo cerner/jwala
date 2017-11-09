@@ -876,7 +876,7 @@ public class ResourceServiceImplTest {
         when(mockJvm.getJvmName()).thenReturn("test-jvm-resource-validation");
 
         ConfigTemplate mockConfigTemplate = mock(ConfigTemplate.class);
-        when(mockConfigTemplate.getMetaData()).thenReturn("{\"deployFileName\":\"\test-deploy-name.xml\", \"deployPath\":\"./fake/test/path\"}");
+        when(mockConfigTemplate.getMetaData()).thenReturn("{\"deployFileName\":\"test-deploy-name.xml\", \"deployPath\":\"./fake/test/path\"}");
         when(mockConfigTemplate.getTemplateContent()).thenReturn("template${nope}template");
 
         when(Config.mockResourceHandler.fetchResource(any(ResourceIdentifier.class))).thenReturn(mockConfigTemplate);
@@ -1008,6 +1008,61 @@ public class ResourceServiceImplTest {
 
         CommandOutput result = resourceService.generateAndDeployFile(resourceIdentifier, "jvm1", "server.xml", "localhost");
         assertEquals(scpResult, result);
+    }
+
+    @Test
+    public void testGenerateAndDeployFileForApplicationWithJvm() throws IOException {
+        final ResourceIdentifier.Builder builder = new ResourceIdentifier.Builder();
+        final ResourceIdentifier resourceIdentifier = builder
+                .setGroupName("group1")
+                .setResourceName("hct.xml")
+                .setJvmName("jvm1")
+                .setWebAppName("webapp1")
+                .build();
+        final ConfigTemplate mockConfigTemplate = mock(ConfigTemplate.class);
+        when(Config.mockResourceHandler.fetchResource(any(ResourceIdentifier.class))).thenReturn(mockConfigTemplate);
+        when(mockConfigTemplate.getMetaData()).thenReturn(IOUtils.toString(this.getClass().getClassLoader()
+                .getResourceAsStream("sample-metadata.json"), StandardCharsets.UTF_8));
+        when(mockConfigTemplate.getTemplateContent()).thenReturn("<Context></Context>");
+
+        Application mockApplication = mock(Application.class);
+        when(mockApplication.getName()).thenReturn("webapp1");
+        when(mockApplication.getWarName()).thenReturn("webapp1-warname.war");
+        Group mockApplicationGroup = mock(Group.class);
+        when(mockApplicationGroup.getName()).thenReturn("group1");
+        when(mockApplication.getGroup()).thenReturn(mockApplicationGroup);
+        Jvm mockJvm = mock(Jvm.class);
+        when(mockJvm.getJvmName()).thenReturn("jvm1");
+        when(mockApplication.getParentJvm()).thenReturn(mockJvm);
+
+        Application applicationWithoutParentJvm = new Application(
+                new Identifier<Application>(111L),
+                "webapp1",
+                "fake/war/path",
+                "/webapp1",
+                mockApplicationGroup,
+                true, true, false,
+                "webapp1-war.war",
+                "fake/war/deploy/path"
+        );
+        when(Config.mockAppPersistenceService.updateWarInfo(anyString(), anyString(), anyString(), anyString())).thenReturn(applicationWithoutParentJvm);
+        when(Config.mockAppPersistenceService.getResourceTemplate(anyString(), anyString(), anyString(), anyString())).thenReturn("<Context></Context>");
+
+        when(Config.mockResourceHandler.getSelectedValue(resourceIdentifier)).thenReturn(mockApplication);
+        final List<Group> groupList = new ArrayList<>();
+        groupList.add(mock(Group.class));
+        when(Config.mockGroupPesistenceService.getGroups()).thenReturn(groupList);
+        when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class))).thenReturn("<server/>");
+
+        when(Config.mockBinaryDistributionControlService.createDirectory(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Created directory", ""));
+        when(Config.mockDistributionService.remoteFileCheck(anyString(), anyString())).thenReturn(true);
+        when(Config.mockBinaryDistributionControlService.backupFileWithMove(anyString(), anyString())).thenReturn(new CommandOutput(new ExecReturnCode(0), "Backup succeeded", ""));
+        final CommandOutput scpResult = new CommandOutput(new ExecReturnCode(0), "SCP succeeded", "");
+        when(Config.mockBinaryDistributionControlService.secureCopyFile(anyString(), anyString(), anyString())).thenReturn(scpResult);
+
+        CommandOutput result = resourceService.generateAndDeployFile(resourceIdentifier, "jvm1", "hct.xml", "localhost");
+        assertEquals(scpResult, result);
+        verify(Config.mockAppPersistenceService).getResourceTemplate(eq("webapp1"), eq("hct.xml"), eq("jvm1"), eq("group1"));
     }
 
     @Test (expected = ResourceServiceException.class)
