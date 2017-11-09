@@ -164,8 +164,7 @@ public class ResourceServiceImpl implements ResourceService {
             jsonMap.put("contentType", getResourceMimeType(bufferedInputStream));
 
             resourceTemplateMetaData = getMetaData(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonMap));
-            if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
-                    MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
+            if (isContentTypeText(resourceTemplateMetaData)) {
                 Scanner scanner = new Scanner(bufferedInputStream).useDelimiter("\\A");
                 templateContent = scanner.hasNext() ? scanner.next() : "";
             } else {
@@ -753,7 +752,7 @@ public class ResourceServiceImpl implements ResourceService {
             } else {
                 commandOutput = distributionControlService.backupFileWithMove(hostName, destPath);
             }
-            if (!commandOutput.getReturnCode().wasSuccessful()) {
+            if (commandFailed(commandOutput)) {
                 String message = MessageFormat.format("Failed to backup source file {0} at destination {1} on host {2}", sourcePath, destPath, hostName);
                 LOGGER.error(message);
                 throw new ResourceServiceException(message);
@@ -891,41 +890,38 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public CommandOutput generateAndDeployFile(final ResourceIdentifier resourceIdentifier, final String entity, final String fileName, final String hostName) {
+        LOGGER.info("Generate and deploy file {} to host {} for entity {} with resource details {}", fileName, hostName, entity, resourceIdentifier);
+
         CommandOutput commandOutput = null;
         final String badStreamMessage = "Bad Stream: ";
-        String metaDataStr;
-        ResourceTemplateMetaData resourceTemplateMetaData;
         String resourceDestPath = null;
         String hostIPAddress = JwalaUtils.getHostAddress(hostName);
         try {
             validateSingleResourceForGeneration(resourceIdentifier);
-            ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
-            metaDataStr = configTemplate.getMetaData();
+
             final Object selectedValue = resourceHandler.getSelectedValue(resourceIdentifier);
-            resourceTemplateMetaData = getTokenizedMetaData(fileName, selectedValue, metaDataStr);
-            String resourceSourceCopy;
+            ResourceTemplateMetaData resourceTemplateMetaData = getResourceTemplateMetaData(resourceIdentifier, fileName, selectedValue);
+
             final String deployFileName = resourceTemplateMetaData.getDeployFileName();
             final String deployPath = resourceTemplateMetaData.getDeployPath();
             if (deployPath != null && deployFileName != null) {
+                String resourceStagingPath;
                 resourceDestPath = deployPath + "/" + deployFileName;
                 binaryDistributionLockManager.writeLock(hostIPAddress + ":" + resourceDestPath);
-                if (MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
-                        MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-                    String fileContent = generateConfigFile(selectedValue, fileName);
-                    String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
-                    resourceSourceCopy = resourcesNameDir + "/" + deployFileName;
-                    createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
+                if (isContentTypeText(resourceTemplateMetaData)) {
+                    resourceStagingPath = generateTemplateForTextResource(entity, fileName, selectedValue, deployFileName);
                 } else {
-                    resourceSourceCopy = generateTemplateForNotText(selectedValue, fileName);
+                    resourceStagingPath = generateTemplateForNonTextResource(selectedValue, fileName);
                 }
-                //Create resource dir
+
+                LOGGER.info("Deploy resource from {} to {} on host {}", resourceStagingPath, resourceDestPath, hostName);
                 commandOutput = distributionControlService.createDirectory(hostName, deployPath);
-                if (!commandOutput.getReturnCode().wasSuccessful()) {
+                if (commandFailed(commandOutput)) {
                     String errorMessage = MessageFormat.format("Failed to create directory {0} while deploying {1} to host {2}", deployPath, fileName, hostName);
                     LOGGER.error(errorMessage);
                     throw new ResourceServiceException(errorMessage);
                 }
-                commandOutput = secureCopyFile(hostName, resourceSourceCopy, resourceDestPath, resourceTemplateMetaData, selectedValue);
+                commandOutput = secureCopyFile(hostName, resourceStagingPath, resourceDestPath, resourceTemplateMetaData, selectedValue);
                 if (resourceTemplateMetaData.isUnpack()) {
                     doUnpack(hostName, deployPath + "/" + resourceTemplateMetaData.getDeployFileName());
                 }
@@ -946,6 +942,30 @@ public class ResourceServiceImpl implements ResourceService {
         return commandOutput;
     }
 
+    private boolean commandFailed(CommandOutput commandOutput) {
+        return !commandOutput.getReturnCode().wasSuccessful();
+    }
+
+    private boolean isContentTypeText(ResourceTemplateMetaData resourceTemplateMetaData) {
+        return MEDIA_TYPE_TEXT.equalsIgnoreCase(resourceTemplateMetaData.getContentType().getType()) ||
+                MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType());
+    }
+
+    private ResourceTemplateMetaData getResourceTemplateMetaData(ResourceIdentifier resourceIdentifier, String fileName, Object selectedValue) throws IOException {
+        final ConfigTemplate configTemplate = resourceHandler.fetchResource(resourceIdentifier);
+        final String metaDataStr = configTemplate.getMetaData();
+        return getTokenizedMetaData(fileName, selectedValue, metaDataStr);
+    }
+
+    private String generateTemplateForTextResource(String entity, String fileName, Object selectedValue, String deployFileName) throws IOException {
+        String resourceStagingPath;
+        String fileContent = generateConfigFile(selectedValue, fileName);
+        String resourcesNameDir = ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + "/" + entity;
+        resourceStagingPath = resourcesNameDir + "/" + deployFileName;
+        createConfigFile(resourcesNameDir + "/", deployFileName, fileContent);
+        return resourceStagingPath;
+    }
+
     private void doUnpack(final String hostName, final String destPath) {
         try {
             binaryDistributionService.distributeUnzip(hostName);
@@ -960,7 +980,7 @@ public class ResourceServiceImpl implements ResourceService {
         }
     }
 
-    private <T> String generateTemplateForNotText(final T entity, final String fileName) {
+    private <T> String generateTemplateForNonTextResource(final T entity, final String fileName) {
         String template = "";
         if (entity instanceof Jvm) {
             template = jvmPersistenceService.getResourceTemplate(((Jvm) entity).getJvmName(), fileName);
@@ -1038,7 +1058,11 @@ public class ResourceServiceImpl implements ResourceService {
         }
 
         ResourceContent warResourceContent = getApplicationWarResourceContent(application, warName, name);
-        return updateApplicationWarInfo(application, warName, name, warResourceContent);
+        Application retVal = updateApplicationWarInfo(application, warName, name, warResourceContent);
+        if (null != application.getParentJvm()) {
+            retVal.setParentJvm(application.getParentJvm());
+        }
+        return retVal;
     }
 
     private Application updateApplicationWarInfo(Application application, String warName, String name, ResourceContent warResourceContent) {
