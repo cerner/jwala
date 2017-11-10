@@ -198,12 +198,6 @@ LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
 SSLSessionCache shmcb:logs/ssl_cache_shm
 #Note: we are not password protecting our keys
 #SSLPassPhraseDialog "exec:../app/data/security/apache/authorize.bat"
-<%
-  def remoteDir = webServer.apacheHttpdMedia.remoteDir;
-  def scriptname = "/app/data/security/scripts/httpd_helper";
-%>
-
-SSLPassPhraseDialog "exec:${remoteDir}${scriptname}.sh"
 
 #IPINS
 LoadModule rewrite_module modules/mod_rewrite.so
@@ -278,8 +272,8 @@ SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
 
 SSLSessionCacheTimeout 300
 
-SSLCertificateFile ../app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.cer
-SSLCertificateKeyFile ../app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.key
+SSLCertificateFile ${webServer.apacheHttpdMedia.remoteDir}/postman/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.cer
+SSLCertificateKeyFile ${webServer.apacheHttpdMedia.remoteDir}/postman/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.key
 
 SSLVerifyClient none
 
