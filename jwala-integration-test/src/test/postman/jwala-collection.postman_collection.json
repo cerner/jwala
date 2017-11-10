@@ -2163,7 +2163,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverId\":{{WebserverId}},\"webserverName\":\"Postman-test-webserver2\",\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"},{\"groupId\":{{GroupId}}}]}]"
+							"raw": "[{\"webserverId\":{{WebserverId}},\"webserverName\":\"{{WebserverName2}}\",\"hostName\":\"{{host}}\",\"portNumber\":\"80\",\"httpsPort\":\"443\",\"statusPath\":\"/apache_pb.png\",\"groupIds\":[{\"groupId\":\"1\"},{\"groupId\":\"2\"},{\"groupId\":{{GroupId}}}]}]"
 						},
 						"description": ""
 					},
