@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "bb9c208b-f49a-b137-57d0-fcb952d38af0",
+		"_postman_id": "8d9990bc-2a88-1a70-85d6-2212b45dbdbe",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -693,7 +693,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"Postman-test-jvm2\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9140\",\"httpsPort\":\"9141\",\"redirectPort\":\"9142\",\"shutdownPort\":\"9143\",\"ajpPort\":\"9144\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+							"raw": "{\"jvmName\":\"{{JvmName2}}\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"9140\",\"httpsPort\":\"9141\",\"redirectPort\":\"9142\",\"shutdownPort\":\"9143\",\"ajpPort\":\"9144\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
 						"description": "create jvm to check the update to existing jvm name exception"
 					},
@@ -792,7 +792,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"Postman-test-webserver\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"83\",\"httpsPort\":\"446\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
+							"raw": "[{\"webserverName\":\"{{WebserverName}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"83\",\"httpsPort\":\"446\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
 						},
 						"description": ""
 					},
@@ -825,7 +825,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[{\"webserverName\":\"Postman-test-webserver2\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"84\",\"httpsPort\":\"447\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
+							"raw": "[{\"webserverName\":\"{{WebserverName2}}\",\"groupIds\":[{\"id\":1,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"portNumber\":\"84\",\"httpsPort\":\"447\",\"statusPath\":\"/apache_pb.png\", \"apacheHttpdMediaId\":{{HttpdMediaId}}}]"
 						},
 						"description": "create webserver to check the update to existing webserver name exception"
 					},
@@ -890,7 +890,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"Postman-test-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
+							"raw": "{\"name\":\"{{WebappName}}\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -923,7 +923,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"Postman-duplicate-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
+							"raw": "{\"name\":\"{{WebappName2}}\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -999,7 +999,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"Postman-test-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
+							"raw": "{\"name\":\"{{WebappName}}\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -1501,7 +1501,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"Postman-test-webapp\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
+							"raw": "{\"name\":\"{{WebappName}}\",\"webappContext\":\"/hello\",\"groupId\":{{GroupId}},\"secure\":true,\"loadBalanceAcrossServers\":true}"
 						},
 						"description": ""
 					},
@@ -2972,7 +2972,7 @@
 						}
 					],
 					"request": {
-						"url": "http://{{host}}:83",
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3413,7 +3413,7 @@
 						}
 					],
 					"request": {
-						"url": "https://{{host}}:446/balancer-manager",
+						"url": "https://{{host}}:{{WebserverHttpsPort}}/balancer-manager",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3539,7 +3539,7 @@
 				{
 					"name": "verify webserver started",
 					"request": {
-						"url": "https://{{host}}:446/apache_pb.png",
+						"url": "https://{{host}}:{{WebserverHttpsPort}}/apache_pb.png",
 						"method": "GET",
 						"header": [],
 						"body": {
