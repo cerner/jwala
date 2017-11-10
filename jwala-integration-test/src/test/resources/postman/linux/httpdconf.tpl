@@ -272,8 +272,8 @@ SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
 
 SSLSessionCacheTimeout 300
 
-SSLCertificateFile ${webServer.apacheHttpdMedia.remoteDir}/postman/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.cer
-SSLCertificateKeyFile ${webServer.apacheHttpdMedia.remoteDir}/postman/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.key
+SSLCertificateFile ${webServer.apacheHttpdMedia.remoteDir}/postman-certs/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.cer
+SSLCertificateKeyFile ${webServer.apacheHttpdMedia.remoteDir}/postman-certs/ctp/app/data/security/id/${webServer.host.tokenize('.')[0].toLowerCase()}.key
 
 SSLVerifyClient none
 
