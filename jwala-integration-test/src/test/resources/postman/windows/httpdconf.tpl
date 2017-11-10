@@ -38,7 +38,7 @@
 PidFile ${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/logs/httpd-${webServer.name}.pid
 #
 #ServerRoot ./
-ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}"
+ServerRoot "${webServer.apacheHttpdMedia.remoteDir}/${webServer.apacheHttpdMedia.rootDir}/"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -170,7 +170,7 @@ SSLRequireSSL
 </Directory>
 
 # Apply rewrite rules to ${webServer.httpsPort} virtual host
-IncludeOptional ../app/data/httpd/*urlrewriterules.conf
+IncludeOptional ${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}/*urlrewriterules.conf
 
 # TLS1 is supported because corporate group policy currently disables TLS1.2 and TLS1.1 in IE
 SSLProtocol -all +TLSv1.2 +TLSv1
@@ -197,7 +197,7 @@ SSLProxyVerifyDepth 2
 
 # Do not check expiration, to avoid outages
 SSLProxyCheckPeerExpire off
-SSLProxyCACertificatePath ../app/data/security/openssl/
+SSLProxyCACertificatePath ${webServer.apacheHttpdMedia.remoteDir}/app/data/security/openssl/
 
 #The following option must be set if you have a locally signed certificate
 SSLProxyVerify optional_no_ca
@@ -229,7 +229,7 @@ DocumentRoot "htdocs"
 
 #IPINS
 RewriteEngine on      
-IncludeOptional ../app/data/httpd/*urlrewriterules.conf
+IncludeOptional ${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}/*urlrewriterules.conf
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)      
 RewriteRule .* - [F]    
 
