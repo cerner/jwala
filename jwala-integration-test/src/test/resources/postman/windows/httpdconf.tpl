@@ -169,9 +169,6 @@ Allow from all
 SSLRequireSSL
 </Directory>
 
-# Apply rewrite rules to ${webServer.httpsPort} virtual host
-IncludeOptional ${webServer.apacheHttpdMedia.remoteDir}/app/data/httpd/${webServer.name}/*urlrewriterules.conf
-
 # TLS1 is supported because corporate group policy currently disables TLS1.2 and TLS1.1 in IE
 SSLProtocol -all +TLSv1.2 +TLSv1
 # Ideally we would be purely on TLS 1.2:
