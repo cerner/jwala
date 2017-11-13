@@ -5524,6 +5524,37 @@
 					"response": []
 				},
 				{
+					"name": "stop group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"stop\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "stop jvm",
 					"event": [
 						{
@@ -5618,37 +5649,6 @@
 							],
 							"variable": []
 						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "stop group",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
 						"method": "POST",
 						"header": [
 							{
