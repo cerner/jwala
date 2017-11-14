@@ -2817,37 +2817,6 @@
 					"response": []
 				},
 				{
-					"name": "control group start",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"start\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "control group webservers",
 					"event": [
 						{
@@ -2862,37 +2831,6 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupId}}/webservers/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"start\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "control groups start",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/commands",
 						"method": "POST",
 						"header": [
 							{
@@ -2942,6 +2880,37 @@
 							],
 							"variable": []
 						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"start\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "control groups start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/commands",
 						"method": "POST",
 						"header": [
 							{
@@ -3475,7 +3444,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/metadata/httpd.conf;group=Web%20Servers;webServer={{WebserverName}}",
+						"url": "{{url}}/v1.0/resources/template/metadata/httpd.conf;group={{GroupName}};webServer={{WebserverName}}",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -5327,6 +5296,37 @@
 			"description": "",
 			"item": [
 				{
+					"name": "stop group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"stop\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "update jvm",
 					"event": [
 						{
@@ -5524,7 +5524,7 @@
 					"response": []
 				},
 				{
-					"name": "stop group",
+					"name": "stop webserver",
 					"event": [
 						{
 							"listen": "test",
@@ -5537,7 +5537,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
+						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands",
 						"method": "POST",
 						"header": [
 							{
@@ -5569,37 +5569,6 @@
 					],
 					"request": {
 						"url": "{{url}}/v1.0/jvms/{{JvmId}}/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "stop webserver",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands",
 						"method": "POST",
 						"header": [
 							{
