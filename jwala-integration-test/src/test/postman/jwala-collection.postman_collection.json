@@ -3481,6 +3481,20 @@
 					"response": []
 				},
 				{
+					"name": "verify webserver started",
+					"request": {
+						"url": "https://{{host}}:{{WebserverHttpsPort}}/apache_pb.png",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "hot deploy server.xml",
 					"event": [
 						{
@@ -3496,20 +3510,6 @@
 					"request": {
 						"url": "{{url}}/v1.0/jvms/{{JvmName}}/conf/server.xml",
 						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "verify webserver started",
-					"request": {
-						"url": "https://{{host}}:{{WebserverHttpsPort}}/apache_pb.png",
-						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
