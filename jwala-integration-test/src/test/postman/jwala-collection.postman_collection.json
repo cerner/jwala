@@ -2731,7 +2731,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(10000);"
 								]
 							}
 						}
@@ -2762,7 +2772,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
 								]
 							}
 						}
@@ -2793,7 +2813,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
 								]
 							}
 						}
@@ -2824,7 +2854,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
 								]
 							}
 						}
@@ -2875,7 +2915,9 @@
 							"query": [
 								{
 									"key": "wait",
-									"value": "TRUE"
+									"value": "TRUE",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -5296,37 +5338,6 @@
 			"description": "",
 			"item": [
 				{
-					"name": "stop group",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "update jvm",
 					"event": [
 						{
@@ -5496,6 +5507,47 @@
 			"description": "",
 			"item": [
 				{
+					"name": "stop group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"stop\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "error: generate group webservers when web server is started exception",
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupId}}/webservers/conf/deploy",
@@ -5531,7 +5583,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
 								]
 							}
 						}
@@ -5593,7 +5655,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
 								]
 							}
 						}
@@ -5613,7 +5685,9 @@
 							"query": [
 								{
 									"key": "wait",
-									"value": "FALSE"
+									"value": "FALSE",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -5642,7 +5716,17 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function pausecomp(millis)",
+									" {",
+									"  var date = new Date();",
+									"  var curDate = null;",
+									"  do { curDate = new Date(); }",
+									"  while(curDate-date < millis);",
+									"}",
+									"",
+									"pausecomp(5000);"
 								]
 							}
 						}
