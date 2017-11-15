@@ -5648,31 +5648,21 @@
 					"response": []
 				},
 				{
-					"name": "stop webserver with wait false",
+					"name": "stop webserver with wait true",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"",
-									"function pausecomp(millis)",
-									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
-									"}",
-									"",
-									"pausecomp(5000);"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=FALSE",
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=TRUE",
 							"host": [
 								"{{url}}"
 							],
@@ -5685,7 +5675,7 @@
 							"query": [
 								{
 									"key": "wait",
-									"value": "FALSE",
+									"value": "TRUE",
 									"equals": true,
 									"description": ""
 								}
