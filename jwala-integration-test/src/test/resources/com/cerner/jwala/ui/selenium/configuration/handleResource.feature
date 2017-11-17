@@ -73,8 +73,9 @@ Feature: Handle a resource
       | deployPath   | httpd.resource.deploy.path |
       | templateName | httpdconf.tpl              |
     Then I check for resource "httpd.conf"
+    When I click "httpd.conf" node
     And I expand "webServer" node in data tree
-    And I don't see "parentGroup" node in the data tree
+    Then I don't see "parentGroup" node in the data tree
     When I click check-box for resourceFile "httpd.conf"
     And I click the resource delete icon
     And I confirm delete a resource popup
