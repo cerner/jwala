@@ -2806,6 +2806,53 @@
 					"response": []
 				},
 				{
+					"name": "check webserver start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}/index.html",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "webserver start ping test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "control group jvms",
 					"event": [
 						{
@@ -2970,7 +3017,7 @@
 					"response": []
 				},
 				{
-					"name": "webserver start ping test",
+					"name": "check jvm start",
 					"event": [
 						{
 							"listen": "test",
@@ -2983,7 +3030,7 @@
 						}
 					],
 					"request": {
-						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"url": "https://{{host}}:9131/hello/",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3161,6 +3208,31 @@
 					"request": {
 						"url": "{{url}}/v1.0/balancermanager/jvm/{{JvmName}}",
 						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "webserver start ping test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
