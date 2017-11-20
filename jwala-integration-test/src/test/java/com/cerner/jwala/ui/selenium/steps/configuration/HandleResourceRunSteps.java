@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 import java.util.Properties;
 
+import static org.junit.Assert.assertFalse;
+
 /**
  * Created by Sharvari Barve on 9/2/2017.
  */
@@ -182,6 +184,11 @@ public class HandleResourceRunSteps {
         clickYes();
     }
 
+    @And("^I don't see \"([^\"]*)\" node in the data tree$")
+    public void verifyabsenceOfNode(String nodeName)  {
+        assertFalse(jwalaUi.isElementExists(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + nodeName + "') ]/preceding-sibling::span")));
+    }
+
     public void clickYes() {
         jwalaUi.click(By.xpath("//*[text()='Yes']"));
     }
@@ -189,5 +196,6 @@ public class HandleResourceRunSteps {
     public void clickOk() {
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
+
 
 }

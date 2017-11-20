@@ -63,9 +63,6 @@ var ResourceAttrPane = React.createClass({
                     break;
                 case "webServerSection":
                     newAttributes["webServers"] = newData.webServers;
-                    newAttributes["webServers"].forEach(function(item) {
-                        item["parentGroup"] = ResourceAttrPane.sanitizeAndCloneData(parent);
-                    });
                     break;
                 case "webAppSection":
                     newAttributes["webApps"] = newData.webApps;
@@ -82,7 +79,6 @@ var ResourceAttrPane = React.createClass({
                      newAttributes["jvm"] = newData;
                     break;
                 case "webServers":
-                     newData["parentGroup"] = ResourceAttrPane.sanitizeAndCloneData(parent.rtreeListMetaData.parent);
                      newAttributes["webServer"] = newData;
             }
 
