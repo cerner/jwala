@@ -1,4 +1,4 @@
-Feature: Deleting a resource
+Feature: Handle a resource
 
   Scenario: Delete a resource -individual jvm
     Given I logged in
@@ -49,7 +49,7 @@ Feature: Deleting a resource
     Then I check for resource "server.xml"
 
 
-  Scenario: Delete an individual  web-server resource
+  Scenario: Handle an individual  web-server resource(delete a resource and removal of parent group defect)
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
@@ -73,6 +73,9 @@ Feature: Deleting a resource
       | deployPath   | httpd.resource.deploy.path |
       | templateName | httpdconf.tpl              |
     Then I check for resource "httpd.conf"
+    When I click "httpd.conf" node
+    And I expand "webServer" node in data tree
+    Then I don't see "parentGroup" node in the data tree
     When I click check-box for resourceFile "httpd.conf"
     And I click the resource delete icon
     And I confirm delete a resource popup
