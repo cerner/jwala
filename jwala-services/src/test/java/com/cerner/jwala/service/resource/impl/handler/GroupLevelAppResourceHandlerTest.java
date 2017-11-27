@@ -6,10 +6,14 @@ import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
 import com.cerner.jwala.common.domain.model.resource.ResourceIdentifier;
 import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
+import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
+import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
+import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupAppConfigTemplate;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
 import com.cerner.jwala.persistence.service.ResourceDao;
+import com.cerner.jwala.service.exception.GroupLevelAppResourceHandlerException;
 import com.cerner.jwala.service.resource.ResourceHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,6 +80,7 @@ public class GroupLevelAppResourceHandlerTest {
         when(mockGroup.getName()).thenReturn("test-group-name");
 
         when(mockGroupPersistence.updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString())).thenReturn(updatedMetaData);
+        when(mockGroupPersistence.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"entity\":{\"deployToJvms\":true}}");
         when(mockGroupPersistence.getGroup(anyString())).thenReturn(mockGroup);
         when(mockAppPersistence.getResourceTemplateNames(anyString(), anyString())).thenReturn(Collections.singletonList(resourceName));
 
@@ -93,6 +98,119 @@ public class GroupLevelAppResourceHandlerTest {
         verify(mockGroupPersistence).updateGroupAppResourceMetaData(eq(resourceIdentifier.groupName), eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData));
         verify(mockAppPersistence).updateResourceMetaData(eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData), eq("mockJvm"), eq(resourceIdentifier.groupName));
         verify(mockAppPersistence).updateApplication(any(UpdateApplicationRequest.class));
+    }
+
+    @Test
+    public void testUpdateMetaDataSetDeployToJvmsTrue() {
+        reset(mockResourceDao, mockAppPersistence);
+        final String updatedMetaData = "{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}";
+        final String resourceName = "update-my-meta-data.txt";
+
+        Group mockGroup = mock(Group.class);
+        Set<Jvm> jvmSet = new HashSet<>();
+        Jvm mockJvm = mock(Jvm.class);
+        jvmSet.add(mockJvm);
+        when(mockJvm.getJvmName()).thenReturn("mockJvm");
+        when(mockGroup.getJvms()).thenReturn(jvmSet);
+        when(mockGroup.getName()).thenReturn("test-group-name");
+
+        when(mockGroupPersistence.updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString())).thenReturn(updatedMetaData);
+        when(mockGroupPersistence.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"entity\":{\"deployToJvms\":false}}");
+        when(mockGroupPersistence.getGroup(anyString())).thenReturn(mockGroup);
+        when(mockAppPersistence.getResourceTemplateNames(anyString(), anyString())).thenReturn(Collections.singletonList(resourceName));
+
+        JpaJvm mockJpaJvm = mock(JpaJvm.class);
+        when(mockJvmPersistence.getJpaJvm(any(Identifier.class), anyBoolean())).thenReturn(mockJpaJvm);
+
+        JpaGroupAppConfigTemplate mockGroupAppConfigTemplate = mock(JpaGroupAppConfigTemplate.class);
+        when(mockGroupAppConfigTemplate.getTemplateContent()).thenReturn("some template content");
+        when(mockResourceDao.getGroupLevelAppResource(anyString(), anyString(), anyString())).thenReturn(mockGroupAppConfigTemplate);
+
+        Application mockApplication = mock(Application.class);
+        when(mockApplication.getName()).thenReturn("app-name");
+        when(mockApplication.getId()).thenReturn(new Identifier<Application>(1111L));
+        when(mockApplication.getGroup()).thenReturn(mockGroup);
+        when(mockApplication.getWebAppContext()).thenReturn("/test-app-context");
+        when(mockApplication.isLoadBalanceAcrossServers()).thenReturn(true);
+        when(mockApplication.isSecure()).thenReturn(true);
+        when(mockAppPersistence.getApplication(anyString())).thenReturn(mockApplication);
+        when(mockAppPersistence.findApplicationsBelongingTo(anyString())).thenReturn(Collections.singletonList(mockApplication));
+
+        groupAppResourceHandler.updateResourceMetaData(resourceIdentifier, resourceName, updatedMetaData);
+
+        verify(mockGroupPersistence).updateGroupAppResourceMetaData(eq(resourceIdentifier.groupName), eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData));
+        verify(mockAppPersistence).updateResourceMetaData(eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData), eq("mockJvm"), eq(resourceIdentifier.groupName));
+        verify(mockAppPersistence).updateApplication(any(UpdateApplicationRequest.class));
+        verify(mockResourceDao, never()).deleteAppResource(anyString(), anyString(), anyString());
+        verify(mockAppPersistence).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
+    }
+
+    @Test
+    public void testUpdateMetaDataSetDeployToJvmsFalse() {
+        reset(mockResourceDao, mockAppPersistence);
+        final String updatedMetaData = "{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{\"deployToJvms\":false}, \"unpack\":\"true\", \"overwrite\":\"true\"}";
+        final String resourceName = "update-my-meta-data.txt";
+
+        Group mockGroup = mock(Group.class);
+        Set<Jvm> jvmSet = new HashSet<>();
+        Jvm mockJvm = mock(Jvm.class);
+        jvmSet.add(mockJvm);
+        when(mockJvm.getJvmName()).thenReturn("mockJvm");
+        when(mockGroup.getJvms()).thenReturn(jvmSet);
+        when(mockGroup.getName()).thenReturn("test-group-name");
+
+        when(mockGroupPersistence.updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString())).thenReturn(updatedMetaData);
+        when(mockGroupPersistence.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"entity\":{}}");
+        when(mockGroupPersistence.getGroup(anyString())).thenReturn(mockGroup);
+        when(mockAppPersistence.getResourceTemplateNames(anyString(), anyString())).thenReturn(Collections.singletonList(resourceName));
+
+        Application mockApplication = mock(Application.class);
+        when(mockApplication.getName()).thenReturn("app-name");
+        when(mockApplication.getId()).thenReturn(new Identifier<Application>(1111L));
+        when(mockApplication.getGroup()).thenReturn(mockGroup);
+        when(mockApplication.getWebAppContext()).thenReturn("/test-app-context");
+        when(mockApplication.isLoadBalanceAcrossServers()).thenReturn(true);
+        when(mockApplication.isSecure()).thenReturn(true);
+        when(mockAppPersistence.getApplication(anyString())).thenReturn(mockApplication);
+
+        groupAppResourceHandler.updateResourceMetaData(resourceIdentifier, resourceName, updatedMetaData);
+
+        verify(mockGroupPersistence).updateGroupAppResourceMetaData(eq(resourceIdentifier.groupName), eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData));
+        verify(mockAppPersistence).updateResourceMetaData(eq(resourceIdentifier.webAppName), eq(resourceName), eq(updatedMetaData), eq("mockJvm"), eq(resourceIdentifier.groupName));
+        verify(mockAppPersistence).updateApplication(any(UpdateApplicationRequest.class));
+        verify(mockResourceDao, times(1)).deleteAppResource(eq(resourceName), eq(resourceIdentifier.webAppName), anyString());
+        verify(mockAppPersistence, never()).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
+    }
+
+    @Test (expected = GroupLevelAppResourceHandlerException.class)
+    public void testUpdateMetaDataFailsToParseMetaData() {
+        reset(mockResourceDao, mockAppPersistence);
+        final String updatedMetaData = "{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{\"deployToJvms\":false}, \"unpack\":\"true\", \"overwrite\":\"true\"}";
+        final String resourceName = "update-my-meta-data.txt";
+
+        Group mockGroup = mock(Group.class);
+        Set<Jvm> jvmSet = new HashSet<>();
+        Jvm mockJvm = mock(Jvm.class);
+        jvmSet.add(mockJvm);
+        when(mockJvm.getJvmName()).thenReturn("mockJvm");
+        when(mockGroup.getJvms()).thenReturn(jvmSet);
+        when(mockGroup.getName()).thenReturn("test-group-name");
+
+        when(mockGroupPersistence.updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString())).thenReturn(updatedMetaData);
+        when(mockGroupPersistence.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("{\"entity\":{},,,}");
+        when(mockGroupPersistence.getGroup(anyString())).thenReturn(mockGroup);
+        when(mockAppPersistence.getResourceTemplateNames(anyString(), anyString())).thenReturn(Collections.singletonList(resourceName));
+
+        Application mockApplication = mock(Application.class);
+        when(mockApplication.getName()).thenReturn("app-name");
+        when(mockApplication.getId()).thenReturn(new Identifier<Application>(1111L));
+        when(mockApplication.getGroup()).thenReturn(mockGroup);
+        when(mockApplication.getWebAppContext()).thenReturn("/test-app-context");
+        when(mockApplication.isLoadBalanceAcrossServers()).thenReturn(true);
+        when(mockApplication.isSecure()).thenReturn(true);
+        when(mockAppPersistence.getApplication(anyString())).thenReturn(mockApplication);
+
+        groupAppResourceHandler.updateResourceMetaData(resourceIdentifier, resourceName, updatedMetaData);
     }
 
     @Test
