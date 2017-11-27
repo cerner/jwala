@@ -9,6 +9,7 @@ import com.cerner.jwala.common.request.app.UpdateApplicationRequest;
 import com.cerner.jwala.common.request.app.UploadAppTemplateRequest;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.ConfigTemplate;
+import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaGroupAppConfigTemplate;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
@@ -101,7 +102,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
             createdConfigTemplate = groupPersistenceService.populateGroupAppTemplate(groupName, resourceIdentifier.webAppName,
                     metaDataCopy.getDeployFileName(), metaDataCopy.getJsonData(), templateContent);
 
-            createJvmTemplateFromAppResource(resourceIdentifier, templateContent, metaDataCopy, groupName, group);
+            createJvmTemplateFromAppResource(resourceIdentifier, templateContent, metaDataCopy, group);
 
             createResourceResponseWrapper = new CreateResourceResponseWrapper(createdConfigTemplate);
         } else if (successor != null) {
@@ -139,11 +140,11 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
         return metaDataCopy;
     }
 
-    private void createJvmTemplateFromAppResource(ResourceIdentifier resourceIdentifier, String templateContent, ResourceTemplateMetaData metaDataCopy, String groupName, Group group) {
+    private void createJvmTemplateFromAppResource(ResourceIdentifier resourceIdentifier, String templateContent, ResourceTemplateMetaData metaDataCopy, Group group) {
         // Can't we just get the application using the group name and target app name instead of getting all the applications
         // then iterating it to compare with the target app name ???
         // If we can do that then TODO: Refactor this to return only one application and remove the iteration!
-        final List<Application> applications = applicationPersistenceService.findApplicationsBelongingTo(groupName);
+        final List<Application> applications = applicationPersistenceService.findApplicationsBelongingTo(group.getName());
 
         for (final Application application : applications) {
             if (metaDataCopy.getEntity().getDeployToJvms() && application.getName().equals(resourceIdentifier.webAppName)) {
@@ -175,12 +176,41 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
     @Override
     public String updateResourceMetaData(final ResourceIdentifier resourceIdentifier, final String resourceName, final String metaData) {
         if (canHandle(resourceIdentifier)) {
+            final String previousMetaData = groupPersistenceService.getGroupAppResourceTemplateMetaData(resourceIdentifier.groupName, resourceName, resourceIdentifier.webAppName);
             final String updatedMetaData = groupPersistenceService.updateGroupAppResourceMetaData(resourceIdentifier.groupName, resourceIdentifier.webAppName, resourceName, metaData);
             updateApplicationUnpackWar(resourceIdentifier.webAppName, resourceName, metaData);
             updateMetaDataForChildJVMResources(resourceIdentifier, resourceName, metaData);
+            updateAppTemplatesWhenDeployToJvmsChanged(resourceIdentifier, resourceName, previousMetaData, updatedMetaData);
             return updatedMetaData;
         } else {
             return successor.updateResourceMetaData(resourceIdentifier, resourceName, metaData);
+        }
+    }
+
+    private void updateAppTemplatesWhenDeployToJvmsChanged(final ResourceIdentifier resourceIdentifier, final String resourceName, final String previousMetaData, final String updatedMetaData) {
+        try {
+            ResourceTemplateMetaData oldMetaData = new ObjectMapper().readValue(previousMetaData, ResourceTemplateMetaData.class);
+            ResourceTemplateMetaData newMetaData = new ObjectMapper().readValue(updatedMetaData, ResourceTemplateMetaData.class);
+            boolean previousDeployToJvms = oldMetaData.getEntity().getDeployToJvms();
+            boolean newDeployToJvms = newMetaData.getEntity().getDeployToJvms();
+            if (previousDeployToJvms != newDeployToJvms) {
+                Group group = groupPersistenceService.getGroup(resourceIdentifier.groupName);
+                if (newDeployToJvms) {
+                    // deployToJvms was changed to true - need to create the JVM templates
+                    JpaGroupAppConfigTemplate appTemplate = resourceDao.getGroupLevelAppResource(resourceName, resourceIdentifier.webAppName, resourceIdentifier.groupName);
+                    newMetaData.setJsonData(updatedMetaData);
+                    createJvmTemplateFromAppResource(resourceIdentifier, appTemplate.getTemplateContent(), newMetaData, group);
+                } else {
+                    // deployToJvms was to false - need to delete the JVM templates
+                    for (Jvm jvm : group.getJvms()) {
+                        resourceDao.deleteAppResource(resourceName, resourceIdentifier.webAppName, jvm.getJvmName());
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            final String errorMsg = MessageFormat.format("Failed to parse meta data for war {0} in application {1} during an update of the meta data", resourceName, resourceIdentifier.webAppName);
+            LOGGER.error(errorMsg, ioe);
+            throw new GroupLevelAppResourceHandlerException(errorMsg);
         }
     }
 
@@ -208,7 +238,7 @@ public class GroupLevelAppResourceHandler extends ResourceHandler {
             }
         } catch (IOException e) {
             final String errorMsg = MessageFormat.format("Failed to parse meta data for war {0} in application {1} during an update of the meta data", resourceName, appName);
-            LOGGER.error(errorMsg,e);
+            LOGGER.error(errorMsg, e);
             throw new GroupLevelAppResourceHandlerException(errorMsg);
         }
     }
