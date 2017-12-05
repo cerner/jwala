@@ -46,18 +46,7 @@ public class SeleniumTestHelper {
      * @return {@link WebDriver}
      */
     public static WebDriver createWebDriver(final String webDriverClass) throws IOException {
-        final WebDriver driver;
-
-        final DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
-        dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
-        dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
-        dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
-        dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-        String hubUrl = (String) getProperties().getProperty("hub.url");
-        hubUrl = hubUrl.replaceAll("\"", "");
-        URL url;
-        url = new URL(hubUrl);
-        driver = new RemoteWebDriver(url, dc);
+        WebDriver driver = null;
 
 
         // Set the size of the browser
@@ -67,6 +56,31 @@ public class SeleniumTestHelper {
         } catch (IOException e) {
             throw new SeleniumTestCaseException(e);
         }
+        String browserName = properties.getProperty("browser.name");
+        if (browserName.equals("ie")) {
+            final DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+            dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
+            dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
+            dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
+            dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+            String hubUrl = (String) getProperties().getProperty("hub.url");
+            hubUrl = hubUrl.replaceAll("\"", "");
+            URL url;
+            url = new URL(hubUrl);
+            driver = new RemoteWebDriver(url, dc);
+        } else if (browserName.equals("chrome")) {
+            try {
+                driver = (WebDriver) Class.forName(webDriverClass).getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+                throw new SeleniumTestCaseException(e);
+            }
+
+            final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
+            final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));
+            Dimension dimension = new Dimension(width, height);
+            driver.manage().window().setSize(dimension);
+        }
+
 
         final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
         final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));

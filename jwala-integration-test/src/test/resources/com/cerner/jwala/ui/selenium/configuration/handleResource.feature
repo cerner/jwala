@@ -5,19 +5,19 @@ Feature: Deleting a resource
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92      |
+      | mediaName       | jdk.media      |
       | mediaType       | JDK              |
-      | archiveFilename | jdk1.8.0_92.zip  |
+      | archiveFilename | jdk.media.archive  |
       | remoteDir       | media.remote.dir |
     And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55     |
+      | mediaName       | apache.tomcat.media     |
       | mediaType       | Apache Tomcat            |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | archiveFilename | apache.tomcat.media.archive |
       | remoteDir       | media.remote.dir         |
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
+      | tomcat     | apache.tomcat.media |
+      | jdk        | jdk.media          |
       | hostName   | host1                |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
@@ -54,9 +54,9 @@ Feature: Deleting a resource
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
+      | mediaName       | apache.httpd.media     |
       | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
+      | archiveFilename | apache.httpd.media.archive |
       | remoteDir       | media.remote.dir        |
     And I created a web server with the following parameters:
       | webserverName      | seleniumWebserver   |
@@ -64,7 +64,7 @@ Feature: Deleting a resource
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
       | group              | seleniumGroup       |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
+      | apacheHttpdMediaId | apache.httpd.media |
       | statusPath         | /apache_pb.png      |
     And I created a web server resource with the following parameters:
       | group        | seleniumGroup              |

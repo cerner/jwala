@@ -1,23 +1,23 @@
 Feature: Testing errors caused by invalid template, meta data or file type
 
-  Scenario: Deploy a war file compressed using 7z
+  Scenario: Deploy a webapp resource with error
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92      |
+      | mediaName       | jdk.media      |
       | mediaType       | JDK              |
-      | archiveFilename | jdk1.8.0_92.zip  |
+      | archiveFilename | jdk.media.archive  |
       | remoteDir       | media.remote.dir |
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | archiveFilename | apache.tomcat.media.archive |
       | remoteDir       | media.remote.dir         |
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
+      | jdk        | jdk.media          |
       | hostName   | host1                |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
@@ -44,41 +44,12 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | fileName     | hello-world.war  |
       | deployOption | individual |
     Then I verify failure to unzip the war file with deployPath "webapp.resource.deploy.path" and name as "hello-world"
-
-
-  Scenario: Deploy webapp resource with error
-    Given I logged in
-    And I am in the Configuration tab
-    And I created a group with the name "seleniumGroup"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92      |
-      | mediaType       | JDK              |
-      | archiveFilename | jdk1.8.0_92.zip  |
-      | remoteDir       | media.remote.dir |
-
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55     |
-      | mediaType       | Apache Tomcat            |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-      | remoteDir       | media.remote.dir         |
-    And I created a jvm with the following parameters:
-      | jvmName    | seleniumJvm          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
-      | hostName   | host1                |
-      | portNumber | 9000                 |
-      | group      | seleniumGroup        |
-    And I created a web app with the following parameters:
-      | webappName  | seleniumWebapp |
-      | contextPath | /hello         |
-      | group       | seleniumGroup  |
     And I created a web app resource with the following parameters:
       | group        | seleniumGroup                       |
       | webApp       | seleniumWebapp                      |
       | deployName   | hello.xml                           |
       | deployPath   | webapp.context.resource.deploy.path |
       | templateName | hello.xml.tpl                       |
-
     And I enter text in resource edit box and save with the following parameters:
       | fileName | hello.xml |
       | tabLabel | Template  |
@@ -115,15 +86,14 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | group      | seleniumGroup  |
     Then I confirm error popup for resourceFile "hello.xml" and web app "seleniumWebapp"
 
-
   Scenario: deploy an individual  web-server resource with error-template-from resource and Operations
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
+      | mediaName       | apache.httpd.media     |
       | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
+      | archiveFilename | apache.httpd.media.archive |
       | remoteDir       | media.remote.dir        |
 
     And I created a web server with the following parameters:
@@ -132,7 +102,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | portNumber         | 80                  |
       | httpsPort          | 443                 |
       | group              | seleniumGroup       |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
+      | apacheHttpdMediaId | apache.httpd.media |
       | statusPath         | /apache_pb.png      |
 
     And I created a web server resource with the following parameters:
@@ -174,30 +144,33 @@ Feature: Testing errors caused by invalid template, meta data or file type
     Then I confirm resource deploy error popup for file "httpd.conf" and webserver "seleniumWebserver"
 
 
-  Scenario: Test cases on the insertion of illegal characters for an individual JVM resource
+
+
+
+
+  Scenario: Test cases on the insertion of illegal characters for a JVM section resource
     Given I logged in
     And I am in the Configuration tab
     And I created a group with the name "seleniumGroup"
     And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92      |
+      | mediaName       | jdk.media      |
       | mediaType       | JDK              |
-      | archiveFilename | jdk1.8.0_92.zip  |
+      | archiveFilename | jdk.media.archive  |
       | remoteDir       | media.remote.dir |
 
     And I created a media with the following parameters:
       | mediaName       | apache-tomcat-7.0.55     |
       | mediaType       | Apache Tomcat            |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | archiveFilename | apache.tomcat.media.archive |
       | remoteDir       | media.remote.dir         |
 
     And I created a jvm with the following parameters:
       | jvmName    | seleniumJvm          |
       | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
+      | jdk        | jdk.media          |
       | hostName   | host1                |
       | portNumber | 9000                 |
       | group      | seleniumGroup        |
-
     And I created a JVM resource with the following parameters:
       | group        | seleniumGroup                       |
       | jvm          | seleniumJvm                         |
@@ -255,31 +228,7 @@ Feature: Testing errors caused by invalid template, meta data or file type
       | group   | seleniumGroup |
     Then I confirm multiple resource deploy error popup for file "server.xml" and file "setenv.bat" and jvm "seleniumJvm"
 
-
-  Scenario: Test cases on the insertion of illegal characters for a JVM section resource
-    Given I logged in
     And I am in the Configuration tab
-    And I created a group with the name "seleniumGroup"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92      |
-      | mediaType       | JDK              |
-      | archiveFilename | jdk1.8.0_92.zip  |
-      | remoteDir       | media.remote.dir |
-
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55     |
-      | mediaType       | Apache Tomcat            |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-      | remoteDir       | media.remote.dir         |
-
-    And I created a jvm with the following parameters:
-      | jvmName    | seleniumJvm          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | jdk        | jdk1.8.0_92          |
-      | hostName   | host1                |
-      | portNumber | 9000                 |
-      | group      | seleniumGroup        |
-
     And I created a group JVM resource with the following parameters:
       | group        | seleniumGroup                       |
       | deployName   | server.xml                          |

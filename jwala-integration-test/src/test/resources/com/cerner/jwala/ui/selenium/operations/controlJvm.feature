@@ -8,22 +8,22 @@ Scenario: Do a happy path start, thread dump, heap dump, stop and deletion of a 
 
     # create media
     And I created a media with the following parameters:
-        | mediaName       | jdk1.8.0_92     |
+        | mediaName       | jdk.media     |
         | mediaType       | JDK             |
-        | archiveFilename | jdk1.8.0_92.zip |
+        | archiveFilename | jdk.media.archive |
         | remoteDir       | media.remote.dir|
     And I created a media with the following parameters:
-        | mediaName       | apache-tomcat-7.0.55     |
+        | mediaName       | apache.tomcat.media     |
         | mediaType       | Apache Tomcat            |
-        | archiveFilename | apache-tomcat-7.0.55.zip |
+        | archiveFilename | apache.tomcat.media.archive |
         | remoteDir       | tomcat.media.remote.dir  |
 
     # create entities
     And I created a group with the name "CONTROL-JVM-TEST-G"
     And I created a jvm with the following parameters:
         | jvmName    | CONTROL-JVM-TEST-J   |
-        | tomcat     | apache-tomcat-7.0.55 |
-        | jdk        | jdk1.8.0_92          |
+        | tomcat     | apache.tomcat.media |
+        | jdk        | jdk.media          |
         | hostName   | host1                |
         | portNumber | jvm.http.port        |
         | group      | CONTROL-JVM-TEST-G   |
@@ -45,7 +45,7 @@ Scenario: Do a happy path start, thread dump, heap dump, stop and deletion of a 
     And I am in the Operations tab
     And I expand the group operation's "CONTROL-JVM-TEST-G" group
 
-    # generate
+    # individual generate
     And I generated "CONTROL-JVM-TEST-J" JVM of "CONTROL-JVM-TEST-G" group
 
     # test start
