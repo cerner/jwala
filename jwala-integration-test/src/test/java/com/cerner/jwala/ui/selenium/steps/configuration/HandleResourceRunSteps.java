@@ -144,7 +144,6 @@ public class HandleResourceRunSteps {
 
     @Then("^I confirm delete a resource popup$")
     public void deleteResource() {
-        jwalaUi.isElementExists(By.xpath("//[contains(text(),'Are you sure you want to delete the selected resource template(s) ?')]"));
         jwalaUi.click(By.xpath("//button/span[text()='Yes']"));
     }
 

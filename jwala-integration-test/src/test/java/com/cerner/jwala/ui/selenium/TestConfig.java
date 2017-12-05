@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,7 @@ public class TestConfig {
     }
 
     @Bean
-    public WebDriver getDriver(@Qualifier("seleniumTestProperties") final Properties properties) {
+    public WebDriver getDriver(@Qualifier("seleniumTestProperties") final Properties properties) throws IOException {
         final WebDriver webDriver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS));
         webDriver.manage().timeouts().implicitlyWait(Long.parseLong(properties.getProperty(ELEMENT_SEARCH_RENDER_WAIT_TIME)),
                 TimeUnit.SECONDS);

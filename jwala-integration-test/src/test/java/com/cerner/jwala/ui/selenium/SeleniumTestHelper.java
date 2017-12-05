@@ -2,17 +2,31 @@ package com.cerner.jwala.ui.selenium;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.*;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Properties;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+import org.openqa.selenium.*;
+import org.openqa.selenium.remote.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class that contains commonly used static methods
@@ -27,38 +41,45 @@ public class SeleniumTestHelper {
 
     /**
      * Create an instance of a {@link WebDriver} to facilitate browser based testing
+     *
      * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
      */
-    public static WebDriver createWebDriver(final String webDriverClass) {
+    public static WebDriver createWebDriver(final String webDriverClass) throws IOException {
         final WebDriver driver;
-        try {
-            final DesiredCapabilities dc = new DesiredCapabilities();
-            dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
-            driver = (WebDriver) Class.forName(webDriverClass).getConstructor(Capabilities.class).newInstance(dc);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            throw new SeleniumTestCaseException(e);
-        }
+
+        final DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+        dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
+        dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
+        dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
+        dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+        String hubUrl = (String) getProperties().getProperty("hub.url");
+        hubUrl = hubUrl.replaceAll("\"", "");
+        URL url;
+        url = new URL(hubUrl);
+        driver = new RemoteWebDriver(url, dc);
+
 
         // Set the size of the browser
         final Properties properties;
         try {
-             properties = SeleniumTestHelper.getProperties();
+            properties = SeleniumTestHelper.getProperties();
         } catch (IOException e) {
             throw new SeleniumTestCaseException(e);
         }
+
         final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
         final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));
         Dimension dimension = new Dimension(width, height);
         driver.manage().window().setSize(dimension);
-
         return driver;
     }
 
     /**
      * Checks whether an element is rendered by the browser or not
+     *
      * @param driver {@link WebDriver}
-     * @param by {@link By}
+     * @param by     {@link By}
      * @return true if the element is rendered
      */
     public static boolean isElementRendered(final WebDriver driver, final By by) {

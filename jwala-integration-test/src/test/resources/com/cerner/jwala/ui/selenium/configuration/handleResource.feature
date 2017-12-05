@@ -33,7 +33,7 @@ Feature: Deleting a resource
     And I click check-box for resourceFile "setenv.bat"
     And I click the resource delete icon
     And I confirm delete a resource popup
-    Then I don't see "setenv.bat"
+    Then No resource is present
 
     #Test group resource delete
     And I created a group JVM resource with the following parameters:
@@ -44,7 +44,7 @@ Feature: Deleting a resource
     And I click check-box for resourceFile "server.xml"
     And I click the resource delete icon
     And I confirm delete a resource popup
-    Then I don't see "server.xml"
+    Then No resource is present
     When I click "seleniumJvm" component
     Then I check for resource "server.xml"
 
@@ -76,8 +76,7 @@ Feature: Deleting a resource
     When I click check-box for resourceFile "httpd.conf"
     And I click the resource delete icon
     And I confirm delete a resource popup
-    Then I don't see "httpd.conf"
-
+    Then No resource is present
 
   Scenario: Resource webapp delete
     Given I logged in
@@ -98,5 +97,4 @@ Feature: Deleting a resource
     And I click check-box for resourceFile "hello.xml"
     And I click the resource delete icon
     And I confirm delete a resource popup
-    Then I don't see "hello.xml"
-
+    Then No resource is present

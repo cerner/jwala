@@ -105,12 +105,12 @@ public class CommonRunSteps {
         navigationRunSteps.goToMediaTab();
         createMediaRunSteps.clickAddMediaBtn();
         createMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
-        createMediaRunSteps.setMediaName(parameters.get("mediaName"));
+        createMediaRunSteps.setMediaName(getPropertyValue(parameters.get("mediaName")));
         createMediaRunSteps.selectMediaType(parameters.get("mediaType"));
-        createMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
+        createMediaRunSteps.selectMediaArchiveFile(getPropertyValue(parameters.get("archiveFilename")));
         createMediaRunSteps.setRemoteDir(getPropertyValue(parameters.get("remoteDir")));
         createMediaRunSteps.clickAddMediaOkDialogBtn();
-        createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
+        createMediaRunSteps.checkForMedia(getPropertyValue(parameters.get("mediaName")));
     }
 
     @Given("^I created a web app with the following parameters:$")
@@ -138,7 +138,7 @@ public class CommonRunSteps {
         createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
         createWebServerRunSteps.setHttpsPort(getPropertyValue(parameters.get("httpsPort")));
-        createWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
+        createWebServerRunSteps.selectApacheHttpd(getPropertyValue(parameters.get("apacheHttpdMediaId")));
         createWebServerRunSteps.selectGroup(parameters.get("group"));
         createWebServerRunSteps.clickAddWebServerDialogOkBtn();
         createWebServerRunSteps.checkForWebServer(parameters.get("webserverName"));
@@ -154,8 +154,8 @@ public class CommonRunSteps {
         String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createJvmRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
-        createJvmRunSteps.selectJdk(parameters.get("jdk"));
-        createJvmRunSteps.selectTomcat(parameters.get("tomcat"));
+        createJvmRunSteps.selectJdk(getPropertyValue(parameters.get("jdk")));
+        createJvmRunSteps.selectTomcat(getPropertyValue(parameters.get("tomcat")));
         List<String> groups = new ArrayList<>();
         groups.add(parameters.get("group"));
         createJvmRunSteps.setGroups(groups);

@@ -1,12 +1,12 @@
 Feature: Sort Table
-    Groups can be sorted in ascending or descending order based on the column header that a user clicked
-    JVMs can be sorted in ascending or descending order based on the column header that a user clicked
-    Web Servers can be sorted in ascending or descending order based on the column header that a user clicked
-    Web Applications can be sorted in ascending or descending order based on the column header that a user clicked
-    Media can be sorted in ascending or descending order based on the column header that a user clicked
+  Groups can be sorted in ascending or descending order based on the column header that a user clicked
+  JVMs can be sorted in ascending or descending order based on the column header that a user clicked
+  Web Servers can be sorted in ascending or descending order based on the column header that a user clicked
+  Web Applications can be sorted in ascending or descending order based on the column header that a user clicked
+  Media can be sorted in ascending or descending order based on the column header that a user clicked
 
 
-Scenario: Sort Group by Name
+  Scenario: Sort Group by Name
 
     Given I logged in
     And I am in the Configuration tab
@@ -20,7 +20,7 @@ Scenario: Sort Group by Name
     Then I see first item "ZZZGroup"
 
 
-Scenario: Sort Web Applications by Name
+  Scenario: Sort Web Applications by Name
 
     Given I logged in
     And I am in the Configuration tab
@@ -42,561 +42,190 @@ Scenario: Sort Web Applications by Name
     Then I see first item "ZZZApp"
 
 
-Scenario: Sort Media by Name
+  Scenario: Sort Media
 
     Given I logged in
     And I am in the Configuration tab
     And I am in the media tab
     And I created a media with the following parameters:
-      | mediaName       | aaaMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+      | mediaName       | zMedia                     |
+      | mediaType       | Apache HTTPD               |
+      | archiveFilename | apache.httpd.media.archive |
+      | remoteDir       | zDir                       |
     And I created a media with the following parameters:
-      | mediaName       | zzzMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+      | mediaName       | aMedia                      |
+      | mediaType       | Apache Tomcat               |
+      | archiveFilename | apache.tomcat.media.archive |
+      | remoteDir       | bDir                        |
+    And I created a media with the following parameters:
+      | mediaName       | mMedia            |
+      | mediaType       | JDK               |
+      | archiveFilename | jdk.media.archive |
+      | remoteDir       | aDir              |
     When I click the column header with the label "Name"
-    Then I see first item "aaaMedia"
+    Then I see first item "aMedia"
     When I click the column header with the label "Name"
-    Then I see first item "zzzMedia"
-
-
-Scenario: Sort Media by Type
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the media tab
-    And I created a media with the following parameters:
-      | mediaName       | aaaMedia                |
-      | mediaType       | Apache Tomcat           |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | zzzMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+    Then I see first item "zMedia"
     When I click the column header with the label "Type"
-    Then I see first item "zzzMedia"
+    Then I see first item "zMedia"
     When I click the column header with the label "Type"
-    Then I see first item "aaaMedia"
-
-
-Scenario: Sort Media by Remote Directory
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the media tab
-    And I created a media with the following parameters:
-      | mediaName       | aaaMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | zDir                    |
-    And I created a media with the following parameters:
-      | mediaName       | zzzMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | aDir                    |
+    Then I see first item "mMedia"
     When I click the column header with the label "Remote Target Directory"
-    Then I see first item "zzzMedia"
+    Then I see first item "mMedia"
     When I click the column header with the label "Remote Target Directory"
-    Then I see first item "aaaMedia"
+    Then I see first item "zMedia"
 
 
-Scenario: Sort Web Servers by Name
+  Scenario: Sort Web Servers
 
     Given I logged in
     And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "group1"
     And I created a group with the name "group2"
+    And I created a group with the name "group3"
     And I am in the media tab
     And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+      | mediaName       | aMedia                     |
+      | mediaType       | Apache HTTPD               |
+      | archiveFilename | apache.httpd.media.archive |
+      | remoteDir       | media.remote.dir           |
+    And I created a media with the following parameters:
+      | mediaName       | mMedia                     |
+      | mediaType       | Apache HTTPD               |
+      | archiveFilename | apache.httpd.media.archive |
+      | remoteDir       | media.remote.dir           |
+    And I created a media with the following parameters:
+      | mediaName       | zMedia                     |
+      | mediaType       | Apache HTTPD               |
+      | archiveFilename | apache.httpd.media.archive |
+      | remoteDir       | media.remote.dir           |
     And I am in the web server tab
     And I created a web server with the following parameters:
-      | mediaName          | apache-httpd-2.4.20     |
-      | mediaType          | Apache HTTPD            |
-      | archiveFilename    | apache-httpd-2.4.20.zip |
-      | remoteDir          | media.remote.dir        |
-      | webserverName      | ZZZZZ                   |
-      | hostName           | localhost               |
-      | portNumber         | 80                      |
-      | httpsPort          | 443                     |
-      | group              | group1                  |
-      | apacheHttpdMediaId | apache-httpd-2.4.20     |
-      | statusPath         | /apache_pb.png          |
+      | webserverName      | aWebserver     |
+      | hostName           | host1          |
+      | portNumber         | 9000           |
+      | httpsPort          | 20005          |
+      | group              | group1         |
+      | apacheHttpdMediaId | zMedia         |
+      | statusPath         | ws.status.path |
     And I created a web server with the following parameters:
-      | mediaName          | apache-httpd-2.4.21     |
-      | mediaType          | Apache HTTPD            |
-      | archiveFilename    | apache-httpd-2.4.20.zip |
-      | remoteDir          | media.remote.dir        |
-      | webserverName      | AAAAAA                  |
-      | hostName           | localhost               |
-      | portNumber         | 80                      |
-      | httpsPort          | 443                     |
-      | group              | group2                  |
-      | apacheHttpdMediaId | apache-httpd-2.4.20     |
-      | statusPath         | /apache_pb.png          |
+      | webserverName      | mWebserver     |
+      | hostName           | host1          |
+      | portNumber         | 8999           |
+      | httpsPort          | 20008          |
+      | group              | group3         |
+      | apacheHttpdMediaId | aMedia         |
+      | statusPath         | ws.status.path |
+    And I created a web server with the following parameters:
+      | webserverName      | zWebserver     |
+      | hostName           | host1          |
+      | portNumber         | 7000           |
+      | httpsPort          | 30000          |
+      | group              | group2         |
+      | apacheHttpdMediaId | mMedia         |
+      | statusPath         | ws.status.path |
     When I click the column header with the label "Name"
-    Then I see first item "AAAAAA"
+    Then I see first item "aWebserver"
     When I click the column header with the label "Name"
-    Then I see first item "ZZZZZ"
-
-
-Scenario: Sort Web Servers by Host Name
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I am in the media tab
-    And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I am in the web server tab
-    And I created a web server with the following parameters:
-          | webserverName      | AAAAAAWebServer     |
-          | hostName           | zHost               |
-          | portNumber         | 80                  |
-          | httpsPort          | 443                 |
-          | group              | group2              |
-          | apacheHttpdMediaId | apache-httpd-2.4.20 |
-          | statusPath         | /apache_pb.png      |
-    And I created a web server with the following parameters:
-      | webserverName      | ZZZZZWebServer      |
-      | hostName           | aHost               |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | group1              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    When I click the column header with the label "Host"
-    Then I see first item "ZZZZZWebServer"
-    When I click the column header with the label "Host"
-    Then I see first item "AAAAAAWebServer"
-
-
-Scenario: Sort Web Servers by HTTP Port
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I am in the media tab
-    And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I am in the web server tab
-    And I created a web server with the following parameters:
-      | webserverName      | zWebServer          |
-      | hostName           | localhost           |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | group1              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    And I created a web server with the following parameters:
-      | webserverName      | aWebServer          |
-      | hostName           | localhost           |
-      | portNumber         | 82                  |
-      | httpsPort          | 443                 |
-      | group              | group2              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
+    Then I see first item "zWebserver"
     When I click the column header with the label "Port"
-    Then I see first item "zWebServer"
+    Then I see first item "zWebserver"
     When I click the column header with the label "Port"
-    Then I see first item "aWebServer"
-
-
-Scenario: Sort Seb Servers by HTTPS Port
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I am in the web server tab
-    And I created a web server with the following parameters:
-      | webserverName      | zWebServer          |
-      | hostName           | localhost           |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | group1              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    And I created a web server with the following parameters:
-      | webserverName      | aWebServer          |
-      | hostName           | localhost           |
-      | portNumber         | 80                  |
-      | httpsPort          | 444                 |
-      | group              | group2              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
+    Then I see first item "aWebserver"
     When I click the column header with the label "HTTPS Port"
-    Then I see first item "zWebServer"
+    Then I see first item "aWebserver"
     When I click the column header with the label "HTTPS Port"
-    Then I see first item "aWebServer"
+    Then I see first item "zWebserver"
+    When I click the column header with the label "Group"
+    Then I see first item "aWebserver"
+    When I click the column header with the label "Group"
+    Then I see first item "mWebserver"
+    When I click the column header with the label "Apache HTTPD"
+    Then I see first item "mWebserver"
+    When I click the column header with the label "Apache HTTPD"
+    Then I see first item "aWebserver"
 
-
-Scenario: Sort Web Servers by Group Name
+  Scenario: Sort JVMs
 
     Given I logged in
     And I am in the Configuration tab
     And I am in the group tab
     And I created a group with the name "aGroup"
+    And I created a group with the name "mGroup"
     And I created a group with the name "zGroup"
     And I created a media with the following parameters:
-      | mediaName       | apache-httpd-2.4.20     |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I am in the web server tab
-    And I created a web server with the following parameters:
-      | webserverName      | ZZZZZWebServer      |
-      | hostName           | localhost           |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | aGroup              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    And I created a web server with the following parameters:
-      | webserverName      | AAAAAAWebServer     |
-      | hostName           | localhost           |
-      | portNumber         | 80                  |
-      | httpsPort          | 443                 |
-      | group              | zGroup              |
-      | apacheHttpdMediaId | apache-httpd-2.4.20 |
-      | statusPath         | /apache_pb.png      |
-    When I click the column header with the label "Group"
-    Then I see first item "ZZZZZWebServer"
-    When I click the column header with the label "Group"
-    Then I see first item "AAAAAAWebServer"
-
-
-Scenario: Sort Web Servers by Apache HTTPD Media
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
+      | mediaName       | ajdk              |
+      | mediaType       | JDK               |
+      | archiveFilename | jdk.media.archive |
+      | remoteDir       | media.remote.dir  |
     And I created a media with the following parameters:
-      | mediaName       | aaaMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
+      | mediaName       | mjdk              |
+      | mediaType       | JDK               |
+      | archiveFilename | jdk.media.archive |
+      | remoteDir       | media.remote.dir  |
     And I created a media with the following parameters:
-      | mediaName       | zzzMedia                |
-      | mediaType       | Apache HTTPD            |
-      | archiveFilename | apache-httpd-2.4.20.zip |
-      | remoteDir       | media.remote.dir        |
-    And I am in the web server tab
-    And I created a web server with the following parameters:
-      | webserverName      | ZZZZZWebServer |
-      | hostName           | localhost      |
-      | portNumber         | 80             |
-      | httpsPort          | 443            |
-      | group              | group1         |
-      | apacheHttpdMediaId | aaaMedia       |
-      | statusPath         | /apache_pb.png |
-    And I created a web server with the following parameters:
-      | webserverName      | AAAAAAWebServer |
-      | hostName           | localhost       |
-      | portNumber         | 80              |
-      | httpsPort          | 443             |
-      | group              | group1          |
-      | apacheHttpdMediaId | zzzMedia        |
-      | statusPath         | /apache_pb.png  |
-    When I click the column header with the label "Apache HTTPD"
-    Then I see first item "ZZZZZWebServer"
-    When I click the column header with the label "Apache HTTPD"
-    Then I see first item "AAAAAAWebServer"
-
-
-Scenario: Sort JVMs by Name
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
+      | mediaName       | zjdk              |
+      | mediaType       | JDK               |
+      | archiveFilename | jdk.media.archive |
+      | remoteDir       | media.remote.dir  |
     And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
+      | mediaName       | aTomcat                     |
+      | mediaType       | Apache Tomcat               |
+      | remoteDir       | media.remote.dir            |
+      | archiveFilename | apache.tomcat.media.archive |
     And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55                 |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
+      | mediaName       | mTomcat                     |
+      | mediaType       | Apache Tomcat               |
+      | remoteDir       | media.remote.dir            |
+      | archiveFilename | apache.tomcat.media.archive |
+    And I created a media with the following parameters:
+      | mediaName       | zTomcat                     |
+      | mediaType       | Apache Tomcat               |
+      | remoteDir       | media.remote.dir            |
+      | archiveFilename | apache.tomcat.media.archive |
     And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm               |
-      | hostName   | aaaHost              |
-      | portNumber | 1000                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
+      | jvmName    | aJvm    |
+      | hostName   | host1   |
+      | portNumber | 4001    |
+      | jdk        | mjdk    |
+      | tomcat     | zTomcat |
+      | group      | mGroup  |
     And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm               |
-      | hostName   | zzzHost              |
-      | portNumber | 9999                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-
+      | jvmName    | mJvm    |
+      | hostName   | host1   |
+      | portNumber | 9999    |
+      | jdk        | ajdk    |
+      | tomcat     | mTomcat |
+      | group      | aGroup  |
+    And I created a jvm with the following parameters:
+      | jvmName    | zJvm    |
+      | hostName   | host1   |
+      | portNumber | 8000    |
+      | jdk        | zjdk    |
+      | tomcat     | aTomcat |
+      | group      | zGroup  |
     When I click the column header with the label "Name"
-    Then I see first item "aaaJvm"
+    Then I see first item "aJvm"
     When I click the column header with the label "Name"
-    Then I see first item "zzzJvm"
-
-
-Scenario: Sort JVMs by Group Name
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "aaagroup1"
-    And I created a group with the name "yyygroup1"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55                 |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm               |
-      | hostName   | zzzHost              |
-      | portNumber | 1000                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | aaagroup1            |
-    And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm               |
-      | hostName   | aaaHost              |
-      | portNumber | 9999                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | yyygroup1            |
-
+    Then I see first item "zJvm"
     When I click the column header with the label "Group"
-    Then I see first item "zzzJvm"
+    Then I see first item "mJvm"
     When I click the column header with the label "Group"
-    Then I see first item "aaaJvm"
-
-
-Scenario: Sort JVMs by Host Name
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55                 |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm               |
-      | hostName   | aaaHost              |
-      | portNumber | 9999                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-
-    And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm               |
-      | hostName   | zzzHost              |
-      | portNumber | 100                  |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-    When I click the column header with the label "Host"
-    Then I see first item "zzzJvm"
-    When I click the column header with the label "Host"
-    Then I see first item "aaaJvm"
-
-
-Scenario: Sort JVMs by HTTP Port
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55                 |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm               |
-      | hostName   | aaaHost              |
-      | portNumber | 9999                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-    And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm               |
-      | hostName   | zzzHost              |
-      | portNumber | 1000                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
+    Then I see first item "zJvm"
     When I click the column header with the label "HTTP"
-    Then I see first item "zzzJvm"
+    Then I see first item "aJvm"
     When I click the column header with the label "HTTP"
-    Then I see first item "aaaJvm"
-
-
-Scenario: Sort JVMs by JDK
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I created a media with the following parameters:
-      | mediaName       | zzzjdk1.8.0_92          |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | aaajdk1.8.0_92          |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55                 |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm               |
-      | hostName   | aaaHost              |
-      | portNumber | 1000                 |
-      | jdk        | zzzjdk1.8.0_92       |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-    And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm               |
-      | hostName   | zzzHost              |
-      | portNumber | 9999                 |
-      | jdk        | aaajdk1.8.0_92       |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-    When I click the column header with the label "JDK"
-    Then I see first item "zzzJvm"
-    When I click the column header with the label "JDK"
-    Then I see first item "aaaJvm"
-
-
-Scenario: Sort jvms by HTTPS Port
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | apache-tomcat-7.0.55                 |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm               |
-      | hostName   | aaaHost              |
-      | portNumber | 1000                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
-    And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm               |
-      | hostName   | zzzHost              |
-      | portNumber | 9999                 |
-      | jdk        | jdk1.8.0_92          |
-      | tomcat     | apache-tomcat-7.0.55 |
-      | group      | group1               |
+    Then I see first item "mJvm"
     When I click the column header with the label "HTTPS"
-    Then I see first item "aaaJvm"
+    Then I see first item "aJvm"
     When I click the column header with the label "HTTPS"
-    Then I see first item "zzzJvm"
-
-
-Scenario: Sort JVMs by Tomcat Media
-
-    Given I logged in
-    And I am in the Configuration tab
-    And I am in the group tab
-    And I created a group with the name "group1"
-    And I created a group with the name "group2"
-    And I created a media with the following parameters:
-      | mediaName       | jdk1.8.0_92             |
-      | mediaType       | JDK                     |
-      | archiveFilename | jdk1.8.0_92.zip |
-      | remoteDir       | media.remote.dir        |
-    And I created a media with the following parameters:
-      | mediaName       | zzzapache-tomcat-7.0.55              |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a media with the following parameters:
-      | mediaName       | aaaapache-tomcat-7.0.55              |
-      | mediaType       | Apache Tomcat                        |
-      | remoteDir       | media.remote.dir                     |
-      | archiveFilename | apache-tomcat-7.0.55.zip |
-    And I created a jvm with the following parameters:
-      | jvmName    | aaaJvm                  |
-      | hostName   | localHost               |
-      | portNumber | 100                     |
-      | jdk        | jdk1.8.0_92             |
-      | tomcat     | zzzapache-tomcat-7.0.55 |
-      | group      | group1                  |
-    And I created a jvm with the following parameters:
-      | jvmName    | zzzJvm                  |
-      | hostName   | localHost               |
-      | portNumber | 100                     |
-      | jdk        | jdk1.8.0_92             |
-      | tomcat     | aaaapache-tomcat-7.0.55 |
-      | group      | group1                  |
+    Then I see first item "mJvm"
+    When I click the column header with the label "JDK"
+    Then I see first item "mJvm"
+    When I click the column header with the label "JDK"
+    Then I see first item "zJvm"
     When I click the column header with the label "Tomcat"
-    Then I see first item "zzzJvm"
+    Then I see first item "zJvm"
     When I click the column header with the label "Tomcat"
-    Then I see first item "aaaJvm"
+    Then I see first item "aJvm"

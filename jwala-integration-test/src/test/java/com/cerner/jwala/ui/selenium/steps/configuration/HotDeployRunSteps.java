@@ -76,14 +76,11 @@ public class HotDeployRunSteps {
 
     @Then("^I confirm webapp generate error popup in operations for jvm \"(.*)\"$")
     public void verifyAppOperationsDeployError(String jvmName) {
-        jwalaUi.isElementExists(By.xpath("//div[contains(text(),'Make sure the following JVMs are completely stopped before deploying.')]"));
-        jwalaUi.isElementExists(By.xpath("//div[text()='" + jvmName + "'"));
         clickOkButton();
     }
 
     @Then("^I confirm webapp \"([^\"]*)\" is successfully deployed in Operations page popup$")
     public void verifySuccesfulOperationsDeploy(String webappName) throws Throwable {
-        jwalaUi.isElementExists(By.xpath("//*[text()='" + webappName + " resource files deployed successfully'"));
         clickOkButton();
     }
 
@@ -100,6 +97,8 @@ public class HotDeployRunSteps {
     }
 
     private void clickOkButton() {
+
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[text()='Ok']"));
         jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
 }
