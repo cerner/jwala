@@ -400,6 +400,10 @@ sonarqube {
 subprojects {
     apply plugin: 'com.moowork.node'
 
+    if (!project.hasProperty("CI_BUILD_VERSION")) {
+        ext.CI_BUILD_VERSION = "1"
+    }
+
     task setupFortifyExtDirs(type: Copy) {
         from configurations.compile
         into "$buildDir/fortify/extdirs/"
