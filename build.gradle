@@ -439,18 +439,21 @@ subprojects {
     /**
      * Note: This is the main task to run to generate Fortify files.
      *       One would need to run this in a machine that has Fortify installed.
+     *       How to run:
+     *
+     *           $ gradle clean sourceAnalyzerCreateMBS -PCI_BUILD_VERSION=1
      */
     task sourceAnalyzerCreateMBS(type: Exec, dependsOn: sourceAnalyzerMakeMobile) {
         commandLine "sourceanalyzer",
                 "-64",
-                "-b", "$project.name",
+                "-b", "ctp-$project.name-$CI_BUILD_VERSION",
                 "-source",
                 "$sourceCompatibility",
                 "-Xmx1g",
                 "-extdirs",
                 "$buildDir\\fortify\\extdirs",
                 "-export-build-session",
-                "$buildDir\\fortify\\${project.name}.mbs"
+                "$buildDir\\fortify\\ctp-${project.name}-${CI_BUILD_VERSION}.mbs"
     }
 
 }
