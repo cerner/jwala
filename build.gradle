@@ -412,14 +412,14 @@ subprojects {
     task sourceAnalyzerCleanBuild(type: Exec, dependsOn: setupFortifyExtDirs) {
         commandLine "sourceanalyzer",
                 "-64",
-                "-b", "'$project.name'",
+                "-b", "ctp-$project.name-$CI_BUILD_VERSION",
                 "-clean"
     }
 
     task sourceAnalyzerCreateBuild(type: Exec, dependsOn: sourceAnalyzerCleanBuild) {
         commandLine "sourceanalyzer",
                 "-64",
-                "-b", "$project.name",
+                "-b", "ctp-$project.name-$CI_BUILD_VERSION",
                 "-source",
                 "$sourceCompatibility",
                 "-Xmx1g",
@@ -431,7 +431,7 @@ subprojects {
     task sourceAnalyzerMakeMobile(type: Exec, dependsOn: sourceAnalyzerCreateBuild) {
         commandLine "sourceanalyzer",
                 "-64",
-                "-b", "$project.name",
+                "-b", "ctp-$project.name-$CI_BUILD_VERSION",
                 "-make-mobile",
                 "-source",
                 "$sourceCompatibility",
@@ -445,7 +445,7 @@ subprojects {
      *       One would need to run this in a machine that has Fortify installed.
      *       How to run:
      *
-     *           $ gradle clean sourceAnalyzerCreateMBS -PCI_BUILD_VERSION=1
+     *           $ gradle clean sourceAnalyzerCreateMBS -PCI_BUILD_VERSION=1 -x :jwala-integration-test:sourceAnalyzerCreateMBS
      */
     task sourceAnalyzerCreateMBS(type: Exec, dependsOn: sourceAnalyzerMakeMobile) {
         commandLine "sourceanalyzer",
