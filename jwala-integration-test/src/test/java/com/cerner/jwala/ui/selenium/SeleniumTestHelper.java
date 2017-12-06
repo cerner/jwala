@@ -74,11 +74,6 @@ public class SeleniumTestHelper {
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
                 throw new SeleniumTestCaseException(e);
             }
-
-            final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
-            final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));
-            Dimension dimension = new Dimension(width, height);
-            driver.manage().window().setSize(dimension);
         }
 
 
