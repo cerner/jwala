@@ -52,6 +52,9 @@ Scenario: Do a happy path start, thread dump, heap dump, stop and deletion of a 
     When I click start on jvm "CONTROL-JVM-TEST-J" of the group "CONTROL-JVM-TEST-G"
     Then I see the state of "CONTROL-JVM-TEST-J" JVM of group "CONTROL-JVM-TEST-G" is "STARTED"
 
+    When I click the drain button of "CONTROL-JVM-TEST-J" JVM under "CONTROL-JVM-TEST-G" group
+    And I do not see an error message after clicking drain
+
     # thread dump
     When I click thread dump of jvm "CONTROL-JVM-TEST-J" of the group "CONTROL-JVM-TEST-G"
     Then I don't see the click status tooltip

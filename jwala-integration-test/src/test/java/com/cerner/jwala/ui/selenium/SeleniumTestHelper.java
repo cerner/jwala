@@ -59,10 +59,6 @@ public class SeleniumTestHelper {
         String browserName = properties.getProperty("browser.name");
         if (browserName.equals("ie")) {
             final DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
-            dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
-            dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
-            dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
-            dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
             String hubUrl = (String) getProperties().getProperty("hub.url");
             hubUrl = hubUrl.replaceAll("\"", "");
             URL url;
