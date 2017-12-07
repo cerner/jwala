@@ -2733,15 +2733,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(10000);"
+									"mockSleep(10000);"
 								]
 							}
 						}
@@ -2774,15 +2771,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(5000);"
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -2862,15 +2856,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(5000);"
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -2903,15 +2894,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(5000);"
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -5588,15 +5576,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(5000);"
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -5657,15 +5642,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(5000);"
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -5780,15 +5762,12 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
-									"function pausecomp(millis)",
+									"function mockSleep(millis)",
 									" {",
-									"  var date = new Date();",
-									"  var curDate = null;",
-									"  do { curDate = new Date(); }",
-									"  while(curDate-date < millis);",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
 									"}",
 									"",
-									"pausecomp(5000);"
+									"mockSleep(5000);"
 								]
 							}
 						}
