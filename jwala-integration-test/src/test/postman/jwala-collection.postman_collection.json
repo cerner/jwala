@@ -2731,7 +2731,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(10000);"
 								]
 							}
 						}
@@ -2762,7 +2769,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -2786,7 +2800,7 @@
 					"response": []
 				},
 				{
-					"name": "control group jvms",
+					"name": "check webserver start",
 					"event": [
 						{
 							"listen": "test",
@@ -2794,6 +2808,60 @@
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}/index.html",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "webserver start ping test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "control group jvms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -2824,7 +2892,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -2875,7 +2950,9 @@
 							"query": [
 								{
 									"key": "wait",
-									"value": "TRUE"
+									"value": "TRUE",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -2928,7 +3005,7 @@
 					"response": []
 				},
 				{
-					"name": "webserver start ping test",
+					"name": "check jvm start",
 					"event": [
 						{
 							"listen": "test",
@@ -2941,7 +3018,7 @@
 						}
 					],
 					"request": {
-						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"url": "https://{{host}}:9131/hello/",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3119,6 +3196,31 @@
 					"request": {
 						"url": "{{url}}/v1.0/balancermanager/jvm/{{JvmName}}",
 						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "webserver start ping test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -5296,37 +5398,6 @@
 			"description": "",
 			"item": [
 				{
-					"name": "stop group",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "update jvm",
 					"event": [
 						{
@@ -5496,6 +5567,44 @@
 			"description": "",
 			"item": [
 				{
+					"name": "stop group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(5000);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"stop\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "error: generate group webservers when web server is started exception",
 					"request": {
 						"url": "{{url}}/v1.0/groups/{{GroupId}}/webservers/conf/deploy",
@@ -5531,7 +5640,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(5000);"
 								]
 							}
 						}
@@ -5586,7 +5702,7 @@
 					"response": []
 				},
 				{
-					"name": "stop webserver with wait false",
+					"name": "stop webserver with wait true",
 					"event": [
 						{
 							"listen": "test",
@@ -5600,7 +5716,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=FALSE",
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=TRUE",
 							"host": [
 								"{{url}}"
 							],
@@ -5613,7 +5729,9 @@
 							"query": [
 								{
 									"key": "wait",
-									"value": "FALSE"
+									"value": "TRUE",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -5642,7 +5760,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"function mockSleep(millis)",
+									" {",
+									"return new Promise(resolve => setTimeout(resolve, millis))",
+									"}",
+									"",
+									"mockSleep(5000);"
 								]
 							}
 						}
