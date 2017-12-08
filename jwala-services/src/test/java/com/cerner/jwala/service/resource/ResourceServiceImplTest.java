@@ -325,6 +325,35 @@ public class ResourceServiceImplTest {
     }
 
     @Test
+    public void testCreateGroupedAppsTemplateWar() {
+        final InputStream metaDataIn = this.getClass().getClassLoader()
+                .getResourceAsStream("resource-service-test-files/create-grouped-apps-template-test-metadata-for-war.json");
+        final InputStream templateIn = this.getClass().getClassLoader()
+                .getResourceAsStream("binaries/apache-tomcat-test.zip");
+
+        final List<Application> appList = new ArrayList<>();
+        final Application mockApp = mock(Application.class);
+        final Application mockApp2 = mock(Application.class);
+        when(mockApp.getName()).thenReturn("test-app-name");
+        when(mockApp2.getName()).thenReturn("test-app-name2");
+        appList.add(mockApp);
+        appList.add(mockApp2);
+        final Group mockGroup = mock(Group.class);
+        Set<Jvm> jvmSet = new HashSet<>();
+        Jvm mockJvm = mock(Jvm.class);
+        jvmSet.add(mockJvm);
+        when(mockGroup.getJvms()).thenReturn(jvmSet);
+        when(mockJvm.getJvmName()).thenReturn("test-jvm-name");
+        when(Config.mockAppPersistenceService.findApplicationsBelongingTo(eq("test-group"))).thenReturn(appList);
+        when(Config.mockGroupPesistenceService.getGroup(eq("test-group"))).thenReturn(mockGroup);
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("user-id");
+        resourceService.createTemplate(metaDataIn, templateIn, "test-app-name", mockUser);
+        verify(Config.mockAppPersistenceService).updateWarInfo(eq("test-app-name"), eq("deploy-file-name.war"), eq("thePath"), eq("/deploy/path"));
+        verify(Config.mockGroupPesistenceService).populateGroupAppTemplate(anyString(), anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
     public void testGenerateResourceFile() {
         File httpdTemplate = new File("../jwala-common/src/test/resources/HttpdConfTemplate.tpl");
         try {

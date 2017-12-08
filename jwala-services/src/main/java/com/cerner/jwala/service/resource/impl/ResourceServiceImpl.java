@@ -604,7 +604,7 @@ public class ResourceServiceImpl implements ResourceService {
                     null,
                     applicationPersistenceService.getApplication(targetAppName),
                     ResourceGeneratorType.METADATA);
-            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getTemplateName(), templateContent, tokenizedWarDeployPath);
+            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getDeployFileName(), templateContent, tokenizedWarDeployPath);
         }
         final String deployFileName = metaData.getDeployFileName();
 
