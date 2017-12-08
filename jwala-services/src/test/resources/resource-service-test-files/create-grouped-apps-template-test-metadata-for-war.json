@@ -1,6 +1,6 @@
 {
   "deployPath" : "/deploy/path",
-  "templateName" : "template-name.war",
+  "templateName" : "template-name.war.tpl",
   "deployFileName" : "deploy-file-name.war",
   "unpack" : false,
   "contentType" : "application/zip",
