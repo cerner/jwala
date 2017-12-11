@@ -18,6 +18,11 @@ var MainArea = React.createClass({
                            <td><Banner/><br/><br/></td>
                        </tr>
                        <tr>
+                            <td className="association-name">
+                                {jwalaVars["jwalaClientName"]}
+                            </td>
+                       </tr>
+                       <tr>
                            <td>
                                {content}
                            </td>
