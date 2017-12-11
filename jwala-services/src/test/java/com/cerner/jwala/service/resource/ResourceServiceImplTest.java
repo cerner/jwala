@@ -78,14 +78,14 @@ import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ResourceServiceImplTest.Config.class})
-@PrepareForTest(JwalaUtils.class )
+@PrepareForTest(JwalaUtils.class)
 public class ResourceServiceImplTest {
 
     @Autowired
     private ResourceService resourceService;
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         System.setProperty(ApplicationProperties.PROPERTIES_ROOT_PATH, new File(".").getAbsolutePath() + "/src/test/resources");
         PowerMockito.mockStatic(JwalaUtils.class);
         PowerMockito.when(JwalaUtils.getHostAddress("testServer")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
@@ -240,7 +240,7 @@ public class ResourceServiceImplTest {
         verify(Config.mockAppPersistenceService).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
     }
 
-    @Test (expected = ResourceServiceException.class)
+    @Test(expected = ResourceServiceException.class)
     public void testCreateAppTemplateWithNullEntity() {
         final InputStream metaDataIn = this.getClass().getClassLoader()
                 .getResourceAsStream("resource-service-test-files/create-app-template-test-null-entity-metadata.json");
@@ -258,7 +258,7 @@ public class ResourceServiceImplTest {
         verify(Config.mockAppPersistenceService, never()).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
     }
 
-    @Test (expected = ResourceServiceException.class)
+    @Test(expected = ResourceServiceException.class)
     public void testCreateAppTemplateWithEmptyEntity() {
         final InputStream metaDataIn = this.getClass().getClassLoader()
                 .getResourceAsStream("resource-service-test-files/create-app-template-test-empty-entity-metadata.json");
@@ -321,6 +321,35 @@ public class ResourceServiceImplTest {
         when(mockUser.getId()).thenReturn("user-id");
         resourceService.createTemplate(metaDataIn, templateIn, "test-app-name", mockUser);
         verify(Config.mockAppPersistenceService).uploadAppTemplate(any(UploadAppTemplateRequest.class), any(JpaJvm.class));
+        verify(Config.mockGroupPesistenceService).populateGroupAppTemplate(anyString(), anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testCreateGroupedAppsTemplateWar() {
+        final InputStream metaDataIn = this.getClass().getClassLoader()
+                .getResourceAsStream("resource-service-test-files/create-grouped-apps-template-test-metadata-for-war.json");
+        final InputStream templateIn = this.getClass().getClassLoader()
+                .getResourceAsStream("binaries/apache-tomcat-test.zip");
+
+        final List<Application> appList = new ArrayList<>();
+        final Application mockApp = mock(Application.class);
+        final Application mockApp2 = mock(Application.class);
+        when(mockApp.getName()).thenReturn("test-app-name");
+        when(mockApp2.getName()).thenReturn("test-app-name2");
+        appList.add(mockApp);
+        appList.add(mockApp2);
+        final Group mockGroup = mock(Group.class);
+        Set<Jvm> jvmSet = new HashSet<>();
+        Jvm mockJvm = mock(Jvm.class);
+        jvmSet.add(mockJvm);
+        when(mockGroup.getJvms()).thenReturn(jvmSet);
+        when(mockJvm.getJvmName()).thenReturn("test-jvm-name");
+        when(Config.mockAppPersistenceService.findApplicationsBelongingTo(eq("test-group"))).thenReturn(appList);
+        when(Config.mockGroupPesistenceService.getGroup(eq("test-group"))).thenReturn(mockGroup);
+        User mockUser = mock(User.class);
+        when(mockUser.getId()).thenReturn("user-id");
+        resourceService.createTemplate(metaDataIn, templateIn, "test-app-name", mockUser);
+        verify(Config.mockAppPersistenceService).updateWarInfo(eq("test-app-name"), eq("deploy-file-name.war"), eq("thePath"), eq("/deploy/path"));
         verify(Config.mockGroupPesistenceService).populateGroupAppTemplate(anyString(), anyString(), anyString(), anyString(), anyString());
     }
 
@@ -1065,7 +1094,7 @@ public class ResourceServiceImplTest {
         verify(Config.mockAppPersistenceService).getResourceTemplate(eq("webapp1"), eq("hct.xml"), eq("jvm1"), eq("group1"));
     }
 
-    @Test (expected = ResourceServiceException.class)
+    @Test(expected = ResourceServiceException.class)
     public void testGenerateAndDeployFileFailsCreateDir() throws IOException {
         final ResourceIdentifier.Builder builder = new ResourceIdentifier.Builder();
         final ResourceIdentifier resourceIdentifier = builder.setGroupName("group1").setResourceName("server.xml")
@@ -1110,7 +1139,7 @@ public class ResourceServiceImplTest {
         assertEquals(skipOverwriteResult, result);
     }
 
-    @Test (expected = ResourceServiceException.class)
+    @Test(expected = ResourceServiceException.class)
     public void testGenerateAndDeployFileFailsBackup() throws IOException {
         final ResourceIdentifier.Builder builder = new ResourceIdentifier.Builder();
         final ResourceIdentifier resourceIdentifier = builder.setGroupName("group1").setResourceName("server.xml")
@@ -1148,7 +1177,7 @@ public class ResourceServiceImplTest {
     static class Config {
         private static final DistributionService mockDistributionService = mock(DistributionService.class);
         private static final BinaryDistributionControlService mockBinaryDistributionControlService = mock(BinaryDistributionControlService.class);
-        private static final BinaryDistributionLockManager mockBinaryDistributionLockManager= mock(BinaryDistributionLockManager.class);
+        private static final BinaryDistributionLockManager mockBinaryDistributionLockManager = mock(BinaryDistributionLockManager.class);
         private static final ResourcePersistenceService mockResourcePersistenceService = mock(ResourcePersistenceService.class);
         private static final GroupPersistenceService mockGroupPesistenceService = mock(GroupPersistenceService.class);
         private static final ApplicationPersistenceService mockAppPersistenceService = mock(ApplicationPersistenceService.class);
@@ -1183,12 +1212,12 @@ public class ResourceServiceImplTest {
         }
 
         @Bean
-        public HistoryFacadeService getMockHistoryFacadeService(){
+        public HistoryFacadeService getMockHistoryFacadeService() {
             return mockHistoryFacadeService;
         }
 
         @Bean
-        public BinaryDistributionLockManager getMockBinaryDistributionLockManager(){
+        public BinaryDistributionLockManager getMockBinaryDistributionLockManager() {
             return mockBinaryDistributionLockManager;
         }
     }

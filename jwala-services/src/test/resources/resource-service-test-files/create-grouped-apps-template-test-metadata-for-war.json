@@ -1,0 +1,13 @@
+{
+  "deployPath" : "/deploy/path",
+  "templateName" : "template-name.war.tpl",
+  "deployFileName" : "deploy-file-name.war",
+  "unpack" : false,
+  "contentType" : "application/zip",
+  "entity" : {
+    "type" : "GROUPED_APPS",
+    "group" : "test-group",
+    "target" : "test-webapp",
+    "deployToJvms" : false
+  }
+}
