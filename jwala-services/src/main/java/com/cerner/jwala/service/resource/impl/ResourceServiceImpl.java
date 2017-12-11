@@ -596,14 +596,14 @@ public class ResourceServiceImpl implements ResourceService {
         ConfigTemplate createdConfigTemplate = null;
 
         if (MediaType.APPLICATION_ZIP.equals(metaData.getContentType()) &&
-                metaData.getTemplateName().toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
+                metaData.getDeployFileName().toLowerCase(Locale.US).endsWith(WAR_FILE_EXTENSION)) {
             String tokenizedWarDeployPath = resourceContentGeneratorService.generateContent(
                     metaData.getDeployFileName(),
                     metaData.getDeployPath(),
                     null,
                     applicationPersistenceService.getApplication(targetAppName),
                     ResourceGeneratorType.METADATA);
-            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getTemplateName(), templateContent, tokenizedWarDeployPath);
+            applicationPersistenceService.updateWarInfo(targetAppName, metaData.getDeployFileName(), templateContent, tokenizedWarDeployPath);
         }
         final String deployFileName = metaData.getDeployFileName();
 
