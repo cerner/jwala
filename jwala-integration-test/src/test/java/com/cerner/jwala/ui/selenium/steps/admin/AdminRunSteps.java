@@ -50,4 +50,11 @@ public class AdminRunSteps {
         final String val = webElement.getAttribute("value");
         assert StringUtils.isNotEmpty(val) && val.contains(itemName);
     }
+
+    @And("^I see client Name \"(.*)\" \"(.*)\" \"(.*)\"")
+    public void verifyClientName(final String clientName, final String hHRR, final String dataMode){
+        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(clientName) + "']"));
+        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(hHRR) + "']"));
+        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(dataMode) + "']"));
+    }
 }
