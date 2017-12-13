@@ -70,7 +70,7 @@ public class HotDeployRunSteps {
 
     @Then("I verify error message popup for group \"(.*)\" for app file \"(.*)\" with one of JVMs as \"(.*)\"$")
     public void verifyErrorMessageIndividualApp(String group, String file, String jvm) {
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//*[contains(text(),'Failed to deploy file " + file + " for group " + group + ": not all JVMs were stopped - the following JVMs were started and the resource was not configured with hotDeploy=true: [" + jvm + "]')]"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[contains(text(),'Failed to deploy file " + file + " for group " + group + ": not all JVMs were stopped - the following JVMs were started and the resource was not configured with hotDeploy=true: [" + jvm + "]')]"));
         clickOkButton();
     }
 
