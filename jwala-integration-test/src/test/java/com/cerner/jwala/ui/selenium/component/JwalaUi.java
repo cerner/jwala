@@ -38,6 +38,9 @@ public class JwalaUi {
     @Qualifier("seleniumTestProperties")
     private Properties properties;
 
+    @Autowired
+    private Actions actions;
+
     public void clickTab(final String tabLabel) {
         final By by = By.xpath("//li[a[text()='" + tabLabel + "']]");
         if (!driver.findElement(by).getAttribute("class").equalsIgnoreCase("current")) {
@@ -166,10 +169,22 @@ public class JwalaUi {
         driver.findElement(by).sendKeys(val);
     }
 
+    /**
+     * Primarily used to send text to code mirror since the WebElement's sendKeys does not work for code mirror in IE
+     * @param val the value to send
+     */
+    public void sendKeysViaActions(final CharSequence val) {
+        actions.sendKeys(val).perform();
+    }
+
     public void click(final By by) {
         final WebElement webElement = driver.findElement(by);
         scrollIntoView(webElement);
         webElement.click();
+    }
+
+    public void doubleClick() {
+        actions.doubleClick().perform();
     }
 
     /**

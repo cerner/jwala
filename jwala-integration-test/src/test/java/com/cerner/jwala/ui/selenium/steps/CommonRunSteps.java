@@ -105,12 +105,12 @@ public class CommonRunSteps {
         navigationRunSteps.goToMediaTab();
         createMediaRunSteps.clickAddMediaBtn();
         createMediaRunSteps.checkIfAddMediaDialogIsDisplayed();
-        createMediaRunSteps.setMediaName(parameters.get("mediaName"));
+        createMediaRunSteps.setMediaName(getPropertyValue(parameters.get("mediaName")));
         createMediaRunSteps.selectMediaType(parameters.get("mediaType"));
-        createMediaRunSteps.selectMediaArchiveFile(parameters.get("archiveFilename"));
+        createMediaRunSteps.selectMediaArchiveFile(getPropertyValue(parameters.get("archiveFilename")));
         createMediaRunSteps.setRemoteDir(getPropertyValue(parameters.get("remoteDir")));
         createMediaRunSteps.clickAddMediaOkDialogBtn();
-        createMediaRunSteps.checkForMedia(parameters.get("mediaName"));
+        createMediaRunSteps.checkForMedia(getPropertyValue(parameters.get("mediaName")));
     }
 
     @Given("^I created a web app with the following parameters:$")
@@ -138,7 +138,7 @@ public class CommonRunSteps {
         createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
         createWebServerRunSteps.setHttpsPort(getPropertyValue(parameters.get("httpsPort")));
-        createWebServerRunSteps.selectApacheHttpd(parameters.get("apacheHttpdMediaId"));
+        createWebServerRunSteps.selectApacheHttpd(getPropertyValue(parameters.get("apacheHttpdMediaId")));
         createWebServerRunSteps.selectGroup(parameters.get("group"));
         createWebServerRunSteps.clickAddWebServerDialogOkBtn();
         createWebServerRunSteps.checkForWebServer(parameters.get("webserverName"));
@@ -154,8 +154,8 @@ public class CommonRunSteps {
         String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createJvmRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
-        createJvmRunSteps.selectJdk(parameters.get("jdk"));
-        createJvmRunSteps.selectTomcat(parameters.get("tomcat"));
+        createJvmRunSteps.selectJdk(getPropertyValue(parameters.get("jdk")));
+        createJvmRunSteps.selectTomcat(getPropertyValue(parameters.get("tomcat")));
         List<String> groups = new ArrayList<>();
         groups.add(parameters.get("group"));
         createJvmRunSteps.setGroups(groups);
@@ -295,7 +295,7 @@ public class CommonRunSteps {
     public void enterValueAndSave(Map<String, String> parameters) {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
-        handleResourceRunSteps.enterInEditBox(parameters.get("text"), parameters.get("position"));
+        handleResourceRunSteps.insertStrInTheResourceEditor(parameters.get("text"), parameters.get("position"));
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
         //not included waiting for saved notification here as if there is an error ,we get an error instead of notification
         //and if we include a condition to check for error, by the time of checking is completed, the notification disappears
@@ -306,7 +306,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickResource(parameters.get("fileName"));
         handleResourceRunSteps.clickTab(parameters.get("tabLabel"));
         //needed to save chrome popup from an unsaved file
-        resourceErrorHandlingRunSteps.removeGarbageValue(parameters.get("textLine"));
+        resourceErrorHandlingRunSteps.deleteResourceEditorText(parameters.get("textLine"));
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
     }
 
