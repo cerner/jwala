@@ -103,7 +103,7 @@ Feature: Sort Table
     And I am in the web server tab
     And I created a web server with the following parameters:
       | webserverName      | aWebserver     |
-      | hostName           | host1          |
+      | hostName           | aHost          |
       | portNumber         | 9000           |
       | httpsPort          | 20005          |
       | group              | group1         |
@@ -111,7 +111,7 @@ Feature: Sort Table
       | statusPath         | ws.status.path |
     And I created a web server with the following parameters:
       | webserverName      | mWebserver     |
-      | hostName           | host1          |
+      | hostName           | zHost          |
       | portNumber         | 8999           |
       | httpsPort          | 20008          |
       | group              | group3         |
@@ -119,7 +119,7 @@ Feature: Sort Table
       | statusPath         | ws.status.path |
     And I created a web server with the following parameters:
       | webserverName      | zWebserver     |
-      | hostName           | host1          |
+      | hostName           | mHost          |
       | portNumber         | 7000           |
       | httpsPort          | 30000          |
       | group              | group2         |
@@ -145,6 +145,10 @@ Feature: Sort Table
     Then I see first item "mWebserver"
     When I click the column header with the label "Apache HTTPD"
     Then I see first item "aWebserver"
+    When I click the column header with the label "Host"
+    Then I see first item "aWebserver"
+    When I click the column header with the label "Host"
+    Then I see first item "mWebserver"
 
   Scenario: Sort JVMs
 
@@ -186,21 +190,21 @@ Feature: Sort Table
       | archiveFilename | apache.tomcat.media.archive |
     And I created a jvm with the following parameters:
       | jvmName    | aJvm    |
-      | hostName   | host1   |
+      | hostName   | zHost   |
       | portNumber | 4001    |
       | jdk        | mjdk    |
       | tomcat     | zTomcat |
       | group      | mGroup  |
     And I created a jvm with the following parameters:
       | jvmName    | mJvm    |
-      | hostName   | host1   |
+      | hostName   | aHost   |
       | portNumber | 9999    |
       | jdk        | ajdk    |
       | tomcat     | mTomcat |
       | group      | aGroup  |
     And I created a jvm with the following parameters:
       | jvmName    | zJvm    |
-      | hostName   | host1   |
+      | hostName   | mHost   |
       | portNumber | 8000    |
       | jdk        | zjdk    |
       | tomcat     | aTomcat |
@@ -229,3 +233,7 @@ Feature: Sort Table
     Then I see first item "zJvm"
     When I click the column header with the label "Tomcat"
     Then I see first item "aJvm"
+    When I click the column header with the label "Host"
+    Then I see first item "mJvm"
+    When I click the column header with the label "Host"
+    Then I see first item "zJvm"
