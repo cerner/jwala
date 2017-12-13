@@ -45,7 +45,7 @@ public class SeleniumTestHelper {
      * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
      */
-    public static WebDriver createWebDriver(final String webDriverClass) throws IOException {
+    public static WebDriver createWebDriver(final String webDriverClass)   {
         WebDriver driver = null;
 
 
@@ -63,10 +63,16 @@ public class SeleniumTestHelper {
             dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
             dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
             dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-            String hubUrl = (String) getProperties().getProperty("hub.url");
-            hubUrl = hubUrl.replaceAll("\"", "");
             URL url;
-            url = new URL(hubUrl);
+            String hubUrl=null;
+            try {
+                hubUrl = (String) getProperties().getProperty("hub.url");
+                hubUrl = hubUrl.replaceAll("\"", "");
+                url = new URL(hubUrl);
+            }
+            catch (IOException io){
+                throw new SeleniumTestCaseException("Unable to get hub url");
+            }
             driver = new RemoteWebDriver(url, dc);
         } else if (browserName.equals("chrome")) {
             try {
