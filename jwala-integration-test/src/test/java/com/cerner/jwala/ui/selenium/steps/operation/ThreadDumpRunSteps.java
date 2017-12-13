@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.File;
 import java.util.Properties;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by Sharvari Barve on 7/18/2017.
  */
@@ -47,8 +49,8 @@ public class ThreadDumpRunSteps {
         String filenamePrefix = "thread_dump_";
         File threadDumpPath = new File(paramProp.getProperty(path));
         File[] threadDumpReports = threadDumpPath.listFiles();
-        for (int i = 0; i < threadDumpReports.length; i++) {
-            assert (threadDumpReports[i].getName().startsWith(filenamePrefix));
+        for (File threadDumpReport : threadDumpReports) {
+            assertTrue (threadDumpReport.getName().startsWith(filenamePrefix));
         }
     }
 }
