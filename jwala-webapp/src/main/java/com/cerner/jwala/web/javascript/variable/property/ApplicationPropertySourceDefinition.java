@@ -19,9 +19,7 @@ public enum ApplicationPropertySourceDefinition {
     TOMCAT_MANAGER_PROTOCOL("tomcatManagerProtocol", "tomcat.manager.protocol", "http", VariableStyle.STRING),
     APACHE_HTTPD_STATUS_PING_RESOURCE("apacheHttpdStatusPingResource", "apache.httpd.status.ping.resource", "index.html", VariableStyle.STRING),
     TOMCAT_IMAGE_LOGO_PATH("tomcatImageLogoPath", "tomcat.image.logo.path", "/tomcat-power.gif", VariableStyle.STRING),
-    JWALA_CLIENT_NAME("jwalaClientName", "jwala.client.name", "", VariableStyle.STRING),
-    JWALA_HHRR("jwalaHhrr","jwala.hhrr", "", VariableStyle.STRING),
-    JWALA_DATA_MODE("jwalaDataMode","jwala.data.mode", "" ,VariableStyle.STRING);
+    JWALA_CLIENT_NAME("jwalaClientName", "jwala.client.name", "", VariableStyle.STRING);
 
     private final String variableName;
     private final String propertyKey;

@@ -23,8 +23,7 @@ public class ApplicationPropertySourceDefinitionTest {
     @Test
     public void testJwalaClientDetails() {
         assertEquals("", JWALA_CLIENT_NAME.getDefaultValue());
-        assertEquals("", JWALA_HHRR.getDefaultValue());
-        assertEquals("", JWALA_DATA_MODE.getDefaultValue());
+        assertEquals("jwala.client.name", JWALA_CLIENT_NAME.getPropertyKey());
     }
 
 }

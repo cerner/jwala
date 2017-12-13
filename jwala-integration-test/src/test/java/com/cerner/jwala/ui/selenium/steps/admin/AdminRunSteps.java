@@ -51,10 +51,8 @@ public class AdminRunSteps {
         assert StringUtils.isNotEmpty(val) && val.contains(itemName);
     }
 
-    @And("^I see client details \"(.*)\" \"(.*)\" \"(.*)\"")
-    public void verifyClientName(final String clientName, final String hHRR, final String dataMode){
+    @And("^I see client details \"(.*)\"")
+    public void verifyClientName(final String clientName){
         jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(clientName) + "']"));
-        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(hHRR) + "']"));
-        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(dataMode) + "']"));
     }
 }
