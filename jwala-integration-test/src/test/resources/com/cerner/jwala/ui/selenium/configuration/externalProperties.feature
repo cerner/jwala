@@ -53,6 +53,6 @@ Feature: External property
     And I choose the resource file "hct.properties.tpl"
     And I click the ok button
     And I click check-box for resourceFile "ext.properties"
-    And I click the resource delete icon
-    And I confirm delete a resource popup
-    Then I don't see "ext.properties"
+    When I click the resource delete icon
+    And I confirm delete a external property resource popup
+    Then No resource is present

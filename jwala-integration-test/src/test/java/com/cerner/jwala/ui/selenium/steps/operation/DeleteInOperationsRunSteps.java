@@ -24,4 +24,8 @@ public class DeleteInOperationsRunSteps {
     public void verifyElementNotPresent(String name) {
         Assert.assertFalse(jwalaUi.isElementExists(By.xpath("/contains(text(),'" + name + "')")));
     }
+
+    @Then("^No resource is present$")
+    public void absenceOfResource(){
+        jwalaUi.find(By.xpath("//*[contains(text(), 'No resources found...')]"));    }
 }
