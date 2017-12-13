@@ -56,6 +56,7 @@ Scenario: Do a happy path start, thread dump, heap dump, stop and deletion of a 
     When I click thread dump of jvm "CONTROL-JVM-TEST-J" of the group "CONTROL-JVM-TEST-G"
     Then I don't see the click status tooltip
     And I see the thread dump page
+    And I verify thread dump report file with path as "thread.dump.path"
 
     # test heap dump
     When I click on heap dump of "CONTROL-JVM-TEST-J" jvm of "CONTROL-JVM-TEST-G" group
