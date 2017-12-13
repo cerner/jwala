@@ -7,6 +7,7 @@ import com.jcraft.jsch.JSchException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +45,7 @@ public class TestConfig {
     }
 
     @Bean
-    public WebDriver getDriver(@Qualifier("seleniumTestProperties") final Properties properties) {
+    public WebDriver getDriver(@Qualifier("seleniumTestProperties") final Properties properties) throws IOException {
         final WebDriver webDriver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS));
         webDriver.manage().timeouts().implicitlyWait(Long.parseLong(properties.getProperty(ELEMENT_SEARCH_RENDER_WAIT_TIME)),
                 TimeUnit.SECONDS);
@@ -88,5 +90,10 @@ public class TestConfig {
                 return raw;
             }
         };
+    }
+
+    @Bean
+    public Actions getActions(final WebDriver driver) {
+        return new Actions(driver);
     }
 }
