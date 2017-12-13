@@ -5,6 +5,10 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.File;
+import java.util.Properties;
 
 /**
  * Created by Sharvari Barve on 7/18/2017.
@@ -12,12 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ThreadDumpRunSteps {
 
     @Autowired
+    @Qualifier("parameterProperties")
+    private Properties paramProp;
+
+    @Autowired
     private JwalaUi jwalaUi;
 
     private String origWindowHandle;
 
     @When("^I click thread dump of jvm \"(.*)\" of the group \"(.*)\"$")
-    public void clickThreadDump(String jvmName, String groupName){
+    public void clickThreadDump(String jvmName, String groupName) {
         origWindowHandle = jwalaUi.getWebDriver().getWindowHandle();
         jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
                 + jvmName + "']/following-sibling::td//button[@title='Thread Dump']"));
@@ -30,6 +38,17 @@ public class ThreadDumpRunSteps {
         if (origWindowHandle != null) {
             jwalaUi.getWebDriver().close();
             jwalaUi.getWebDriver().switchTo().window(origWindowHandle);
+        }
+    }
+
+    @Then("^I verify thread dump report file with path as \"(.*)\"$")
+    public void verifyThreadDumpReport(String path) {
+        //only the partial file name is checked due to timestamp and timelag while running the tests
+        String filenamePrefix = "thread_dump_";
+        File threadDumpPath = new File(paramProp.getProperty(path));
+        File[] threadDumpReports = threadDumpPath.listFiles();
+        for (int i = 0; i < threadDumpReports.length; i++) {
+            assert (threadDumpReports[i].getName().startsWith(filenamePrefix));
         }
     }
 }
