@@ -236,4 +236,4 @@ Feature: Sort Table
     When I click the column header with the label "Host"
     Then I see first item "mJvm"
     When I click the column header with the label "Host"
-    Then I see first item "zJvm"
+    Then I see first item "aJvm"
