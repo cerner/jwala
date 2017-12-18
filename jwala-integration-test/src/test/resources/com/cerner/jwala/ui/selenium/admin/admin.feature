@@ -3,7 +3,7 @@ Feature: Admin Utilities
 Scenario: Test encryption, properties reload and manifest.mf
 
     Given I logged in
-    And I see client details "jwala.client.deparment.name" "jwala.data.mode"
+    And I see client details "jwala.client.details" "jwala.data.mode"
     And I am in the admin tab
 
     # test encryption

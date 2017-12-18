@@ -58,7 +58,7 @@ var Banner = React.createClass({
                    <img src="public-resources/img/jwala-banner.png"/>
                    <span className="banner-logout"><a href="#" onClick={this.handleLogoutClick}>Logout</a></span>
                    <span className="association-name">
-                         {jwalaVars["jwalaClientDepartmentName"]} {jwalaVars["jwalaDataMode"]}
+                         {jwalaVars["jwalaClientDetails"]} {jwalaVars["jwalaDataMode"]}
                    </span>
                </div>
     },
