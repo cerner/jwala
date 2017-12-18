@@ -43,14 +43,4 @@ public class ThreadDumpRunSteps {
         }
     }
 
-    @Then("^I verify thread dump report file with path as \"(.*)\"$")
-    public void verifyThreadDumpReport(String path) {
-        //only the partial file name is checked due to timestamp and timelag while running the tests
-        String filenamePrefix = "thread_dump_";
-        File threadDumpPath = new File(paramProp.getProperty(path));
-        File[] threadDumpReports = threadDumpPath.listFiles();
-        for (File threadDumpReport : threadDumpReports) {
-            assertTrue (threadDumpReport.getName().startsWith(filenamePrefix));
-        }
-    }
 }
