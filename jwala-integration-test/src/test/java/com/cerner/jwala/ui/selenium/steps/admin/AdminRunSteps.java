@@ -50,4 +50,10 @@ public class AdminRunSteps {
         final String val = webElement.getAttribute("value");
         assert StringUtils.isNotEmpty(val) && val.contains(itemName);
     }
+
+    @And("I see in the web banner that the client details = \"(.*)\" and data mode = \"(.*)\"")
+    public void verifyClientDetails(final String clientDetails, final String dataMode){
+        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(clientDetails) + "']"));
+        jwalaUi.find(By.xpath("//span[text() = '" + paramProp.getProperty(dataMode) + "']"));
+    }
 }
