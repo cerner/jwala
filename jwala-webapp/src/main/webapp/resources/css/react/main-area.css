@@ -10,6 +10,13 @@ div.main-area {
     margin-right:5px;
 }
 
+.association-name {
+    position: relative;
+    top: 80px;
+    float:right;
+    margin-right:-30px;
+}
+
 .main-area-table {
     width:100%;
 }
@@ -63,3 +70,4 @@ div.main-area {
 .AppBusyScreen.show {
     display: block !important;
 }
+
