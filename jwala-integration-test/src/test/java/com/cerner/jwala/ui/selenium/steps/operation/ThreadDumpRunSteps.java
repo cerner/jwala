@@ -36,21 +36,11 @@ public class ThreadDumpRunSteps {
     @Then("^I see the thread dump page$")
     public void verifyThreadDumpPage() {
         jwalaUi.switchToOtherTab(origWindowHandle);
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//pre[contains(text(), 'Full thread dump')]"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//pre[contains(text(), 'thread dump Java HotSpot(TM) 64-Bit Server VM')]"));
         if (origWindowHandle != null) {
             jwalaUi.getWebDriver().close();
             jwalaUi.getWebDriver().switchTo().window(origWindowHandle);
         }
     }
 
-    @Then("^I verify thread dump report file with path as \"(.*)\"$")
-    public void verifyThreadDumpReport(String path) {
-        //only the partial file name is checked due to timestamp and timelag while running the tests
-        String filenamePrefix = "thread_dump_";
-        File threadDumpPath = new File(paramProp.getProperty(path));
-        File[] threadDumpReports = threadDumpPath.listFiles();
-        for (File threadDumpReport : threadDumpReports) {
-            assertTrue (threadDumpReport.getName().startsWith(filenamePrefix));
-        }
-    }
 }
