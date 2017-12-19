@@ -36,7 +36,7 @@ public class ThreadDumpRunSteps {
     @Then("^I see the thread dump page$")
     public void verifyThreadDumpPage() {
         jwalaUi.switchToOtherTab(origWindowHandle);
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//pre[contains(text(), 'Full thread dump')]"));
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//pre[contains(text(), 'thread dump Java HotSpot(TM) 64-Bit Server VM')]"));
         if (origWindowHandle != null) {
             jwalaUi.getWebDriver().close();
             jwalaUi.getWebDriver().switchTo().window(origWindowHandle);
