@@ -29,6 +29,8 @@ dependencies {
 	testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
 
     testCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
+
+    compile group: 'io.swagger', name: 'swagger-core', version: '1.5.17'
 }
 
 test {
@@ -40,5 +42,37 @@ test {
                     "*.configuration.*",
                     "**.configuration.**",
                     "com.cerner.jwala.service.configuration.service.*"]
+    }
+}
+
+
+/*** Gradle plugin for creating Swagger artifact ***/
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.benjaminsproule:swagger-gradle-plugin:+'
+    }
+}
+
+apply plugin: 'com.benjaminsproule.swagger'
+
+swagger {
+    apiSource {
+        springmvc = false
+        locations = [ 'com.cerner.jwala.ws.rest.v1.service.admin' ]
+        schemes = [ 'https' ]
+        host = 'localhost:8001'
+        basePath = '/jwala/v1.0'
+        info {
+            title = 'Jwala Tomcat Manager'
+            version = 'v1.0'
+        }
+        securityDefinition {
+            name = 'basicAuth'
+            type = 'basic'
+        }
+        swaggerDirectory = "${project.rootProject.buildDir.path}/swagger-ui"
     }
 }
