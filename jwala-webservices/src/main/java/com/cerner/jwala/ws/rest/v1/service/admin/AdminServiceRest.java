@@ -1,8 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.admin;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.ServletContext;
@@ -49,6 +47,7 @@ public interface AdminServiceRest {
     @ApiOperation(value = "Get the content of the MANIFEST.MF of the Jwala application",
             response = Attributes.class
     )
+    @ApiResponses(value = { @ApiResponse(code = 500, message = "Failed to read MANIFEST.MF")})
     Response manifest(@Context ServletContext context);
 
     @GET

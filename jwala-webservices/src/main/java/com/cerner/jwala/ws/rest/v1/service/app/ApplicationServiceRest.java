@@ -8,6 +8,8 @@ import com.cerner.jwala.service.exception.ApplicationServiceException;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import com.cerner.jwala.ws.rest.v1.service.app.impl.JsonCreateApplication;
 import com.cerner.jwala.ws.rest.v1.service.app.impl.JsonUpdateApplication;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -18,10 +20,16 @@ import javax.ws.rs.core.Response;
 public interface ApplicationServiceRest {
 
     @GET
-    Response getApplications(@QueryParam("group.id") final Identifier<Group> aGroupId);
+    @ApiOperation(value = "Get the data for all of the applications configured for a group",
+            response = Application.class
+    )
+    Response getApplications(@ApiParam(value = "The group ID to query", required = true) @QueryParam("group.id") final Identifier<Group> aGroupId);
 
     @GET
     @Path("/{applicationId}")
+    @ApiOperation(value = "Get the data for all of the applications configured for a group",
+            response = Application.class
+    )
     Response getApplication(@PathParam("applicationId") final Identifier<Application> anAppId);
 
     @GET
