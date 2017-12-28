@@ -61,7 +61,7 @@ apply plugin: 'com.benjaminsproule.swagger'
 swagger {
     apiSource {
         springmvc = false
-        locations = [ 'com.cerner.jwala.ws.rest.v1.service.admin' ]
+        locations = [ 'com.cerner.jwala.ws.rest.v1' ]
         schemes = [ 'https' ]
         host = 'localhost:8001'
         basePath = '/jwala/v1.0'
