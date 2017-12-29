@@ -61,6 +61,7 @@ public interface ApplicationServiceRest {
     @ApiOperation(value = "Update an existing application",
             response = Application.class
     )
+    @ApiResponses(@ApiResponse(code = 500, message = "The application update failed"))
     Response updateApplication(@ApiParam(value = "The updated application configuration to use", required = true) final JsonUpdateApplication appsToUpdate,
                                @BeanParam final AuthenticatedUser aUser) throws ApplicationServiceException;
 
