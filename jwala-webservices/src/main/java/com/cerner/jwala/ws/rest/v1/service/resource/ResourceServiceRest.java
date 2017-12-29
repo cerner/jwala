@@ -1,5 +1,6 @@
 package com.cerner.jwala.ws.rest.v1.service.resource;
 
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
@@ -12,6 +13,7 @@ import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -132,8 +134,8 @@ public interface ResourceServiceRest extends InitializingBean {
     @DELETE
     @Path("/template/{name}")
     @Deprecated
-    @ApiOperation(value = "Delete a resouce",
-            notes = "DEPRECATED METHOD",
+    @ApiOperation(value = "Delete a resource",
+            notes = "DEPRECATED METHOD. Use the /templates API for deleting resources.",
             response = Integer.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Resource not found"))
@@ -151,7 +153,14 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @DELETE
     @Path("/templates")
-    Response deleteResources(@MatrixParam("name") String[] templateNameArray, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, @BeanParam AuthenticatedUser user);
+    @ApiOperation(value = "Delete a resource or mulitple resources",
+            notes = "This is the preferred method for deleting resources",
+            response = Integer.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Resource not found"))
+    Response deleteResources(@ApiParam(value = "The list of the name of the resources to be deleted", required = true) @MatrixParam("name") String[] templateNameArray,
+                             @ApiParam(value = "The parameters that identify the entity associated with the resource to be deleted", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                             @BeanParam AuthenticatedUser user);
 
     /**
      * Get the template content
@@ -162,7 +171,11 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("/{resourceName}/content")
-    Response getResourceContent(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam);
+    @ApiOperation(value = "Get the template content",
+            response = ResourceContent.class
+    )
+    Response getResourceContent(@ApiParam(value = "The name of the resource", required = true) @PathParam("resourceName") String resourceName,
+                                @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam);
 
     /**
      * Update the template content
@@ -174,7 +187,12 @@ public interface ResourceServiceRest extends InitializingBean {
     @PUT
     @Path("/template/{resourceName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    Response updateResourceContent(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, final String content);
+    @ApiOperation(value = "Update the template content",
+            response = String.class
+    )
+    Response updateResourceContent(@ApiParam(value = "The name of the resource to be updated", required = true) @PathParam("resourceName") String resourceName,
+                                   @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                                   @ApiParam(value = "The new resource content", required = true) final String content);
 
     /**
      * Update the template meta data
@@ -186,7 +204,13 @@ public interface ResourceServiceRest extends InitializingBean {
     @PUT
     @Path("/template/metadata/{resourceName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    Response updateResourceMetaData(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, final String metaData);
+    @ApiOperation(value = "Update the template meta data",
+            response = String.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the meta data"))
+    Response updateResourceMetaData(@ApiParam(value = "The name of the resource to be updated", required = true) @PathParam("resourceName") String resourceName,
+                                    @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                                    @ApiParam(value = "The new meta data", required = true) final String metaData);
 
     /**
      * Preview the template content
@@ -197,7 +221,12 @@ public interface ResourceServiceRest extends InitializingBean {
     @PUT
     @Path("/template/preview/{resourceName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    Response previewResourceContent(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, final String content);
+    @ApiOperation(value = "Preview the template content",
+            response = String.class
+    )
+    Response previewResourceContent(@ApiParam(value = "The name of the resource to be updated", required = true) @PathParam("resourceName") String resourceName,
+                                    @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                                    @ApiParam(value = "The content to be previewed", required = true) final String content);
 
     /**
      * Get the key/value pairings for any external properties that were loaded
@@ -208,6 +237,9 @@ public interface ResourceServiceRest extends InitializingBean {
     @Path("/properties")
     // TODO return mime type text/plain
 //    @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Get the key/value pairings for any external properties that were loaded",
+            response = Map.class
+    )
     Response getExternalProperties();
 
     /**
@@ -218,11 +250,17 @@ public interface ResourceServiceRest extends InitializingBean {
     @GET
     @Path("/properties/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @ApiOperation(value = "Return the external properties file as a download",
+            response = File.class
+    )
     Response getExternalPropertiesDownload();
 
     @GET
     @Path("/properties/view")
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Return the external properties as a string",
+            response = String.class
+    )
     Response getExternalPropertiesView();
 
     /**
@@ -233,6 +271,10 @@ public interface ResourceServiceRest extends InitializingBean {
     @POST
     @Path("/properties")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(value = "Upload the external properties file",
+            response = CreateResourceResponseWrapper.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "File exceptions thrown while attempting to upload external properties file"))
     Response uploadExternalProperties(@BeanParam AuthenticatedUser user);
 
     /**
@@ -242,6 +284,9 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("templates/names")
-    Response getResourcesFileNames(@MatrixParam("") final ResourceHierarchyParam resourceHierarchyParam);
+    @ApiOperation(value = "Get the name of any templates that were loaded for a resource",
+            response = String.class
+    )
+    Response getResourcesFileNames(@ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") final ResourceHierarchyParam resourceHierarchyParam);
 
 }
