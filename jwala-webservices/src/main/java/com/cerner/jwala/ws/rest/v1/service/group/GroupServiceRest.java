@@ -71,7 +71,7 @@ public interface GroupServiceRest {
 
     @POST
     @Path("/{groupId}/jvms")
-    @ApiOperation(value = "Add JVMS to group",
+    @ApiOperation(value = "Add JVMs to a group",
             response = Group.class
     )
     Response addJvmsToGroup(@ApiParam(value = "The group ID to query") @PathParam("groupId") final Identifier<Group> aGroupId,
@@ -80,7 +80,7 @@ public interface GroupServiceRest {
 
     @DELETE
     @Path("/{groupId}/jvms/{jvmId}")
-    @ApiOperation(value = "Remove JVMS from group",
+    @ApiOperation(value = "Remove JVMS from a group",
             response = Group.class
     )
     Response removeJvmFromGroup(@ApiParam(value = "The group ID to query") @PathParam("groupId") final Identifier<Group> aGroupId,
@@ -104,7 +104,7 @@ public interface GroupServiceRest {
     @ApiOperation(value = "Generate and deploy group JVM file",
             response = Group.class
     )
-    @ApiResponses(@ApiResponse(code = 500, message = "Failed for web server"))
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed for generate and deploy a group JVM resource file"))
     Response generateAndDeployGroupJvmFile(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName,
                                            @ApiParam(value = "The file name to deploy") @PathParam("fileName") String fileName,
                                            @BeanParam AuthenticatedUser authUser);
@@ -128,7 +128,7 @@ public interface GroupServiceRest {
     @PUT
     @Path("/{groupName}/jvms/resources/preview/{resourceTemplateName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Preview group jvm resource template",
+    @ApiOperation(value = "Preview group JVM resource template",
             response = String.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to preview group JVM resource template"))
@@ -162,7 +162,7 @@ public interface GroupServiceRest {
 
     @GET
     @Path("/{groupName}/webservers/resources/name")
-    @ApiOperation(value = "Get group webservers resource names",
+    @ApiOperation(value = "Get group webserver resource names",
             response = List.class
     )
     Response getGroupWebServersResourceNames(@ApiParam(value = "The group name to query") @PathParam("groupName") final String groupName);
@@ -222,7 +222,7 @@ public interface GroupServiceRest {
     @PUT
     @Path("/{groupName}/{appName}/apps/resources/template/{resourceTemplateName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Update group app resource template",
+    @ApiOperation(value = "Update group application resource template",
             response = String.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to group application resource template"))
@@ -233,7 +233,7 @@ public interface GroupServiceRest {
     @PUT
     @Path("/{groupName}/apps/resources/preview/{resourceTemplateName}/{appName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Get group app resource names",
+    @ApiOperation(value = "Preview group application resource names",
             response = String.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to preview group application resource template"))
@@ -368,14 +368,14 @@ public interface GroupServiceRest {
 
     @GET
     @Path("/{groupName}/jvms/allStopped")
-    @ApiOperation(value = "Are all jvms of a group stopped",
+    @ApiOperation(value = "check if all jvms of a group are stopped",
             response = Map.class
     )
     Response areAllJvmsStopped(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
 
     @GET
     @Path("/{groupName}/webservers/allStopped")
-    @ApiOperation(value = "Are all webservers of a group stopped",
+    @ApiOperation(value = "check if all webservers of a group are stopped",
             response = Map.class
     )
     Response areAllWebServersStopped(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
@@ -410,7 +410,7 @@ public interface GroupServiceRest {
      */
     @GET
     @Path("/{groupName}/state")
-    @ApiOperation(value = "Get group state",
+    @ApiOperation(value = "Get group state of a specific group",
             response = CurrentState.class
     )
     Response getGroupState(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
