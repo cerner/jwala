@@ -6,10 +6,7 @@ import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import com.cerner.jwala.ws.rest.v1.service.jvm.impl.JsonControlJvm;
 import com.cerner.jwala.ws.rest.v1.service.jvm.impl.JsonCreateJvm;
 import com.cerner.jwala.ws.rest.v1.service.jvm.impl.JsonUpdateJvm;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -32,7 +29,7 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Get a single jvm by ID",
             response = Jvm.class
     )
-    Response getJvm(@PathParam("jvmId") final Identifier<Jvm> aJvmId);
+    Response getJvm(@ApiParam(value = "The jvm's ID", required = true) @PathParam("jvmId") final Identifier<Jvm> aJvmId);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -40,7 +37,7 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Jvm already exists"))
-    Response createJvm(JsonCreateJvm jsonCreateJvm, @BeanParam AuthenticatedUser aUser);
+    Response createJvm(@ApiParam(value = "The configuration info for the jvm to be created", required = true) JsonCreateJvm jsonCreateJvm, @BeanParam AuthenticatedUser aUser);
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -48,7 +45,7 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the jvm"))
-    Response updateJvm(JsonUpdateJvm aJvmToUpdate, @QueryParam("updateJvmPassword") boolean updateJvmPassword,
+    Response updateJvm(@ApiParam(value = "The configuration info for the jvm to be updated", required = true) JsonUpdateJvm aJvmToUpdate, @QueryParam("updateJvmPassword") boolean updateJvmPassword,
                        @BeanParam AuthenticatedUser aUser);
 
     @DELETE
@@ -57,7 +54,7 @@ public interface JvmServiceRest {
             response = Response.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Unable to delete jvm"))
-    Response deleteJvm(@PathParam("jvmId") Identifier<Jvm> id, @QueryParam("hardDelete") boolean hardDelete,
+    Response deleteJvm(@ApiParam(value = "The ID of the jvm to be deleted", required = true) @PathParam("jvmId") Identifier<Jvm> id, @ApiParam(value = "Deletes the jvm and its service when set to true; only deletes the jvm when false", required = true) @QueryParam("hardDelete") boolean hardDelete,
                        @BeanParam final AuthenticatedUser user);
 
     /**
@@ -75,10 +72,10 @@ public interface JvmServiceRest {
             response = String.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Jvm operation unsuccessful"))
-    Response controlJvm(@PathParam("jvmId") final Identifier<Jvm> aJvmId,
-                        final JsonControlJvm aJvmToControl,
-                        @QueryParam("wait") Boolean wait,
-                        @QueryParam("timeout") Long waitTimeout,
+    Response controlJvm(@ApiParam(value = "The ID of the jvm", required = true) @PathParam("jvmId") final Identifier<Jvm> aJvmId,
+                        @ApiParam(value = "The control operation to execute", required = true) final JsonControlJvm aJvmToControl,
+                        @ApiParam(value = "If set to true then block the thread until the control operation returns", required = true) @QueryParam("wait") Boolean wait,
+                        @ApiParam(value = "When 'wait=true' set a maximum time to block the thread", required = true) @QueryParam("timeout") Long waitTimeout,
                         @BeanParam final AuthenticatedUser aUser);
 
     /**
@@ -93,7 +90,7 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Remote generation of jvm failed"))
-    Response generateAndDeployJvm(@PathParam("jvmName") final String jvmName,
+    Response generateAndDeployJvm(@ApiParam(value = "The name of the jvm to generated", required = true) @PathParam("jvmName") final String jvmName,
                                   @BeanParam final AuthenticatedUser aUser);
 
     /**
@@ -109,8 +106,8 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to deploy jvm resource"))
-    Response generateAndDeployFile(@PathParam("jvmName") final String jvmName,
-                                   @PathParam("fileName") final String fileName,
+    Response generateAndDeployFile(@ApiParam(value = "The name of the jvm associated with the resource", required = true) @PathParam("jvmName") final String jvmName,
+                                   @ApiParam(value = "The name of the resource to be generated and deployed", required = true) @PathParam("fileName") final String fileName,
                                    @BeanParam final AuthenticatedUser aUser);
 
     /**
@@ -123,14 +120,14 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Initiate a heartbeat followed by an SSH check",
             response = String.class
     )
-    Response diagnoseJvm(@PathParam("jvmId") final Identifier<Jvm> aJvmId, @BeanParam final AuthenticatedUser aUser);
+    Response diagnoseJvm(@ApiParam(value = "The id of the jvm whose state needs to be diagnosed", required = true) @PathParam("jvmId") final Identifier<Jvm> aJvmId, @BeanParam final AuthenticatedUser aUser);
 
     @GET
     @Path("/{jvmName}/resources/name")
     @ApiOperation(value = "Get all the resources corresponding to a specific jvm",
             response = List.class
     )
-    Response getResourceNames(@PathParam("jvmName") final String jvmName);
+    Response getResourceNames(@ApiParam(value = "The name of the jvm for which corresponding all resources are to be obtained", required = true) @PathParam("jvmName") final String jvmName);
 
     /**
      * Get resource template content.
@@ -144,9 +141,9 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Get the template of a file for the given jvm and file name",
             response = String.class
     )
-    Response getResourceTemplate(@PathParam("jvmName") final String jvmName,
-                                 @PathParam("resourceTemplateName") final String resourceTemplateName,
-                                 @QueryParam("tokensReplaced") final boolean tokensReplaced);
+    Response getResourceTemplate(@ApiParam(value = "The name of the jvm", required = true) @PathParam("jvmName") final String jvmName,
+                                 @ApiParam(value = "The name of the resource", required = true) @PathParam("resourceTemplateName") final String resourceTemplateName,
+                                 @ApiParam(value = "If true then return the generated template, else return the raw template", required = true) @QueryParam("tokensReplaced") final boolean tokensReplaced);
 
     @PUT
     @Path("/{jvmName}/resources/template/{resourceTemplateName}")
@@ -156,9 +153,9 @@ public interface JvmServiceRest {
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the template"))
         // TODO: Pass authenticated user.
-    Response updateResourceTemplate(@PathParam("jvmName") final String jvmName,
-                                    @PathParam("resourceTemplateName") final String resourceTemplateName,
-                                    final String content);
+    Response updateResourceTemplate(@ApiParam(value = "The name of the jvm", required = true) @PathParam("jvmName") final String jvmName,
+                                    @ApiParam(value = "The name of the resource", required = true) @PathParam("resourceTemplateName") final String resourceTemplateName,
+                                    @ApiParam(value = "The new content of the resource", required = true) final String content);
 
     /**
      * Request a preview a resource file.
@@ -174,9 +171,9 @@ public interface JvmServiceRest {
             response = String.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Error previewing template"))
-    Response previewResourceTemplate(@PathParam("jvmName") String jvmName,
-                                     @PathParam("resourceTemplateName") final String resourceTemplateName,
-                                     @MatrixParam("groupName") String groupName,
-                                     String template);
+    Response previewResourceTemplate(@ApiParam(value = "The name of the jvm", required = true) @PathParam("jvmName") String jvmName,
+                                     @ApiParam(value = "The name of the resource to preview", required = true) @PathParam("resourceTemplateName") final String resourceTemplateName,
+                                     @ApiParam(value = "The name of the jvm's group", required = true) @MatrixParam("groupName") String groupName,
+                                     @ApiParam(value = "The content to be generated", required = true) String template);
 
 }
