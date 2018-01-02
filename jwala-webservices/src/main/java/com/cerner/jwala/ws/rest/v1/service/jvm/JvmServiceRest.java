@@ -47,6 +47,7 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Update an existing jvm",
             response = Jvm.class
     )
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the jvm"))
     Response updateJvm(JsonUpdateJvm aJvmToUpdate, @QueryParam("updateJvmPassword") boolean updateJvmPassword,
                        @BeanParam AuthenticatedUser aUser);
 
@@ -91,6 +92,7 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Generates and deploy all JVM resource files",
             response = Jvm.class
     )
+    @ApiResponses(@ApiResponse(code = 500, message = "Remote generation of jvm failed"))
     Response generateAndDeployJvm(@PathParam("jvmName") final String jvmName,
                                   @BeanParam final AuthenticatedUser aUser);
 
@@ -106,6 +108,7 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Generates and deploy a single JVM resource file as specified by the fileName",
             response = Jvm.class
     )
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to deploy jvm resource"))
     Response generateAndDeployFile(@PathParam("jvmName") final String jvmName,
                                    @PathParam("fileName") final String fileName,
                                    @BeanParam final AuthenticatedUser aUser);
@@ -151,6 +154,7 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Update an existing jvm template with the new content provided",
             response = String.class
     )
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the template"))
         // TODO: Pass authenticated user.
     Response updateResourceTemplate(@PathParam("jvmName") final String jvmName,
                                     @PathParam("resourceTemplateName") final String resourceTemplateName,
@@ -169,6 +173,7 @@ public interface JvmServiceRest {
     @ApiOperation(value = "View the contents of a jvm resource file",
             response = String.class
     )
+    @ApiResponses(@ApiResponse(code = 500, message = "Error previewing template"))
     Response previewResourceTemplate(@PathParam("jvmName") String jvmName,
                                      @PathParam("resourceTemplateName") final String resourceTemplateName,
                                      @MatrixParam("groupName") String groupName,
