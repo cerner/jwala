@@ -93,7 +93,7 @@ public interface GroupServiceRest {
             response = CommandOutput.class
     )
     Response controlGroupJvms(@ApiParam(value = "The group ID to query") @PathParam("groupId") final Identifier<Group> aGroupId,
-                              @ApiParam(value = "The control group jvms operation") final JsonControlJvm jvmControlOperation,
+                              @ApiParam(value = "The control group JVMs operation") final JsonControlJvm jvmControlOperation,
                               @BeanParam final AuthenticatedUser aUser);
 
     /*********************
@@ -326,49 +326,49 @@ public interface GroupServiceRest {
 
     @GET
     @Path("/children/startedCount")
-    @ApiOperation(value = "Get number of started webservers and jvms count",
+    @ApiOperation(value = "Get number of started webservers and JVMs count",
             response = Long.class
     )
     Response getStartedWebServersAndJvmsCount();
 
     @GET
     @Path("/children/startedAndStoppedCount")
-    @ApiOperation(value = "Get number of started and stopped webservers, jvms count",
+    @ApiOperation(value = "Get number of started and stopped webservers, JVMs count",
             response = Long.class
     )
     Response getStartedAndStoppedWebServersAndJvmsCount();
 
     @GET
     @Path("/{groupName}/children/startedCount")
-    @ApiOperation(value = "Get number of started webservers and jvms count of a group",
+    @ApiOperation(value = "Get number of started webservers and JVMs count of a group",
             response = Long.class
     )
     Response getStartedWebServersAndJvmsCount(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
 
     @GET
     @Path("/{groupName}/children/startedAndStoppedCount")
-    @ApiOperation(value = "Get number of started and stopped webservers, jvms count of a group",
+    @ApiOperation(value = "Get number of started and stopped webservers, JVMs count of a group",
             response = Long.class
     )
     Response getStartedAndStoppedWebServersAndJvmsCount(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
 
     @GET
     @Path("/children/stoppedCount")
-    @ApiOperation(value = "Get stopped webservers and jvms count",
+    @ApiOperation(value = "Get stopped webservers and JVMs count",
             response = Long.class
     )
     Response getStoppedWebServersAndJvmsCount();
 
     @GET
     @Path("/{groupName}/children/stoppedCount")
-    @ApiOperation(value = "Get stopped webservers and jvms count of a group",
+    @ApiOperation(value = "Get stopped webservers and JVMs count of a group",
             response = Long.class
     )
     Response getStoppedWebServersAndJvmsCount(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
 
     @GET
     @Path("/{groupName}/jvms/allStopped")
-    @ApiOperation(value = "check if all jvms of a group are stopped",
+    @ApiOperation(value = "check if all JVMs of a group are stopped",
             response = Map.class
     )
     Response areAllJvmsStopped(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
