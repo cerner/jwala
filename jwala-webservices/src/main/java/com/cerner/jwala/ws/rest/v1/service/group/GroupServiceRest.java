@@ -32,7 +32,7 @@ public interface GroupServiceRest {
             response = Group.class
     )
     Response getGroups(@BeanParam final NameSearchParameterProvider aGroupNameSearch,
-                       @ApiParam(value = "The boolean value to fetch webservers data", required = true) @QueryParam("webServers") final boolean fetchWebServers);
+                       @ApiParam(value = "The boolean value to fetch web servers data", required = true) @QueryParam("webServers") final boolean fetchWebServers);
 
     @GET
     @Path("/{groupIdOrName}")
@@ -153,7 +153,7 @@ public interface GroupServiceRest {
      ****************************/
     @PUT
     @Path("/{groupName}/webservers/conf/{resourceFileName}")
-    @ApiOperation(value = "Generate and deploy group webservers file",
+    @ApiOperation(value = "Generate and deploy group web servers file",
             response = String.class
     )
     Response generateAndDeployGroupWebServersFile(@ApiParam(value = "The group name to query") @PathParam("groupName") final String groupName,
@@ -162,14 +162,14 @@ public interface GroupServiceRest {
 
     @GET
     @Path("/{groupName}/webservers/resources/name")
-    @ApiOperation(value = "Get group webserver resource names",
+    @ApiOperation(value = "Get group web server resource names",
             response = List.class
     )
     Response getGroupWebServersResourceNames(@ApiParam(value = "The group name to query") @PathParam("groupName") final String groupName);
 
     @GET
     @Path("/{groupName}/webservers/resources/template/{resourceTemplateName}")
-    @ApiOperation(value = "Get group webserver resource template",
+    @ApiOperation(value = "Get group web server resource template",
             response = String.class
     )
     Response getGroupWebServerResourceTemplate(@ApiParam(value = "The group name to query") @PathParam("groupName") final String groupName,
@@ -179,25 +179,25 @@ public interface GroupServiceRest {
     @PUT
     @Path("/{groupName}/webservers/resources/preview/{resourceTemplateName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Preview group webserver resource template",
+    @ApiOperation(value = "Preview group web server resource template",
             response = String.class
     )
-    @ApiResponses(@ApiResponse(code = 500, message = "Failed to preview group Webserver resource template"))
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to preview group web server resource template"))
     Response previewGroupWebServerResourceTemplate(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName,
                                                    @ApiParam(value = "The resource template name") @PathParam("resourceTemplateName") final String resourceTemplateName,
-                                                   @ApiParam(value = "The webserver resource resource template") String template);
+                                                   @ApiParam(value = "The web server resource resource template") String template);
 
 
     @PUT
     @Path("/{groupName}/webservers/resources/template/{resourceTemplateName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiOperation(value = "Update group webserver resource template",
+    @ApiOperation(value = "Update group web server resource template",
             response = String.class
     )
-    @ApiResponses(@ApiResponse(code = 500, message = "Failed to update group Webserver resource template"))
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to update group web server resource template"))
     Response updateGroupWebServerResourceTemplate(@ApiParam(value = "The group name to query") @PathParam("groupName") final String groupName,
                                                   @ApiParam(value = "The resource template name") @PathParam("resourceTemplateName") final String resourceTemplateName,
-                                                  @ApiParam(value = "The updated webserver resource template content") final String content);
+                                                  @ApiParam(value = "The updated web server resource template content") final String content);
 
     /********************
      * ** App Template ***
@@ -282,20 +282,20 @@ public interface GroupServiceRest {
 
     @POST
     @Path("/{groupId}/webservers/commands")
-    @ApiOperation(value = "Start all the webservers of a group",
+    @ApiOperation(value = "Start all the web servers of a group",
             response = CommandOutput.class
     )
     Response controlGroupWebservers(@ApiParam(value = "The group ID to query") @PathParam("groupId") final Identifier<Group> aGroupId,
-                                    @ApiParam(value = "The control group operation to start or stop all webservers") final JsonControlWebServer jsonControlWebServer,
+                                    @ApiParam(value = "The control group operation to start or stop all web servers") final JsonControlWebServer jsonControlWebServer,
                                     @BeanParam final AuthenticatedUser aUser);
 
 
     @POST
     @Path("/{groupId}/webservers/conf/deploy")
-    @ApiOperation(value = "Generate group webservers",
+    @ApiOperation(value = "Generate group web servers",
             response = Group.class
     )
-    @ApiResponses(@ApiResponse(code = 500, message = "Failed to generate group webservers"))
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to generate group web servers"))
     Response generateGroupWebservers(@ApiParam(value = "The group ID to query") @PathParam("groupId") final Identifier<Group> aGroupId,
                                      @BeanParam final AuthenticatedUser aUser);
 
@@ -326,42 +326,42 @@ public interface GroupServiceRest {
 
     @GET
     @Path("/children/startedCount")
-    @ApiOperation(value = "Get number of started webservers and JVMs count",
+    @ApiOperation(value = "Get number of started web servers and JVMs count",
             response = Long.class
     )
     Response getStartedWebServersAndJvmsCount();
 
     @GET
     @Path("/children/startedAndStoppedCount")
-    @ApiOperation(value = "Get number of started and stopped webservers, JVMs count",
+    @ApiOperation(value = "Get number of started and stopped web servers, JVMs count",
             response = Long.class
     )
     Response getStartedAndStoppedWebServersAndJvmsCount();
 
     @GET
     @Path("/{groupName}/children/startedCount")
-    @ApiOperation(value = "Get number of started webservers and JVMs count of a group",
+    @ApiOperation(value = "Get number of started web servers and JVMs count of a group",
             response = Long.class
     )
     Response getStartedWebServersAndJvmsCount(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
 
     @GET
     @Path("/{groupName}/children/startedAndStoppedCount")
-    @ApiOperation(value = "Get number of started and stopped webservers, JVMs count of a group",
+    @ApiOperation(value = "Get number of started and stopped web servers, JVMs count of a group",
             response = Long.class
     )
     Response getStartedAndStoppedWebServersAndJvmsCount(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
 
     @GET
     @Path("/children/stoppedCount")
-    @ApiOperation(value = "Get stopped webservers and JVMs count",
+    @ApiOperation(value = "Get stopped web servers and JVMs count",
             response = Long.class
     )
     Response getStoppedWebServersAndJvmsCount();
 
     @GET
     @Path("/{groupName}/children/stoppedCount")
-    @ApiOperation(value = "Get stopped webservers and JVMs count of a group",
+    @ApiOperation(value = "Get stopped web servers and JVMs count of a group",
             response = Long.class
     )
     Response getStoppedWebServersAndJvmsCount(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
@@ -375,7 +375,7 @@ public interface GroupServiceRest {
 
     @GET
     @Path("/{groupName}/webservers/allStopped")
-    @ApiOperation(value = "check if all webservers of a group are stopped",
+    @ApiOperation(value = "check if all web servers of a group are stopped",
             response = Map.class
     )
     Response areAllWebServersStopped(@ApiParam(value = "The group name to query") @PathParam("groupName") String groupName);
