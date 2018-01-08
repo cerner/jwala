@@ -35,7 +35,7 @@ public interface WebServerServiceRest {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create a web server",
+    @ApiOperation(value = "Create a web server on Jwala database, The actual webserver instance on the server is created only after generate operation",
             response = WebServer.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Web Server already exists"))
@@ -53,7 +53,7 @@ public interface WebServerServiceRest {
 
     @DELETE
     @Path("/{webserverId}")
-    @ApiOperation(value = "Delete a web server",
+    @ApiOperation(value = "Delete a web server with the boolean hardDelete, when set to true it will delete web server from services and Jwala database and when set to false it will only delete the web server from Jwala database",
             response = Response.class
     )
     Response deleteWebServer(@ApiParam(value = "The ID of the web server to be deleted", required = true) @PathParam("webserverId") final Identifier<WebServer> id,

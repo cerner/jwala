@@ -33,7 +33,7 @@ public interface JvmServiceRest {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create a JVM",
+    @ApiOperation(value = "Create a JVM on Jwala database, The actual JVM instance on the server is created only after generate operation",
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "JVM already exists"))
@@ -50,7 +50,7 @@ public interface JvmServiceRest {
 
     @DELETE
     @Path("/{jvmId}")
-    @ApiOperation(value = "Delete an existing JVM",
+    @ApiOperation(value = "Delete an existing JVM with the boolean hardDelete, when set to true it will delete JVM from services and Jwala database and when set to false it will only delete the JVM from Jwala database",
             response = Response.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Unable to delete JVM"))
