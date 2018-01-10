@@ -22,7 +22,7 @@ public interface BalancerManagerServiceRest {
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to drain the web servers"))
     Response drainUserGroup(@ApiParam(value = "The name of the group to drain all the web servers", required = true) @PathParam("groupName") String groupName,
                             @ApiParam(value = "The name of the the web servers to drain") String webServerNames,
-                            @BeanParam final AuthUser authUser);
+                            @ApiParam(value = "The authentication details of user") @BeanParam final AuthUser authUser);
 
     @POST
     @Path("/{groupName}/{webServerName}")
@@ -32,14 +32,14 @@ public interface BalancerManagerServiceRest {
     @ApiResponses(@ApiResponse(code = 500, message = "Drain web server error"))
     Response drainUserWebServer(@ApiParam(value = "The name of the group to drain the web server", required = true) @PathParam("groupName") String groupName,
                                 @ApiParam(value = "The name of the web server to drain", required = true) @PathParam("webServerName") String webServerName,
-                                String jvmNames, @BeanParam AuthUser authUser);
+                                String jvmNames, @ApiParam(value = "The authentication details of user") @BeanParam AuthUser authUser);
 
     @POST
     @Path("/jvm/{jvmName}")
     @ApiOperation(value = "Drain a single JVM",
             response = BalancerManagerState.class
     )
-    Response drainUserJvm(@ApiParam(value = "The name of the JVM to drain", required = true) @PathParam("jvmName") String jvmName, @BeanParam AuthUser authUser);
+    Response drainUserJvm(@ApiParam(value = "The name of the JVM to drain", required = true) @PathParam("jvmName") String jvmName, @ApiParam(value = "The authentication details of user") @BeanParam AuthUser authUser);
 
     @POST
     @Path("/jvm/{groupName}/{jvmName}")
@@ -49,7 +49,7 @@ public interface BalancerManagerServiceRest {
     @ApiResponses(@ApiResponse(code = 500, message = "Drain JVM error"))
     Response drainUserGroupJvm(@ApiParam(value = "The JVM's group name", required = true) @PathParam("groupName") String groupName,
                                @ApiParam(value = "The name of the JVM to drain", required = true) @PathParam("jvmName") String jvmName,
-                               @BeanParam AuthUser authUser);
+                               @ApiParam(value = "The authentication details of user") @BeanParam AuthUser authUser);
 
     @GET
     @Path("/{groupName}")
@@ -57,6 +57,6 @@ public interface BalancerManagerServiceRest {
     @ApiOperation(value = "Get the status of any drained web servers and JVMs belonging to the group",
             response = BalancerManagerState.class
     )
-    Response getGroupDrainStatus(@ApiParam(value = "The name of the group to query for the status", required = true) @PathParam("groupName") String groupName, @BeanParam AuthUser authUser);
+    Response getGroupDrainStatus(@ApiParam(value = "The name of the group to query for the status", required = true) @PathParam("groupName") String groupName, @ApiParam(value = "The authentication details of user") @BeanParam AuthUser authUser);
 
 }

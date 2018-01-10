@@ -37,7 +37,8 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "JVM already exists"))
-    Response createJvm(@ApiParam(value = "The configuration info for the JVM to be created", required = true) JsonCreateJvm jsonCreateJvm, @BeanParam AuthenticatedUser aUser);
+    Response createJvm(@ApiParam(value = "The configuration info for the JVM to be created", required = true) JsonCreateJvm jsonCreateJvm,
+                       @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser aUser);
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -45,8 +46,8 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the JVM"))
-    Response updateJvm(@ApiParam(value = "The configuration info for the JVM to be updated", required = true) JsonUpdateJvm aJvmToUpdate, @QueryParam("updateJvmPassword") boolean updateJvmPassword,
-                       @BeanParam AuthenticatedUser aUser);
+    Response updateJvm(@ApiParam(value = "The configuration info for the JVM to be updated", required = true) JsonUpdateJvm aJvmToUpdate, @ApiParam(value = "If set to true then update jvm password") @QueryParam("updateJvmPassword") boolean updateJvmPassword,
+                       @ApiParam(value = "The user authentication details") @BeanParam AuthenticatedUser aUser);
 
     @DELETE
     @Path("/{jvmId}")
@@ -55,7 +56,7 @@ public interface JvmServiceRest {
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Unable to delete JVM"))
     Response deleteJvm(@ApiParam(value = "The ID of the JVM to be deleted", required = true) @PathParam("jvmId") Identifier<Jvm> id, @ApiParam(value = "Deletes the JVM and its service when set to true; only deletes the JVM when false", required = true) @QueryParam("hardDelete") boolean hardDelete,
-                       @BeanParam final AuthenticatedUser user);
+                       @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser user);
 
     /**
      * Control a JVM (e.g. start, stop)
@@ -76,7 +77,7 @@ public interface JvmServiceRest {
                         @ApiParam(value = "The control operation to execute", required = true) final JsonControlJvm aJvmToControl,
                         @ApiParam(value = "If set to true then block the thread until the control operation returns", required = true) @QueryParam("wait") Boolean wait,
                         @ApiParam(value = "When 'wait=true' set a maximum time to block the thread", required = true) @QueryParam("timeout") Long waitTimeout,
-                        @BeanParam final AuthenticatedUser aUser);
+                        @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     /**
      * Generate JVM config files then deploy the JVM.
@@ -91,7 +92,7 @@ public interface JvmServiceRest {
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Remote generation of JVM failed"))
     Response generateAndDeployJvm(@ApiParam(value = "The name of the JVM to generated", required = true) @PathParam("jvmName") final String jvmName,
-                                  @BeanParam final AuthenticatedUser aUser);
+                                  @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     /**
      * Generates and deploy a single JVM resource file as specified by the fileName I presume...have to confirm
@@ -108,7 +109,7 @@ public interface JvmServiceRest {
     @ApiResponses(@ApiResponse(code = 500, message = "Failed to deploy JVM resource"))
     Response generateAndDeployFile(@ApiParam(value = "The name of the JVM associated with the resource", required = true) @PathParam("jvmName") final String jvmName,
                                    @ApiParam(value = "The name of the resource to be generated and deployed", required = true) @PathParam("fileName") final String fileName,
-                                   @BeanParam final AuthenticatedUser aUser);
+                                   @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     /**
      * Initiate a heartbeat followed by an SSH check
@@ -120,7 +121,8 @@ public interface JvmServiceRest {
     @ApiOperation(value = "Initiate a heartbeat followed by an SSH check",
             response = String.class
     )
-    Response diagnoseJvm(@ApiParam(value = "The id of the JVM whose state needs to be diagnosed", required = true) @PathParam("jvmId") final Identifier<Jvm> aJvmId, @BeanParam final AuthenticatedUser aUser);
+    Response diagnoseJvm(@ApiParam(value = "The id of the JVM whose state needs to be diagnosed", required = true) @PathParam("jvmId") final Identifier<Jvm> aJvmId,
+                         @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     @GET
     @Path("/{jvmName}/resources/name")

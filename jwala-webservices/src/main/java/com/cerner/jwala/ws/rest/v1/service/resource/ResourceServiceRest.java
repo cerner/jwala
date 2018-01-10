@@ -2,13 +2,11 @@ package com.cerner.jwala.ws.rest.v1.service.resource;
 
 import com.cerner.jwala.common.domain.model.resource.ResourceContent;
 import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
-import com.cerner.jwala.persistence.jpa.domain.JpaMedia;
 import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
+import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import io.swagger.annotations.*;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.springframework.beans.factory.InitializingBean;
-
-import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -46,7 +44,7 @@ public interface ResourceServiceRest extends InitializingBean {
     @ApiResponses(@ApiResponse(code = 500, message = "Invalid number of attachments"))
     Response createTemplate(@ApiParam(value = "The list of attachments  including the template and the meta data file", required = true) List<Attachment> attachments,
                             @ApiParam(value = "The target entity associated with the template resource", required = true) @PathParam("targetName") final String targetName,
-                            @BeanParam AuthenticatedUser user);
+                            @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     @GET
     @Path("/data")
@@ -141,7 +139,7 @@ public interface ResourceServiceRest extends InitializingBean {
     @ApiResponses(@ApiResponse(code = 500, message = "Resource not found"))
     Response deleteResource(@ApiParam(value = "The name of the resource to be deleted", required = true) @PathParam("name") String templateName,
                             @ApiParam(value = "The target entity associated with the resource to be deleted", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
-                            @BeanParam AuthenticatedUser user);
+                            @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     /**
      * Delete resources.
@@ -160,7 +158,7 @@ public interface ResourceServiceRest extends InitializingBean {
     @ApiResponses(@ApiResponse(code = 500, message = "Resource not found"))
     Response deleteResources(@ApiParam(value = "The list of the name of the resources to be deleted", required = true) @MatrixParam("name") String[] templateNameArray,
                              @ApiParam(value = "The parameters that identify the entity associated with the resource to be deleted", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
-                             @BeanParam AuthenticatedUser user);
+                             @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     /**
      * Get the template content
@@ -275,7 +273,7 @@ public interface ResourceServiceRest extends InitializingBean {
             response = CreateResourceResponseWrapper.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "File exceptions thrown while attempting to upload external properties file"))
-    Response uploadExternalProperties(@BeanParam AuthenticatedUser user);
+    Response uploadExternalProperties(@ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     /**
      * Get the name of any templates that were loaded for a resource

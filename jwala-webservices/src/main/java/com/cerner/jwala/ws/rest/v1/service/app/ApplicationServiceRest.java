@@ -54,7 +54,7 @@ public interface ApplicationServiceRest {
     )
     @ApiResponses(@ApiResponse(code = 500, message = "An application already exists with the provided name"))
     Response createApplication(@ApiParam(value = "The application configuration to use", required = true) final JsonCreateApplication anAppToCreate,
-                               @BeanParam final AuthenticatedUser aUser);
+                               @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -63,7 +63,7 @@ public interface ApplicationServiceRest {
     )
     @ApiResponses(@ApiResponse(code = 500, message = "The application update failed"))
     Response updateApplication(@ApiParam(value = "The updated application configuration to use", required = true) final JsonUpdateApplication appsToUpdate,
-                               @BeanParam final AuthenticatedUser aUser) throws ApplicationServiceException;
+                               @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser) throws ApplicationServiceException;
 
     @DELETE
     @Path("/{applicationId}")
@@ -71,7 +71,7 @@ public interface ApplicationServiceRest {
             response = Response.class
     )
     Response removeApplication(@ApiParam(value = "The application ID to query", required = true) @PathParam("applicationId") final Identifier<Application> anAppToRemove,
-                               @BeanParam final AuthenticatedUser aUser);
+                               @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     @PUT
     @Path("/{applicationId}/war/deploy")
@@ -80,7 +80,7 @@ public interface ApplicationServiceRest {
             response = Application.class
     )
     Response deployWebArchive(@ApiParam(value = "The application ID to query", required = true) @PathParam("applicationId") final Identifier<Application> anAppToGet,
-                              @BeanParam final AuthenticatedUser aUser);
+                              @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     @PUT
     @Path("/{applicationId}/war/deploy/{hostName}")
@@ -121,7 +121,7 @@ public interface ApplicationServiceRest {
                         @ApiParam(value = "The group name to query", required = true) @MatrixParam("groupName") String groupName,
                         @ApiParam(value = "The JVM name to query", required = true) @MatrixParam("jvmName") String jvmName,
                         @ApiParam(value = "The resource template name to query", required = true) @PathParam("resourceTemplateName") String resourceTemplateName,
-                        @BeanParam AuthenticatedUser aUser);
+                        @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser aUser);
 
     @PUT
     @Path("/{appName}/resources/preview/{resourceTemplateName}")
@@ -143,7 +143,7 @@ public interface ApplicationServiceRest {
             response = String.class
     )
     Response deployConf(@ApiParam(value = "The application name to query", required = true) @PathParam("appName") String appName,
-                        @BeanParam AuthenticatedUser aUser,
+                        @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser aUser,
                         @ApiParam(value = "The hostname of the target node") @QueryParam("hostName") String hostName);
 
     @GET
@@ -152,7 +152,7 @@ public interface ApplicationServiceRest {
             response = CommandOutput.class
     )
     Response checkIfFileExists(@ApiParam(value = "The absolute path of the file to check", required = true) @QueryParam("filePath") String filePath,
-                               @BeanParam AuthenticatedUser aUser,
+                               @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser aUser,
                                @ApiParam(value = "The name of the host where the file exists", required = true) @QueryParam("hostName") String hostName);
 
 }

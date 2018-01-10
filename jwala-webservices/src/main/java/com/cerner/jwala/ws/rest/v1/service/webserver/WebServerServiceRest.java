@@ -40,7 +40,7 @@ public interface WebServerServiceRest {
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Web Server already exists"))
     Response createWebServer(@ApiParam(value = "The configuration info for the web server to be created", required = true) final JsonCreateWebServer aWebServerToCreate,
-                             @BeanParam final AuthenticatedUser aUser);
+                             @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -58,7 +58,7 @@ public interface WebServerServiceRest {
     )
     Response deleteWebServer(@ApiParam(value = "The ID of the web server to be deleted", required = true) @PathParam("webserverId") final Identifier<WebServer> id,
                              @ApiParam(value = "Deletes the web server and its service when set to true; only deletes the web server when false", required = true) @QueryParam("hardDelete") boolean hardDelete,
-                             @BeanParam final AuthenticatedUser user);
+                             @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser user);
 
     @POST
     @Path("/{webServerId}/commands")
@@ -68,7 +68,7 @@ public interface WebServerServiceRest {
     @ApiResponses(@ApiResponse(code = 500, message = "Web Server operation unsuccessful"))
     Response controlWebServer(@ApiParam(value = "The ID of the web server", required = true) @PathParam("webServerId") final Identifier<WebServer> aWebServerId,
                               @ApiParam(value = "The control operation to execute", required = true) final JsonControlWebServer aWebServerToControl,
-                              @BeanParam final AuthenticatedUser aUser,
+                              @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser,
                               @ApiParam(value = "If set to true then block the thread until the control operation returns", required = true) @QueryParam("wait") final Boolean wait,
                               @ApiParam(value = "When 'wait=true' set a maximum time to block the thread", required = true) @QueryParam("timeout") final Long waitTimeout);
 
@@ -87,7 +87,7 @@ public interface WebServerServiceRest {
     )
     Response generateAndDeployConfig(@ApiParam(value = "The name of the web server associated with the resource", required = true) @PathParam("webServerName") final String webServerName,
                                      @ApiParam(value = "The name of the resource to be generated and deployed", required = true) @PathParam("fileName") String fileName,
-                                     @BeanParam final AuthenticatedUser aUser);
+                                     @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     @PUT
     @Path("/{webServerName}/conf/deploy")
