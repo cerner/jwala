@@ -24,6 +24,9 @@ var jvmControlService = function() {
         },
         heapDump : function(jvmId) {
             return controlPromise(jvmId, "heapdump");
+        },
+        threadDump : function(jvmId) {
+            return controlPromise(jvmId, "threaddump");
         }
     };
 
