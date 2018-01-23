@@ -198,10 +198,13 @@ public class JvmCommandFactory {
      * @return
      */
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
+        final String trimmedJvmName = StringUtils.deleteWhitespace(jvm.getJvmName());
         final String jvmRootDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' +
                 StringUtils.deleteWhitespace(jvm.getJvmName()) + '/' + jvm.getTomcatMedia().getRootDir())
                 .normalize().toString();
-        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), jvmRootDir, jvm.getJvmName());
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
+        final String dumpFile = "threadDump." + trimmedJvmName + "." + formatter.print(DateTime.now());
+        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), jvmRootDir, jvm.getJvmName(), dumpFile);
     }
 
     /**

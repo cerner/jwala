@@ -748,14 +748,14 @@ var GroupOperationsDataTable = React.createClass({
                 var msg;
                 if (!response.applicationResponseContent.standardError) {
                     msg = response.applicationResponseContent.standardOutput;
-                    var indexOfMessage = msg.indexOf('***message-start***');
-                    var endOfMessage = msg.indexOf('***message-end***');
-                    var message = msg.substring(indexOfMessage, endOfMessage);
-                    if (message.trim() === "") {
+                    var indexOfMessage = msg.indexOf('creating');
+                    var endOfMessage = msg.length
+                    var message = msg.substring(indexOfMessage,endOfMessage);
+                    if (message.trim() === "" || msg.indexOf('Full thread dump Java') === -1) {
                         msg = "Oops! Something went wrong! The JVM might not have been started.";
                         $.errorAlert(msg, "Thread Dump", false);
                     } else {
-                         var url = "jvmCommand?jvmId=" + this.props.data.id.id + "&operation=threadDump";
+                         var url = "jvmCommand?jvmId=" + id.id + "&operation=threadDump";
                          window.open(url)
                          $.alert(message+" on "+host, "Thread Dump", false);
                     }
