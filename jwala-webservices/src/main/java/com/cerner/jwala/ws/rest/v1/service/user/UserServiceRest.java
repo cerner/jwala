@@ -19,7 +19,7 @@ public interface UserServiceRest {
     @ApiOperation(value = "Login to the application",
             response = Response.class
     )
-    @ApiResponses(@ApiResponse(code = 500, message = "Error login"))
+    @ApiResponses(@ApiResponse(code = 401, message = "Error login"))
     Response login(@Context HttpServletRequest request,
                    @ApiParam(value = "The user", required = true) @FormParam("userName") String userName,
                    @ApiParam(value = "The user's password", required = true) @FormParam("password") String password);

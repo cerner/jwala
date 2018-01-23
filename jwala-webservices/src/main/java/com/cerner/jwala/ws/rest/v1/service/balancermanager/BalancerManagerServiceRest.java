@@ -32,7 +32,7 @@ public interface BalancerManagerServiceRest {
     @ApiResponses(@ApiResponse(code = 500, message = "Drain web server error"))
     Response drainUserWebServer(@ApiParam(value = "The name of the group to drain the web server", required = true) @PathParam("groupName") String groupName,
                                 @ApiParam(value = "The name of the web server to drain", required = true) @PathParam("webServerName") String webServerName,
-                                String jvmNames, @ApiParam(value = "The authentication details of user") @BeanParam AuthUser authUser);
+                                @ApiParam(value = "The list of JVM's") String jvmNames, @ApiParam(value = "The authentication details of user") @BeanParam AuthUser authUser);
 
     @POST
     @Path("/jvm/{jvmName}")
