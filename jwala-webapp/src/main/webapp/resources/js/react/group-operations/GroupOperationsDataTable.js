@@ -755,8 +755,6 @@ var GroupOperationsDataTable = React.createClass({
                         msg = "Oops! Something went wrong! The JVM might not have been started.";
                         $.errorAlert(msg, "Thread Dump", false);
                     } else {
-                         var url = "jvmCommand?jvmId=" + id.id + "&operation=threadDump";
-                         window.open(url)
                          $.alert(message+" on "+host, "Thread Dump", false);
                     }
                 } else {
