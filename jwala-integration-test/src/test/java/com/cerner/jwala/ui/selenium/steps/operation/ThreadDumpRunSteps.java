@@ -43,4 +43,11 @@ public class ThreadDumpRunSteps {
         }
     }
 
+    @Then("^I see the thread dump popup$")
+    public void verifyThreadDumpPopup() {
+        assert jwalaUi.isElementExists(By.xpath("//div[contains(text(),'creating thread-dump file at')]"), 60);
+        assert jwalaUi.isElementExists(By.xpath("//div[contains(text(),'thread_dump_reports/threadDumpCONTROL-JVM-TEST-J ')]"));
+    }
+
+
 }

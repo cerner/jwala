@@ -18,13 +18,21 @@ current_time=$(date +"%m-%d-%Y-%T")
 
 if $linux; then
 	echo $(<${JVM_INSTANCE_DIR}/logs/catalina.pid)
-	/usr/bin/sudo -u tomcat ${JAVA_HOME}/bin/jstack $(<${JVM_INSTANCE_DIR}/logs/catalina.pid) 2>&1 | tee  ${JVM_INSTANCE_DIR}/thread_dump_reports/$DUMP_FILE
+	 thread_dump_output=$(/usr/bin/sudo -u tomcat ${JAVA_HOME}/bin/jstack $(<${JVM_INSTANCE_DIR}/logs/catalina.pid) 2>&1 )
+    if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
+	   echo "$thread_dump_output" |tee ${JVM_INSTANCE_DIR}/thread_dump_reports/thread_dump_$current_time
+	   echo "creating thread-dump file at ${JVM_INSTANCE_DIR}/thread_dump_reports/$DUMP_FILE"
+	fi
 
 fi
 
 if $cygwin; then
     export JVMPID=`sc queryex $JVM_NAME | /usr/bin/grep PID | /usr/bin/awk '{ print $3 }'`
-	${JAVA_HOME}/bin/jstack -l ${JVMPID} 2>&1 |tee ${JVM_INSTANCE_DIR}/thread_dump_reports/thread_dump_$current_time
+    thread_dump_output=$(${JAVA_HOME}/bin/jstack -l ${JVMPID} 2>&1 )
+    if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
+       echo "$thread_dump_output" |tee ${JVM_INSTANCE_DIR}/thread_dump_reports/thread_dump_$current_time
+	   echo "creating thread-dump file at ${JVM_INSTANCE_DIR}/thread_dump_reports/$DUMP_FILE"
+	fi
 fi
 
-echo "creating thread-dump file at ${JVM_INSTANCE_DIR}/thread_dump_reports/$DUMP_FILE"
+
