@@ -717,7 +717,7 @@ var GroupOperationsDataTable = React.createClass({
                     msg = "Oops! Something went wrong! The JVM might not have been started.";
                     $.errorAlert(msg, "Heap Dump", false);
                 } else {
-                    $.alert(msg + " on " + host, "Heap Dump", false);
+                    $.alert(msg + " on the host: " + host, "Heap Dump", false);
                 }
             } else {
                 msg = response.applicationResponseContent.execData.standardError;
@@ -748,14 +748,14 @@ var GroupOperationsDataTable = React.createClass({
                 var msg;
                 if (!response.applicationResponseContent.standardError) {
                     msg = response.applicationResponseContent.standardOutput;
-                    var indexOfMessage = msg.indexOf('creating');
+                    var indexOfMessage = msg.indexOf('Creating');
                     var endOfMessage = msg.length
                     var message = msg.substring(indexOfMessage,endOfMessage);
                     if (message.trim() === "" || msg.indexOf('Full thread dump Java') === -1) {
                         msg = "Oops! Something went wrong! The JVM might not have been started.";
                         $.errorAlert(msg, "Thread Dump", false);
                     } else {
-                         $.alert(message+" on "+host, "Thread Dump", false);
+                         $.alert(message+" on the host: "+host, "Thread Dump", false);
                     }
                 } else {
                     msg = response.applicationResponseContent.execData.standardError;
