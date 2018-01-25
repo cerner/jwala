@@ -19,6 +19,8 @@ if $linux; then
     if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
 	   echo "$thread_dump_output" |tee ${DATA_DIR}/$DUMP_FILE
 	   echo "Creating thread-dump file at location: ${DATA_DIR}/$DUMP_FILE, "
+	else
+	   echo "Generation of thread dump failed : $thread_dump_output"
 	fi
 
 fi
@@ -29,6 +31,8 @@ if $cygwin; then
     if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
        echo "$thread_dump_output" |tee ${DATA_DIR}/$DUMP_FILE
 	   echo "Creating Thread Dump file at location : ${DATA_DIR}/$DUMP_FILE, "
+	else
+	   echo "Generation of thread dump failed : $thread_dump_output"
 	fi
 fi
 
