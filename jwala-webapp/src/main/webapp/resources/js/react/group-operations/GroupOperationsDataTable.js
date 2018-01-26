@@ -764,16 +764,8 @@ var GroupOperationsDataTable = React.createClass({
                 $(selector).attr("title", "Last thread dump status: " + msg);
             };
             var threadDumpErrorHandler = function (e) {
-                var errCodeAndMsg;
-                try {
-                    var errCode = JSON.parse(e.responseText).msgCode;
-                    var errMsg = JSON.parse(e.responseText).applicationResponseContent;
-                    errCodeAndMsg = "Error: " + errCode + (errMsg !== "" ? " - " : "") + errMsg;
-                } catch (e) {
-                    errCodeAndMsg = e.responseText;
-                }
-                $.alert(errCodeAndMsg, "Thread Dump Error!", false);
-                $(selector).attr('title', "Last thread dump status: " + errCodeAndMsg);
+                $.errorAlert("Failure to generate thread dump, JVM may not be started", "Thread Dump Error!", false);
+
             };
 
             this.disableEnableThreadDumpButton(selector, requestThreadDump, threadDumpRequestCallback, threadDumpErrorHandler);
