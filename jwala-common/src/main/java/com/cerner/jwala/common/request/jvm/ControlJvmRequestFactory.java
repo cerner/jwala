@@ -24,6 +24,7 @@ public class ControlJvmRequestFactory {
             case DEPLOY_JVM_ARCHIVE: return new DeployArchiveControlJvmRequest(jvm);
             case INSTALL_SERVICE: return new InstallServiceControlJvmRequest(jvm);
             case HEAP_DUMP: return new HeapDumpControlJvmRequest(jvm);
+            case THREAD_DUMP: return new ThreadDumpControlJvmRequest(jvm);
 
             default: throw new UnsupportedJvmControlOperationException(jvmControlOperation);
         }

@@ -92,8 +92,7 @@ var JvmControlPanelWidget = React.createClass({
         this.props.jvmHeapDumpCallback(this.props.data.id, this.refs.heapDumpBtn.getDOMNode(), this.props.data.hostName);
     },
     doThreadDump: function() {
-        var url = "jvmCommand?jvmId=" + this.props.data.id.id + "&operation=threadDump";
-        window.open(url)
+        this.props.jvmThreadDumpCallback(this.props.data.id, this.refs.threadDumpBtn.getDOMNode(), this.props.data.hostName,this.props.data.tomcat);
     },
     diagnose: function() {
         this.props.jvmDiagnoseCallback(this.props.data, this.refs.diagnoseBtn, function(){});
