@@ -93,8 +93,6 @@ var JvmControlPanelWidget = React.createClass({
     },
     doThreadDump: function() {
         this.props.jvmThreadDumpCallback(this.props.data.id, this.refs.threadDumpBtn.getDOMNode(), this.props.data.hostName,this.props.data.tomcat);
-        var url = "jvmCommand?jvmId=" + this.props.data.id.id + "&operation=threadDump";
-        window.open(url)
     },
     diagnose: function() {
         this.props.jvmDiagnoseCallback(this.props.data, this.refs.diagnoseBtn, function(){});
