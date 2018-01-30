@@ -19,7 +19,7 @@ Scenario: Add JVM
     When I click the add jvm button
     And I see the jvm add dialog
     And I fill in the "JVM Name" field with "JVM_X"
-    And I fill in the "JVM Host Name" field with "localhost"
+    And I fill in the "JVM Host Name" field with "host1"
     And I fill in the "JVM HTTP Port" field with "9100"
     And I click the "JVM status path" field to auto generate it
     And I select the "JVM JDK" version "jdk1.8.0_92"
@@ -29,7 +29,7 @@ Scenario: Add JVM
     And I click the jvm add dialog ok button
     Then I see the following jvm details in the jvm table:
         |name      |JVM_X                                  |
-        |host      |localhost                              |
+        |host      |host1                              |
         |group     |GROUP_FOR_...                          |
         |statusPath|https://localhost:91...                |
         |http      |9100                                   |

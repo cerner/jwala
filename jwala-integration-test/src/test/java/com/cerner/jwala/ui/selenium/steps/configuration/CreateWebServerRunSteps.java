@@ -9,6 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Properties;
+
 /**
  * Created by Jedd Cuison on 6/27/2017
  */
@@ -16,6 +18,10 @@ public class CreateWebServerRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
+
+
+    @Autowired
+    private Properties paramProp;
 
     @Given("^I am in the web server tab$")
     public void goToWebServersTab() {
@@ -39,7 +45,8 @@ public class CreateWebServerRunSteps {
 
     @And("^I fill in the \"Host Name\" field with \"(.*)\"$")
     public void setHostName(final String hostName) {
-        jwalaUi.sendKeys(By.name("hostName"), hostName);
+        String actualHostName = paramProp.getProperty(hostName) == null ? hostName : paramProp.getProperty(hostName);
+        jwalaUi.sendKeys(By.name("hostName"), actualHostName);
     }
 
     @And("^I fill in the \"Status Path\" field with \"(.*)\"$")
