@@ -8,6 +8,7 @@ import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Properties;
 
@@ -21,6 +22,7 @@ public class CreateWebServerRunSteps {
 
 
     @Autowired
+    @Qualifier("parameterProperties")
     private Properties paramProp;
 
     @Given("^I am in the web server tab$")

@@ -7,6 +7,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class CreateJvmRunSteps {
     private JwalaUi jwalaUi;
 
     @Autowired
+    @Qualifier("parameterProperties")
     private Properties paramProp;
 
     @Given("^I am in the jvm tab$")
