@@ -103,7 +103,7 @@ public class TearDownStep {
             remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", 10000);
         }
         catch (JschServiceException jsch){
-            LOGGER.info("unable to determine the os, hostname may be invalid");
+            LOGGER.info("Unable to determine the os, hostname may be invalid");
             return;
         }
         LOGGER.info("Executed uname, result = {}", remoteCommandReturnInfo.standardOuput);
