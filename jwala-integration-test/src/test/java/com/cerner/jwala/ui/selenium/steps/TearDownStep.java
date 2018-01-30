@@ -5,6 +5,7 @@ import static com.cerner.jwala.common.domain.model.jvm.JvmState.*;
 
 import com.cerner.jwala.common.exec.RemoteSystemConnection;
 import com.cerner.jwala.common.jsch.JschService;
+import com.cerner.jwala.common.jsch.JschServiceException;
 import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
 import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import cucumber.api.java.After;
@@ -97,8 +98,14 @@ public class TearDownStep {
         final RemoteSystemConnection remoteSystemConnection
                 = new RemoteSystemConnection(sshUser, sshPwd, serviceInfo.host, 22);
 
-        RemoteCommandReturnInfo remoteCommandReturnInfo
-                = jschService.runShellCommand(remoteSystemConnection, "uname", 10000);
+        RemoteCommandReturnInfo remoteCommandReturnInfo = null;
+        try {
+            remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", 10000);
+        }
+        catch (JschServiceException jsch){
+            LOGGER.info("unable to determine the os, hostname may be invalid");
+            return;
+        }
         LOGGER.info("Executed uname, result = {}", remoteCommandReturnInfo.standardOuput);
         final JwalaOsType osType = StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ?
                 JwalaOsType.WINDOWS : JwalaOsType.UNIX;
