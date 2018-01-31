@@ -58,7 +58,7 @@ Feature: Test start, thread dump, heap dump, stop and delete
       # thread dump
     When I click thread dump of jvm "CONTROL-JVM-TEST-J" of the group "CONTROL-JVM-TEST-G"
     Then I don't see the click status tooltip
-    And I see the thread dump popup
+    And I see the thread dump popup for the jvm "ONTROL-JVM-TEST-J" with the message "thread-dump-popup-message"
     And I click the ok button
 
       # test heap dump
