@@ -19,7 +19,7 @@ Scenario: Add JVM
     When I click the add jvm button
     And I see the jvm add dialog
     And I fill in the "JVM Name" field with "JVM_X"
-    And I fill in the "JVM Host Name" field with "host1"
+    And I fill in the "JVM Host Name" field with "localhost"
     And I fill in the "JVM HTTP Port" field with "9100"
     And I click the "JVM status path" field to auto generate it
     And I select the "JVM JDK" version "jdk1.8.0_92"
