@@ -5,28 +5,17 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Properties;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import org.openqa.selenium.*;
-import org.openqa.selenium.remote.*;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class that contains commonly used static methods
