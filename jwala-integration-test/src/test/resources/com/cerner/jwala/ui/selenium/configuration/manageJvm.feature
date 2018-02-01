@@ -29,9 +29,9 @@ Scenario: Add JVM
     And I click the jvm add dialog ok button
     Then I see the following jvm details in the jvm table:
         |name      |JVM_X                                  |
-        |host      |host1                              |
+        |host      |host1                                  |
         |group     |GROUP_FOR_...                          |
-        |statusPath|https://localhost:91...                |
+        |statusPath|https://host1:91...                    |
         |http      |9100                                   |
         |https     |9101                                   |
         |userName  |                                       |
