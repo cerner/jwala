@@ -93,11 +93,9 @@ public class CreateJvmRunSteps {
     @Then("^I see the following jvm details in the jvm table:$")
     public void validateJvm(final Map<String, String> jvmDetails) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + jvmDetails.get("name") + "']"));
-        String actualHost = getPropertyValue(jvmDetails.get("host"));
-        assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + actualHost + "']")));
+        assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + getPropertyValue(jvmDetails.get("host")) + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("group") + "']")));
-        String actualStatusPath = jvmDetails.get("statusPath").replace(jvmDetails.get("host"),actualHost);
-        assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + actualStatusPath + "']")));
+        assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("statusPath") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("http") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//td[text()='" + jvmDetails.get("https") + "']")));
         assertTrue(jwalaUi.isElementExists(By.xpath("//span[text()='" + jvmDetails.get("jdk") + "']")));
