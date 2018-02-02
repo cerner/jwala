@@ -54,7 +54,7 @@ public class TestConfig {
 
     @Bean
     public WebDriverWait getWebDriverWait(final WebDriver driver) {
-        return new WebDriverWait(driver, 20, 100);
+        return new WebDriverWait(driver, 60, 100);
     }
 
     @Bean(name = "parameterProperties")
