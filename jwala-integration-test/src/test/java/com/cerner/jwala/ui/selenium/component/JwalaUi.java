@@ -319,4 +319,13 @@ public class JwalaUi {
             throw new JwalaUiException("Screen shot failed!", e);
         }
     }
+
+    public void clickOk(){
+        click(By.xpath("//*[text()='Ok']"));
+    }
+
+    public void clickYes(){
+        click(By.xpath("//*[text()='Yes']"));
+    }
+
 }

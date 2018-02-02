@@ -23,6 +23,6 @@ public class GenerateWebAppRunSteps {
     @Then("^I see \"(.*)\" web application got deployed successfully$")
     public void checkForSuccessfulResourceDeployment(final String webAppName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='" + webAppName + " resource files deployed successfully']"), 300);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+
     }
 }

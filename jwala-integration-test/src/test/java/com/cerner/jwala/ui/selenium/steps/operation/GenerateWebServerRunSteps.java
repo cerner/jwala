@@ -22,7 +22,7 @@ public class GenerateWebServerRunSteps {
     @Then("^I see that the web servers were successfully generated for group \"(.*)\"$")
     public void checkForTheSuccessfulGenerationOfWebServers(final String groupName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the web servers for " + groupName + "']"), 600);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOk();
     }
 
     @When("^I generate \"(.*)\" web server of \"(.*)\" group$")
@@ -33,6 +33,6 @@ public class GenerateWebServerRunSteps {
     @Then("^I see the web server was successfully generated$")
     public void checkForSuccessfulGenerationOfAWebserver() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully installed the service, and generated and deployed configuration file(s).']"), 600);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOk();
     }
 }
