@@ -62,7 +62,7 @@ $.extend({ errorAlert: function (message, dlgTitle, modal, content) {
                 modal: modal !== undefined ? modal : true,
                 open: function () {
                     $(this).parents(".ui-dialog:first").find(".ui-dialog-titlebar").addClass("ui-state-error");
-                    $(this).parents(".ui-dialog:first").zIndex(999);
+                    // $(this).parents(".ui-dialog:first").zIndex(999);
                 }}).html($.parseHTML(message.replace(/\n/g, "<br>") + detailsHtml));
         }
     }
