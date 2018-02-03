@@ -320,6 +320,7 @@ public class JwalaUi {
         }
     }
 
+    //the dialog box xpaths have been generalized since different popups have different xpaths
     public void clickOk(){
         click(By.xpath("//*[text()='Ok']"));
     }
