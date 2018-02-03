@@ -321,11 +321,11 @@ public class JwalaUi {
     }
 
     public void clickOk(){
-        click(By.xpath("//*[text()='Ok']"));
+        click(By.xpath("//button[text()='Ok']"));
     }
 
     public void clickYes(){
-        click(By.xpath("//*[text()='Yes']"));
+        click(By.xpath("//button[text()='Yes']"));
     }
 
 }
