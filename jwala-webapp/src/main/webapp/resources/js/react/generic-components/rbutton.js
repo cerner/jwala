@@ -23,15 +23,15 @@ var RButton = React.createClass({
         var className;
         var spanClassName;
 
-        if (this.state.busy && this.props.busyClassName !== undefined) {
+        if (this.state.busy && this.props.busyClassName) {
             className = this.props.busyClassName;
             spanClassName = "";
         } else {
-            className = (this.props.className !== undefined) ? this.props.className : "ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
-            spanClassName = (this.props.spanClassName !== undefined) ? this.props.spanClassName : "ui-button-text";
+            className = this.props.className ? this.props.className : "ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only";
+            spanClassName = this.props.spanClassName ? this.props.spanClassName : "ui-button-text";
         }
 
-        var theHoverClassName = (this.props.hoverClassName !== undefined) ? this.props.hoverClassName : "ui-state-hover";
+        var theHoverClassName = this.props.hoverClassName ? this.props.hoverClassName : "ui-state-hover";
         var hoverClassName = this.state.hover ? theHoverClassName : "";
 
         var attr = {className: className + " " + hoverClassName,
@@ -50,7 +50,7 @@ var RButton = React.createClass({
     },
     handleClick: function(e) {
         if (!this.state.busy) {
-            if (this.props.busyClassName !== undefined) {
+            if (this.props.busyClassName) {
                 this.setState({busy: true});
             }
             this.props.onClick(this.doneCallback);
