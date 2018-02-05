@@ -319,4 +319,14 @@ public class JwalaUi {
             throw new JwalaUiException("Screen shot failed!", e);
         }
     }
+
+    //the dialog box xpaths have been generalized since different popups have different xpaths
+    public void clickOk(){
+        click(By.xpath("//*[text()='Ok']"));
+    }
+
+    public void clickYes(){
+        click(By.xpath("//*[text()='Yes']"));
+    }
+
 }

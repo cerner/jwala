@@ -22,7 +22,7 @@ public class JvmControlRunSteps {
 
     @When("^I click the operation's confirm delete JVM dialog yes button$")
     public void clickConfirmJvmDeleteYesButton() {
-        jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
+        jwalaUi.clickYes();
     }
 
     @Then("^I see that \"(.*)\" JVM got deleted successfully from the operations tab$")
