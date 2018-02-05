@@ -320,13 +320,20 @@ public class JwalaUi {
         }
     }
 
-    //the dialog box xpaths have been generalized since different popups have different xpaths
+    public void clickOkWithSpan(){
+        click(By.xpath("//button/span[text()='Ok']"));
+    }
+
     public void clickOk(){
-        click(By.xpath("//*[text()='Ok']"));
+        click(By.xpath("//button[text()='Ok']"));
+    }
+
+    public void clickYesWithSpan(){
+        click(By.xpath("//button/span[text()='Yes']"));
     }
 
     public void clickYes(){
-        click(By.xpath("//*[text()='Yes']"));
+        click(By.xpath("//button[text()='Yes']"));
     }
 
 }

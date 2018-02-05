@@ -188,19 +188,19 @@ public class HandleResourceRunSteps {
     @And("^I click the ok button to override JVM Templates$")
     public void overrideJvmTemplates() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Saving will overwrite all')]"));
-        jwalaUi.clickOk();
+        jwalaUi.clickOkWithSpan();
     }
 
     @And("^I confirm the resource deploy to a host popup$")
     public void confirmDeployToAHost() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Select a host')]"));
-        jwalaUi.clickOk();
+        jwalaUi.clickOkWithSpan();
     }
 
     @And("^I confirm overriding individual instances popup for resourceFile \"(.*)\"$")
     public void confirmOverride(String resource) {
         jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Any previous customizations to an individual instance of \"" + resource + "\" will be overwritten.')]"));
-         jwalaUi.clickYes();
+         jwalaUi.clickYesWithSpan();
     }
 
     @And("^I don't see \"([^\"]*)\" node in the data tree$")

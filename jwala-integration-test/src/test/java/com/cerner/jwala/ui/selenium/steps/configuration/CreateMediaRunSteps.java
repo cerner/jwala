@@ -54,7 +54,7 @@ public class CreateMediaRunSteps {
 
     @And("^I click the add media dialog ok button$")
     public void clickAddMediaOkDialogBtn() {
-        jwalaUi.clickOk();
+        jwalaUi.clickOkWithSpan();
     }
 
     @Then("I see \"(.*)\" in the media table")

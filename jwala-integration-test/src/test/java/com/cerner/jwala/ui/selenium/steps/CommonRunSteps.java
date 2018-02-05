@@ -322,7 +322,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
         handleResourceRunSteps.clickSaveButton("Meta Data");
         if(parameters.get("override").equals("true")){
-            jwalaUi.clickOk();
+            jwalaUi.clickOkWithSpan();
         }
         handleResourceRunSteps.waitForNotification("Saved");
     }
@@ -386,7 +386,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
         handleResourceRunSteps.clickSaveButton("Meta Data");
         //click ok to override popup
-        jwalaUi.clickOk();
+        jwalaUi.clickOkWithSpan();
         handleResourceRunSteps.waitForNotification("Saved");
     }
 
@@ -417,7 +417,7 @@ public class CommonRunSteps {
             jwalaUi.clickYes();
         } else {
             handleResourceRunSteps.clickDeployToAHost();
-            jwalaUi.clickOk();
+            jwalaUi.clickOkWithSpan();
         }
 
     }
