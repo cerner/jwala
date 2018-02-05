@@ -57,7 +57,7 @@ public class SeleniumTestHelper {
             dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
             dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
         }
-        else if(webDriverClass.equalsIgnoreCase(ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER)) {
+        else  {
             dc = DesiredCapabilities.chrome();
         }
 
