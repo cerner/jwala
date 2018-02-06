@@ -40,6 +40,8 @@ public class TearDownStep {
     final String connectionStr;
     final String userName;
     final String password;
+    private static final int CONNECTION_TIMEOUT=300000;
+    private static final int SHORT_CONNECTION_TIMEOUT=10000;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TearDownStep.class);
 
@@ -100,7 +102,7 @@ public class TearDownStep {
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = null;
         try {
-            remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", 10000);
+            remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
         }
         catch (JschServiceException jsch){
             LOGGER.info("Unable to determine the os, hostname may be invalid");
@@ -115,10 +117,10 @@ public class TearDownStep {
             // Stop the service first so that service delete is executed by the OS asap
             switch (osType) {
                 case WINDOWS:
-                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc stop " + serviceInfo.name, 300000);
+                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc stop " + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 case UNIX:
-                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + serviceInfo.name + " stop", 300000);
+                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + serviceInfo.name + " stop", CONNECTION_TIMEOUT);
                     break;
                 default:
                     throw new TearDownException(
@@ -132,10 +134,10 @@ public class TearDownStep {
         if (!serviceInfo.isNew()) {
             switch (osType) {
                 case WINDOWS:
-                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc delete " + serviceInfo.name, 300000);
+                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc delete " + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 case UNIX:
-                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo rm /etc/init.d/" + serviceInfo.name, 300000);
+                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo rm /etc/init.d/" + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 default:
                     throw new TearDownException(
