@@ -414,7 +414,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickDeploy();
         if ("all".equals(parameters.get("deployOption"))) {
             handleResourceRunSteps.clickDeployAll();
-            jwalaUi.clickYes();
+            jwalaUi.clickYesWithSpan();
         } else {
             handleResourceRunSteps.clickDeployToAHost();
             jwalaUi.clickOkWithSpan();
