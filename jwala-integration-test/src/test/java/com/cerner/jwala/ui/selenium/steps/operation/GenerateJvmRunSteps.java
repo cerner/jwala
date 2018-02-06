@@ -18,13 +18,13 @@ public class GenerateJvmRunSteps {
 
     @When("^I click the \"Generate JVMs\" button of group \"(.*)\"$")
     public void clickGenerateJvmsBtnOfGroup(final String groupName) {
-        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//button[span[text()='Generate JVMs']]"));
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr/td//button[text()='Generate JVMs']"));
     }
 
     @Then("^I see that the JVMs were successfully generated for group \"(.*)\"$")
     public void checkForTheSuccessfulGenerationOfJvms(final String groupName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the JVMs for " + groupName + "']"), 1200);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOk();
     }
 
     @When("^I generate \"(.*)\" JVM of \"(.*)\" group$")
@@ -35,13 +35,13 @@ public class GenerateJvmRunSteps {
     @Then("^I see the JVM was successfully generated$")
     public void checkForSuccessfulGenerationIndividualJvm() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated and deployed JVM resource files']"), 1200);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOk();
     }
 
     @And("^I click the yes to generate JVMs under a group \"(.*)\"$")
     public void confirmGenerateJvmUnderAGroup(String groupName) {
         jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Are you sure you want to generate all JVMs under']"));
         jwalaUi.isElementExists(By.xpath("//span[text()='"+groupName+"']"));
-        jwalaUi.click(By.xpath("//button[span[text()='Yes']]"));
+        jwalaUi.clickYes();
     }
 }

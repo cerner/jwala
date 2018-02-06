@@ -38,7 +38,7 @@ public class CreateGroupRunSteps {
 
     @And("^I click the group add dialog ok button$")
     public void clickOkBtn() {
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOkWithSpan();
     }
 
     @Then("^I see \"(.*)\" in the group table$")

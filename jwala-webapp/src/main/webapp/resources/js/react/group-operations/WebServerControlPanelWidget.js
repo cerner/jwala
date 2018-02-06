@@ -4,27 +4,28 @@
 var WebServerControlPanelWidget = React.createClass({
     doneCallback: {},
     render: function() {
-        return <div className="web-server-control-panel-widget">
+        return <div className="ControlPanelWidget">
 
                     <RButton ref="drainBtn"
-                             className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                             className="iconBtn ui-button ui-corner-all"
                              spanClassName="ui-icon ui-icon-drain-custom"
                              onClick={this.webServerDrain}
                              title="Drain"/>
 
                     <RButton ref="stopBtn"
-                            className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
-                            spanClassName="ui-icon ui-icon-stop"
-                            onClick={this.webServerStop}
-                            title="Stop"/>
+                             className="iconBtn ui-button ui-corner-all"
+                             spanClassName="ui-icon ui-icon-stop"
+                             onClick={this.webServerStop}
+                             title="Stop"/>
 
                     <RButton ref="startBtn"
-                             className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                             className="iconBtn ui-button ui-corner-all"
                              spanClassName="ui-icon ui-icon-play"
                              onClick={this.webServerStart}
                              title="Start"/>
 
-                    <RButton className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                    <RButton ref="generateWebServer"
+                             className="iconBtn ui-button ui-corner-all"
                              spanClassName="ui-icon ui-icon-gear-custom"
                              onClick={this.generateServiceAndHttpdConf}
                              title="Generate the httpd.conf and deploy as a service"
@@ -33,7 +34,7 @@ var WebServerControlPanelWidget = React.createClass({
                              busyClassName="busy-button"/>
 
                     <RButton ref="delBtn"
-                             className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                             className="iconBtn ui-button ui-corner-all"
                              spanClassName="ui-icon ui-icon-trash"
                              onClick={this.webServerDelete}
                              title="Delete Web Server"
