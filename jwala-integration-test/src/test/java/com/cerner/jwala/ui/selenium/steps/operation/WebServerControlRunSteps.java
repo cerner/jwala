@@ -36,7 +36,7 @@ public class WebServerControlRunSteps {
     @When("^I click the operation's confirm delete \"(.*)\" web server dialog yes button$")
     public void clickConfirmWebServerDeleteYesButton(final String webServerName) {
         jwalaUi.click(By.xpath("//div[contains(@class, 'ui-dialog') and contains(@style, 'display: block')][div[text()='Are you sure you want to delete web server "
-                + webServerName + "']]//button[span[text()='Yes']]"));
+                + webServerName + "']]//button[text()='Yes']"));
     }
 
     @When("^I click the \"(.*)\" link of web server \"(.*)\" under group \"(.*)\" in the operations tab$")

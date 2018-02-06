@@ -17,7 +17,7 @@ public class StartWebServerRunSteps {
     @When("I click \"Start Web Servers\" button of group \"(.*)\"")
     public void clickStartWebServersOfGroup(final String groupName) {
         jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName +
-                "']]/following-sibling::tr//button[span[text()='Start Web Servers']]"));
+                "']]/following-sibling::tr//button[text()='Start Web Servers']"));
     }
 
     @When("^I click the start button of \"(.*)\" webserver of \"(.*)\" group$")

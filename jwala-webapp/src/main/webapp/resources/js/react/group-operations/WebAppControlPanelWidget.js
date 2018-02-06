@@ -4,8 +4,8 @@
 var WebAppControlPanelWidget = React.createClass({
     doneCallback: {},
     render: function() {
-        return <div className="WebAppControlPanelWidget">
-                   <RButton className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+        return <div className="ControlPanelWidget webApp">
+                   <RButton className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-gear-custom"
                             onClick={this.generateConf}
                             title="Generate and deploy the webapp resources."

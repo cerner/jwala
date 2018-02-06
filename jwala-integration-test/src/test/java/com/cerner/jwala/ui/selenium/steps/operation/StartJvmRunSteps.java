@@ -17,7 +17,7 @@ public class StartJvmRunSteps {
     @When("I click \"Start JVMs\" button of group \"(.*)\"")
     public void clickStartJvmsOfGroup(final String groupName) {
         jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName +
-                "']]/following-sibling::tr//button[span[text()='Start JVMs']]"));
+                "']]/following-sibling::tr//button[text()='Start JVMs']"));
     }
 
     @Then("I see the state of \"(.*)\" JVM of group \"(.*)\" is \"STARTED\"")

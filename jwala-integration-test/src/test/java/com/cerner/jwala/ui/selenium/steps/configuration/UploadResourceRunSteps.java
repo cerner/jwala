@@ -60,7 +60,7 @@ public class UploadResourceRunSteps {
 
     @And("^I click the upload resource dialog ok button$")
     public void clickUploadResourceDlgOkBtn() {
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOkWithSpan();
     }
 
     @And("^I check Upload Meta Data File$")

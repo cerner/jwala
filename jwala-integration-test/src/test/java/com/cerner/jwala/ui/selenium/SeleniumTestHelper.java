@@ -5,28 +5,17 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Properties;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import org.openqa.selenium.*;
-import org.openqa.selenium.remote.*;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class that contains commonly used static methods
@@ -38,6 +27,8 @@ public class SeleniumTestHelper {
     private static final String TEST_PROPERTIES = "selenium/test.properties";
     private static final String DEFAULT_BROWSER_WIDTH = "1500";
     private static final String DEFAULT_BROWSER_HEIGHT = "1000";
+    private static final String SELENIUM_GRID_HUB_URL = "selenium.grid.hub.url";
+    private static final String ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER = "org.openqa.selenium.ie.InternetExplorerDriver";
 
     /**
      * Create an instance of a {@link WebDriver} to facilitate browser based testing
@@ -46,42 +37,42 @@ public class SeleniumTestHelper {
      * @return {@link WebDriver}
      */
     public static WebDriver createWebDriver(final String webDriverClass)   {
-        WebDriver driver = null;
-
+        final WebDriver driver;
 
         // Set the size of the browser
         final Properties properties;
         try {
             properties = SeleniumTestHelper.getProperties();
-        } catch (IOException e) {
-            throw new SeleniumTestCaseException(e);
+        } catch (final IOException e) {
+            throw new SeleniumTestCaseException("Failure to load properties!", e);
         }
-        String browserName = properties.getProperty("browser.name");
-        if (browserName.equals("ie")) {
-            final DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+
+        DesiredCapabilities dc = null;
+
+        // IE specific
+        if (webDriverClass.equalsIgnoreCase(ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER)) {
+            dc = DesiredCapabilities.internetExplorer();
             dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
             dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
             dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
             dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-            URL url;
-            String hubUrl=null;
-            try {
-                hubUrl = (String) getProperties().getProperty("hub.url");
-                hubUrl = hubUrl.replaceAll("\"", "");
-                url = new URL(hubUrl);
-            }
-            catch (IOException io){
-                throw new SeleniumTestCaseException("Unable to get hub url");
-            }
-            driver = new RemoteWebDriver(url, dc);
-        } else if (browserName.equals("chrome")) {
-            try {
-                driver = (WebDriver) Class.forName(webDriverClass).getConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-                throw new SeleniumTestCaseException(e);
-            }
+        } else  {
+            dc = DesiredCapabilities.chrome();
         }
 
+        final String hubUrl;
+        try {
+            hubUrl = getProperties().getProperty(SELENIUM_GRID_HUB_URL);
+            if (StringUtils.isNotEmpty(hubUrl)) {
+                // Driver that runs tests via Selenium Grid
+                driver = new RemoteWebDriver(new URL(hubUrl.replaceAll("\"", "")), dc);
+            } else {
+                driver = (WebDriver) Class.forName(webDriverClass).getConstructor().newInstance();
+            }
+        } catch (final IOException | InstantiationException | IllegalAccessException | InvocationTargetException |
+                       NoSuchMethodException | ClassNotFoundException e) {
+            throw new SeleniumTestCaseException("Failed to create web driver!", e);
+        }
 
         final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
         final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));
