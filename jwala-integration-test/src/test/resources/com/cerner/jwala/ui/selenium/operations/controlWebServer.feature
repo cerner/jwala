@@ -54,7 +54,7 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     And I see an error dialog box that tells me to stop the web server "CONTROL-WEBSERVER-TEST-W"
 
     # we need to close the expected delete web server error message box
-    Given I click the ok button
+    Given I click the ok button for popup in operations tab
 
     # test status
     # disabled to make this feature run successfully in Chrome

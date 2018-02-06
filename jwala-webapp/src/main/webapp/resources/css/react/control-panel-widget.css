@@ -1,0 +1,27 @@
+.ControlPanelWidget > button {
+    margin-right: 3px;
+    float: right !important;
+}
+
+.ControlPanelWidget > .iconBtn {
+    width: 18px !important;
+    height: 22px !important;;
+    padding: 0 0 0 0 !important;
+}
+
+.ControlPanelWidget > .iconBtn span {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-top: 1px;
+}
+
+.ControlPanelWidget > .iconBtn {
+    width: 18px;
+    height: 18px;
+    float: left;
+}
+.ControlPanelWidget.webApp > button {
+    float: left !important;
+    margin-left: 3px !important;
+}

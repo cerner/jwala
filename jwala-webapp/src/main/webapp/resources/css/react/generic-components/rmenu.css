@@ -1,9 +1,11 @@
-.RMenu.subMenu {
+.RMenu .subMenu {
     display: block;
-    top: -1px;
+    top: -0.5px;
     left: 150px;
 }
 
 .RMenu .menuItem {
     white-space: nowrap;
+    padding: 10px 10px 10px 10px;
+    line-height: 1.6em;
 }

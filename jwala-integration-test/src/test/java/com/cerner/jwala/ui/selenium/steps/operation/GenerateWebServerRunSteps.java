@@ -16,13 +16,13 @@ public class GenerateWebServerRunSteps {
 
     @When("^I click the \"Generate Web Servers\" button of group \"(.*)\"$")
     public void clickGenerateWebServersBtnOfGroup(final String groupName) {
-        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//button[span[text()='Generate Web Servers']]"));
+        jwalaUi.clickWhenReady(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr/td//button[text()='Generate Web Servers']"));
     }
 
     @Then("^I see that the web servers were successfully generated for group \"(.*)\"$")
     public void checkForTheSuccessfulGenerationOfWebServers(final String groupName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully generated the web servers for " + groupName + "']"), 600);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOk();
     }
 
     @When("^I generate \"(.*)\" web server of \"(.*)\" group$")
@@ -33,6 +33,6 @@ public class GenerateWebServerRunSteps {
     @Then("^I see the web server was successfully generated$")
     public void checkForSuccessfulGenerationOfAWebserver() {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Successfully installed the service, and generated and deployed configuration file(s).']"), 600);
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOk();
     }
 }

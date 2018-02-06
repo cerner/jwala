@@ -319,4 +319,21 @@ public class JwalaUi {
             throw new JwalaUiException("Screen shot failed!", e);
         }
     }
+
+    public void clickOkWithSpan(){
+        click(By.xpath("//button/span[text()='Ok']"));
+    }
+
+    public void clickOk(){
+        click(By.xpath("//button[text()='Ok']"));
+    }
+
+    public void clickYesWithSpan(){
+        click(By.xpath("//button/span[text()='Yes']"));
+    }
+
+    public void clickYes(){
+        click(By.xpath("//button[text()='Yes']"));
+    }
+
 }

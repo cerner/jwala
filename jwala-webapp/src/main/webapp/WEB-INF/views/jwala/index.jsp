@@ -50,6 +50,7 @@
 <link rel="stylesheet" type="text/css" href="public-resources/css/jquery-ui/button.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/resource-attr-pane.css">
 <link rel="stylesheet" type="text/css" href="public-resources/css/react/resource-pane.css">
+<link rel="stylesheet" type="text/css" href="public-resources/css/react/control-panel-widget.css">
 
 <jsp:include page="/index-page-scripts?devMode=${devMode}"/>
 
