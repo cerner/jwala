@@ -44,7 +44,7 @@ public class ThreadDumpRunSteps {
     }
 
     @Then("^I see the thread dump popup for the jvm \"(.*)\"$")
-    public void verifyThreadDumpPopup(String jvm, String popupMessage) {
+    public void verifyThreadDumpPopup(String jvm) {
         assert this.jwalaUi.isElementExists(By.xpath("//div[contains(text(),'Creating Thread Dump file at location')]"));
         assert this.jwalaUi.isElementExists(By.xpath("//div[contains(text(),'threadDump."+jvm+"')]"));
     }
