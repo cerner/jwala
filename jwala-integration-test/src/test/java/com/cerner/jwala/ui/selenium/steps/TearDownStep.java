@@ -40,8 +40,8 @@ public class TearDownStep {
     final String connectionStr;
     final String userName;
     final String password;
-    private static final int CONNECTION_TIMEOUT=300000;
-    private static final int SHORT_CONNECTION_TIMEOUT=10000;
+    private static final int CONNECTION_TIMEOUT = 300000;
+    private static final int SHORT_CONNECTION_TIMEOUT = 10000;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TearDownStep.class);
 
@@ -92,8 +92,9 @@ public class TearDownStep {
 
     /**
      * Delete an OS service
-     * @param sshUser the ssh user
-     * @param sshPwd the ssh password
+     *
+     * @param sshUser     the ssh user
+     * @param sshPwd      the ssh password
      * @param serviceInfo information on the service to delete
      */
     private void deleteService(String sshUser, String sshPwd, ServiceInfo serviceInfo) {
@@ -101,10 +102,10 @@ public class TearDownStep {
                 = new RemoteSystemConnection(sshUser, sshPwd, serviceInfo.host, 22);
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = null;
+        RemoteCommandReturnInfo remoteCommandReturnInfoForStatus = null;
         try {
             remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
-        }
-        catch (JschServiceException jsch){
+        } catch (JschServiceException jsch) {
             LOGGER.info("Unable to determine the os, hostname may be invalid");
             return;
         }
@@ -118,9 +119,17 @@ public class TearDownStep {
             switch (osType) {
                 case WINDOWS:
                     remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc stop " + serviceInfo.name, CONNECTION_TIMEOUT);
+                    remoteCommandReturnInfoForStatus = jschService.runShellCommand(remoteSystemConnection, "sc query " + serviceInfo.name + "|grep -i STOPPED", CONNECTION_TIMEOUT);
+                    if (null == remoteCommandReturnInfoForStatus.standardOuput || remoteCommandReturnInfoForStatus.standardOuput.equals("")) {
+                        throw new TearDownException("Unable to stop the service" + serviceInfo.name);
+                    }
                     break;
                 case UNIX:
                     remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + serviceInfo.name + " stop", CONNECTION_TIMEOUT);
+                    remoteCommandReturnInfoForStatus = jschService.runShellCommand(remoteSystemConnection, "sudo service " + serviceInfo.name + " status|grep -i STOPPED", CONNECTION_TIMEOUT);
+                    if (null == remoteCommandReturnInfoForStatus.standardOuput || remoteCommandReturnInfoForStatus.standardOuput.equals("")) {
+                        throw new TearDownException("Unable to stop the service" + serviceInfo.name);
+                    }
                     break;
                 default:
                     throw new TearDownException(
@@ -149,6 +158,7 @@ public class TearDownStep {
 
     /**
      * Get stopped web servers from db
+     *
      * @return list of stopped web servers
      * @throws IOException
      * @throws ClassNotFoundException
@@ -169,6 +179,7 @@ public class TearDownStep {
 
     /**
      * Get stopped JVMs from db
+     *
      * @return list of stopped JVMs
      * @throws IOException
      * @throws ClassNotFoundException
