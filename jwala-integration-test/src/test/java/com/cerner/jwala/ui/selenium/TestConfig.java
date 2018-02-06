@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +32,9 @@ public class TestConfig {
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
     private static final String TEST_PROPERTY_PATH = "test.property.path";
     private static final String PARAMETERS_PROPERTIES = "selenium/test.properties";
+    private static final int SLEEP_IN_MILLIS = 100;
+    private static final String WEB_DRIVER_WAIT_TIMEOUT_SEC = "web.driver.wait.timeout.sec";
+    private static final String WEB_DRIVER_WAIT_TIMEOUT_SEC_DEFAULT_VALUE = "60";
 
     public TestConfig() throws SQLException, IOException, ClassNotFoundException {
         // make sure the db is clean before running the tests
@@ -53,8 +55,10 @@ public class TestConfig {
     }
 
     @Bean
-    public WebDriverWait getWebDriverWait(final WebDriver driver) {
-        return new WebDriverWait(driver, 20, 100);
+    public WebDriverWait getWebDriverWait(final WebDriver driver, @Qualifier("parameterProperties") final Properties properties) {
+        final long webDriverWaitTimeoutSec = Long.parseLong(properties.getProperty(WEB_DRIVER_WAIT_TIMEOUT_SEC,
+                WEB_DRIVER_WAIT_TIMEOUT_SEC_DEFAULT_VALUE));
+        return new WebDriverWait(driver, webDriverWaitTimeoutSec, SLEEP_IN_MILLIS);
     }
 
     @Bean(name = "parameterProperties")

@@ -12,7 +12,7 @@
 ### in Gradle
 Running a test
 ```ssh
-$ gradle clean test -Dtest.single=JwalaUiMainTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=d:/jwala-ui-integ-test-support-files/drivers/chromedriver.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test.properties -PjwalaIntegrationTest
+$ gradle clean test -Dtest.single=SecurityTest -Dwebdriver.class=org.openqa.selenium.chrome.ChromeDriver -Dwebdriver.chrome.driver=d:/jwala-ui-integ-test-support-files/drivers/chromedriver.exe -Dtest.property.path=d:/jwala-ui-integ-test-support-files/properties/test-localhost.properties -PjwalaIntegrationTest
 ```
 
 For IE
@@ -59,5 +59,12 @@ on execution
 23. Copy the jwala-ui-integ-test-support-files directory and its content to the slave (e.g. d:\jwala-ui-integ-test-support-files)
 23. Run the job, you should see the job under the slave Jenkins (node)
 
+# Running with Selenium Grid
+
+To run with selenium grid add the following to the test properties file e.g. test-localhost.properties
+
+```
+selenium.grid.hub.url=http://[host]:4444/wd/hub
+``` 
 
 

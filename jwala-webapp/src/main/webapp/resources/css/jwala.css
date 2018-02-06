@@ -187,3 +187,7 @@ div.preload {
 .btnAppsDeploy {
     padding: 4px;
 }
+
+.ui-button {
+    padding: 2px 1px 2px 1px !important;
+}

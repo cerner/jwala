@@ -82,7 +82,7 @@ public class CreateJvmRunSteps {
 
     @And("^I click the jvm add dialog ok button$")
     public void clickOkBtn() {
-        jwalaUi.click(By.xpath("//span[text()='Ok']"));
+        jwalaUi.clickOkWithSpan();
     }
 
     @Then("^I see \"(.*)\" in the jvm table$")

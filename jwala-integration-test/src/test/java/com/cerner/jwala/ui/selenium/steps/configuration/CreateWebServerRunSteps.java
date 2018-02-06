@@ -83,7 +83,7 @@ public class CreateWebServerRunSteps {
 
     @And("^I click the add web server dialog ok button$")
     public void clickAddWebServerDialogOkBtn() throws InterruptedException {
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOkWithSpan();
     }
 
     @Then("^I see \"(.*)\" in the webserver table$")
