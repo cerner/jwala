@@ -48,7 +48,7 @@ public class CreateWebAppRunSteps {
 
     @And("^I click the add web app dialog ok button$")
     public void clickAddDialogOkBtn() {
-        jwalaUi.clickOk();
+        jwalaUi.clickOkWithSpan();
     }
 
     @And("^I see the following web app details in the web app table:$")
