@@ -170,9 +170,9 @@ public class CommonRunSteps {
         uploadResourceRunSteps.expandNode("JVMs");
         uploadResourceRunSteps.clickNode(parameters.get("jvm"));
         uploadResourceRunSteps.clickAddResourceBtn();
-        uploadResourceRunSteps.setDeployName(parameters.get("deployName"));
+        uploadResourceRunSteps.setDeployName(getPropertyValue(parameters.get("deployName")));
         uploadResourceRunSteps.setDeployPath(parameters.get("deployPath"));
-        uploadResourceRunSteps.selectResourceFile(parameters.get("templateName"));
+        uploadResourceRunSteps.selectResourceFile(getPropertyValue(parameters.get("templateName")));
         uploadResourceRunSteps.clickUploadResourceDlgOkBtn();
         uploadResourceRunSteps.checkForSuccessfulResourceUpload();
     }
