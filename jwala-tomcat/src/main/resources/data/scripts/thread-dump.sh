@@ -20,7 +20,7 @@ if $linux; then
 	thread_dump_output=$(/usr/bin/sudo -u tomcat ${JAVA_HOME}/bin/jstack $(<${JVM_INSTANCE_DIR}/logs/catalina.pid) 2>&1 )
     if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
 	   echo "$thread_dump_output" |tee ${DATA_DIR}/$DUMP_FILE
-	   echo "Creating thread-dump file at location: ${DATA_DIR}/$DUMP_FILE, "
+	   echo "Creating Thread Dump file at location : ${DATA_DIR}/$DUMP_FILE, "
 	   exit $JWALA_EXIT_CODE_SUCCESS
 	else
 	   echo "Generation of thread dump failed : $thread_dump_output"

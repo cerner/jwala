@@ -5,6 +5,8 @@ package com.cerner.jwala.ui.selenium.steps;
  */
 public class TearDownException extends RuntimeException {
 
+    public TearDownException(final String message) { super(message); }
+
     public TearDownException(final String message, final Throwable cause) {
         super(message, cause);
     }
