@@ -46,16 +46,9 @@ test {
 }
 
 
-/*** Gradle plugin for creating Swagger artifact ***/
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.benjaminsproule:swagger-gradle-plugin:+'
-    }
+plugins {
+    id 'com.benjaminsproule.swagger' version '1.0.0'
 }
-
 apply plugin: 'com.benjaminsproule.swagger'
 
 swagger {
