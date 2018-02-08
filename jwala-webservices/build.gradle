@@ -1,5 +1,5 @@
 plugins {
-    id "com.benjaminsproule.swagger" version "1.0.0"
+    id "com.benjaminsproule.swagger" version "0.1.9"
 }
 description "The module exposes the REST webservices to the Jwala UI and other clients"
 
