@@ -1,3 +1,6 @@
+plugins {
+    id "com.benjaminsproule.swagger" version "1.0.0"
+}
 description "The module exposes the REST webservices to the Jwala UI and other clients"
 
 sourceCompatibility = 1.8
@@ -46,10 +49,7 @@ test {
 }
 
 
-plugins {
-    id 'com.benjaminsproule.swagger' version '1.0.0'
-}
-apply plugin: 'com.benjaminsproule.swagger'
+
 
 swagger {
     apiSource {
