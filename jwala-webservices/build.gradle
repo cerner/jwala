@@ -1,3 +1,6 @@
+plugins {
+    id "com.benjaminsproule.swagger" version "0.1.9"
+}
 description "The module exposes the REST webservices to the Jwala UI and other clients"
 
 sourceCompatibility = 1.8
@@ -46,17 +49,7 @@ test {
 }
 
 
-/*** Gradle plugin for creating Swagger artifact ***/
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.benjaminsproule:swagger-gradle-plugin:+'
-    }
-}
 
-apply plugin: 'com.benjaminsproule.swagger'
 
 swagger {
     apiSource {
