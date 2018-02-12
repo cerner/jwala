@@ -1,8 +1,5 @@
 package com.cerner.jwala.ui.selenium.steps;
 
-import static com.cerner.jwala.common.domain.model.webserver.WebServerReachableState.*;
-import static com.cerner.jwala.common.domain.model.jvm.JvmState.*;
-
 import com.cerner.jwala.common.exec.RemoteSystemConnection;
 import com.cerner.jwala.common.jsch.JschService;
 import com.cerner.jwala.common.jsch.JschServiceException;
@@ -21,6 +18,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static com.cerner.jwala.common.domain.model.jvm.JvmState.JVM_NEW;
+import static com.cerner.jwala.common.domain.model.jvm.JvmState.JVM_STARTED;
+import static com.cerner.jwala.common.domain.model.webserver.WebServerReachableState.WS_NEW;
+import static com.cerner.jwala.common.domain.model.webserver.WebServerReachableState.WS_REACHABLE;
 
 /**
  * Created by Jedd Cuison on 8/7/2017
@@ -146,6 +148,7 @@ public class TearDownStep {
                     remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc delete " + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 case UNIX:
+                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "chkconfig --del " + serviceInfo.name, CONNECTION_TIMEOUT);
                     remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo rm /etc/init.d/" + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 default:
