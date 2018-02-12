@@ -148,7 +148,7 @@ public class TearDownStep {
                     remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc delete " + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 case UNIX:
-                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "chkconfig --del " + serviceInfo.name, CONNECTION_TIMEOUT);
+                    remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo chkconfig --del " + serviceInfo.name, CONNECTION_TIMEOUT);
                     remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo rm /etc/init.d/" + serviceInfo.name, CONNECTION_TIMEOUT);
                     break;
                 default:
