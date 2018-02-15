@@ -156,9 +156,6 @@ var DataTableButton = React.createClass({
                         $("#" + self.props.id).removeClass("ui-state-hover");
                     }
                 });
-            } else {
-                $("#" + self.props.id).off("mouseover");
-                $("#" + self.props.id).on("mouseover", DataTableButton.hoverCallback.bind(self, self.props.id, theLabel));
             }
         }
     }

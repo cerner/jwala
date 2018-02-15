@@ -1,5 +1,9 @@
 /* Override default theme button css */
 
+button {
+    font-weight: normal !important; /* By default make all buttons to have normal font-weight */
+}
+
 .ui-button-text-only .ui-button-text {
     padding: .2em .5em;
     font-weight: normal;

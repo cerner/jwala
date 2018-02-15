@@ -26,8 +26,6 @@
 <link rel="stylesheet" type="text/css" href="public-resources/css/adjustable-table-col.css">
 
 <link rel="stylesheet" type="text/css" href="public-resources/css/themes/${cookie['theme'] == null ? 'redmond' : cookie['theme'].value}/jquery-ui.min.css">
-<link rel="stylesheet" type="text/css" href="public-resources/css/themes/${cookie['theme'] == null ? 'redmond' : cookie['theme'].value}/jquery-ui.structure.min.css">
-<link rel="stylesheet" type="text/css" href="public-resources/css/themes/${cookie['theme'] == null ? 'redmond' : cookie['theme'].value}/jquery-ui.theme.min.css">
 
 <link rel="stylesheet" type="text/css" href="public-resources/css/jquery.dataTables.css">
 
