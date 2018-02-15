@@ -38,3 +38,15 @@
 .accordion-title-text-position {
     left: 1.8em;
 }
+
+div.ui-accordion-header span.ui-accordion-header-icon.ui-icon.ui-icon-triangle-1-s {
+    float: left;
+    margin-left: -16px;
+    margin-top: 2px;
+}
+
+div.ui-accordion-header span.ui-accordion-header-icon.ui-icon.ui-icon-triangle-1-e {
+    float: left;
+    margin-left: -16px;
+    margin-top: 2px;
+}
