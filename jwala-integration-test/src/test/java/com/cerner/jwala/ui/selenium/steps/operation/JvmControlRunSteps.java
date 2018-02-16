@@ -33,6 +33,7 @@ public class JvmControlRunSteps {
     private Properties props;
 
     private static final int SHORT_CONNECTION_TIMEOUT = 10000;
+    private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
     private final static Logger LOGGER = LoggerFactory.getLogger(JvmControlRunSteps.class);
 
     @When("^I click the \"(.*)\" button of JVM \"(.*)\" under group \"(.*)\" in the operations tab$")
