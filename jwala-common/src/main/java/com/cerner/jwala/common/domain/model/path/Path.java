@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -20,6 +22,8 @@ import java.util.regex.Pattern;
  * 
  */
 public class Path implements Serializable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Path.class);
 
     public static final String HTTP = "http";
     private static final Pattern ABSOLUTE_REG_EX = Pattern.compile("^(([a-zA-Z]:)|([\\/])).*");
@@ -110,6 +114,7 @@ public class Path implements Serializable {
             new URL(path);
             return true;
         } catch (final MalformedURLException e) {
+            LOGGER.error("{} is an invalid URL!", path,e);
             return false;
         }
     }
@@ -119,6 +124,8 @@ public class Path implements Serializable {
             new URI(protocol, null, hostName, port, path, StringUtils.EMPTY, StringUtils.EMPTY);
             return true;
         } catch (final URISyntaxException e) {
+            LOGGER.error("Failed to create a valid URI using the parameters: {}, {}, {} and {}!",
+                         protocol, hostName, port, path, e);
             return false;
         }
     }
