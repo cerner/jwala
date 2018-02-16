@@ -216,12 +216,12 @@ public class FileUtility {
             return DigestUtils.sha256Hex(fileInputStream);
         } catch (FileNotFoundException e) {
             final String errMsg = MessageFormat.format("Failed to get the checksum for non-existent file: {0}", fileAbsolutePath);
-            LOGGER.error(errMsg);
-            throw new FileUtilityException(errMsg);
+            LOGGER.error(errMsg, e);
+            throw new FileUtilityException(errMsg, e);
         } catch (IOException e) {
             final String errMsg = MessageFormat.format("Failed to generate the checksum while reading file: {0}", fileAbsolutePath);
-            LOGGER.error(errMsg);
-            throw new FileUtilityException(errMsg);
+            LOGGER.error(errMsg, e);
+            throw new FileUtilityException(errMsg, e);
         } finally {
             IOUtils.closeQuietly(fileInputStream);
         }
