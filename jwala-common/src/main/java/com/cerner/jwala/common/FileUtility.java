@@ -29,10 +29,8 @@ import java.util.zip.ZipFile;
  */
 @Component
 public class FileUtility {
-    private static final String ZIP_FILE_EXT = ".zip";
     private static final String TAR_GZIP_FILE_EXT = "gz";
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtility.class);
-    private ZipFile zipFile;
 
     /**
      * Unzips the file to the specified destination
