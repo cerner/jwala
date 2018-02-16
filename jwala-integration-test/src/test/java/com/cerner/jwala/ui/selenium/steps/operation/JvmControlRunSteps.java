@@ -36,25 +36,6 @@ public class JvmControlRunSteps {
     private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
     private final static Logger LOGGER = LoggerFactory.getLogger(JvmControlRunSteps.class);
 
-    final String sshUser;
-    final String sshPwd;
-    final String jvmHostname;
-
-    public JvmControlRunSteps() {
-        // indirectly required by JschServiceImpl via use of ApplicationProperties
-        System.setProperty("PROPERTIES_ROOT_PATH", this.getClass().getResource("/selenium/vars.properties").getPath()
-                .replace("/vars.properties", ""));
-
-        sshUser = props.getProperty("ssh.user.name");
-        sshPwd = props.getProperty("ssh.user.pwd");
-        jvmHostname = props.getProperty("host1");
-
-        assert StringUtils.isNotEmpty(sshUser);
-        assert StringUtils.isNotEmpty(sshPwd);
-        assert StringUtils.isNotEmpty(jvmHostname);
-
-    }
-
     @When("^I click the \"(.*)\" button of JVM \"(.*)\" under group \"(.*)\" in the operations tab$")
     public void clickControlJvmBtn(final String buttonTitle, final String jvmName, final String groupName) {
         jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
@@ -75,6 +56,18 @@ public class JvmControlRunSteps {
     }
 
     private void checkJVMServiceDeleteWasSuccessful(String jvmName) {
+
+        // indirectly required by JschServiceImpl via use of ApplicationProperties
+        System.setProperty("PROPERTIES_ROOT_PATH", this.getClass().getResource("/selenium/vars.properties").getPath()
+                .replace("/vars.properties", ""));
+
+        final String sshUser = props.getProperty("ssh.user.name");
+        final String sshPwd = props.getProperty("ssh.user.pwd");
+        final String jvmHostname = props.getProperty("host1");
+
+        assert StringUtils.isNotEmpty(sshUser);
+        assert StringUtils.isNotEmpty(sshPwd);
+        assert StringUtils.isNotEmpty(jvmHostname);
 
         final RemoteSystemConnection remoteSystemConnection
                 = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
