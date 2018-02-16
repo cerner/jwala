@@ -5,6 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ import java.util.zip.ZipFile;
 @Component
 public class FileUtility {
     private static final String ZIP_FILE_EXT = ".zip";
-    private static final String TAR_GZIP_FILE_EXT = ".gz";
+    private static final String TAR_GZIP_FILE_EXT = "gz";
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtility.class);
     private ZipFile zipFile;
 
@@ -100,7 +101,7 @@ public class FileUtility {
     public Set<String> getZipRootDirs(final String zipFilename) {
         final Set<String> zipRootDirs = new HashSet<>();
         try {
-            if (zipFilename.indexOf(TAR_GZIP_FILE_EXT) > 0) {
+            if (TAR_GZIP_FILE_EXT.equalsIgnoreCase(FilenameUtils.getExtension(zipFilename))) {
                 return getGZipRootDirs(zipFilename);
             }
             final ZipFile zipFile = new ZipFile(zipFilename);
