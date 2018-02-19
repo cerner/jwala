@@ -72,7 +72,7 @@ public class JvmControlRunSteps {
         final RemoteSystemConnection remoteSystemConnection
                 = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
 
-        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runExecCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
         final JwalaOsType osType = StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ? JwalaOsType.WINDOWS : JwalaOsType.UNIX;
 
         if (osType.equals(JwalaOsType.WINDOWS)) {
