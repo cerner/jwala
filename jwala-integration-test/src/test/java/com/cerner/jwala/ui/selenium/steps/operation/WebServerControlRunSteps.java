@@ -57,12 +57,13 @@ public class WebServerControlRunSteps {
             count++;
             try {
                 verifyProperConfFile();
+                break;
             } catch (TimeoutException exception) {
-
                 if(count ==3){
                     throw exception;
                 }
             }
+
         }
     }
 
