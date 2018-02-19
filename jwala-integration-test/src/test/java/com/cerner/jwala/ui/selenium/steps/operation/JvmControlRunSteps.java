@@ -72,7 +72,7 @@ public class JvmControlRunSteps {
         LOGGER.error("sshUser {}, sshPwd ***{}***, host {}", sshUser, sshPwd.charAt(0), jvmHostname);
 
         final RemoteSystemConnection remoteSystemConnection
-                = new RemoteSystemConnection(sshUser, sshPwd.toCharArray(), jvmHostname, 22);
+                = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
         LOGGER.error("uname: " + remoteCommandReturnInfo);
