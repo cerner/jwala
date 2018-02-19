@@ -69,6 +69,8 @@ public class JvmControlRunSteps {
         assert StringUtils.isNotEmpty(sshPwd);
         assert StringUtils.isNotEmpty(jvmHostname);
 
+        LOGGER.error("sshUser {0}, sshPwd ***{1}***, host {2}", sshUser, sshPwd.charAt(0), jvmHostname);
+
         final RemoteSystemConnection remoteSystemConnection
                 = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
 
