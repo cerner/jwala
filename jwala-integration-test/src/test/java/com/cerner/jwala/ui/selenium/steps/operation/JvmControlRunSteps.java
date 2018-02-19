@@ -62,17 +62,17 @@ public class JvmControlRunSteps {
                 .replace("/vars.properties", ""));
 
         final String sshUser = props.getProperty("ssh.user.name");
-        final String sshPwd = props.getProperty("ssh.user.pwd");
+        final String sshEncPwd = props.getProperty("ssh.user.enc.pwd");
         final String jvmHostname = props.getProperty("host1");
 
         assert StringUtils.isNotEmpty(sshUser);
-        assert StringUtils.isNotEmpty(sshPwd);
+        assert StringUtils.isNotEmpty(sshEncPwd);
         assert StringUtils.isNotEmpty(jvmHostname);
 
-        LOGGER.error("sshUser {}, sshPwd ***{}***, host {}", sshUser, sshPwd.charAt(0), jvmHostname);
+        LOGGER.error("sshUser {}, sshPwd ***{}***, host {}", sshUser, sshEncPwd.charAt(0), jvmHostname);
 
         final RemoteSystemConnection remoteSystemConnection
-                = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
+                = new RemoteSystemConnection(sshUser, sshEncPwd.toCharArray(), jvmHostname, 22);
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runExecCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
         LOGGER.error("uname: " + remoteCommandReturnInfo);
