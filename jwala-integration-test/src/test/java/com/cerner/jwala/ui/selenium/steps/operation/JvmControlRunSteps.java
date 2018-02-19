@@ -73,10 +73,12 @@ public class JvmControlRunSteps {
                 = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runExecCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
+        LOGGER.error("uname: " + remoteCommandReturnInfo);
         final JwalaOsType osType = StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ? JwalaOsType.WINDOWS : JwalaOsType.UNIX;
 
         if (osType.equals(JwalaOsType.WINDOWS)) {
             remoteCommandReturnInfo = jschService.runExecCommand(remoteSystemConnection, "sc queryex " + jvmName, SHORT_CONNECTION_TIMEOUT);
+            LOGGER.error("sc queryex: " + remoteCommandReturnInfo);
             if (!remoteCommandReturnInfo.standardOuput.contains("The specified service does not exist as an installed service")) {
                 throw new SeleniumTestCaseException("Failed to delete JVM service " + jvmName + " on host " + jvmHostname);
             } else {
@@ -85,12 +87,14 @@ public class JvmControlRunSteps {
 
         } else {
             remoteCommandReturnInfo = jschService.runExecCommand(remoteSystemConnection, "sudo chkconfig --list " + jvmName, SHORT_CONNECTION_TIMEOUT);
+            LOGGER.error("chkconfig: " + remoteCommandReturnInfo);
             if (!remoteCommandReturnInfo.standardOuput.contains("error reading information on service " + jvmName + ": No such file or directory")) {
                 throw new SeleniumTestCaseException("Failed to delete JVM " + jvmName + " from runlevel on host " + jvmHostname);
             } else {
                 LOGGER.info("STD_OUT chkconfig::" + remoteCommandReturnInfo.standardOuput);
             }
             remoteCommandReturnInfo = jschService.runExecCommand(remoteSystemConnection, "sudo service " + jvmName + " status", SHORT_CONNECTION_TIMEOUT);
+            LOGGER.error("servuce: " + remoteCommandReturnInfo);
             if (!remoteCommandReturnInfo.standardOuput.contains(jvmName + ": unrecognized service")) {
                 throw new SeleniumTestCaseException("Failed to delete JVM service " + jvmName + " on host " + jvmHostname);
             } else {
