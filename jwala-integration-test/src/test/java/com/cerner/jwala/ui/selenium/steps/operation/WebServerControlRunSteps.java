@@ -31,11 +31,11 @@ public class WebServerControlRunSteps {
 
 
     @Autowired
-    private static JschService jschService;
+    private JschService jschService;
 
     @Autowired
     @Qualifier("seleniumTestProperties")
-    private static Properties props;
+    private Properties props;
 
     @When("^I click the \"(.*)\" button of web server \"(.*)\" under group \"(.*)\" in the operations tab$")
     public void clickControlWebServerBtn(final String buttonTitle, final String webServerName, final String groupName) {

@@ -20,11 +20,11 @@ public class JvmControlRunSteps {
     private JwalaUi jwalaUi;
 
     @Autowired
-    private static JschService jschService;
+    private JschService jschService;
 
     @Autowired
     @Qualifier("seleniumTestProperties")
-    private static Properties props;
+    private Properties props;
 
     @When("^I click the \"(.*)\" button of JVM \"(.*)\" under group \"(.*)\" in the operations tab$")
     public void clickControlJvmBtn(final String buttonTitle, final String jvmName, final String groupName) {
