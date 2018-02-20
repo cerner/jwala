@@ -147,7 +147,9 @@ public class SeleniumTestHelper {
         }
 
         // Restore the properties root path
-        System.setProperty("PROPERTIES_ROOT_PATH", originalPropertiesRootPath);
+        if (null != originalPropertiesRootPath) {
+            System.setProperty("PROPERTIES_ROOT_PATH", originalPropertiesRootPath);
+        }
     }
 
     private static void checkLinuxService(String serviceName, String hostname, RemoteSystemConnection remoteSystemConnection) {
