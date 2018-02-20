@@ -1,5 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.operation;
 
+import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -57,6 +58,7 @@ public class WebServerControlRunSteps {
         jwalaUi.waitUntilElementIsVisible(
                 By.xpath("//div[text()='Web server " + webServerName
                         + " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.']"));
+        SeleniumTestHelper.checkServiceDeleteWasSuccessful(webServerName);
     }
 
     @Then("^I see the httpd.conf$")

@@ -1,5 +1,9 @@
 package com.cerner.jwala.ui.selenium;
 
+import com.cerner.jwala.common.exec.RemoteSystemConnection;
+import com.cerner.jwala.common.jsch.JschService;
+import com.cerner.jwala.common.jsch.RemoteCommandReturnInfo;
+import com.cerner.jwala.ui.selenium.steps.JwalaOsType;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -8,6 +12,10 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 /**
@@ -30,6 +39,17 @@ public class SeleniumTestHelper {
     private static final String DEFAULT_BROWSER_HEIGHT = "1000";
     private static final String SELENIUM_GRID_HUB_URL = "selenium.grid.hub.url";
     private static final String ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER = "org.openqa.selenium.ie.InternetExplorerDriver";
+    private static final int SHORT_CONNECTION_TIMEOUT = 10000;
+    private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
+    private final static Logger LOGGER = LoggerFactory.getLogger(SeleniumTestHelper.class);
+
+    @Autowired
+    private static JschService jschService;
+
+    @Autowired
+    @Qualifier("seleniumTestProperties")
+    private static Properties props;
+
 
     /**
      * Create an instance of a {@link WebDriver} to facilitate browser based testing
@@ -109,4 +129,73 @@ public class SeleniumTestHelper {
             }
         }
     }
+
+    public static void checkServiceDeleteWasSuccessful(String serviceName) {
+        LOGGER.info("checkServiceDeleteWasSuccessful {}", serviceName);
+
+        // indirectly required by JschServiceImpl via use of ApplicationProperties
+        final String originalPropertiesRootPath = System.getProperty("PROPERTIES_ROOT_PATH");
+        System.setProperty("PROPERTIES_ROOT_PATH", SeleniumTestHelper.class.getResource("/selenium/vars.properties").getPath()
+                .replace("/vars.properties", ""));
+
+        final String hostname = props.getProperty("host1");
+
+        final RemoteSystemConnection remoteSystemConnection = getRemoteSystemConnection(hostname);
+
+        final JwalaOsType osType = getJwalaOsType(remoteSystemConnection);
+
+        if (osType.equals(JwalaOsType.WINDOWS)) {
+            checkWindowsService(serviceName, hostname, remoteSystemConnection);
+        } else {
+            checkLinuxServiceRunLevel(serviceName, hostname, remoteSystemConnection);
+            checkLinuxService(serviceName, hostname, remoteSystemConnection);
+        }
+
+        // Restore the properties root path
+        System.setProperty("PROPERTIES_ROOT_PATH", originalPropertiesRootPath);
+    }
+
+    private static void checkLinuxService(String serviceName, String hostname, RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + serviceName + " status", SHORT_CONNECTION_TIMEOUT);
+        if (!remoteCommandReturnInfo.standardOuput.contains(serviceName + ": unrecognized service")) {
+            throw new SeleniumTestCaseException(MessageFormat.format("Failed to delete the service {0} on host {1}", serviceName, hostname));
+        } else {
+            LOGGER.info("STD_OUT service status::{}", remoteCommandReturnInfo.standardOuput);
+        }
+    }
+
+    private static void checkLinuxServiceRunLevel(String serviceName, String hostname, RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo chkconfig --list " + serviceName, SHORT_CONNECTION_TIMEOUT);
+        if (!remoteCommandReturnInfo.standardOuput.contains("error reading information on service " + serviceName + ": No such file or directory")) {
+            throw new SeleniumTestCaseException(MessageFormat.format("Failed to delete {0} from runlevel on host {1}", serviceName, hostname));
+        } else {
+            LOGGER.info("STD_OUT chkconfig::{}", remoteCommandReturnInfo.standardOuput);
+        }
+    }
+
+    private static void checkWindowsService(String serviceName, String hostname, RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc queryex " + serviceName, SHORT_CONNECTION_TIMEOUT);
+        if (!remoteCommandReturnInfo.standardOuput.contains("The specified service does not exist as an installed service")) {
+            throw new SeleniumTestCaseException(MessageFormat.format("Failed to delete the service {0} on host {1}", serviceName, hostname));
+        } else {
+            LOGGER.info("STD_OUT sc queryex::{}", remoteCommandReturnInfo.standardOuput);
+        }
+    }
+
+    private static JwalaOsType getJwalaOsType(RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
+        LOGGER.info("uname: {}", remoteCommandReturnInfo);
+        return StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ? JwalaOsType.WINDOWS : JwalaOsType.UNIX;
+    }
+
+    private static RemoteSystemConnection getRemoteSystemConnection(String hostname) {
+        final String sshUser = props.getProperty("ssh.user.name");
+        final String sshPwd = props.getProperty("ssh.user.pwd");
+
+        LOGGER.info("sshUser {} :: host1: {}", sshUser, hostname);
+
+        return new RemoteSystemConnection(sshUser, sshPwd, hostname, 22);
+    }
+
+
 }
