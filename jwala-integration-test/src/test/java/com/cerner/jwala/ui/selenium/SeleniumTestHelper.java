@@ -14,8 +14,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -42,14 +40,8 @@ public class SeleniumTestHelper {
     private static final int SHORT_CONNECTION_TIMEOUT = 10000;
     private static final String SHELL_READ_SLEEP_DEFAULT_VALUE = "250";
     private final static Logger LOGGER = LoggerFactory.getLogger(SeleniumTestHelper.class);
-
-    @Autowired
-    private static JschService jschService;
-
-    @Autowired
-    @Qualifier("seleniumTestProperties")
     private static Properties props;
-
+    private static JschService jschService;
 
     /**
      * Create an instance of a {@link WebDriver} to facilitate browser based testing
@@ -130,8 +122,11 @@ public class SeleniumTestHelper {
         }
     }
 
-    public static void checkServiceDeleteWasSuccessful(String serviceName) {
+    public static void checkServiceDeleteWasSuccessful(String serviceName, JschService jschSvc, Properties properties) {
         LOGGER.info("checkServiceDeleteWasSuccessful {}", serviceName);
+
+        props = properties;
+        jschService = jschSvc;
 
         // indirectly required by JschServiceImpl via use of ApplicationProperties
         final String originalPropertiesRootPath = System.getProperty("PROPERTIES_ROOT_PATH");

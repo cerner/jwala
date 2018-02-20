@@ -1,11 +1,15 @@
 package com.cerner.jwala.ui.selenium.steps.operation;
 
+import com.cerner.jwala.common.jsch.JschService;
 import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Properties;
 
 /**
  * Created by Jedd Cuison on 8/28/2017
@@ -14,6 +18,13 @@ public class JvmControlRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
+
+    @Autowired
+    private static JschService jschService;
+
+    @Autowired
+    @Qualifier("seleniumTestProperties")
+    private static Properties props;
 
     @When("^I click the \"(.*)\" button of JVM \"(.*)\" under group \"(.*)\" in the operations tab$")
     public void clickControlJvmBtn(final String buttonTitle, final String jvmName, final String groupName) {
@@ -31,7 +42,7 @@ public class JvmControlRunSteps {
         jwalaUi.waitUntilElementIsVisible(
                 By.xpath("//div[text()='JVM " + jvmName +
                         " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.']"));
-        SeleniumTestHelper.checkServiceDeleteWasSuccessful(jvmName);
+        SeleniumTestHelper.checkServiceDeleteWasSuccessful(jvmName, jschService, props);
     }
 
 }

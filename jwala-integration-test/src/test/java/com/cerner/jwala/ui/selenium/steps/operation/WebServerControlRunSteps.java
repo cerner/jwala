@@ -1,5 +1,6 @@
 package com.cerner.jwala.ui.selenium.steps.operation;
 
+import com.cerner.jwala.common.jsch.JschService;
 import com.cerner.jwala.ui.selenium.SeleniumTestHelper;
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.Then;
@@ -27,6 +28,14 @@ public class WebServerControlRunSteps {
     Properties paramProp;
 
     private String origWindowHandle;
+
+
+    @Autowired
+    private static JschService jschService;
+
+    @Autowired
+    @Qualifier("seleniumTestProperties")
+    private static Properties props;
 
     @When("^I click the \"(.*)\" button of web server \"(.*)\" under group \"(.*)\" in the operations tab$")
     public void clickControlWebServerBtn(final String buttonTitle, final String webServerName, final String groupName) {
@@ -58,7 +67,7 @@ public class WebServerControlRunSteps {
         jwalaUi.waitUntilElementIsVisible(
                 By.xpath("//div[text()='Web server " + webServerName
                         + " was successfully deleted. Jwala will need to refresh to display the latest data and recompute the states.']"));
-        SeleniumTestHelper.checkServiceDeleteWasSuccessful(webServerName);
+        SeleniumTestHelper.checkServiceDeleteWasSuccessful(webServerName, jschService, props);
     }
 
     @Then("^I see the httpd.conf$")
