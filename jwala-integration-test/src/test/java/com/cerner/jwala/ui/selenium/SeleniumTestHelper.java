@@ -1,7 +1,9 @@
 package com.cerner.jwala.ui.selenium;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.UnexpectedAlertBehaviour;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -14,7 +16,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.MessageFormat;
 import java.util.Properties;
 
 /**
@@ -79,29 +80,6 @@ public class SeleniumTestHelper {
         Dimension dimension = new Dimension(width, height);
         driver.manage().window().setSize(dimension);
         return driver;
-    }
-
-    /**
-     * Checks whether an element is rendered by the browser or not
-     *
-     * @param driver {@link WebDriver}
-     * @param by     {@link By}
-     * @return true if the element is rendered
-     */
-    public static boolean isElementRendered(final WebDriver driver, final By by) {
-        try {
-            final int elementCount = driver.findElements(by).size();
-            switch (elementCount) {
-                case 0:
-                case 1:
-                    return elementCount == 1;
-                default:
-                    throw new SeleniumTestCaseException(MessageFormat.format("More than one element was found! By: {0}",
-                            by.toString()));
-            }
-        } catch (final NoSuchElementException e) {
-            return false;
-        }
     }
 
     public static Properties getProperties() throws IOException {
