@@ -69,18 +69,15 @@ public class JvmControlRunSteps {
         assert StringUtils.isNotEmpty(sshPwd);
         assert StringUtils.isNotEmpty(jvmHostname);
 
-        LOGGER.error("sshUser {}, sshPwd ***{}***, host {}", sshUser, sshPwd.charAt(0), jvmHostname);
-
         final RemoteSystemConnection remoteSystemConnection
                 = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
 
         RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
-        LOGGER.error("uname: " + remoteCommandReturnInfo);
+        LOGGER.info("uname: " + remoteCommandReturnInfo);
         final JwalaOsType osType = StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ? JwalaOsType.WINDOWS : JwalaOsType.UNIX;
 
         if (osType.equals(JwalaOsType.WINDOWS)) {
             remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc queryex " + jvmName, SHORT_CONNECTION_TIMEOUT);
-            LOGGER.error("sc queryex: " + remoteCommandReturnInfo);
             if (!remoteCommandReturnInfo.standardOuput.contains("The specified service does not exist as an installed service")) {
                 throw new SeleniumTestCaseException("Failed to delete JVM service " + jvmName + " on host " + jvmHostname);
             } else {
@@ -89,14 +86,12 @@ public class JvmControlRunSteps {
 
         } else {
             remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo chkconfig --list " + jvmName, SHORT_CONNECTION_TIMEOUT);
-            LOGGER.error("chkconfig: " + remoteCommandReturnInfo);
             if (!remoteCommandReturnInfo.standardOuput.contains("error reading information on service " + jvmName + ": No such file or directory")) {
                 throw new SeleniumTestCaseException("Failed to delete JVM " + jvmName + " from runlevel on host " + jvmHostname);
             } else {
                 LOGGER.info("STD_OUT chkconfig::" + remoteCommandReturnInfo.standardOuput);
             }
             remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + jvmName + " status", SHORT_CONNECTION_TIMEOUT);
-            LOGGER.error("servuce: " + remoteCommandReturnInfo);
             if (!remoteCommandReturnInfo.standardOuput.contains(jvmName + ": unrecognized service")) {
                 throw new SeleniumTestCaseException("Failed to delete JVM service " + jvmName + " on host " + jvmHostname);
             } else {
