@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.text.MessageFormat;
 import java.util.Properties;
 
 /**
@@ -61,44 +62,61 @@ public class JvmControlRunSteps {
         System.setProperty("PROPERTIES_ROOT_PATH", this.getClass().getResource("/selenium/vars.properties").getPath()
                 .replace("/vars.properties", ""));
 
-        final String sshUser = props.getProperty("ssh.user.name");
-        final String sshPwd = props.getProperty("ssh.user.pwd");
         final String jvmHostname = props.getProperty("host1");
 
-        assert StringUtils.isNotEmpty(sshUser);
-        assert StringUtils.isNotEmpty(sshPwd);
-        assert StringUtils.isNotEmpty(jvmHostname);
+        final RemoteSystemConnection remoteSystemConnection = getRemoteSystemConnection(jvmHostname);
 
-        final RemoteSystemConnection remoteSystemConnection
-                = new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
-
-        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
-        LOGGER.info("uname: " + remoteCommandReturnInfo);
-        final JwalaOsType osType = StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ? JwalaOsType.WINDOWS : JwalaOsType.UNIX;
+        final JwalaOsType osType = getJwalaOsType(remoteSystemConnection);
 
         if (osType.equals(JwalaOsType.WINDOWS)) {
-            remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc queryex " + jvmName, SHORT_CONNECTION_TIMEOUT);
-            if (!remoteCommandReturnInfo.standardOuput.contains("The specified service does not exist as an installed service")) {
-                throw new SeleniumTestCaseException("Failed to delete JVM service " + jvmName + " on host " + jvmHostname);
-            } else {
-                LOGGER.info("STD_OUT sc queryex::" + remoteCommandReturnInfo.standardOuput);
-            }
-
+            checkWindowsService(jvmName, jvmHostname, remoteSystemConnection);
         } else {
-            remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo chkconfig --list " + jvmName, SHORT_CONNECTION_TIMEOUT);
-            if (!remoteCommandReturnInfo.standardOuput.contains("error reading information on service " + jvmName + ": No such file or directory")) {
-                throw new SeleniumTestCaseException("Failed to delete JVM " + jvmName + " from runlevel on host " + jvmHostname);
-            } else {
-                LOGGER.info("STD_OUT chkconfig::" + remoteCommandReturnInfo.standardOuput);
-            }
-            remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + jvmName + " status", SHORT_CONNECTION_TIMEOUT);
-            if (!remoteCommandReturnInfo.standardOuput.contains(jvmName + ": unrecognized service")) {
-                throw new SeleniumTestCaseException("Failed to delete JVM service " + jvmName + " on host " + jvmHostname);
-            } else {
-                LOGGER.info("STD_OUT service status::" + remoteCommandReturnInfo.standardOuput);
-            }
+            checkLinuxServiceRunLevel(jvmName, jvmHostname, remoteSystemConnection);
+            checkLinuxService(jvmName, jvmHostname, remoteSystemConnection);
         }
 
+    }
+
+    private void checkLinuxService(String jvmName, String jvmHostname, RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo service " + jvmName + " status", SHORT_CONNECTION_TIMEOUT);
+        if (!remoteCommandReturnInfo.standardOuput.contains(jvmName + ": unrecognized service")) {
+            throw new SeleniumTestCaseException(MessageFormat.format("Failed to delete JVM service {0} on host {1}", jvmName, jvmHostname));
+        } else {
+            LOGGER.info("STD_OUT service status::{}", remoteCommandReturnInfo.standardOuput);
+        }
+    }
+
+    private void checkLinuxServiceRunLevel(String jvmName, String jvmHostname, RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sudo chkconfig --list " + jvmName, SHORT_CONNECTION_TIMEOUT);
+        if (!remoteCommandReturnInfo.standardOuput.contains("error reading information on service " + jvmName + ": No such file or directory")) {
+            throw new SeleniumTestCaseException(MessageFormat.format("Failed to delete JVM {0} from runlevel on host {1}", jvmName, jvmHostname));
+        } else {
+            LOGGER.info("STD_OUT chkconfig::{}", remoteCommandReturnInfo.standardOuput);
+        }
+    }
+
+    private void checkWindowsService(String jvmName, String jvmHostname, RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "sc queryex " + jvmName, SHORT_CONNECTION_TIMEOUT);
+        if (!remoteCommandReturnInfo.standardOuput.contains("The specified service does not exist as an installed service")) {
+            throw new SeleniumTestCaseException(MessageFormat.format("Failed to delete JVM service {0} on host {1}", jvmName, jvmHostname));
+        } else {
+            LOGGER.info("STD_OUT sc queryex::{}", remoteCommandReturnInfo.standardOuput);
+        }
+    }
+
+    private JwalaOsType getJwalaOsType(RemoteSystemConnection remoteSystemConnection) {
+        RemoteCommandReturnInfo remoteCommandReturnInfo = jschService.runShellCommand(remoteSystemConnection, "uname", SHORT_CONNECTION_TIMEOUT);
+        LOGGER.info("uname: {}", remoteCommandReturnInfo);
+        return StringUtils.indexOf(remoteCommandReturnInfo.standardOuput, "CYGWIN") > -1 ? JwalaOsType.WINDOWS : JwalaOsType.UNIX;
+    }
+
+    private RemoteSystemConnection getRemoteSystemConnection(String jvmHostname) {
+        final String sshUser = props.getProperty("ssh.user.name");
+        final String sshPwd = props.getProperty("ssh.user.pwd");
+
+        LOGGER.info("sshUser {} :: host1: {}", sshUser, jvmHostname);
+
+        return new RemoteSystemConnection(sshUser, sshPwd, jvmHostname, 22);
     }
 
 }
