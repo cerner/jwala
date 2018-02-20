@@ -48,7 +48,7 @@ public class WebServerControlRunSteps {
     }
 
     @When("^I click the httpd.conf link of web server \"(.*)\" under group \"(.*)\" in the operations tab and I see httpd.conf$")
-    public void clickWebServerHttpdConfLink(final String linkLabel, final String webServerName, final String groupName) {
+    public void clickWebServerHttpdConfLink(final String webServerName, final String groupName) {
         origWindowHandle = jwalaUi.getWebDriver().getWindowHandle();
         int count = 0;
         while(count < 3) {
