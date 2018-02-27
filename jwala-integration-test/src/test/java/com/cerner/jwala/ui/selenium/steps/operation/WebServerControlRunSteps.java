@@ -4,6 +4,7 @@ import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -46,6 +47,26 @@ public class WebServerControlRunSteps {
                 + webServerName + "']/following-sibling::td//button[text()='" + linkLabel + "']"));
     }
 
+    @When("^I click the httpd.conf link of web server \"(.*)\" under group \"(.*)\" in the operations tab and I see httpd.conf$")
+    public void clickWebServerHttpdConfLink(final String webServerName, final String groupName) {
+        origWindowHandle = jwalaUi.getWebDriver().getWindowHandle();
+        int count = 0;
+        while(count < 3) {
+            jwalaUi.click(By.xpath("//tr[td[text()='" + groupName + "']]/following-sibling::tr//td[text()='"
+                    + webServerName + "']/following-sibling::td//button[text()='httpd.conf']"));
+            count++;
+            try {
+                verifyProperConfFile();
+                break;
+            } catch (TimeoutException exception) {
+                if(count ==3){
+                    throw exception;
+                }
+            }
+
+        }
+    }
+
     @Then("^I see an error dialog box that tells me to stop the web server \"(.*)\"$")
     public void deleteError(final String webServerName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//div[text()='Please stop web server " + webServerName
@@ -60,13 +81,14 @@ public class WebServerControlRunSteps {
     }
 
     @Then("^I see the httpd.conf$")
-    public void verifyProperConfFile() {
+    public boolean verifyProperConfFile() throws TimeoutException{
         jwalaUi.switchToOtherTab(origWindowHandle);
-        jwalaUi.waitUntilElementIsVisible(By.xpath("//pre[contains(text(),'This is the main Apache HTTP server configuration file.')]"), 60);
+        boolean isExists = jwalaUi.isElementExists(By.xpath("//pre[contains(text(),'This is the main Apache HTTP server configuration file.')]"), 60);
         if (origWindowHandle != null) {
             jwalaUi.getWebDriver().close();
             jwalaUi.getWebDriver().switchTo().window(origWindowHandle);
         }
+        return isExists;
     }
 
     @Then("^I see the load balancer page$")
