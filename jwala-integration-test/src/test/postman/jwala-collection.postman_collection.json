@@ -7182,6 +7182,128 @@
 						"description": ""
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "u) health check application test",
+			"description": "",
+			"item": [
+				{
+					"name": "start jvm with wait true",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "179a918a-9d12-4d3a-9594-17818fefa228",
+								"type": "text/javascript",
+								"exec": [
+									"setTimeout(function(){}, 5000);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"start\"}"
+						},
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/1/commands?wait=TRUE",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"1",
+								"commands"
+							],
+							"query": [
+								{
+									"key": "wait",
+									"value": "TRUE",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "get health check application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c2738e9c-ad1d-478c-b7fc-480b5af978a7",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": "https://{{host}}/hct/",
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "send test data for health check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a7c9ec33-c8e0-49ad-99ad-6c421566ab44",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://{{host}}/hct/services/rest/v1/status?message=test",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"hct",
+								"services",
+								"rest",
+								"v1",
+								"status"
+							],
+							"query": [
+								{
+									"key": "message",
+									"value": "test",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
 				},
 				{
 					"name": "logout ",
@@ -7197,14 +7319,14 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/user/logout",
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
+						"url": "{{url}}/v1.0/user/logout",
+						"description": null
 					},
 					"response": []
 				}
