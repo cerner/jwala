@@ -124,9 +124,9 @@ task watchJsx(type: Exec) {
 
 node {
     // Version of node to use.
-    version = '0.11.10'
+    version = '6.9.4'
 
-    npmVersion = '3.3.12'
+    npmVersion = '2.1.5'
 
     // Base URL for fetching node distributions (change if you have a mirror).
     distBaseUrl = 'https://nodejs.org/dist'

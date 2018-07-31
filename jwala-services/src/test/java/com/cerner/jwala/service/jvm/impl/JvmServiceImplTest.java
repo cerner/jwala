@@ -1118,6 +1118,20 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(Config.mockJvmPersistenceService, never()).removeJvm(id);
     }
 
+
+    @Test
+    public void testDeleteFailedJvm() {
+        final CommandOutput mockCommandOutput = mock(CommandOutput.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_FAILED);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
+        jvmService.deleteJvm(id, true, user);
+        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService).removeJvm(id);
+    }
+
+
     @Configuration
     static class Config {
 
