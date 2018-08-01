@@ -347,7 +347,7 @@ public class JvmServiceImpl implements JvmService {
             LOGGER.info("Deleting JVM service {}", jvm.getJvmName());
 
             if (!JvmState.JVM_NEW.equals(jvm.getState()) && !JvmState.JVM_STOPPED.equals(jvm.getState()) &&
-                    !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
+                    !JvmState.FORCED_STOPPED.equals(jvm.getState()) && !jvm.getState().equals(JvmState.JVM_FAILED)) {
                 final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
                         jvm.getJvmName());
                 LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
@@ -376,8 +376,8 @@ public class JvmServiceImpl implements JvmService {
         }
     }
 
-    @Override
-    public void deleteJvmService(Jvm jvm, User user) {
+
+    private void deleteJvmService(Jvm jvm, User user) {
         if (!jvm.getState().equals(JvmState.JVM_NEW)) {
             ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.DELETE_SERVICE, jvm);
             CommandOutput commandOutput = jvmControlService.controlJvm(controlJvmRequest, user);
@@ -1064,7 +1064,7 @@ public class JvmServiceImpl implements JvmService {
     @Transactional
     public void deleteJvm(final String name, final String userName) {
         final Jvm jvm = getJvm(name);
-        if (!jvm.getState().isStartedState()) {
+        if (!jvm.getState().isStartedState() || jvm.getState().equals(JvmState.JVM_FAILED) ) {
             LOGGER.info("Removing JVM from the database and deleting the service for jvm {}", name);
             if (!jvm.getState().equals(JvmState.JVM_NEW)) {
                 deleteJvmService(jvm, new User(userName));
