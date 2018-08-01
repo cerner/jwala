@@ -376,8 +376,8 @@ public class JvmServiceImpl implements JvmService {
         }
     }
 
-    @Override
-    public void deleteJvmService(Jvm jvm, User user) {
+
+    private void deleteJvmService(Jvm jvm, User user) {
         if (!jvm.getState().equals(JvmState.JVM_NEW)) {
             ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.DELETE_SERVICE, jvm);
             CommandOutput commandOutput = jvmControlService.controlJvm(controlJvmRequest, user);
