@@ -5759,6 +5759,104 @@
 			]
 		},
 		{
+			"name": "p) create JVM with bad credentials",
+			"description": "",
+			"item": [
+				{
+					"name": "create jvm with bad user credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bbc6d7d0-ceec-4469-926a-a12be613b4b4",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"BadJvmId\", jsonData.applicationResponseContent.id.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"test-jvm-failed\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":\"8001\",\"redirectPort\":\"8002\",\"shutdownPort\":\"8003\",\"ajpPort\":\"8004\",\"userName\":\"baduser\",\"encryptedPassword\":\"bad\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"url": "{{url}}/v1.0/jvms"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate jvm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f37f1de7-c52d-4759-86ff-61e95fa9b446",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf"
+					},
+					"response": []
+				},
+				{
+					"name": "delete jvm on failed state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0dca04e4-1e43-49c4-8f4d-337489803685",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{BadJvmId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{BadJvmId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "q) test metadata and template copy",
 			"description": "",
 			"item": [
