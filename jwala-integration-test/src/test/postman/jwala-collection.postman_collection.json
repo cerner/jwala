@@ -5800,7 +5800,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f37f1de7-c52d-4759-86ff-61e95fa9b446",
+								"id": "",
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 500\"] = responseCode.code === 500;"
@@ -5822,7 +5822,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0dca04e4-1e43-49c4-8f4d-337489803685",
+								"id": "",
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 204\"] = responseCode.code === 204;"
