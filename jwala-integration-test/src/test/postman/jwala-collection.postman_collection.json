@@ -5768,7 +5768,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bbc6d7d0-ceec-4469-926a-a12be613b4b4",
+								"id": "",
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 201\"] = responseCode.code === 201;",
@@ -5788,7 +5788,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"test-jvm-failed\",\"groupIds\":[{\"id\":10,\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":\"8001\",\"redirectPort\":\"8002\",\"shutdownPort\":\"8003\",\"ajpPort\":\"8004\",\"userName\":\"baduser\",\"encryptedPassword\":\"bad\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+							"raw": "{\"jvmName\":\"test-jvm-failed\",\"groupIds\":[{\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":\"8001\",\"redirectPort\":\"8002\",\"shutdownPort\":\"8003\",\"ajpPort\":\"8004\",\"userName\":\"baduser\",\"encryptedPassword\":\"bad\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
 						"url": "{{url}}/v1.0/jvms"
 					},
