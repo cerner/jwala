@@ -704,7 +704,219 @@ public class JvmServiceImpl implements JvmService {
         }
 
     }
+    
+    public Jvm upgradeJDKAndDeployJvm(String jvmName, User user) {
+        boolean didSucceed = false;
+        Jvm jvm = getJvm(jvmName);
+        LOGGER.debug("Start upgradeJDKAndDeployJvm for {} by user {}", jvmName, user.getId());
 
+        historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), "Starting to upgrade JDK :: JVM " +
+                jvm.getJvmName() + " on host " + jvm.getHostName(), EventType.USER_ACTION_INFO, user.getId());
+
+        //add write lock for multiple write
+        binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
+
+        try {
+            if (jvm.getState().isStartedState()) {
+                final String errorMessage = "The remote JVM " + jvm.getJvmName() + " must be stopped before attempting to generate the JVM";
+                LOGGER.info(errorMessage);
+                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
+            }
+//Does this required??
+            validateJvmAndAppResources(jvm);
+
+            checkForJvmBinaries(jvm);
+
+            distributeBinaries(jvm);
+
+            // create the scripts directory if it doesn't exist
+           // createScriptsDirectory(jvm);
+
+            //REQUIRED
+            // copy the install and deploy scripts
+        //    deployScriptsToUserJwalaScriptsDir_JDKUpgrade(jvm, user);
+
+            // delete the service
+          //  deleteJvmService(jvm, user);
+
+            // create the jar file
+            //
+            //final String jvmConfigJar = generateJvmConfigJar(jvm);
+
+            // copy the jar file to the staging area
+            //secureCopyJvmConfigJar(jvm, jvmConfigJar, user);
+
+            // call script to backup and tar the current directory and
+            // then untar the new tar, needs jar
+            //deployJvmConfigJar(jvm, user, jvmConfigJar);
+
+            // copy the individual jvm templates to the destination
+            //deployJvmResourceFiles(jvm, user);
+
+            // deploy any application context xml's in the group
+            //deployApplicationContextXMLs(jvm, user);
+
+            // re-install the service
+            //installJvmWindowsService(jvm, user);
+
+            // set the state to stopped
+            updateState(jvm.getId(), JvmState.JVM_STOPPED);
+
+            didSucceed = true;
+        } catch (CommandFailureException e) {
+            LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Failed to generate the JVM config: " + jvm.getJvmName(), e);
+        } finally {
+            binaryDistributionLockManager.writeUnlock(jvmName + "-" + jvm.getId().toString());
+            LOGGER.debug("End upgrade JDK for {} by user {}", jvmName, user.getId());
+
+            final EventType eventType = didSucceed ? EventType.SYSTEM_INFO : EventType.SYSTEM_ERROR;
+
+            String historyMessage = didSucceed ? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " succeeded" :
+                    "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " failed";
+
+            historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), historyMessage, eventType, user.getId());
+        }
+        return jvm;
+    }
+
+    /**
+     * This method will deploy necessary scripts to Jwala Directory during JDK upgrade process
+     * @param jvm
+     * @param user
+     * @throws CommandFailureException
+     * @throws IOException
+     */
+    protected void deployScriptsToUserJwalaScriptsDir_JDKUpgrade(Jvm jvm, User user) throws CommandFailureException, IOException {
+        final ControlJvmRequest secureCopyRequest = new ControlJvmRequest(jvm.getId(), JvmControlOperation.SCP);
+        final String commandsScriptsPath = ApplicationProperties.get("commands.scripts-path");
+
+      
+        final String jvmName = jvm.getJvmName();
+        final String userId = user.getId();
+        final String scriptsDir = ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR);
+
+        final String stagingArea = scriptsDir + '/' + jvmName;
+
+        createParentDir(jvm, stagingArea);
+        final String failedToCopyMessage = "Failed to secure copy ";
+        final String duringCreationMessage = " during the creation of ";
+        final boolean alwaysOverwriteScripts = true;
+        
+      /*  // copy the unjar script
+        final String destinationDeployJarPath = stagingArea + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
+         final String deployConfigJarPath = commandsScriptsPath + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, deployConfigJarPath, destinationDeployJarPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + deployConfigJarPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+        // copy the install service script
+        final String installServicePath = commandsScriptsPath + '/' + INSTALL_SERVICE_SCRIPT_NAME;
+        final String destinationInstallServicePath = stagingArea + '/' + INSTALL_SERVICE_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, installServicePath, destinationInstallServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + installServicePath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+        
+        /* 
+        final String deleteServicePath = commandsScriptsPath + "/" + DELETE_SERVICE_SCRIPT_NAME;
+        final String destinationDeleteServicePath = stagingArea + "/" + DELETE_SERVICE_SCRIPT_NAME;
+
+       // copy the delete service script
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, deleteServicePath, destinationDeleteServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + deleteServicePath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+        /*
+        // copy the start service script
+        final String startServicePath = commandsScriptsPath + "/" + START_SCRIPT_NAME;
+        final String destinationStartServicePath = stagingArea + "/" + START_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, startServicePath, destinationStartServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + startServicePath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+       /* // copy the stop service script
+        final String stopServicePath = commandsScriptsPath + "/" + STOP_SCRIPT_NAME;
+        final String destinationStopServicePath = stagingArea + "/" + STOP_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, stopServicePath, destinationStopServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + stopServicePath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+       /* // copy the thread dump script
+        final String threadDumpPath = commandsScriptsPath + "/" + THREAD_DUMP_SCRIPT_NAME;
+        final String destinationThreadDumpPath = stagingArea + "/" + THREAD_DUMP_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, threadDumpPath, destinationThreadDumpPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + threadDumpPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+     /*   // copy the heap dump script
+        final String heapDumpPath = commandsScriptsPath + "/" + HEAP_DUMP_SCRIPT_NAME;
+        final String destinationHeapDumpPath = stagingArea + "/" + HEAP_DUMP_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, heapDumpPath, destinationHeapDumpPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + heapDumpPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+       /* // copy the status service script
+        final String serviceStatusPath = commandsScriptsPath + "/" + SERVICE_STATUS_SCRIPT_NAME;
+        final String destinationServiceStatusPath = stagingArea + "/" + SERVICE_STATUS_SCRIPT_NAME;
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, serviceStatusPath, destinationServiceStatusPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + serviceStatusPath + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }*/
+
+        //TODO move to constant
+        final String linuxJvmService = "/linux/jvm-service.sh";
+        final CommandOutput commandOutput = jvmControlService.executeCreateDirectoryCommand(jvm, stagingArea + "/linux");
+        if (commandOutput.getReturnCode().wasSuccessful()) {
+            LOGGER.info("created {} directory successfully", stagingArea + "/linux");
+        } else {
+            final String standardError = commandOutput.getStandardError().isEmpty() ? commandOutput.getStandardOutput() : commandOutput.getStandardError();
+            LOGGER.error("create command failed with error trying to create parent directory {} on {} :: ERROR: {}", stagingArea + "/linux", jvm.getHostName(), standardError);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, standardError.isEmpty() ? CommandOutputReturnCode.fromReturnCode(commandOutput.getReturnCode().getReturnCode()).getDesc() : standardError);
+        }
+
+        if (!jvmControlService.secureCopyFile(secureCopyRequest, commandsScriptsPath + linuxJvmService, stagingArea + linuxJvmService, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
+            String message = failedToCopyMessage + commandsScriptsPath + linuxJvmService + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+        
+        // make sure the scripts are executable
+        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea, "*.sh").getReturnCode().wasSuccessful()) {
+            String message = "Failed to change the file permissions in " + stagingArea + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+        //TODO fix constants
+        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea + "/linux", "jvm-service.sh").getReturnCode().wasSuccessful()) {
+            String message = "Failed to change the file permissions in " + stagingArea + linuxJvmService + duringCreationMessage + jvmName;
+            LOGGER.error(message);
+            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
+        }
+
+    }
+    
+    
     String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Start generateJvmConfigJar ");
