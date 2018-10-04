@@ -179,17 +179,17 @@ public interface JvmServiceRest {
                                      @ApiParam(value = "The content to be generated", required = true) String template);
 
     /**
-     * Upgraded the JDK version of the mentioned JVM.
+     * upgrade the JDK version of the mentioned JVM.
      * @param jvmName the name of the JVM
      * @param aUser the user
      * @return {@link Response}
      */
     @PUT
-    @Path("/{jvmName}/upgradeJDK")
+    @Path("/{jvmName}/jdk")
     @ApiOperation(value = "upgrade the JDK version for the JVM",
             response = Jvm.class
     )
-    @ApiResponses(@ApiResponse(code = 500, message = "Remote upgradation of JDK failed"))
+    @ApiResponses(@ApiResponse(code = 500, message = "Attempt to upgrade the JDK failed."))
     Response upgradeJDKAndDeployJvm(@ApiParam(value = "The name of the JVM to be upgraded", required = true) @PathParam("jvmName") final String jvmName,
                                   @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
