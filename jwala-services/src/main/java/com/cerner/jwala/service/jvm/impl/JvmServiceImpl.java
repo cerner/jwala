@@ -1,5 +1,42 @@
 package com.cerner.jwala.service.jvm.impl;
 
+import static com.cerner.jwala.control.AemControl.Properties.DELETE_SERVICE_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.HEAP_DUMP_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.INSTALL_SERVICE_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.SERVICE_STATUS_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.START_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.STOP_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.THREAD_DUMP_SCRIPT_NAME;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.NoResultException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.mime.MediaType;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
@@ -22,7 +59,11 @@ import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
-import com.cerner.jwala.common.request.jvm.*;
+import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
+import com.cerner.jwala.common.request.jvm.ControlJvmRequestFactory;
+import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
+import com.cerner.jwala.common.request.jvm.CreateJvmRequest;
+import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
 import com.cerner.jwala.common.scrubber.ObjectStoreService;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaJvmConfigTemplate;
@@ -44,30 +85,6 @@ import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.mime.MediaType;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.NoResultException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.*;
-
-import static com.cerner.jwala.control.AemControl.Properties.*;
 
 public class JvmServiceImpl implements JvmService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImpl.class);
@@ -86,6 +103,9 @@ public class JvmServiceImpl implements JvmService {
     private final HistoryFacadeService historyFacadeService;
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
+    //JDK Upgrade Resource file names Array
+   private static String[] jdk_upgrade_resourceNamesArray= {"setenv"};
+    
 
     @Autowired
     private JvmStateService jvmStateService;
@@ -722,48 +742,22 @@ public class JvmServiceImpl implements JvmService {
                 LOGGER.info(errorMessage);
                 throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
             }
-//Does this required??
+            //Does this required??
             validateJvmAndAppResources(jvm);
 
             checkForJvmBinaries(jvm);
 
             distributeBinaries(jvm);
+            
+            //This will update the Setenv file with upgraded JDK
+            deployJvmResourceFilesForJDKUpgrade(jvm, user);
 
-            // create the scripts directory if it doesn't exist
-           // createScriptsDirectory(jvm);
-
-            //REQUIRED
-            // copy the install and deploy scripts
-        //    deployScriptsToUserJwalaScriptsDir_JDKUpgrade(jvm, user);
-
-            // delete the service
-          //  deleteJvmService(jvm, user);
-
-            // create the jar file
-            //
-            //final String jvmConfigJar = generateJvmConfigJar(jvm);
-
-            // copy the jar file to the staging area
-            //secureCopyJvmConfigJar(jvm, jvmConfigJar, user);
-
-            // call script to backup and tar the current directory and
-            // then untar the new tar, needs jar
-            //deployJvmConfigJar(jvm, user, jvmConfigJar);
-
-            // copy the individual jvm templates to the destination
-            //deployJvmResourceFiles(jvm, user);
-
-            // deploy any application context xml's in the group
-            //deployApplicationContextXMLs(jvm, user);
-
-            // re-install the service
-            //installJvmWindowsService(jvm, user);
 
             // set the state to stopped
             updateState(jvm.getId(), JvmState.JVM_STOPPED);
 
             didSucceed = true;
-        } catch (CommandFailureException e) {
+        } catch (CommandFailureException | IOException e) {
             LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
             throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Failed to generate the JVM config: " + jvm.getJvmName(), e);
         } finally {
@@ -994,7 +988,27 @@ public class JvmServiceImpl implements JvmService {
             }
         }
     }
-
+    
+/**
+ * This method modifies the setenv file with the JDK home location during JDK upgrade process
+ * @param jvm
+ * @param user
+ * @throws IOException
+ * @throws CommandFailureException
+ */
+    private void deployJvmResourceFilesForJDKUpgrade(Jvm jvm, User user) throws IOException, CommandFailureException {
+        final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
+        if (generatedFiles != null) {
+            for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
+                final ScpDestination scpDestination = entry.getValue();
+                String sourceFile=entry.getKey();
+                if(isSourceFileNameMatchesResourceList(sourceFile)) {
+                	secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
+                }
+                
+            }
+        }
+    }
     private void installJvmWindowsService(Jvm jvm, User user) {
         ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, jvm);
         CommandOutput execData = jvmControlService.controlJvm(controlJvmRequest, user);
@@ -1296,5 +1310,17 @@ public class JvmServiceImpl implements JvmService {
             this.destPath = destPath;
             this.overwrite = overwrite;
         }
+    }
+    
+    private static boolean isSourceFileNameMatchesResourceList(String sourceFile)
+    {
+        for(int i =0; i < jdk_upgrade_resourceNamesArray.length; i++)
+        {
+            if(sourceFile.contains(jdk_upgrade_resourceNamesArray[i]))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
