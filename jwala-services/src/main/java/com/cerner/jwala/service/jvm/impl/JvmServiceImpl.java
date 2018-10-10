@@ -104,7 +104,7 @@ public class JvmServiceImpl implements JvmService {
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
     //JDK Upgrade Resource file names Array
-   private static String[] jdk_upgrade_resourceNamesArray= {"setenv"};
+	private static String[] jdk_upgrade_resourceNames = { "setenv" };
     
 
     @Autowired
@@ -725,54 +725,63 @@ public class JvmServiceImpl implements JvmService {
 
     }
     
-    public Jvm upgradeJDKAndDeployJvm(String jvmName, User user) {
-        boolean didSucceed = false;
-        Jvm jvm = getJvm(jvmName);
-        LOGGER.debug("Start upgradeJDKAndDeployJvm for {} by user {}", jvmName, user.getId());
+	public Jvm upgradeJDKAndDeployJvm(String jvmName, User user) {
+		boolean didSucceed = false;
+		Jvm jvm = getJvm(jvmName);
+		LOGGER.info("Start upgradeJDKAndDeployJvm for {} by user {}", jvmName, user.getId());
 
-        historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), "Starting to upgrade JDK :: JVM " +
-                jvm.getJvmName() + " on host " + jvm.getHostName(), EventType.USER_ACTION_INFO, user.getId());
+		historyFacadeService.write(jvm.getHostName(), jvm.getGroups(),
+				"Starting to upgrade JDK :: JVM " + jvm.getJvmName() + " on host " + jvm.getHostName(),
+				EventType.USER_ACTION_INFO, user.getId());
 
-        //add write lock for multiple write
-        binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
+		// add write lock for multiple write
+		binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
 
-        try {
-            if (jvm.getState().isStartedState()) {
-                final String errorMessage = "The remote JVM " + jvm.getJvmName() + " must be stopped before attempting to generate the JVM";
-                LOGGER.info(errorMessage);
-                throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
-            }
-            //Does this required??
-            validateJvmAndAppResources(jvm);
+		try {
+			// Validation 1: Application should not be in STARTED state
+			if (jvm.getState().isStartedState()) {
+				final String errorMessage = "The remote JVM " + jvm.getJvmName()
+						+ " must be stopped before attempting to upgrade the JDK of the JVM";
+				LOGGER.error(errorMessage);
+				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
+			}
+			// Validation 2: Application should not be in NEW state
+			if (jvm.getState().equals(JvmState.JVM_NEW)) {
+				final String errorMessage = "The remote JVM " + jvm.getJvmName()
+						+ " should have been generated atleast once and not in NEW state before attempting to upgrade the JDK of the JVM";
+				LOGGER.error(errorMessage);
+				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
+			}
+			// Step 1: Check if JDK Binaries exists
+			checkForJvmBinaries(jvm);
+			// Step 2: Distribute JDK binaries if required
+			distributeBinaries(jvm);
 
-            checkForJvmBinaries(jvm);
+			// Step 3: update the Setenv file with upgraded JDK
+			deployJvmResourceFilesForJDKUpgrade(jvm, user);
 
-            distributeBinaries(jvm);
-            
-            //This will update the Setenv file with upgraded JDK
-            deployJvmResourceFilesForJDKUpgrade(jvm, user);
+			// Step 4: set the state to stopped
+			updateState(jvm.getId(), JvmState.JVM_STOPPED);
 
+			didSucceed = true;
+		} catch (CommandFailureException | IOException e) {
+			LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
+			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
+					"Failed to generate the JVM config: " + jvm.getJvmName(), e);
+		} finally {
+			binaryDistributionLockManager.writeUnlock(jvmName + "-" + jvm.getId().toString());
+			LOGGER.info("End upgrade JDK for {} by user {}", jvmName, user.getId());
 
-            // set the state to stopped
-            updateState(jvm.getId(), JvmState.JVM_STOPPED);
+			final EventType eventType = didSucceed ? EventType.SYSTEM_INFO : EventType.SYSTEM_ERROR;
 
-            didSucceed = true;
-        } catch (CommandFailureException | IOException e) {
-            LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, "Failed to generate the JVM config: " + jvm.getJvmName(), e);
-        } finally {
-            binaryDistributionLockManager.writeUnlock(jvmName + "-" + jvm.getId().toString());
-            LOGGER.debug("End upgrade JDK for {} by user {}", jvmName, user.getId());
+			String historyMessage = didSucceed
+					? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " succeeded"
+					: "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " failed";
 
-            final EventType eventType = didSucceed ? EventType.SYSTEM_INFO : EventType.SYSTEM_ERROR;
-
-            String historyMessage = didSucceed ? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " succeeded" :
-                    "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " failed";
-
-            historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), historyMessage, eventType, user.getId());
-        }
-        return jvm;
-    }
+			historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), historyMessage, eventType, user.getId());
+		}
+		return jvm;
+	}
 
     /**
      * This method will deploy necessary scripts to Jwala Directory during JDK upgrade process
@@ -996,19 +1005,19 @@ public class JvmServiceImpl implements JvmService {
  * @throws IOException
  * @throws CommandFailureException
  */
-    private void deployJvmResourceFilesForJDKUpgrade(Jvm jvm, User user) throws IOException, CommandFailureException {
-        final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
-        if (generatedFiles != null) {
-            for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
-                final ScpDestination scpDestination = entry.getValue();
-                String sourceFile=entry.getKey();
-                if(isSourceFileNameMatchesResourceList(sourceFile)) {
-                	secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
-                }
-                
-            }
-        }
-    }
+	private void deployJvmResourceFilesForJDKUpgrade(Jvm jvm, User user) throws IOException, CommandFailureException {
+		final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
+		if (generatedFiles != null) {
+			for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
+				final ScpDestination scpDestination = entry.getValue();
+				String sourceFile = entry.getKey();
+				if (isSourceFileNameMatchesResourceList(sourceFile)) {
+					secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
+				}
+
+			}
+		}
+	}
     private void installJvmWindowsService(Jvm jvm, User user) {
         ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, jvm);
         CommandOutput execData = jvmControlService.controlJvm(controlJvmRequest, user);
@@ -1312,15 +1321,12 @@ public class JvmServiceImpl implements JvmService {
         }
     }
     
-    private static boolean isSourceFileNameMatchesResourceList(String sourceFile)
-    {
-        for(int i =0; i < jdk_upgrade_resourceNamesArray.length; i++)
-        {
-            if(sourceFile.contains(jdk_upgrade_resourceNamesArray[i]))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+	private static boolean isSourceFileNameMatchesResourceList(String sourceFile) {
+		for (int i = 0; i < jdk_upgrade_resourceNames.length; i++) {
+			if (sourceFile.contains(jdk_upgrade_resourceNames[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
