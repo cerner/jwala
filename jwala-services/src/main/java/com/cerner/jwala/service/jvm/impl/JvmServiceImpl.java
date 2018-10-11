@@ -725,6 +725,10 @@ public class JvmServiceImpl implements JvmService {
 
     }
     
+   /**
+    * This method upgrades the JDK version for the mentioned JVM
+    * 
+    */
 	public Jvm upgradeJDKAndDeployJvm(String jvmName, User user) {
 		boolean didSucceed = false;
 		Jvm jvm = getJvm(jvmName);
@@ -738,30 +742,27 @@ public class JvmServiceImpl implements JvmService {
 		binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
 
 		try {
-			// Validation 1: Application should not be in STARTED state
-			if (jvm.getState().isStartedState()) {
-				final String errorMessage = "The remote JVM " + jvm.getJvmName()
-						+ " must be stopped before attempting to upgrade the JDK of the JVM";
+			// Validation 1: Application should be in STOPPED state
+			if (!jvm.getState().equals(JvmState.JVM_STOPPED)) {
+				final String errorMessage = "The remote JVM ::" + jvm.getJvmName()
+						+ " must be in STOPPED state before attempting to upgrade the JDK of the JVM";
 				LOGGER.error(errorMessage);
 				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
 			}
-			// Validation 2: Application should not be in NEW state
-			if (jvm.getState().equals(JvmState.JVM_NEW)) {
-				final String errorMessage = "The remote JVM " + jvm.getJvmName()
-						+ " should have been generated atleast once and not in NEW state before attempting to upgrade the JDK of the JVM";
-				LOGGER.error(errorMessage);
-				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
-			}
+
 			// Step 1: Check if JDK Binaries exists
 			checkForJvmBinaries(jvm);
 			// Step 2: Distribute JDK binaries if required
 			distributeBinaries(jvm);
 
-			// Step 3: update the Setenv file with upgraded JDK
+			// Step 3: delete the service
+			deleteJvmService(jvm, user);
+
+			// Step 4: update the Setenv file with upgraded JDK
 			deployJvmResourceFilesForJDKUpgrade(jvm, user);
 
-			// Step 4: set the state to stopped
-			updateState(jvm.getId(), JvmState.JVM_STOPPED);
+			// Step 5: re-install the service
+			installJvmWindowsService(jvm, user);
 
 			didSucceed = true;
 		} catch (CommandFailureException | IOException e) {
@@ -782,143 +783,7 @@ public class JvmServiceImpl implements JvmService {
 		}
 		return jvm;
 	}
-
-    /**
-     * This method will deploy necessary scripts to Jwala Directory during JDK upgrade process
-     * @param jvm
-     * @param user
-     * @throws CommandFailureException
-     * @throws IOException
-     */
-    protected void deployScriptsToUserJwalaScriptsDir_JDKUpgrade(Jvm jvm, User user) throws CommandFailureException, IOException {
-        final ControlJvmRequest secureCopyRequest = new ControlJvmRequest(jvm.getId(), JvmControlOperation.SCP);
-        final String commandsScriptsPath = ApplicationProperties.get("commands.scripts-path");
-
-      
-        final String jvmName = jvm.getJvmName();
-        final String userId = user.getId();
-        final String scriptsDir = ApplicationProperties.get(PropertyKeys.REMOTE_SCRIPT_DIR);
-
-        final String stagingArea = scriptsDir + '/' + jvmName;
-
-        createParentDir(jvm, stagingArea);
-        final String failedToCopyMessage = "Failed to secure copy ";
-        final String duringCreationMessage = " during the creation of ";
-        final boolean alwaysOverwriteScripts = true;
-        
-      /*  // copy the unjar script
-        final String destinationDeployJarPath = stagingArea + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
-         final String deployConfigJarPath = commandsScriptsPath + '/' + DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, deployConfigJarPath, destinationDeployJarPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + deployConfigJarPath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-        // copy the install service script
-        final String installServicePath = commandsScriptsPath + '/' + INSTALL_SERVICE_SCRIPT_NAME;
-        final String destinationInstallServicePath = stagingArea + '/' + INSTALL_SERVICE_SCRIPT_NAME;
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, installServicePath, destinationInstallServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + installServicePath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }
-        
-        /* 
-        final String deleteServicePath = commandsScriptsPath + "/" + DELETE_SERVICE_SCRIPT_NAME;
-        final String destinationDeleteServicePath = stagingArea + "/" + DELETE_SERVICE_SCRIPT_NAME;
-
-       // copy the delete service script
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, deleteServicePath, destinationDeleteServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + deleteServicePath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-        /*
-        // copy the start service script
-        final String startServicePath = commandsScriptsPath + "/" + START_SCRIPT_NAME;
-        final String destinationStartServicePath = stagingArea + "/" + START_SCRIPT_NAME;
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, startServicePath, destinationStartServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + startServicePath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-       /* // copy the stop service script
-        final String stopServicePath = commandsScriptsPath + "/" + STOP_SCRIPT_NAME;
-        final String destinationStopServicePath = stagingArea + "/" + STOP_SCRIPT_NAME;
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, stopServicePath, destinationStopServicePath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + stopServicePath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-       /* // copy the thread dump script
-        final String threadDumpPath = commandsScriptsPath + "/" + THREAD_DUMP_SCRIPT_NAME;
-        final String destinationThreadDumpPath = stagingArea + "/" + THREAD_DUMP_SCRIPT_NAME;
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, threadDumpPath, destinationThreadDumpPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + threadDumpPath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-     /*   // copy the heap dump script
-        final String heapDumpPath = commandsScriptsPath + "/" + HEAP_DUMP_SCRIPT_NAME;
-        final String destinationHeapDumpPath = stagingArea + "/" + HEAP_DUMP_SCRIPT_NAME;
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, heapDumpPath, destinationHeapDumpPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + heapDumpPath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-       /* // copy the status service script
-        final String serviceStatusPath = commandsScriptsPath + "/" + SERVICE_STATUS_SCRIPT_NAME;
-        final String destinationServiceStatusPath = stagingArea + "/" + SERVICE_STATUS_SCRIPT_NAME;
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, serviceStatusPath, destinationServiceStatusPath, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + serviceStatusPath + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }*/
-
-        //TODO move to constant
-        final String linuxJvmService = "/linux/jvm-service.sh";
-        final CommandOutput commandOutput = jvmControlService.executeCreateDirectoryCommand(jvm, stagingArea + "/linux");
-        if (commandOutput.getReturnCode().wasSuccessful()) {
-            LOGGER.info("created {} directory successfully", stagingArea + "/linux");
-        } else {
-            final String standardError = commandOutput.getStandardError().isEmpty() ? commandOutput.getStandardOutput() : commandOutput.getStandardError();
-            LOGGER.error("create command failed with error trying to create parent directory {} on {} :: ERROR: {}", stagingArea + "/linux", jvm.getHostName(), standardError);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, standardError.isEmpty() ? CommandOutputReturnCode.fromReturnCode(commandOutput.getReturnCode().getReturnCode()).getDesc() : standardError);
-        }
-
-        if (!jvmControlService.secureCopyFile(secureCopyRequest, commandsScriptsPath + linuxJvmService, stagingArea + linuxJvmService, userId, alwaysOverwriteScripts).getReturnCode().wasSuccessful()) {
-            String message = failedToCopyMessage + commandsScriptsPath + linuxJvmService + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }
-        
-        // make sure the scripts are executable
-        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea, "*.sh").getReturnCode().wasSuccessful()) {
-            String message = "Failed to change the file permissions in " + stagingArea + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }
-        //TODO fix constants
-        if (!jvmControlService.executeChangeFileModeCommand(jvm, "a+x", stagingArea + "/linux", "jvm-service.sh").getReturnCode().wasSuccessful()) {
-            String message = "Failed to change the file permissions in " + stagingArea + linuxJvmService + duringCreationMessage + jvmName;
-            LOGGER.error(message);
-            throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, message);
-        }
-
-    }
-    
+ 
     
     String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
