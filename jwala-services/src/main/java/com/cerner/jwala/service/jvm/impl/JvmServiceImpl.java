@@ -89,7 +89,7 @@ import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
 public class JvmServiceImpl implements JvmService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImpl.class);
     private static final String MEDIA_TYPE_TEXT = "text";
-
+    private static final String RESOURCE_FILE_SETENV = "setenv";
     private final BinaryDistributionLockManager binaryDistributionLockManager;
     private final String topicServerStates;
     private final JvmPersistenceService jvmPersistenceService;
@@ -103,10 +103,7 @@ public class JvmServiceImpl implements JvmService {
     private final HistoryFacadeService historyFacadeService;
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
-    //JDK Upgrade Resource file names Array
-	private static String[] jdk_upgrade_resourceNames = { "setenv" };
-    
-
+ 
     @Autowired
     private JvmStateService jvmStateService;
 
@@ -854,7 +851,7 @@ public class JvmServiceImpl implements JvmService {
     }
 
     private void deployJvmResourceFiles(Jvm jvm, User user) throws IOException, CommandFailureException {
-        final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
+        final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName(),false);
         if (generatedFiles != null) {
             for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
                 final ScpDestination scpDestination = entry.getValue();
@@ -871,12 +868,12 @@ public class JvmServiceImpl implements JvmService {
  * @throws CommandFailureException
  */
 	private void deployJvmResourceFilesForJDKUpgrade(Jvm jvm, User user) throws IOException, CommandFailureException {
-		final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
+		final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName(), true);
 		if (generatedFiles != null) {
 			for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
 				final ScpDestination scpDestination = entry.getValue();
 				String sourceFile = entry.getKey();
-				if (isSourceFileNameMatchesResourceList(sourceFile)) {
+				if (sourceFile.contains(RESOURCE_FILE_SETENV)) {
 					secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
 				}
 
@@ -1113,10 +1110,16 @@ public class JvmServiceImpl implements JvmService {
         return jvmPersistenceService.getJvmForciblyStoppedCount(groupName);
     }
 
-    private Map<String, ScpDestination> generateResourceFiles(final String jvmName) throws IOException {
+    private Map<String, ScpDestination> generateResourceFiles(final String jvmName,boolean isJDKUpgradeService) throws IOException {
         Map<String, ScpDestination> generatedFiles = new HashMap<>();
         final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
+      
         for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
+			// If isJDKUpgradeService is true ,then proceed with generating Resource files
+			// only setenv file.
+			if (isJDKUpgradeService && !jpaJvmConfigTemplate.getTemplateName().contains(RESOURCE_FILE_SETENV)) {
+				continue;
+			}
             final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
             String resourceTemplateMetaDataString = "";
@@ -1186,12 +1189,5 @@ public class JvmServiceImpl implements JvmService {
         }
     }
     
-	private static boolean isSourceFileNameMatchesResourceList(String sourceFile) {
-		for (int i = 0; i < jdk_upgrade_resourceNames.length; i++) {
-			if (sourceFile.contains(jdk_upgrade_resourceNames[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
+
 }
