@@ -2226,6 +2226,31 @@
 					"response": []
 				},
 				{
+					"name": "upgrade JDK",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmName}}/jdk",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "This webservices upgrade the JDK version of the JVM."
+					},
+					"response": []
+				},
+				{
 					"name": "generate webapp",
 					"event": [
 						{
