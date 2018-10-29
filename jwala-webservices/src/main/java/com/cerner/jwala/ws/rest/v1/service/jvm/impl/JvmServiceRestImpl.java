@@ -132,9 +132,9 @@ public class JvmServiceRestImpl implements JvmServiceRest {
     }
     
     @Override
-    public Response upgradeJDKAndDeployJvm(final String jvmName, final AuthenticatedUser user) {
+    public Response upgradeJDK(final String jvmName, final AuthenticatedUser user) {
         LOGGER.info("Upgrade the JDK and deploy JVM {} by user {}", jvmName, user.getUser().getId());
-        return ResponseBuilder.ok(jvmService.upgradeJDKAndDeployJvm(jvmName, user.getUser()));
+        return ResponseBuilder.ok(jvmService.upgradeJDK(jvmName, user.getUser()));
     }
 
     @Override

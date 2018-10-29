@@ -126,5 +126,5 @@ public interface JvmService {
 	 * @param user
 	 * @return
 	 */
-	Jvm upgradeJDKAndDeployJvm(String jvmName, User user);
+	Jvm upgradeJDK(String jvmName, User user);
 }

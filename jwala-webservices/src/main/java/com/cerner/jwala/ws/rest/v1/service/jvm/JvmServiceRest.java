@@ -190,7 +190,7 @@ public interface JvmServiceRest {
             response = Jvm.class
     )
     @ApiResponses(@ApiResponse(code = 500, message = "Attempt to upgrade the JDK failed."))
-    Response upgradeJDKAndDeployJvm(@ApiParam(value = "The name of the JVM to be upgraded", required = true) @PathParam("jvmName") final String jvmName,
+    Response upgradeJDK(@ApiParam(value = "The name of the JVM to be upgraded", required = true) @PathParam("jvmName") final String jvmName,
                                   @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
 
     

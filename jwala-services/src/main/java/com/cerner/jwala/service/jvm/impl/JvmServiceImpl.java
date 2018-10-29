@@ -722,15 +722,19 @@ public class JvmServiceImpl implements JvmService {
 
     }
     
-   /**
-    * This method upgrades the JDK version for the mentioned JVM
-    * 
-    */
-	public Jvm upgradeJDKAndDeployJvm(String jvmName, User user) {
+	/**
+	 * This method upgrades the JDK version for the mentioned JVM
+	 * 
+	 * @param jvmName
+	 * @param user
+	 * @return Jvm
+	 * 
+	 */
+	public Jvm upgradeJDK(String jvmName, User user) {
 		boolean didSucceed = false;
 		Jvm jvm = getJvm(jvmName);
 		LOGGER.info("Start upgradeJDKAndDeployJvm for {} by user {}", jvmName, user.getId());
-
+		;
 		historyFacadeService.write(jvm.getHostName(), jvm.getGroups(),
 				"Starting to upgrade JDK :: JVM " + jvm.getJvmName() + " on host " + jvm.getHostName(),
 				EventType.USER_ACTION_INFO, user.getId());
@@ -773,14 +777,13 @@ public class JvmServiceImpl implements JvmService {
 			final EventType eventType = didSucceed ? EventType.SYSTEM_INFO : EventType.SYSTEM_ERROR;
 
 			String historyMessage = didSucceed
-					? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " succeeded"
+					? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " with JDK "+jvm.getJdkMedia().getName() +" to host " + jvm.getHostName() + " succeeded."
 					: "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " failed";
 
 			historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), historyMessage, eventType, user.getId());
 		}
 		return jvm;
 	}
- 
     
     String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
@@ -851,7 +854,7 @@ public class JvmServiceImpl implements JvmService {
     }
 
     private void deployJvmResourceFiles(Jvm jvm, User user) throws IOException, CommandFailureException {
-        final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName(),false);
+        final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName());
         if (generatedFiles != null) {
             for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
                 final ScpDestination scpDestination = entry.getValue();
@@ -860,26 +863,78 @@ public class JvmServiceImpl implements JvmService {
         }
     }
     
-/**
- * This method modifies the setenv file with the JDK home location during JDK upgrade process
- * @param jvm
- * @param user
- * @throws IOException
- * @throws CommandFailureException
- */
+	/**
+	 * This method modifies the setenv file with the JDK home location during JDK
+	 * upgrade process
+	 * 
+	 * @param jvm
+	 * @param user
+	 * @throws IOException
+	 * @throws CommandFailureException
+	 */
 	private void deployJvmResourceFilesForJDKUpgrade(Jvm jvm, User user) throws IOException, CommandFailureException {
-		final Map<String, ScpDestination> generatedFiles = generateResourceFiles(jvm.getJvmName(), true);
+		final Map<String, ScpDestination> generatedFiles = generateResourceFilesByName(jvm.getJvmName(),
+				RESOURCE_FILE_SETENV);
 		if (generatedFiles != null) {
 			for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
 				final ScpDestination scpDestination = entry.getValue();
 				String sourceFile = entry.getKey();
-				if (sourceFile.contains(RESOURCE_FILE_SETENV)) {
-					secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
-				}
+				secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
 
 			}
 		}
 	}
+	
+	/**
+	 * This method generates the targeted resource file passed as resourceFileName
+	 * argument.
+	 * 
+	 * @param jvmName
+	 * @param resourceFileName
+	 * @return Map<String,ScpDestination>
+	 * @throws IOException
+	 * 
+	 */
+	private Map<String, ScpDestination> generateResourceFilesByName(final String jvmName, String resourceFileName)
+			throws IOException {
+		Map<String, ScpDestination> generatedFiles = new HashMap<>();
+		final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
+
+		for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
+			// Generate only the file mentioned as resourceFileName
+			if (!jpaJvmConfigTemplate.getTemplateName().contains(resourceFileName)) {
+				continue;
+			}
+			final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
+			final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
+
+			String resourceTemplateMetaDataString = "";
+			resourceTemplateMetaDataString = resourceService.generateResourceFile(
+					jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getMetaData(), resourceGroup, jvm,
+					ResourceGeneratorType.METADATA);
+			final ResourceTemplateMetaData resourceTemplateMetaData = resourceService
+					.getMetaData(resourceTemplateMetaDataString);
+			final String deployFileName = resourceTemplateMetaData.getDeployFileName();
+			if (resourceTemplateMetaData.getContentType().getType().equalsIgnoreCase(MEDIA_TYPE_TEXT)
+					|| MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
+				final String generatedResourceStr = resourceService.generateResourceFile(
+						jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
+						resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
+				generatedFiles.put(
+						createConfigFile(
+								ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName,
+								deployFileName, generatedResourceStr),
+						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
+								resourceTemplateMetaData.isOverwrite()));
+			} else {
+				generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
+						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
+								resourceTemplateMetaData.isOverwrite()));
+			}
+		}
+		return generatedFiles;
+	}
+	 
     private void installJvmWindowsService(Jvm jvm, User user) {
         ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, jvm);
         CommandOutput execData = jvmControlService.controlJvm(controlJvmRequest, user);
@@ -1110,17 +1165,12 @@ public class JvmServiceImpl implements JvmService {
         return jvmPersistenceService.getJvmForciblyStoppedCount(groupName);
     }
 
-    private Map<String, ScpDestination> generateResourceFiles(final String jvmName,boolean isJDKUpgradeService) throws IOException {
+    private Map<String, ScpDestination> generateResourceFiles(final String jvmName) throws IOException {
         Map<String, ScpDestination> generatedFiles = new HashMap<>();
         final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
       
         for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
-			// If isJDKUpgradeService is true ,then proceed with generating Resource files
-			// only setenv file.
-			if (isJDKUpgradeService && !jpaJvmConfigTemplate.getTemplateName().contains(RESOURCE_FILE_SETENV)) {
-				continue;
-			}
-            final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
+			final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
             final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
             String resourceTemplateMetaDataString = "";
             resourceTemplateMetaDataString = resourceService.generateResourceFile(jpaJvmConfigTemplate.getTemplateName(),
