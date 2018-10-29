@@ -734,7 +734,6 @@ public class JvmServiceImpl implements JvmService {
 		boolean didSucceed = false;
 		Jvm jvm = getJvm(jvmName);
 		LOGGER.info("Start upgradeJDKAndDeployJvm for {} by user {}", jvmName, user.getId());
-		;
 		historyFacadeService.write(jvm.getHostName(), jvm.getGroups(),
 				"Starting to upgrade JDK :: JVM " + jvm.getJvmName() + " on host " + jvm.getHostName(),
 				EventType.USER_ACTION_INFO, user.getId());
@@ -777,7 +776,8 @@ public class JvmServiceImpl implements JvmService {
 			final EventType eventType = didSucceed ? EventType.SYSTEM_INFO : EventType.SYSTEM_ERROR;
 
 			String historyMessage = didSucceed
-					? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " with JDK "+jvm.getJdkMedia().getName() +" to host " + jvm.getHostName() + " succeeded."
+					? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " with JDK " + jvm.getJdkMedia().getName()
+							+ " to host " + jvm.getHostName() + " succeeded."
 					: "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " failed";
 
 			historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), historyMessage, eventType, user.getId());
