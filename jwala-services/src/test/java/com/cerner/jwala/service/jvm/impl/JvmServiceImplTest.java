@@ -1132,18 +1132,17 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
 
-	@Test(expected = Exception.class)
+	@Test(expected = InternalErrorException.class)
 	public void testUpgradeJDKNewJVM() throws CommandFailureException, IOException {
 
 		Jvm mockJvm = mock(Jvm.class);
 		when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
 		when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
 		when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
-
+		when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
 		final List<String> templateNames = new ArrayList<>();
 		templateNames.add("setenv.bat");
 		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
-
 		jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
 
 	}
@@ -1154,7 +1153,6 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 		CommandOutput commandOutput = mock(CommandOutput.class);
 		Jvm mockJvm = mock(Jvm.class);
 		ResourceGroup mockResourceGroup = mock(ResourceGroup.class);
-
 		when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
 		when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
 		when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
@@ -1190,13 +1188,17 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 		when(Config.mockResourceService.generateResourceGroup()).thenReturn(mockResourceGroup);
 		when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class),
 				anyObject(), any(ResourceGeneratorType.class))).thenReturn("<server>some xml</server>");
+		ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder().setResourceName("setenv.bat")
+				.setJvmName("test-jvm-deploy-config").build();
+		ResourceContent resourceContent = new ResourceContent("TEST", "TEST");
 
 		final List<String> templateNames = new ArrayList<>();
 		templateNames.add("setenv.bat");
 		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
-
+		when(Config.mockResourceService.getResourceContent(resourceIdentifier)).thenReturn(resourceContent);
 		Jvm response = jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
 		assertEquals(response.getJvmName(), mockJvm.getJvmName());
+		verify(Config.mockJvmPersistenceService, times(3)).findJvmByExactName(anyString());
 
 	}
     

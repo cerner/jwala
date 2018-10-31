@@ -25,6 +25,7 @@ import javax.persistence.NoResultException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.mime.MediaType;
 import org.joda.time.DateTime;
@@ -89,7 +90,8 @@ import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
 public class JvmServiceImpl implements JvmService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImpl.class);
     private static final String MEDIA_TYPE_TEXT = "text";
-    private static final String RESOURCE_FILE_SETENV = "setenv";
+    private static final String RESOURCE_FILE_SETENV_WINDOWS = "setenv.bat";
+    private static final String RESOURCE_FILE_SETENV_LINUX = "setenv.sh";
     private final BinaryDistributionLockManager binaryDistributionLockManager;
     private final String topicServerStates;
     private final JvmPersistenceService jvmPersistenceService;
@@ -752,20 +754,25 @@ public class JvmServiceImpl implements JvmService {
 
 			// Step 1: Check if JDK Binaries exists
 			checkForJvmBinaries(jvm);
+
 			// Step 2: Distribute JDK binaries if required
 			distributeBinaries(jvm);
 
-			// Step 3: delete the service
+			// Step 3: Delete the service
 			deleteJvmService(jvm, user);
 
-			// Step 4: update the Setenv file with upgraded JDK
-			deployJvmResourceFilesForJDKUpgrade(jvm, user);
+			// Step 4: Generate and deploy Setenv file with upgraded JDK
+			if (SystemUtils.IS_OS_WINDOWS) {
+				generateAndDeployFile(jvmName, RESOURCE_FILE_SETENV_WINDOWS, user);
+			} else {
+				generateAndDeployFile(jvmName, RESOURCE_FILE_SETENV_LINUX, user);
+			}
 
-			// Step 5: re-install the service
+			// Step 5: Re-install the service
 			installJvmWindowsService(jvm, user);
 
 			didSucceed = true;
-		} catch (CommandFailureException | IOException e) {
+		} catch (CommandFailureException e) {
 			LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
 			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
 					"Failed to generate the JVM config: " + jvm.getJvmName(), e);
@@ -784,7 +791,7 @@ public class JvmServiceImpl implements JvmService {
 		}
 		return jvm;
 	}
-    
+
     String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
         LOGGER.debug("Start generateJvmConfigJar ");
@@ -862,78 +869,7 @@ public class JvmServiceImpl implements JvmService {
             }
         }
     }
-    
-	/**
-	 * This method modifies the setenv file with the JDK home location during JDK
-	 * upgrade process
-	 * 
-	 * @param jvm
-	 * @param user
-	 * @throws IOException
-	 * @throws CommandFailureException
-	 */
-	private void deployJvmResourceFilesForJDKUpgrade(Jvm jvm, User user) throws IOException, CommandFailureException {
-		final Map<String, ScpDestination> generatedFiles = generateResourceFilesByName(jvm.getJvmName(),
-				RESOURCE_FILE_SETENV);
-		if (generatedFiles != null) {
-			for (Map.Entry<String, ScpDestination> entry : generatedFiles.entrySet()) {
-				final ScpDestination scpDestination = entry.getValue();
-				String sourceFile = entry.getKey();
-				secureCopyFileToJvm(jvm, sourceFile, scpDestination.destPath, user, scpDestination.overwrite);
 
-			}
-		}
-	}
-	
-	/**
-	 * This method generates the targeted resource file passed as resourceFileName
-	 * argument.
-	 * 
-	 * @param jvmName
-	 * @param resourceFileName
-	 * @return Map<String,ScpDestination>
-	 * @throws IOException
-	 * 
-	 */
-	private Map<String, ScpDestination> generateResourceFilesByName(final String jvmName, String resourceFileName)
-			throws IOException {
-		Map<String, ScpDestination> generatedFiles = new HashMap<>();
-		final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
-
-		for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
-			// Generate only the file mentioned as resourceFileName
-			if (!jpaJvmConfigTemplate.getTemplateName().contains(resourceFileName)) {
-				continue;
-			}
-			final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
-			final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
-
-			String resourceTemplateMetaDataString = "";
-			resourceTemplateMetaDataString = resourceService.generateResourceFile(
-					jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getMetaData(), resourceGroup, jvm,
-					ResourceGeneratorType.METADATA);
-			final ResourceTemplateMetaData resourceTemplateMetaData = resourceService
-					.getMetaData(resourceTemplateMetaDataString);
-			final String deployFileName = resourceTemplateMetaData.getDeployFileName();
-			if (resourceTemplateMetaData.getContentType().getType().equalsIgnoreCase(MEDIA_TYPE_TEXT)
-					|| MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-				final String generatedResourceStr = resourceService.generateResourceFile(
-						jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
-						resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
-				generatedFiles.put(
-						createConfigFile(
-								ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName,
-								deployFileName, generatedResourceStr),
-						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
-								resourceTemplateMetaData.isOverwrite()));
-			} else {
-				generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
-						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
-								resourceTemplateMetaData.isOverwrite()));
-			}
-		}
-		return generatedFiles;
-	}
 	 
     private void installJvmWindowsService(Jvm jvm, User user) {
         ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, jvm);
@@ -1165,34 +1101,38 @@ public class JvmServiceImpl implements JvmService {
         return jvmPersistenceService.getJvmForciblyStoppedCount(groupName);
     }
 
-    private Map<String, ScpDestination> generateResourceFiles(final String jvmName) throws IOException {
-        Map<String, ScpDestination> generatedFiles = new HashMap<>();
-        final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
-      
-        for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
+	private Map<String, ScpDestination> generateResourceFiles(final String jvmName) throws IOException {
+		Map<String, ScpDestination> generatedFiles = new HashMap<>();
+		final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
+		for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
 			final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
-            final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
-            String resourceTemplateMetaDataString = "";
-            resourceTemplateMetaDataString = resourceService.generateResourceFile(jpaJvmConfigTemplate.getTemplateName(),
-                    jpaJvmConfigTemplate.getMetaData(),
-                    resourceGroup,
-                    jvm,
-                    ResourceGeneratorType.METADATA);
-            final ResourceTemplateMetaData resourceTemplateMetaData = resourceService.getMetaData(resourceTemplateMetaDataString);
-            final String deployFileName = resourceTemplateMetaData.getDeployFileName();
-            if (resourceTemplateMetaData.getContentType().getType().equalsIgnoreCase(MEDIA_TYPE_TEXT) ||
-                    MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-                final String generatedResourceStr = resourceService.generateResourceFile(jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
-                        resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
-                generatedFiles.put(createConfigFile(ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName, deployFileName, generatedResourceStr),
-                        new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName, resourceTemplateMetaData.isOverwrite()));
-            } else {
-                generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
-                        new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName, resourceTemplateMetaData.isOverwrite()));
-            }
-        }
-        return generatedFiles;
-    }
+			final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
+			String resourceTemplateMetaDataString = "";
+			resourceTemplateMetaDataString = resourceService.generateResourceFile(
+					jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getMetaData(), resourceGroup, jvm,
+					ResourceGeneratorType.METADATA);
+			final ResourceTemplateMetaData resourceTemplateMetaData = resourceService
+					.getMetaData(resourceTemplateMetaDataString);
+			final String deployFileName = resourceTemplateMetaData.getDeployFileName();
+			if (resourceTemplateMetaData.getContentType().getType().equalsIgnoreCase(MEDIA_TYPE_TEXT)
+					|| MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
+				final String generatedResourceStr = resourceService.generateResourceFile(
+						jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
+						resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
+				generatedFiles.put(
+						createConfigFile(
+								ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName,
+								deployFileName, generatedResourceStr),
+						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
+								resourceTemplateMetaData.isOverwrite()));
+			} else {
+				generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
+						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
+								resourceTemplateMetaData.isOverwrite()));
+			}
+		}
+		return generatedFiles;
+	}
 
     /**
      * This method creates a temp file .tpl file, with the generatedResourceString as the input data for the file.
