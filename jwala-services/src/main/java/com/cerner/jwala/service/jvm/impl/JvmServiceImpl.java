@@ -762,11 +762,8 @@ public class JvmServiceImpl implements JvmService {
 			deleteJvmService(jvm, user);
 
 			// Step 4: Generate and deploy Setenv file with upgraded JDK
-			if (SystemUtils.IS_OS_WINDOWS) {
-				generateAndDeployFile(jvmName, RESOURCE_FILE_SETENV_WINDOWS, user);
-			} else {
-				generateAndDeployFile(jvmName, RESOURCE_FILE_SETENV_LINUX, user);
-			}
+			generateAndDeployFile(jvmName,
+					SystemUtils.IS_OS_WINDOWS ? RESOURCE_FILE_SETENV_WINDOWS : RESOURCE_FILE_SETENV_LINUX, user);
 
 			// Step 5: Re-install the service
 			installJvmWindowsService(jvm, user);
