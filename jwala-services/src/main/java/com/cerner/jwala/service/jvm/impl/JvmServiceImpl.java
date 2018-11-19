@@ -743,6 +743,8 @@ public class JvmServiceImpl implements JvmService {
 		// add write lock for multiple write
 		binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
 
+		// determine the setenv file name based on the operating system
+		String resourceFileName = SystemUtils.IS_OS_WINDOWS ? RESOURCE_FILE_SETENV_WINDOWS : RESOURCE_FILE_SETENV_LINUX;
 		try {
 			// Validation 1: Application should be in STOPPED state
 			if (!jvm.getState().equals(JvmState.JVM_STOPPED)) {
@@ -761,10 +763,14 @@ public class JvmServiceImpl implements JvmService {
 			// Step 3: Delete the service
 			deleteJvmService(jvm, user);
 
-			// Step 4: Generate and deploy Setenv file with upgraded JDK
-			generateAndDeployFile(jvmName,
-					SystemUtils.IS_OS_WINDOWS ? RESOURCE_FILE_SETENV_WINDOWS : RESOURCE_FILE_SETENV_LINUX, user);
-
+			try {
+				// Step 4: Generate and deploy Setenv file with upgraded JDK
+				generateAndDeployFile(jvmName, resourceFileName, user);
+			} catch (NoResultException e) {
+				String errorMessage = resourceFileName + " resource file does not exist for JVM: " + jvm.getJvmName();
+				LOGGER.error(errorMessage, jvm.getJvmName(), e);
+				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage, e);
+			}
 			// Step 5: Re-install the service
 			installJvmWindowsService(jvm, user);
 
