@@ -6358,7 +6358,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmName}}/jdk",
+						"url": "{{url}}/v1.0/jvms/Postman-test-jvm2/jdk",
 						"method": "PUT",
 						"header": [],
 						"body": {
