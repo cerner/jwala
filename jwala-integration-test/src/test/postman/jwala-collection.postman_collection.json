@@ -6280,7 +6280,7 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"src": "../resources/postman/setenv.bat.json",
+									"src": "../resources/postman/setenv_upgradeJDK.bat.json",
 									"value": ""
 								},
 								{
