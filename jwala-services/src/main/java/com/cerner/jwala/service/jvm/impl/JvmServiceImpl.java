@@ -763,18 +763,18 @@ public class JvmServiceImpl implements JvmService {
 			// Step 3: Delete the service
 			deleteJvmService(jvm, user);
 
-			try {
-				// Step 4: Generate and deploy Setenv file with upgraded JDK
-				generateAndDeployFile(jvmName, resourceFileName, user);
-			} catch (NoResultException e) {
-				String errorMessage = resourceFileName + " resource file does not exist for JVM: " + jvm.getJvmName();
-				LOGGER.error(errorMessage, jvm.getJvmName(), e);
-				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage, e);
-			}
+			// Step 4: Generate and deploy Setenv file with upgraded JDK
+			generateAndDeployFile(jvmName, resourceFileName, user);
+
 			// Step 5: Re-install the service
 			installJvmWindowsService(jvm, user);
 
 			didSucceed = true;
+		} catch (NoResultException e) {
+			String errorMessage = resourceFileName + " resource file does not exist for JVM: " + jvm.getJvmName()
+					+ " ,and the file is required to set the JAVA_HOME for the JVM.";
+			LOGGER.error(errorMessage, jvm.getJvmName(), e);
+			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage, e);
 		} catch (CommandFailureException e) {
 			LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
 			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
