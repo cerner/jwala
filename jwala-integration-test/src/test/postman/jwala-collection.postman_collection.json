@@ -6258,6 +6258,44 @@
 					"response": []
 				},
 				{
+					"name": "upload setenv.bat template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/setenv.bat.tpl",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/setenv.bat.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/setenv.bat.tpl",
+									"value": ""
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
 					"name": "upgrade JDK",
 					"event": [
 						{
