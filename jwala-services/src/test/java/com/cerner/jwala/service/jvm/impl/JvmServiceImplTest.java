@@ -1132,6 +1132,76 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
     }
 
 
+	@Test(expected = InternalErrorException.class)
+	public void testUpgradeJDKNewJVM() throws CommandFailureException, IOException {
+
+		Jvm mockJvm = mock(Jvm.class);
+		when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+		when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
+		when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+		when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+		final List<String> templateNames = new ArrayList<>();
+		templateNames.add("setenv.bat");
+		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
+		jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
+
+	}
+
+	@Test
+	public void testUpgradeJDK() throws CommandFailureException, IOException {
+
+		CommandOutput commandOutput = mock(CommandOutput.class);
+		Jvm mockJvm = mock(Jvm.class);
+		ResourceGroup mockResourceGroup = mock(ResourceGroup.class);
+		when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
+		when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
+		when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+		when(mockJvm.getJdkMedia())
+				.thenReturn(new Media(1L, "test JDK media", MediaType.JDK, Paths.get("x:/test/archive/path.zip"),
+						Paths.get("x:/test-destination"), Paths.get("root-dir-destination")));
+		when(mockJvm.getTomcatMedia()).thenReturn(new Media(2L, "test Tomcat media", MediaType.TOMCAT,
+				Paths.get("./src/test/resources/binaries/apache-tomcat-test.zip"),
+				Paths.get("x:/test-destination-tomcat"), Paths.get("tomcat-root-dir-destination")));
+		when(commandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+		when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(),
+				anyString(), anyBoolean())).thenReturn(commandOutput);
+		when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString()))
+				.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.executeChangeFileModeCommand(any(Jvm.class), anyString(), anyString(),
+				anyString())).thenReturn(commandOutput);
+		when(Config.mockJvmControlService.controlJvm(
+				eq(ControlJvmRequestFactory.create(JvmControlOperation.DELETE_SERVICE, mockJvm)), any(User.class)))
+						.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.controlJvm(
+				eq(ControlJvmRequestFactory.create(JvmControlOperation.DEPLOY_JVM_ARCHIVE, mockJvm)), any(User.class)))
+						.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.controlJvm(
+				eq(ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, mockJvm)), any(User.class)))
+						.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.executeCheckFileExistsCommand(any(Jvm.class), anyString()))
+				.thenReturn(commandOutput);
+
+		when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+		when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class)))
+				.thenReturn("<server>some xml</server>");
+
+		when(Config.mockResourceService.generateResourceGroup()).thenReturn(mockResourceGroup);
+		when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class),
+				anyObject(), any(ResourceGeneratorType.class))).thenReturn("<server>some xml</server>");
+		ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder().setResourceName("setenv.bat")
+				.setJvmName("test-jvm-deploy-config").build();
+		ResourceContent resourceContent = new ResourceContent("TEST", "TEST");
+
+		final List<String> templateNames = new ArrayList<>();
+		templateNames.add("setenv.bat");
+		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
+		when(Config.mockResourceService.getResourceContent(resourceIdentifier)).thenReturn(resourceContent);
+		Jvm response = jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
+		assertEquals(response.getJvmName(), mockJvm.getJvmName());
+		verify(Config.mockJvmPersistenceService, times(3)).findJvmByExactName(anyString());
+
+	}
+    
     @Configuration
     static class Config {
 
@@ -1281,5 +1351,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         }
 
     }
+    
+  
+    
 
 }

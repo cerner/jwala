@@ -178,4 +178,21 @@ public interface JvmServiceRest {
                                      @ApiParam(value = "The name of the JVM's group", required = true) @MatrixParam("groupName") String groupName,
                                      @ApiParam(value = "The content to be generated", required = true) String template);
 
+    /**
+     * upgrade the JDK version of the mentioned JVM.
+     * @param jvmName the name of the JVM
+     * @param aUser the user
+     * @return {@link Response}
+     */
+    @PUT
+    @Path("/{jvmName}/jdk")
+    @ApiOperation(value = "upgrade the JDK version for the JVM",
+            response = Jvm.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Attempt to upgrade the JDK failed."))
+    Response upgradeJDK(@ApiParam(value = "The name of the JVM to be upgraded", required = true) @PathParam("jvmName") final String jvmName,
+                                  @ApiParam(value = "The authentication details of user") @BeanParam final AuthenticatedUser aUser);
+
+    
+
 }
