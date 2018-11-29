@@ -727,9 +727,9 @@ public class JvmServiceImpl implements JvmService {
 	/**
 	 * This method upgrades the JDK version for the mentioned JVM
 	 * 
-	 * @param jvmName
-	 * @param user
-	 * @return Jvm
+	 * @param jvmName - name of the JVM that needs to be upgraded
+	 * @param user    - user object performing the JVM upgrade operation
+	 * @return Jvm - upgraded JVM object
 	 * 
 	 */
 	public Jvm upgradeJDK(String jvmName, User user) {
@@ -772,7 +772,7 @@ public class JvmServiceImpl implements JvmService {
 			didSucceed = true;
 		} catch (NoResultException e) {
 			String errorMessage = resourceFileName + " resource file does not exist for JVM: " + jvm.getJvmName()
-					+ " ,and the file is required to set the JAVA_HOME for the JVM.";
+					+ ", and the file is required to set the JAVA_HOME for the JVM.";
 			LOGGER.error(errorMessage, jvm.getJvmName(), e);
 			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage, e);
 		} catch (CommandFailureException e) {

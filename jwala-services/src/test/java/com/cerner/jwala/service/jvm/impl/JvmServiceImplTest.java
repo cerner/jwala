@@ -1198,6 +1198,13 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 		when(Config.mockResourceService.getResourceContent(resourceIdentifier)).thenReturn(resourceContent);
 		Jvm response = jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
 		assertEquals(response.getJvmName(), mockJvm.getJvmName());
+
+		/**
+		 * The persistence Service will be called three times - to fetch JVM details by
+		 * NAME-To fetch Setenv.bat Resource content - To generate the resource file-
+		 * Setenv.bat . JDK upgrade is assumed to be successful,if all these three steps
+		 * happens without error
+		 **/
 		verify(Config.mockJvmPersistenceService, times(3)).findJvmByExactName(anyString());
 
 	}

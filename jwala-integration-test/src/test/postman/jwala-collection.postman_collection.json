@@ -2617,6 +2617,7 @@
 					},
 					"response": []
 				}
+				
 			]
 		},
 		{
@@ -6256,6 +6257,70 @@
 						"description": ""
 					},
 					"response": []
+				}
+				
+			]
+		},
+				{
+			"name": "s)  upgrade JDK test operations",
+			"description": "",
+			"item": [
+{
+					"name": "upgrade JDK- Negative Test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JvmName2}}/jdk",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "This webservices upgrade the JDK version of the JVM which does not have Setenv.bat."
+					},
+					"response": []
+				},
+				{
+					"name": "update jvm values for Upgrade JVM Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmId\":{{JvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
+						},
+						"description": ""
+					},
+					"response": []
 				},
 				{
 					"name": "upload setenv.bat template",
@@ -6295,57 +6360,9 @@
 					},
 					"response": []
 				},
+				
 				{
-					"name": "create Tomcat media for JVM-upgrade",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"tests[\"Status code is 201\"] = responseCode.code === 201;",
-									"postman.setEnvironmentVariable(\"TomcatMediaId\", jsonData.applicationResponseContent.id);"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/media",
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "Postman-Test-JDK-Media-update",
-									"type": "text"
-								},
-								{
-									"key": "type",
-									"value": "TOMCAT",
-									"type": "text"
-								},
-								{
-									"key": "mediaArchiveFile",
-									"type": "file",
-									"src": "{{tomcatMediaSrc}}",
-									"value": ""
-								},
-								{
-									"key": "remoteDir",
-									"value": "{{mediaRemoteDir}}/app/instances",
-									"type": "text"
-								}
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "upgrade JDK",
+					"name": "upgrade JDK- Positive flow",
 					"event": [
 						{
 							"listen": "test",
@@ -6358,21 +6375,23 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/Postman-test-jvm2/jdk",
+						"url": "{{url}}/v1.0/jvms/{{JvmName2}}/jdk",
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": "This webservices upgrade the JDK version of the JVM."
+						"description": "This webservices upgrade the JDK version of the JVM after updating the JVM values and Setenv.bat.JVM in STOPPED state."
 					},
 					"response": []
 				}
-			]
+
+	]
 		},
+
 		{
-			"name": "s)  tear down operations",
+			"name": "t)  tear down operations",
 			"description": "",
 			"item": [
 				{
