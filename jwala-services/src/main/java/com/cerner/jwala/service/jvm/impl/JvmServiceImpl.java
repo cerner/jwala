@@ -729,9 +729,9 @@ public class JvmServiceImpl implements JvmService {
 	 * upgrade,the JVM needs to be in STOPPED state and setenv.bat/sh resource file
 	 * needs to available for the JVM for updating the JAVA_HOME.
 	 * 
-	 * @param jvmName - name of the JVM that needs to be upgraded
-	 * @param user    - user object performing the JVM upgrade operation
-	 * @return Jvm - upgraded JVM object
+	 * @param jvmName name of the JVM that needs to be upgraded
+	 * @param user    user object performing the JVM upgrade operation
+	 * @return Jvm upgraded JVM object
 	 * 
 	 */
 	public Jvm upgradeJDK(String jvmName, User user) {
