@@ -62,10 +62,6 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     # When I click the "status" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
     # Then I see the load balancer page
 
-    # test view httpd.conf
-    When I click the "httpd.conf" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
-    Then I see the httpd.conf
-
     When I click the drain button of "CONTROL-WEBSERVER-TEST-W" webserver under "CONTROL-WEBSERVER-TEST-G" group
     Then I see the drain message for webserver "CONTROL-WEBSERVER-TEST-W" and host "host1"
     And I do not see an error message after clicking drain
