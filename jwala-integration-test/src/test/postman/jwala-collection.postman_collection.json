@@ -6273,7 +6273,12 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+											"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
+
+									"tests[\"Assert No setenv.bat error\"] = jsonData.message === \"setenv.bat resource file does not exist for JVM: Postman-test-jvm2 ,and the file is required to set the JAVA_HOME for the JVM.\";"
 								]
 							}
 						}
@@ -6287,6 +6292,55 @@
 							"raw": ""
 						},
 						"description": "This webservices upgrade the JDK version of the JVM which does not have Setenv.bat."
+					},
+					"response": []
+				},
+				{
+					"name": "create new JDK media for upgrade JDK operation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"postman.setEnvironmentVariable(\"JdkMediaId2\", jsonData.applicationResponseContent.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/media",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "{{JdkMediaName}}2",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "JDK",
+									"type": "text"
+								},
+								{
+									"key": "mediaArchiveFile",
+									"type": "file",
+									"src": "{{jdkMediaSrc}}",
+									"value": ""
+								},
+								{
+									"key": "remoteDir",
+									"value": "{{mediaRemoteDir}}",
+									"type": "text"
+								}
+							]
+						},
+						"description": "This methods uploads a media which will be used for upgrade JDK operation"
 					},
 					"response": []
 				},
@@ -6316,9 +6370,9 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":{{JvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9130\",\"httpsPort\":\"9131\",\"redirectPort\":\"9132\",\"shutdownPort\":\"9133\",\"ajpPort\":\"9134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
+							"raw": "{\"jvmId\":{{JvmId2}},\"systemProperties\":\"\",\"jvmName\":\"{{JvmName2}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9131\",\"httpsPort\":\"9132\",\"redirectPort\":\"9133\",\"shutdownPort\":\"9134\",\"ajpPort\":\"9135\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId2}},\"tomcatMediaId\":{{TomcatMediaId}},\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
 						},
-						"description": ""
+						"description": "This Rest API updates the JVM properties including the  jdkMedia"
 					},
 					"response": []
 				},
@@ -6360,7 +6414,7 @@
 					},
 					"response": []
 				},
-				
+							
 				{
 					"name": "upgrade JDK- Positive flow",
 					"event": [

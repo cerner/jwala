@@ -725,7 +725,9 @@ public class JvmServiceImpl implements JvmService {
     }
     
 	/**
-	 * This method upgrades the JDK version for the mentioned JVM
+	 * This method upgrades the JDK version for the mentioned JVM. For a successful
+	 * upgrade,the JVM needs to be in STOPPED state and setenv.bat/sh resource file
+	 * needs to available for the JVM for updating the JAVA_HOME.
 	 * 
 	 * @param jvmName - name of the JVM that needs to be upgraded
 	 * @param user    - user object performing the JVM upgrade operation

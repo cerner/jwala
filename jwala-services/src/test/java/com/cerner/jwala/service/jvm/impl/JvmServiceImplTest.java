@@ -1197,18 +1197,32 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
 		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
 		when(Config.mockResourceService.getResourceContent(resourceIdentifier)).thenReturn(resourceContent);
 		Jvm response = jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
-		assertEquals(response.getJvmName(), mockJvm.getJvmName());
 
-		/**
-		 * The persistence Service will be called three times - to fetch JVM details by
-		 * NAME-To fetch Setenv.bat Resource content - To generate the resource file-
-		 * Setenv.bat . JDK upgrade is assumed to be successful,if all these three steps
-		 * happens without error
-		 **/
+		assertEquals(response.getJvmName(), mockJvm.getJvmName());
 		verify(Config.mockJvmPersistenceService, times(3)).findJvmByExactName(anyString());
 
+		// verify - Delete windows service and Install Service - are called
+		verify(Config.mockJvmControlService, times(2)).controlJvm(anyObject(), anyObject());
+
+		// Verify - the Setenv resource file is fetched from persistence layer
+		verify(Config.mockResourceService, times(1)).getResourceContent(anyObject());
+
+		// Very - JVM State and Binaries are checked
+		verify(mockJvm, times(1)).getTomcatMedia();
+		verify(mockJvm, times(3)).getJdkMedia();
+		verify(mockJvm, times(3)).getState();
+
+		// Verify - Binaries are distributed
+		verify(Config.mockBinaryDistributionService, times(1)).distributeUnzip(anyString());
+		verify(Config.mockBinaryDistributionService, times(1)).distributeMedia(anyString(), anyString(), anyObject(),
+				anyObject());
+
+		// Verify - Resource file(Setenv.bat/sh) is validated and generated
+		verify(Config.mockResourceService, times(1)).generateAndDeployFile(anyObject(), anyString(), anyString(),
+				anyString());
+		verify(Config.mockResourceService, times(1)).validateSingleResourceForGeneration(anyObject());
 	}
-    
+
     @Configuration
     static class Config {
 
