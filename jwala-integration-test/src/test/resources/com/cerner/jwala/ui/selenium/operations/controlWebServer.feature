@@ -64,8 +64,8 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
 
     # test view httpd.conf
     When I click the "httpd.conf" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
-    @ignore
-    Then I see the httpd.conf
+    #TODO: Need to fix test view httpd.conf 
+    #Then I see the httpd.conf
 
     When I click the drain button of "CONTROL-WEBSERVER-TEST-W" webserver under "CONTROL-WEBSERVER-TEST-G" group
     Then I see the drain message for webserver "CONTROL-WEBSERVER-TEST-W" and host "host1"
