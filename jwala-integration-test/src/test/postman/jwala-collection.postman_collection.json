@@ -373,6 +373,7 @@
 					},
 					"response": []
 				}
+
 			]
 		},
 		{
@@ -1614,6 +1615,7 @@
 					},
 					"response": []
 				}
+				
 			]
 		},
 		{
@@ -6266,6 +6268,77 @@
 			"description": "",
 			"item": [
 {
+					"name": "create new group - for JDK upgrade testing ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JDKUpgradeGroupId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"JDKUpgradeGroup\");",
+									"tests[\"Successful POST request\"] = responseCode.code === 201;",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{JDKUpgradeGroup}}"
+						},
+						"description": "create group for JDKUpgradeGroup . This group will be used for JDK upgrade testing."
+					},
+					"response": []
+				},
+				{
+					"name": "create jvm for JDK Upgrade",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JDKUpgradeJvmId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === postman.getEnvironmentVariable(\"JDKUpgradeJvmName\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"groupIds\":[{\"id\":10,\"groupId\":{{JDKUpgradeGroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"10130\",\"httpsPort\":\"10131\",\"redirectPort\":\"10132\",\"shutdownPort\":\"10133\",\"ajpPort\":\"10134\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"description": "Creating a new JVM for JDK upgrade testing."
+					},
+					"response": []
+				},
+				
+				{
 					"name": "upgrade JDK- Negative Test case",
 					"event": [
 						{
@@ -6278,13 +6351,68 @@
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
 
-									"tests[\"Assert No setenv.bat error\"] = jsonData.message === \"setenv.bat resource file does not exist for JVM: Postman-test-jvm2 ,and the file is required to set the JAVA_HOME for the JVM.\";"
+									"tests[\"Assert No setenv.bat error\"] = jsonData.message === \"The remote JVM ::Postman-test-jvm-jdk-upgrade must be in STOPPED state before attempting to upgrade the JDK of the JVM\";"
 								]
 							}
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmName2}}/jdk",
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/jdk",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "This webservices tries to upgrade the JDK version of the JVM which is not yet generated."
+					},
+					"response": []
+				},
+				{
+					"name": "generate jvm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/conf",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Generating the JDK upgrade JVM. "
+					},
+					"response": []
+				},
+				{
+					"name": "upgrade JDK- Negative Test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+											"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
+
+									"tests[\"Assert No setenv.bat error\"] = jsonData.message === \"setenv.bat resource file does not exist for JVM: Postman-test-jvm-jdk-upgrade ,and the file is required to set the JAVA_HOME for the JVM.\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/jdk",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -6340,7 +6468,7 @@
 								}
 							]
 						},
-						"description": "This methods uploads a media which will be used for upgrade JDK operation"
+						"description": "This methods uploads a JDK media which will be used for upgrade JDK operation"
 					},
 					"response": []
 				},
@@ -6370,7 +6498,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":{{JvmId2}},\"systemProperties\":\"\",\"jvmName\":\"{{JvmName2}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"9131\",\"httpsPort\":\"9132\",\"redirectPort\":\"9133\",\"shutdownPort\":\"9134\",\"ajpPort\":\"9135\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId2}},\"tomcatMediaId\":{{TomcatMediaId}},\"groupIds\":[{\"groupId\":{{GroupId}}}]}"
+							"raw": "{\"jvmId\":{{JDKUpgradeJvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"10131\",\"httpsPort\":\"10132\",\"redirectPort\":\"10133\",\"shutdownPort\":\"10134\",\"ajpPort\":\"10135\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId2}},\"tomcatMediaId\":{{TomcatMediaId}},\"groupIds\":[{\"groupId\":{{JDKUpgradeGroupId}}}]}"
 						},
 						"description": "This Rest API updates the JVM properties including the  jdkMedia"
 					},
@@ -6410,7 +6538,7 @@
 								}
 							]
 						},
-						"description": ""
+						"description": "uploading the setenv.bat file for JDK upgrade JVM Group.This group contains only one JVM."
 					},
 					"response": []
 				},
@@ -6429,7 +6557,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/jvms/{{JvmName2}}/jdk",
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/jdk",
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -6437,6 +6565,73 @@
 							"raw": ""
 						},
 						"description": "This webservices upgrade the JDK version of the JVM after updating the JVM values and Setenv.bat.JVM in STOPPED state."
+					},
+					"response": []
+				},
+				{
+					"name": "delete JDK upgrade jvm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JDKUpgradeJvmId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Tear down operation for JDK upgrade"
+					},
+					"response": []
+				},
+				{
+					"name": "delete JDK upgrade group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{JDKUpgradeGroupId}}",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Tear down operation for JDK upgrade"
 					},
 					"response": []
 				}

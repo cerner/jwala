@@ -5,8 +5,8 @@
         "deployFileName":"setenv.bat",
         "entity":{
                 "type":"GROUPED_JVMS",
-                "group":"Postman-Test-Group-update",
-                "target":"Postman-Test-Group-update"
+                "group":"Postman-jdkUpgrade-Group",
+                "target":"Postman-jdkUpgrade-Group"
         }
 }
 
