@@ -376,7 +376,6 @@
 
 			]
 		},
-		
 		{
 			"name": "b) create group",
 			"description": "",
@@ -6266,11 +6265,12 @@
 				
 			]
 		},
-		{
-			"name": "s)  upgrade JDK test operations",
-			"description": "",
-			"item": [
+		
 {
+			"name": "s)  upgrade JDK test operations",
+			"description": "Test cases to test the JDK upgrade workflow",
+			"item": [
+			{
 					"name": "create new group - for JDK upgrade testing ",
 					"event": [
 						{
@@ -6334,7 +6334,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"groupIds\":[{\"id\":10,\"groupId\":{{JDKUpgradeGroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"{{jdkUpgrade-HTTP-port}}\",\"httpsPort\":\"{{jdkUpgrade-HTTPS-port}}\",\"redirectPort\":\"{{jdkUpgrade-redirect-port}}\",\"shutdownPort\":\"{{jdkUpgrade-shutdown-port}}\",\"ajpPort\":\"{{jdkUpgrade-ajp-port}}\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+							"raw": "{\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"groupIds\":[{\"id\":10,\"groupId\":{{JDKUpgradeGroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"{{jdkUpgradeHttpPort}}\",\"httpsPort\":\"{{jdkUpgradeHttpsPort}}\",\"redirectPort\":\"{{jdkUpgradeRedirectPort}}\",\"shutdownPort\":\"{{jdkUpgradeShutdownPort}}\",\"ajpPort\":\"{{jdkUpgradeAjpPort}}\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
 						},
 						"description": "Creating a new JVM for JDK upgrade testing."
 					},
@@ -6353,7 +6353,6 @@
 											"",
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
-
 									"tests[\"Assert -JVM not in STOPPED state- error\"] = jsonData.message === \"The remote JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\" must be in STOPPED state before attempting to upgrade the JDK of the JVM\";"
 								]
 							}
@@ -6408,8 +6407,9 @@
 											"",
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
-
-									"tests[\"Assert No setenv.bat error\"] = jsonData.message === \"The setenv.bat file does not exist as a resource for JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\". Please create a setenv.bat resource for the JVM in order to set the JAVA_HOME environment variable.\"|| jsonData.message === \"The setenv.sh file does not exist as a resource for JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\". Please create a setenv.sh resource for the JVM in order to set the JAVA_HOME environment variable.\";"
+									"postman.setEnvironmentVariable(\"setEnvResourceFileName\",pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\")?pm.variables.get(\"setEnvWindowsFileName\"):pm.variables.get(\"setEnvLinuxFileName\"));",
+									"var noSetEnvErrMessage = \"The \"+postman.getEnvironmentVariable(\"setEnvResourceFileName\")+\" file does not exist as a resource for JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\". Please create a \"+postman.getEnvironmentVariable(\"setEnvResourceFileName\")+\" resource for the JVM in order to set the JAVA_HOME environment variable.\";",
+									"tests[\"Assert No setenv resource file error\"] = jsonData.message === noSetEnvErrMessage ;"
 								]
 							}
 						}
@@ -6501,7 +6501,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"jvmId\":{{JDKUpgradeJvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"{{jdkUpgrade-HTTP-port}}\",\"httpsPort\":\"{{jdkUpgrade-HTTPS-port}}\",\"redirectPort\":\"{{jdkUpgrade-redirect-port}}\",\"shutdownPort\":\"{{jdkUpgrade-shutdown-port}}\",\"ajpPort\":\"{{jdkUpgrade-ajp-port}}\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkUpgradeMediaId}},\"tomcatMediaId\":{{TomcatMediaId}},\"groupIds\":[{\"groupId\":{{JDKUpgradeGroupId}}}]}"
+							"raw": "{\"jvmId\":{{JDKUpgradeJvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"{{jdkUpgradeHttpPort}}\",\"httpsPort\":\"{{jdkUpgradeHttpsPort}}\",\"redirectPort\":\"{{jdkUpgradeRedirectPort}}\",\"shutdownPort\":\"{{jdkUpgradeShutdownPort}}\",\"ajpPort\":\"{{jdkUpgradeAjpPort}}\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkUpgradeMediaId}},\"tomcatMediaId\":{{TomcatMediaId}},\"groupIds\":[{\"groupId\":{{JDKUpgradeGroupId}}}]}"
 						},
 						"description": "This Rest API updates the JVM properties including the  jdkMedia"
 					},
@@ -6703,7 +6703,6 @@
 
 	]
 		},
-	
 
 		{
 			"name": "t)  tear down operations",
