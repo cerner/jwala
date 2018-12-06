@@ -376,6 +376,7 @@
 
 			]
 		},
+
 		{
 			"name": "b) create group",
 			"description": "",
@@ -6265,8 +6266,7 @@
 				
 			]
 		},
-		
-{
+		{
 			"name": "s)  upgrade JDK test operations",
 			"description": "Test cases to test the JDK upgrade workflow",
 			"item": [
@@ -6306,6 +6306,7 @@
 					},
 					"response": []
 				},
+				
 				{
 					"name": "create jvm for JDK Upgrade",
 					"event": [
@@ -6408,6 +6409,7 @@
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
 									"postman.setEnvironmentVariable(\"setEnvResourceFileName\",pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\")?pm.variables.get(\"setEnvWindowsFileName\"):pm.variables.get(\"setEnvLinuxFileName\"));",
+									"postman.setEnvironmentVariable(\"setEnvResourceTemplateName\",pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\")?\"setenv.bat.tpl\":\"setenv.sh.tpl\");",
 									"var noSetEnvErrMessage = \"The \"+postman.getEnvironmentVariable(\"setEnvResourceFileName\")+\" file does not exist as a resource for JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\". Please create a \"+postman.getEnvironmentVariable(\"setEnvResourceFileName\")+\" resource for the JVM in order to set the JAVA_HOME environment variable.\";",
 									"tests[\"Assert No setenv resource file error\"] = jsonData.message === noSetEnvErrMessage ;"
 								]
@@ -6508,7 +6510,7 @@
 					"response": []
 				},
 				{
-					"name": "upload setenv.bat template",
+					"name": "upload setenv template",
 					"event": [
 						{
 							"listen": "test",
@@ -6521,7 +6523,7 @@
 						}
 					],
 					"request": {
-						"url": "{{url}}/v1.0/resources/template/setenv.bat.tpl",
+						"url": "{{url}}/v1.0/resources/template/{{setEnvResourceTemplateName}}",
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -6530,59 +6532,22 @@
 								{
 									"key": "metaData",
 									"type": "file",
-									"src": "../resources/postman/setenv_upgradeJDK.bat.json",
+									"src": "../resources/postman/{{targetOs}}/setenv_upgradeJDK.json",
 									"value": ""
 								},
 								{
 									"key": "tplFile",
 									"type": "file",
-									"src": "../resources/postman/setenv.bat.tpl",
+									"src": "../resources/postman/{{setEnvResourceTemplateName}}",
 									"value": ""
 								}
 							]
 						},
-						"description": "uploading the setenv.bat file for JDK upgrade JVM Group.This group contains only one JVM."
+						"description": "uploading the setenv resource file for JDK upgrade JVM Group.This group contains only one JVM."
 					},
 					"response": []
 				},
-					{
-					"name": "upload setenv template for Linux environment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 201\"] = responseCode.code === 201;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/resources/template/setenv.sh.tpl",
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "metaData",
-									"type": "file",
-									"src": "../resources/postman/setenv_upgradeJDK.sh.json",
-									"value": ""
-								},
-								{
-									"key": "tplFile",
-									"type": "file",
-									"src": "../resources/postman/setenv.sh.tpl",
-									"value": ""
-								}
-							]
-						},
-						"description": "uploads the setenv sh file for Linux compatibility"
-					},
-					"response": []
-				},		
+						
 				{
 					"name": "upgrade JDK- Positive flow",
 					"event": [
