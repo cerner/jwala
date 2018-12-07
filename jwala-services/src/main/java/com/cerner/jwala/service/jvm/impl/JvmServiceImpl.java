@@ -725,11 +725,13 @@ public class JvmServiceImpl implements JvmService {
     }
     
 	/**
-	 * This method upgrades the JDK version for the mentioned JVM
+	 * This method upgrades the JDK version for the mentioned JVM. For a successful
+	 * upgrade,the JVM needs to be in STOPPED state and setenv.bat/sh resource file
+	 * needs to available for the JVM for updating the JAVA_HOME.
 	 * 
-	 * @param jvmName
-	 * @param user
-	 * @return Jvm
+	 * @param jvmName name of the JVM that needs to be upgraded
+	 * @param user    user object performing the JVM upgrade operation
+	 * @return Jvm upgraded JVM object
 	 * 
 	 */
 	public Jvm upgradeJDK(String jvmName, User user) {
@@ -748,7 +750,7 @@ public class JvmServiceImpl implements JvmService {
 		try {
 			// Validation 1: Application should be in STOPPED state
 			if (!jvm.getState().equals(JvmState.JVM_STOPPED)) {
-				final String errorMessage = "The remote JVM ::" + jvm.getJvmName()
+				final String errorMessage = "The remote JVM: " + jvm.getJvmName()
 						+ " must be in STOPPED state before attempting to upgrade the JDK of the JVM";
 				LOGGER.error(errorMessage);
 				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
@@ -771,8 +773,8 @@ public class JvmServiceImpl implements JvmService {
 
 			didSucceed = true;
 		} catch (NoResultException e) {
-			String errorMessage = resourceFileName + " resource file does not exist for JVM: " + jvm.getJvmName()
-					+ " ,and the file is required to set the JAVA_HOME for the JVM.";
+			String errorMessage = "The "+ resourceFileName + " file does not exist as a resource for JVM: " + jvm.getJvmName()
+					+ ". Please create a "+ resourceFileName +" resource for the JVM in order to set the JAVA_HOME environment variable.";
 			LOGGER.error(errorMessage, jvm.getJvmName(), e);
 			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage, e);
 		} catch (CommandFailureException e) {
