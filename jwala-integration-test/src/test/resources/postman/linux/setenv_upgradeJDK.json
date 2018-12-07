@@ -1,0 +1,11 @@
+{
+  "deployPath" : "${jvm.tomcatMedia.remoteDir}/${jvm.jvmName}/${jvm.tomcatMedia.rootDir}/bin",
+  "templateName" : "SetenvShTemplate.tpl",
+  "deployFileName" : "setenv.sh",
+  "contentType" : "text/plain",
+  "entity" : {
+    "type" : "GROUPED_JVMS",
+        "group":"Postman-jdkUpgrade-Group",
+        "target":"Postman-jdkUpgrade-Group"
+  }
+}
