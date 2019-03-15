@@ -1,5 +1,6 @@
-#!/bin/bash
+ #!/bin/bash
 
+JWALA_EXIT_CODE_INVALID_OS=124
 cygwin=false
 linux=false
 case "`uname`" in
@@ -21,10 +22,19 @@ if $cygwin; then
 fi
 
 if $linux; then
-    if [ -e "/etc/init.d/$1" ]; then
-        echo chkconfig --del $1
-        /usr/bin/sudo /sbin/chkconfig --del $1
-        echo delete /etc/init.d/$1
-        /usr/bin/sudo rm /etc/init.d/$1
-    fi
+  get_version=$(uname -r)
+  linux_7="el7"
+  if [[ $get_version =~ $linux_7 ]];then
+    echo systemctl disable  $1
+    /usr/bin/sudo systemctl disable  $1
+    echo delete /etc/systemd/system/$1
+    /usr/bin/sudo rm /etc/systemd/system/$1
+    echo reload systemctl
+    /usr/bin/sudo systemctl daemon-reload
+    echo reset all the units state
+    /usr/bin/sudo systemctl reset-failed
+  else
+    /usr/bin/echo Linux 6 found
+    exit $JWALA_EXIT_CODE_INVALID_OS;
+  fi
 fi

@@ -3,7 +3,11 @@
 JWALA_EXIT_CODE_NO_OP=127
 JWALA_EXIT_CODE_SUCCESS=0
 JWALA_EXIT_CODE_FAILED=1
-
+JWALA_EXIT_CODE_INVALID_OS=124
+TOMCAT_USER="${TOMCAT_USER:-tomcat}"
+# Define the tomcat group
+TOMCAT_GROUP="${TOMCAT_GROUP:-`id -gn $TOMCAT_USER`}"
+TOMCAT_HOME=$2/$1/$3
 cygwin=false
 linux=false
 case "`uname`" in
@@ -47,10 +51,23 @@ if $cygwin; then
 fi
 
 if $linux; then
-   pushd $(dirname $0)
-  /bin/sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" linux/jvm-service.sh> $1
-  chmod 755 $1
-  /usr/bin/sudo cp $1 /etc/init.d
-  /usr/bin/sudo /sbin/chkconfig --add $1
+  get_version=$(uname -r)
+  linux_7="el7"
+  service_file=$1".service"
+  if [[ $get_version =~ $linux_7 ]];then
+    pushd $(dirname $0)
+    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/work
+    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
+    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/temp
+    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/data
+    /bin/sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" linux/jvm-service.sh> $service_file
+    chmod 755 $service_file
+    /usr/bin/sudo cp $service_file /etc/systemd/system
+    /usr/bin/sudo systemctl daemon-reload
+    /usr/bin/sudo systemctl enable $1
+  else
+    /usr/bin/echo Linux 6 found
+    exit $JWALA_EXIT_CODE_INVALID_OS;
+  fi 
   popd
 fi
