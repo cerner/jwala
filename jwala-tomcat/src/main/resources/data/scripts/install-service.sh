@@ -25,28 +25,28 @@ if $cygwin; then
   if [ "$JVMINST" = "1060" ]; then
     echo Service $1 not installed on server, continuing with install
   else
-    /usr/bin/echo Service $1 already exists
+    echo Service $1 already exists
     exit $JWALA_EXIT_CODE_FAILED
   fi
 
   $2/$1/$3/bin/install-service.bat "$4" "${5//&/^&}"
   export EXIT_CODE=$?
   if [ "$EXIT_CODE" -ne "0" ]; then
-    /usr/bin/echo Failed to install service $1
+    echo Failed to install service $1
     exit $JWALA_EXIT_CODE_FAILED
   fi
 
   for (( c=1; c<=5; c++ ))
   do
-    /usr/bin/sleep 1
+    sleep 1
   done
 
   export JVMINST=`sc queryex $1 | head -1 | awk '{ sub(/:/,"",$4); print $4 }'`
   if [ "$JVMINST" = "1060" ]; then
-      /usr/bin/echo Failed to install service $1
+      echo Failed to install service $1
       exit $JWALA_EXIT_CODE_FAILED
   fi
-  /usr/bin/echo Invoke of service $1 was successful
+  echo Invoke of service $1 was successful
   exit $JWALA_EXIT_CODE_SUCCESS
 fi
 
@@ -60,11 +60,11 @@ if $linux; then
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/temp
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/data
-    /bin/sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" linux/jvm-service.sh> $service_file
+    sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" linux/jvm-service.sh> $service_file
     chmod 755 $service_file
-    /usr/bin/sudo cp $service_file /etc/systemd/system
-    /usr/bin/sudo systemctl daemon-reload
-    /usr/bin/sudo systemctl enable $1
+    sudo cp $service_file /etc/systemd/system
+    sudo systemctl daemon-reload
+    sudo systemctl enable $1
   else
     echo $os_version found but was expecting $linux_7
     echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
