@@ -45,9 +45,9 @@ fi
 
 if $linux; then
   # Need to pass $3 for apache home ex: /opt/ctp/apache-httpd-2.4.20, remote.paths.apache.httpd from vars.properties
-  get_version=$(uname -r)
+  os_version=$(uname -r)
   linux_7="el7"
-  if [[ $get_version =~ $linux_7 ]];then
+  if [[ $os_version =~ $linux_7 ]];then
     echo "Linux version 7 found"
     pushd $(dirname $0)
     sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
@@ -55,7 +55,8 @@ if $linux; then
     /usr/bin/sudo cp $1 /etc/systemd/system
     /usr/bin/sudo systemctl enable $1
   else
-    /usr/bin/echo Linux 6 found
+    echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
     exit $JWALA_EXIT_CODE_INVALID_OS;
   fi
   popd
