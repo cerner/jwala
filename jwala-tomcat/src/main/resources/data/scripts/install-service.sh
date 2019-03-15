@@ -51,10 +51,10 @@ if $cygwin; then
 fi
 
 if $linux; then
-  get_version=$(uname -r)
+  os_version=$(uname -r)
   linux_7="el7"
   service_file=$1".service"
-  if [[ $get_version =~ $linux_7 ]];then
+  if [[ $os_version =~ $linux_7 ]];then
     pushd $(dirname $0)
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/work
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
