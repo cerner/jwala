@@ -51,7 +51,7 @@ if $linux; then
     echo "Linux version 7 found"
     pushd $(dirname $0)
     sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
-    /bin/chmod 755 $1
+    chmod 755 $1
     sudo cp $1 /etc/systemd/system
     sudo systemctl enable $1
   else
