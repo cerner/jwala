@@ -21,12 +21,13 @@ if $cygwin; then
 fi
 
 if $linux; then
-  get_version=$(uname -r)
+  os_version=$(uname -r)
   linux_7="el7"
-  if [[ $get_version =~ $linux_7 ]];then
-	  /usr/bin/sudo systemctl status $1
+  if [[ $os_version =~ $linux_7 ]];then
+    sudo systemctl status $1
   else
-    /usr/bin/echo Linux 6 found
+    echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
     exit $JWALA_EXIT_CODE_INVALID_OS;
   fi
     exit $?
