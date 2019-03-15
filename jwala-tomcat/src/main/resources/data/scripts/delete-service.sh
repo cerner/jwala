@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 JWALA_EXIT_CODE_INVALID_OS=124
 cygwin=false
@@ -22,9 +22,9 @@ if $cygwin; then
 fi
 
 if $linux; then
-  get_version=$(uname -r)
+  os_version=$(uname -r)
   linux_7="el7"
-  if [[ $get_version =~ $linux_7 ]];then
+  if [[ $os_version =~ $linux_7 ]];then
     echo systemctl disable  $1
     /usr/bin/sudo systemctl disable  $1
     echo delete /etc/systemd/system/$1
@@ -34,7 +34,8 @@ if $linux; then
     echo reset all the units state
     /usr/bin/sudo systemctl reset-failed
   else
-    /usr/bin/echo Linux 6 found
+    /usr/bin/echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
     exit $JWALA_EXIT_CODE_INVALID_OS;
   fi
 fi
