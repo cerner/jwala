@@ -26,15 +26,15 @@ if $linux; then
   linux_7="el7"
   if [[ $os_version =~ $linux_7 ]];then
     echo systemctl disable  $1
-    /usr/bin/sudo systemctl disable  $1
+    sudo systemctl disable  $1
     echo delete /etc/systemd/system/$1
-    /usr/bin/sudo rm /etc/systemd/system/$1
+    sudo rm /etc/systemd/system/$1
     echo reload systemctl
-    /usr/bin/sudo systemctl daemon-reload
+    sudo systemctl daemon-reload
     echo reset all the units state
-    /usr/bin/sudo systemctl reset-failed
+    sudo systemctl reset-failed
   else
-    /usr/bin/echo $os_version found but was expecting $linux_7
+    echo $os_version found but was expecting $linux_7
     echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
     exit $JWALA_EXIT_CODE_INVALID_OS;
   fi
