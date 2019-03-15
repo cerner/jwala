@@ -21,28 +21,28 @@ if [ "$1" = "" ]; then
 fi
 
 if $cygwin; then
-  export JVMINST=`sc queryex $1 | /usr/bin/head -1 | /usr/bin/awk '{ sub(/:/,"",$4); print $4 }'`
+  export JVMINST=`sc queryex $1 | head -1 | /usr/bin/awk '{ sub(/:/,"",$4); print $4 }'`
   if [ "$JVMINST" = "1060" ]; then
-      /usr/bin/echo `sc queryex $1`
+      echo `sc queryex $1`
       exit $JWALA_EXIT_CODE_NO_SUCH_SERVICE
   else
       sc start $1 &> output
       if [ $? -ne 0 ]; then
-          export SCRESULT=`sc start $1 | /usr/bin/head -1 | /usr/bin/awk '{ sub(/:/,"",$4); print $4 }'`
+          export SCRESULT=`sc start $1 | head -1 | /usr/bin/awk '{ sub(/:/,"",$4); print $4 }'`
           if [ "$SCRESULT" = "1056" ]; then
-              /usr/bin/echo Service $1 already started.
+              echo Service $1 already started.
               rm output
               exit $JWALA_EXIT_CODE_ABNORMAL_SUCCESS
           fi
           if [ -s output]; then
-              /usr/bin/echo $1 failed to start and was not already started
+              echo $1 failed to start and was not already started
           else
-              /usr/bin/cat output
+              cat output
           fi
           rm output
           exit $JWALA_EXIT_CODE_FAILED
       else
-          /usr/bin/echo Call to start service $1 was successful
+          echo Call to start service $1 was successful
           rm output
           exit $JWALA_EXIT_CODE_SUCCESS
       fi
@@ -50,12 +50,13 @@ if $cygwin; then
 fi
 
 if $linux; then
-  get_version=$(uname -r)
+  os_version=$(uname -r)
   linux_7="el7"
-  if [[ $get_version =~ $linux_7 ]];then
-    /usr/bin/sudo systemctl start $1
+  if [[ $os_version =~ $linux_7 ]];then
+    sudo systemctl start $1
   else
-    /usr/bin/echo Linux 6 found
+    echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
     exit $JWALA_EXIT_CODE_INVALID_OS;
   fi
 fi
