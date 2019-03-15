@@ -6,6 +6,7 @@ JWALA_EXIT_CODE_ABNORMAL_SUCCESS=126
 JWALA_EXIT_CODE_NO_OP=127
 JWALA_EXIT_CODE_SUCCESS=0
 JWALA_EXIT_CODE_FAILED=1
+JWALA_EXIT_CODE_INVALID_OS=124
 
 cygwin=false
 linux=false
@@ -49,5 +50,12 @@ if $cygwin; then
 fi
 
 if $linux; then
-  /usr/bin/sudo /sbin/service $1 start
+  get_version=$(uname -r)
+  linux_7="el7"
+  if [[ $get_version =~ $linux_7 ]];then
+    /usr/bin/sudo systemctl start $1
+  else
+    /usr/bin/echo Linux 6 found
+    exit $JWALA_EXIT_CODE_INVALID_OS;
+  fi
 fi

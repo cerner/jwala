@@ -3,6 +3,7 @@
 JWALA_EXIT_CODE_NO_OP=127
 JWALA_EXIT_CODE_SUCCESS=0
 JWALA_EXIT_CODE_FAILED=1
+JWALA_EXIT_CODE_INVALID_OS=124
 
 cygwin=false
 linux=false
@@ -44,10 +45,18 @@ fi
 
 if $linux; then
   # Need to pass $3 for apache home ex: /opt/ctp/apache-httpd-2.4.20, remote.paths.apache.httpd from vars.properties
-  	pushd $(dirname $0)
-  sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
-  /bin/chmod 755 $1
-  /usr/bin/sudo cp $1 /etc/init.d
-  /usr/bin/sudo /sbin/chkconfig --add $1
+  get_version=$(uname -r)
+  linux_7="el7"
+  if [[ $get_version =~ $linux_7 ]];then
+    echo "Linux version 7 found"
+    pushd $(dirname $0)
+    sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
+    /bin/chmod 755 $1
+    /usr/bin/sudo cp $1 /etc/systemd/system
+    /usr/bin/sudo systemctl enable $1
+  else
+    /usr/bin/echo Linux 6 found
+    exit $JWALA_EXIT_CODE_INVALID_OS;
+  fi
   popd
 fi

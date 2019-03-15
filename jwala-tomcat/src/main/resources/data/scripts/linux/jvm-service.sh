@@ -12,115 +12,27 @@
 ### END INIT INFO
 
 # Source LSB function library.
-. /etc/init.d/functions
 
-NAME=`basename "$0"`
+[Unit]
+Description= jwala service file
+After=network.target
 
-TOMCAT_HOME=@TOMCAT_HOME@
-TOMCAT_HOME_BIN=$TOMCAT_HOME/bin
+[Service]
+Type=forking
 
 # Define the tomcat username
-TOMCAT_USER="${TOMCAT_USER:-tomcat}"
+User=tomcat
 
-# Define the tomcat group
-TOMCAT_GROUP="${TOMCAT_GROUP:-`id -gn $TOMCAT_USER`}"
+#Environment="JAVA_HOME=/usr/lib/jvm/jre"
+#Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom"
 
-CATALINA_PID=$TOMCAT_HOME/logs/catalina.pid
-export CATALINA_PID
+Environment="CATALINA_BASE=@TOMCAT_HOME@"
+Environment="CATALINA_HOME=@TOMCAT_HOME@"
+Environment="CATALINA_PID=@TOMCAT_HOME@/logs/catalina.pid"
+Environment="CATALINA_HOME_BIN=@TOMCAT_HOME@/bin"
 
-RETVAL="0"
+ExecStart=/opt/ctp/jwala-0.0.245/apache-tomcat-7.0.55/bin/startup.sh
+ExecStop=/opt/ctp/jwala-0.0.245/apache-tomcat-7.0.55/bin/catalina.sh 
 
-# For SELinux we need to use 'runuser' not 'su'
-if [ -x "/sbin/runuser" ]; then
-    SU="/sbin/runuser -s /bin/sh"
-else
-    SU="/bin/su -s /bin/sh"
-fi
-
-function checkpidfile()
-{
-   if [ -f "${CATALINA_PID}" ]; then
-      read kpid < ${CATALINA_PID}
-      if [ -d "/proc/${kpid}" ]; then
-          # The pid file exists and the process is running
-          RETVAL="0"
-         return
-      else
-        # The pid file exists but the process is not running
-         RETVAL="1"
-         return
-      fi
-   else
-      # pid file does not exist and program is not running
-      RETVAL="3"
-      return
-  fi
-}
-
-function status()
-{
-   checkpidfile
-   if [ "$RETVAL" -eq "0" ]; then
-      echo "${NAME} (pid ${kpid}) is RUNNING..."
-      success
-   elif [ "$RETVAL" -eq "1" ]; then
-      echo "PID file exists, but process is NOT RUNNING"
-      failure
-   else
-      pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_GROUP} ${NAME})"
-      if [ -z "$pid" ]; then
-          echo "${NAME} is STOPPED"
-          success
-          RETVAL="0"
-      else
-          echo "${NAME} (pid ${kpid}) is RUNNING..."
-          success
-          RETVAL="0"
-      fi
-  fi
-}
-
-start() {
-    echo -n "Starting Tomcat @JVM_NAME@"
-    # chmod -R 755 ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/bin
-    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/work
-    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
-    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/temp
-    chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/data
-    $SU - $TOMCAT_USER -c "pushd $TOMCAT_HOME_BIN; ./startup.sh; popd"
-    echo "."
-}
-
-stop() {
-    echo -n "Stopping Tomcat @JVM_NAME@"
-    $SU - $TOMCAT_USER -c "pushd $TOMCAT_HOME_BIN; ./catalina.sh stop 20 -force; popd"
-    echo "."
-}
-
-function version(){
-    $SU - $TOMCAT_USER -c "pushd $TOMCAT_HOME_BIN; ./catalina.sh version; popd"
-}
-
-case "$1" in
-    start)
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    status)
-        status
-        ;;
-    version)
-        version
-        ;;
-    restart)
-        stop
-        sleep 15
-        start
-        ;;
-    *)
-        echo "Usage: tomcat {start|stop|restart|status|version}"
-        exit 1
-esac
-exit $RETVAL
+[Install]
+WantedBy=multi-user.target
