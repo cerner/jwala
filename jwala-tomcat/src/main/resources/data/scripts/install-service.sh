@@ -66,7 +66,8 @@ if $linux; then
     /usr/bin/sudo systemctl daemon-reload
     /usr/bin/sudo systemctl enable $1
   else
-    /usr/bin/echo Linux 6 found
+    echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
     exit $JWALA_EXIT_CODE_INVALID_OS;
   fi 
   popd
