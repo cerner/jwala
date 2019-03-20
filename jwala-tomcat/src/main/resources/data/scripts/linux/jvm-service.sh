@@ -1,5 +1,3 @@
-#!/bin/sh
-
 [Unit]
 Description= jwala service file
 After=network.target
@@ -9,8 +7,8 @@ Type=forking
 PIDFile="@TOMCAT_HOME@/logs/catalina.pid"
 
 # Define the tomcat username
-User=tomcat
-Group=tomcat
+User=@TOMCAT_USER@
+Group=@TOMCAT_GROUP@
 
 Environment="CATALINA_BASE=@TOMCAT_HOME@"
 Environment="CATALINA_HOME=@TOMCAT_HOME@"

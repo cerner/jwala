@@ -59,7 +59,7 @@ if $linux; then
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/logs
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/temp
     chown -R ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_HOME/data
-    sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" linux/jvm-service.sh> $service_file
+    sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" -e "s/@TOMCAT_USER@/$TOMCAT_USER/g" -e "s/@TOMCAT_GROUP@/$TOMCAT_GROUP/g" linux/jvm-service.sh> $service_file
     chmod 755 $service_file
     sudo cp $service_file /etc/systemd/system
     sudo systemctl enable $1
