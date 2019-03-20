@@ -47,12 +47,14 @@ if $linux; then
   # Need to pass $3 for apache home ex: /opt/ctp/apache-httpd-2.4.20, remote.paths.apache.httpd from vars.properties
   os_version=$(uname -r)
   linux_7="el7"
+  service_file=$1".service"
   if [[ $os_version =~ $linux_7 ]];then
     echo "Linux version 7 found"
     pushd $(dirname $0)
-    sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
-    chmod 755 $1
-    sudo cp $1 /etc/systemd/system
+    sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $service_file
+    chmod 755 $service_file
+    sudo cp $service_file /etc/systemd/system
+    sudo systemctl daemon-reload
     sudo systemctl enable $1
   else
     echo $os_version found but was expecting $linux_7

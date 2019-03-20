@@ -62,8 +62,8 @@ if $linux; then
     sed -e "s/@TOMCAT_HOME@/${2//\//\\/}\\/$1\\/$3/g" -e "s/@JVM_NAME@/$1/g" -e "s/@TOMCAT_USER@/$TOMCAT_USER/g" -e "s/@TOMCAT_GROUP@/$TOMCAT_GROUP/g" linux/jvm-service.sh> $service_file
     chmod 755 $service_file
     sudo cp $service_file /etc/systemd/system
-    sudo systemctl enable $1
     sudo systemctl daemon-reload
+    sudo systemctl enable $1
   else
     echo $os_version found but was expecting $linux_7
     echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
