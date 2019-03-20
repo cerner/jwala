@@ -3,8 +3,6 @@ Description=Apache Web Server
 After=network.target remote-fs.target nss-lookup.target
 
 [Service]
-User=
-Group=
 Type=forking
 
 PIDFile=@APACHE_HOME@/logs/httpd-@WSNAME@.pid
