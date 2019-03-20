@@ -1,5 +1,5 @@
 [Unit]
-Description= jwala service file
+Description=Jwala Tomcat Manager
 After=network.target
 
 [Service]
