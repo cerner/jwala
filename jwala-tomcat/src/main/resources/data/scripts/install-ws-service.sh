@@ -3,6 +3,7 @@
 JWALA_EXIT_CODE_NO_OP=127
 JWALA_EXIT_CODE_SUCCESS=0
 JWALA_EXIT_CODE_FAILED=1
+JWALA_EXIT_CODE_INVALID_OS=124
 
 cygwin=false
 linux=false
@@ -21,7 +22,7 @@ if $cygwin; then
   if [ "$WSINST" = "1060" ]; then
       echo Service $1 not installed on server, continuing with install
   else
-      /usr/bin/echo Service $1 already exists. Exiting.
+      echo Service $1 already exists. Exiting.
       exit $JWALA_EXIT_CODE_FAILED
   fi
 
@@ -30,24 +31,35 @@ if $cygwin; then
 
   for (( c=1; c<=5; c++ ))
   do
-    /usr/bin/sleep 1
+    sleep 1
   done
 
     export WSINST=`sc queryex $1 | head -1 | awk '{ sub(/:/,"",$4); print $4 }'`
     if [ "$WSINST" = "1060" ]; then
-        /usr/bin/echo Failed to install service $1
+        echo Failed to install service $1
         exit $JWALA_EXIT_CODE_FAILED
     fi
-    /usr/bin/echo Invoke of service $1 was successful
+    echo Invoke of service $1 was successful
     exit $JWALA_EXIT_CODE_SUCCESS
 fi
 
 if $linux; then
   # Need to pass $3 for apache home ex: /opt/ctp/apache-httpd-2.4.20, remote.paths.apache.httpd from vars.properties
-  	pushd $(dirname $0)
-  sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $1
-  /bin/chmod 755 $1
-  /usr/bin/sudo cp $1 /etc/init.d
-  /usr/bin/sudo /sbin/chkconfig --add $1
+  os_version=$(uname -r)
+  linux_7="el7"
+  service_file=$1".service"
+  if [[ $os_version =~ $linux_7 ]];then
+    echo "Linux version 7 found"
+    pushd $(dirname $0)
+    sed -e "s/@APACHE_HOME@/${3//\//\\/}/g" -e "s/@HTTPD_CONF@/${2//\//\\/}/g" -e "s/@WSNAME@/$1/g" linux/httpd-ws-service.sh> $service_file
+    chmod 755 $service_file
+    sudo cp $service_file /etc/systemd/system
+    sudo systemctl daemon-reload
+    sudo systemctl enable $1
+  else
+    echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
+    exit $JWALA_EXIT_CODE_INVALID_OS;
+  fi
   popd
 fi
