@@ -5603,6 +5603,17 @@
 				},
 				{
 					"name": "error: generate and deploy webserver when started exception",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"setTimeout(function(){}, 5000);"
+								]
+							}
+						}
+					],
 					"request": {
 						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/deploy",
 						"method": "PUT",
