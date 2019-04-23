@@ -5616,39 +5616,6 @@
 					"response": []
 				},
 				{
-					"name": "stop webserver",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"setTimeout(function(){}, 5000);",
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/webservers/{{WebserverId}}/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "stop jvm",
 					"event": [
 						{
