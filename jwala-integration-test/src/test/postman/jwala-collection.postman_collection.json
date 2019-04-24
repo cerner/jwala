@@ -5553,10 +5553,10 @@
 		},
 		{
 			"name": "p) control operation stop",
-			"description": "",
+			"description": "set up the tests by first starting the group",
 			"item": [
 				{
-					"name": "stop group",
+					"name": "start group",
 					"event": [
 						{
 							"listen": "test",
@@ -5581,7 +5581,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
+							"raw": "{\"controlOperation\":\"start\"}"
 						},
 						"description": ""
 					},
@@ -5603,17 +5603,6 @@
 				},
 				{
 					"name": "error: generate and deploy webserver when started exception",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"setTimeout(function(){}, 5000);"
-								]
-							}
-						}
-					],
 					"request": {
 						"url": "{{url}}/v1.0/webservers/{{WebserverName}}/conf/deploy",
 						"method": "PUT",
@@ -5705,14 +5694,14 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=TRUE",
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId2}}/commands?wait=TRUE",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"v1.0",
 								"webservers",
-								"{{WebserverId}}",
+								"{{WebserverId2}}",
 								"commands"
 							],
 							"query": [
