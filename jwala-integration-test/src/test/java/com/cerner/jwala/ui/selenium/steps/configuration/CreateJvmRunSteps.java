@@ -67,6 +67,11 @@ public class CreateJvmRunSteps {
     public void selectJdk(final String jdk) {
         jwalaUi.selectItem(By.name("jdkMediaId"), jdk);
     }
+     
+    @And("^I click the \"Status Path\" Refresh button \"(.*)\"$")
+    public void clickRefreshButtonToUpdateStatusPath() {
+        jwalaUi.click(By.xpath("//span[contains(@title,'Generate Status Path')]/span"));
+    }
 
     @And("^I select the \"JVM Apache Tomcat\" version \"(.*)\"$")
     public void selectTomcat(final String tomcat) {
