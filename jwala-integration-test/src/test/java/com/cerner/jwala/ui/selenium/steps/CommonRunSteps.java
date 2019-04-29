@@ -155,6 +155,7 @@ public class CommonRunSteps {
         createWebServerRunSteps.setHostName(hostName);
         createJvmRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
         createJvmRunSteps.selectJdk(getPropertyValue(parameters.get("jdk")));
+        createJvmRunSteps.clickRefreshButtonToUpdateStatusPath();
         createJvmRunSteps.selectTomcat(getPropertyValue(parameters.get("tomcat")));
         List<String> groups = new ArrayList<>();
         groups.add(parameters.get("group"));
