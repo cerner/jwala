@@ -751,7 +751,7 @@ var GroupOperationsDataTable = React.createClass({
                     var indexOfMessage = msg.indexOf('Creating');
                     var endOfMessage = msg.length
                     var message = msg.substring(indexOfMessage,endOfMessage);
-                    if (message.trim() === "" || msg.indexOf('Full thread dump Java') === -1) {
+                    if (message.trim() === "" || msg.indexOf('Full thread dump') === -1) {
                         msg = "Oops! Something went wrong! The JVM might not have been started.";
                         $.errorAlert(msg, "Thread Dump", false);
                     } else {
