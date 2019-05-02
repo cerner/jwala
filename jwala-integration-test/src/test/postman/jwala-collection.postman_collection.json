@@ -5809,7 +5809,7 @@
 								"id": "",
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+									"tests[\"Status code is 500\"] = pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\") ? responseCode.code === 500 : responseCode.code == 200;"
 								]
 							}
 						}
@@ -5818,7 +5818,8 @@
 						"method": "PUT",
 						"header": [],
 						"body": {},
-						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf"
+						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf",
+                                                "description" : "Windows will verify the username/password and fail, the Linux JVM is always installed without a username/password so will pass"
 					},
 					"response": []
 				},
