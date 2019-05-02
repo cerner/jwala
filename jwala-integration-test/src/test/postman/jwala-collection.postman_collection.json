@@ -5818,7 +5818,8 @@
 						"method": "PUT",
 						"header": [],
 						"body": {},
-						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf"
+						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf",
+                                                "description" : "Windows will verify the username/password and fail, the Linux JVM is always installed without a username/password so will pass"
 					},
 					"response": []
 				},
