@@ -5809,7 +5809,7 @@
 								"id": "",
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = responseCode.code === 500;"
+									"tests[\"Status code is 500\"] = pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\") ? responseCode.code === 500 : responseCode.code == 200;"
 								]
 							}
 						}
