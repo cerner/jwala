@@ -137,6 +137,7 @@ public class CommonRunSteps {
         String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
+        createWebServerRunSteps.clickRefreshButtonToUpdateStatusPath();
         createWebServerRunSteps.setHttpsPort(getPropertyValue(parameters.get("httpsPort")));
         createWebServerRunSteps.selectApacheHttpd(getPropertyValue(parameters.get("apacheHttpdMediaId")));
         createWebServerRunSteps.selectGroup(parameters.get("group"));
@@ -311,22 +312,22 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickSaveButton(parameters.get("tabLabel"));
     }
 
-    @And("^I enter attribute in the file MetaData with the following parameters:$")
-    public void enterAttributeInMetaData(Map<String, String> parameters) {
-        navigationRunSteps.goToConfigurationTab();
-        navigationRunSteps.goToResourceTab();
-        uploadResourceRunSteps.expandNode(parameters.get("group"));
-        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
-        uploadResourceRunSteps.clickNode(parameters.get("componentName"));
-        handleResourceRunSteps.clickResource(parameters.get("fileName"));
-        handleResourceRunSteps.clickTab("Meta Data");
-        handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
-        handleResourceRunSteps.clickSaveButton("Meta Data");
-        if(parameters.get("override").equals("true")){
-            jwalaUi.clickOkWithSpan();
-        }
-        handleResourceRunSteps.waitForNotification("Saved");
-    }
+	@And("^I enter attribute in the file MetaData with the following parameters:$")
+	public void enterAttributeInMetaData(Map<String, String> parameters) {
+		navigationRunSteps.goToConfigurationTab();
+		navigationRunSteps.goToResourceTab();
+		uploadResourceRunSteps.expandNode(parameters.get("group"));
+		uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+		uploadResourceRunSteps.clickNode(parameters.get("componentName"));
+		handleResourceRunSteps.clickResource(parameters.get("fileName"));
+		handleResourceRunSteps.clickTab("Meta Data");
+		handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"),parameters.get("attributeValue"));
+		handleResourceRunSteps.clickSaveButton("Meta Data");
+		if (parameters.get("override").equals("true")) {
+			jwalaUi.clickOkWithSpan();
+		}
+		handleResourceRunSteps.waitForNotification("Saved");
+	}
 
     /**
      * Gets the value from the properties file

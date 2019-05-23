@@ -43,7 +43,7 @@ public class NavigationRunSteps {
         // check first if the group is already expanded, if it is there is no need to expand it
         if (jwalaUi.isElementExists(
                 By.xpath("//td[text()='" + groupName + "']/preceding-sibling::td//span[contains(@class,'ui-icon-triangle-1-e')]"))) {
-            jwalaUi.click(By.xpath("//td[text()='" + groupName + "']/preceding-sibling::td"));
+            jwalaUi.click(By.xpath("//td[text()='" + groupName + "']/preceding-sibling::td//span"));
         }
     }
 

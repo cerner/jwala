@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @ComponentScan({"com.cerner.jwala.ui.selenium.component", "com.cerner.jwala.common.jsch"})
 public class TestConfig {
-
+	private static final String WEBDRIVER_PATH = "webdriver.ie.driver";
     private static final String WEB_DRIVER_CLASS = "webdriver.class";
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
     private static final String TEST_PROPERTY_PATH = "test.property.path";
@@ -48,7 +48,7 @@ public class TestConfig {
 
     @Bean
     public WebDriver getDriver(@Qualifier("seleniumTestProperties") final Properties properties) throws IOException {
-        final WebDriver webDriver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS));
+        final WebDriver webDriver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS),System.getProperty(WEBDRIVER_PATH));
         webDriver.manage().timeouts().implicitlyWait(Long.parseLong(properties.getProperty(ELEMENT_SEARCH_RENDER_WAIT_TIME)),
                 TimeUnit.SECONDS);
         return webDriver;

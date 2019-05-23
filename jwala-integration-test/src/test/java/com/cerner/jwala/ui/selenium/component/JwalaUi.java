@@ -42,7 +42,7 @@ public class JwalaUi {
     private Actions actions;
 
     public void clickTab(final String tabLabel) {
-        final By by = By.xpath("//li[a[text()='" + tabLabel + "']]");
+        final By by = By.xpath("//li//a[text()='" + tabLabel + "']");
         if (!driver.findElement(by).getAttribute("class").equalsIgnoreCase("current")) {
             clickWhenReady(by);
             webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("AppBusyScreen")));
@@ -181,8 +181,8 @@ public class JwalaUi {
         webElement.click();
     }
 
-    public void doubleClick() {
-        actions.doubleClick().perform();
+    public void backSpace() {
+        actions.sendKeys(Keys.BACK_SPACE);
     }
 
     /**

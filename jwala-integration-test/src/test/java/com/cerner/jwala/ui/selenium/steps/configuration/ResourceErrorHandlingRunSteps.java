@@ -30,7 +30,7 @@ public class ResourceErrorHandlingRunSteps {
         final String normalizedText = text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
         By by = By.xpath("(//pre[contains(@class, 'CodeMirror-line')]//span[text()='" + normalizedText + "'])[1]");
         jwalaUi.click(by);
-        jwalaUi.doubleClick();
+        jwalaUi.backSpace();
         jwalaUi.sendKeysViaActions(Keys.BACK_SPACE);
     }
 
