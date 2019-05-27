@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @ComponentScan({"com.cerner.jwala.ui.selenium.component", "com.cerner.jwala.common.jsch"})
 public class TestConfig {
-	private static final String WEBDRIVER_PATH = "webdriver.ie.driver";
+    private static final String WEBDRIVER_PATH = "webdriver.ie.driver";
     private static final String WEB_DRIVER_CLASS = "webdriver.class";
     private static final String ELEMENT_SEARCH_RENDER_WAIT_TIME = "element.search.render.wait.time";
     private static final String TEST_PROPERTY_PATH = "test.property.path";
