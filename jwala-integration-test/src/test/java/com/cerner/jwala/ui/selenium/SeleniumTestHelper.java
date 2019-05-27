@@ -22,8 +22,8 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
- * Utility class that contains commonly used static methods Created by Jedd
- * Cuison on 2/22/2017
+ * Utility class that contains commonly used static methods
+ * Created by Jedd Cuison on 2/22/2017
  */
 public class SeleniumTestHelper {
     private static final String TEST_PROPERTY_PATH = "test.property.path";
@@ -33,8 +33,7 @@ public class SeleniumTestHelper {
     /**
      * Create an instance of a {@link WebDriver} to facilitate browser based testing
      *
-     * @param webDriverClass
-     *            The name of the web driver class to use
+     * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
     */
     public static WebDriver createWebDriver(final String webDriverClass, String webDriverPath) {
