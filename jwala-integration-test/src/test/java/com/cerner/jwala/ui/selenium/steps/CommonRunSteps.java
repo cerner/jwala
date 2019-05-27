@@ -314,20 +314,20 @@ public class CommonRunSteps {
 
     @And("^I enter attribute in the file MetaData with the following parameters:$")
     public void enterAttributeInMetaData(Map<String, String> parameters) {
-         navigationRunSteps.goToConfigurationTab();
-	 navigationRunSteps.goToResourceTab();
-	 uploadResourceRunSteps.expandNode(parameters.get("group"));
-	 uploadResourceRunSteps.expandNode(parameters.get("componentType"));
-	 uploadResourceRunSteps.clickNode(parameters.get("componentName"));
-	 handleResourceRunSteps.clickResource(parameters.get("fileName"));
-	 handleResourceRunSteps.clickTab("Meta Data");
-	 handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"),parameters.get("attributeValue"));
-	 handleResourceRunSteps.clickSaveButton("Meta Data");
-	 if (parameters.get("override").equals("true")) {
-	  jwalaUi.clickOkWithSpan();
-	  }
-	 handleResourceRunSteps.waitForNotification("Saved");
-	}
+        navigationRunSteps.goToConfigurationTab();
+        navigationRunSteps.goToResourceTab();
+        uploadResourceRunSteps.expandNode(parameters.get("group"));
+        uploadResourceRunSteps.expandNode(parameters.get("componentType"));
+        uploadResourceRunSteps.clickNode(parameters.get("componentName"));
+        handleResourceRunSteps.clickResource(parameters.get("fileName"));
+        handleResourceRunSteps.clickTab("Meta Data");
+        handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
+        handleResourceRunSteps.clickSaveButton("Meta Data");
+        if(parameters.get("override").equals("true")){
+            jwalaUi.clickOkWithSpan();
+        }
+        handleResourceRunSteps.waitForNotification("Saved");
+    }
 
     /**
      * Gets the value from the properties file
