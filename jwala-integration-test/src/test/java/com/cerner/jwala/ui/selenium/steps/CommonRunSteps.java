@@ -323,7 +323,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickTab("Meta Data");
         handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
         handleResourceRunSteps.clickSaveButton("Meta Data");
-        if(parameters.get("override").equals("true")){
+        if (parameters.get("override").equals("true")) {
             jwalaUi.clickOkWithSpan();
         }
         handleResourceRunSteps.waitForNotification("Saved");
