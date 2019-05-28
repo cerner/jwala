@@ -35,35 +35,35 @@ public class SeleniumTestHelper {
      *
      * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
-    */
+     */
     public static WebDriver createWebDriver(final String webDriverClass, String webDriverPath) {
-      WebDriver driver = null;
-      DesiredCapabilities dc = null;
-      // IE specific
-      if (webDriverClass.equalsIgnoreCase(ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER)) {
-	 System.setProperty("webdriver.ie.driver", webDriverPath);
-	 dc = DesiredCapabilities.internetExplorer();
-	 dc.setCapability(InternetExplorerDriver.ENABLE_ELEMENT_CACHE_CLEANUP, true);
-	 dc.setCapability(InternetExplorerDriver.NATIVE_EVENTS, false);
-	 dc.setCapability("unexpectedAlertBehaviour", "accept");
-	 dc.setCapability(InternetExplorerDriver.IGNORE_ZOOM_SETTING, true);
-	 dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-	 dc.setCapability("disable-popup-blocking", true);
-	 dc.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-	 dc.setCapability("silent", true);
-	 dc.setCapability("allow-blocked-content", true);
-	 dc.setCapability("allowBlockedContent", true);
-	 dc.setCapability(InternetExplorerDriver.ENABLE_PERSISTENT_HOVERING, false);
-	 dc.setCapability(InternetExplorerDriver.REQUIRE_WINDOW_FOCUS, true);
-	 driver = new InternetExplorerDriver(dc);
-      } else {
-	 dc = DesiredCapabilities.chrome();
-	 driver = new ChromeDriver(dc);
-      }
-         driver.manage().window().maximize();
-	 return driver;
+        WebDriver driver = null;
+        DesiredCapabilities dc = null;
+        // IE specific
+        if (webDriverClass.equalsIgnoreCase(ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER)) {
+            System.setProperty("webdriver.ie.driver", webDriverPath);
+            dc = DesiredCapabilities.internetExplorer();
+            dc.setCapability(InternetExplorerDriver.ENABLE_ELEMENT_CACHE_CLEANUP, true);
+            dc.setCapability(InternetExplorerDriver.NATIVE_EVENTS, false);
+            dc.setCapability("unexpectedAlertBehaviour", "accept");
+            dc.setCapability(InternetExplorerDriver.IGNORE_ZOOM_SETTING, true);
+            dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+            dc.setCapability("disable-popup-blocking", true);
+            dc.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+            dc.setCapability("silent", true);
+            dc.setCapability("allow-blocked-content", true);
+            dc.setCapability("allowBlockedContent", true);
+            dc.setCapability(InternetExplorerDriver.ENABLE_PERSISTENT_HOVERING, false);
+            dc.setCapability(InternetExplorerDriver.REQUIRE_WINDOW_FOCUS, true);
+            driver = new InternetExplorerDriver(dc);
+        } else {
+            dc = DesiredCapabilities.chrome();
+            driver = new ChromeDriver(dc);
+        }
+        driver.manage().window().maximize();
+        return driver;
     }
-	
+
     /**
      * Checks whether an element is rendered by the browser or not
      *
