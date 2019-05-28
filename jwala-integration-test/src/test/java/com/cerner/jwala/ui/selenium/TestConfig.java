@@ -48,7 +48,7 @@ public class TestConfig {
 
     @Bean
     public WebDriver getDriver(@Qualifier("seleniumTestProperties") final Properties properties) throws IOException {
-        final WebDriver webDriver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS),System.getProperty(WEBDRIVER_PATH));
+        final WebDriver webDriver = SeleniumTestHelper.createWebDriver(System.getProperty(WEB_DRIVER_CLASS), System.getProperty(WEBDRIVER_PATH));
         webDriver.manage().timeouts().implicitlyWait(Long.parseLong(properties.getProperty(ELEMENT_SEARCH_RENDER_WAIT_TIME)),
                 TimeUnit.SECONDS);
         return webDriver;
