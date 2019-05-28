@@ -137,6 +137,7 @@ public class CommonRunSteps {
         String hostName = getPropertyValue(parameters.get("hostName"));
         createWebServerRunSteps.setHostName(hostName);
         createWebServerRunSteps.setHttpPort(getPropertyValue(parameters.get("portNumber")));
+        createWebServerRunSteps.clickRefreshButtonToUpdateStatusPath();
         createWebServerRunSteps.setHttpsPort(getPropertyValue(parameters.get("httpsPort")));
         createWebServerRunSteps.selectApacheHttpd(getPropertyValue(parameters.get("apacheHttpdMediaId")));
         createWebServerRunSteps.selectGroup(parameters.get("group"));
@@ -322,7 +323,7 @@ public class CommonRunSteps {
         handleResourceRunSteps.clickTab("Meta Data");
         handleResourceRunSteps.enterAttribute(parameters.get("attributeKey"), parameters.get("attributeValue"));
         handleResourceRunSteps.clickSaveButton("Meta Data");
-        if(parameters.get("override").equals("true")){
+        if (parameters.get("override").equals("true")) {
             jwalaUi.clickOkWithSpan();
         }
         handleResourceRunSteps.waitForNotification("Saved");
