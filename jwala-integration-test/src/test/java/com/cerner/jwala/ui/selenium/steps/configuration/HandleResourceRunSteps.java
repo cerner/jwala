@@ -102,7 +102,7 @@ public class HandleResourceRunSteps {
      * Insert text in the resource template/metadata text box
      *
      * @param inputStr the string that is to be inserted in the resource text box
-     * @param atStr the String whose location is where the inputStr parameter will be inserted at
+     * @param atStr    the String whose location is where the inputStr parameter will be inserted at
      */
     @When("^I enter value \"(.*)\" in the edit box at text \"(.*)\"$")
     public void insertStrInTheResourceEditor(final String inputStr, final String atStr) {
@@ -200,14 +200,13 @@ public class HandleResourceRunSteps {
     @And("^I confirm overriding individual instances popup for resourceFile \"(.*)\"$")
     public void confirmOverride(String resource) {
         jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Any previous customizations to an individual instance of \"" + resource + "\" will be overwritten.')]"));
-         jwalaUi.clickYesWithSpan();
+        jwalaUi.clickYesWithSpan();
     }
 
     @And("^I don't see \"([^\"]*)\" node in the data tree$")
-    public void verifyabsenceOfNode(String nodeName)  {
+    public void verifyabsenceOfNode(String nodeName) {
         assertFalse(jwalaUi.isElementExists(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + nodeName + "') ]/preceding-sibling::span")));
     }
-
 
 
 }
