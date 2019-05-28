@@ -1,15 +1,10 @@
 package com.cerner.jwala.ui.selenium;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.*;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,17 +12,22 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 /**
  * Utility class that contains commonly used static methods
  * Created by Jedd Cuison on 2/22/2017
  */
 public class SeleniumTestHelper {
-
     private static final String TEST_PROPERTY_PATH = "test.property.path";
     private static final String TEST_PROPERTIES = "selenium/test.properties";
-    private static final String DEFAULT_BROWSER_WIDTH = "1500";
-    private static final String DEFAULT_BROWSER_HEIGHT = "1000";
-    private static final String SELENIUM_GRID_HUB_URL = "selenium.grid.hub.url";
     private static final String ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER = "org.openqa.selenium.ie.InternetExplorerDriver";
 
     /**
@@ -36,48 +36,31 @@ public class SeleniumTestHelper {
      * @param webDriverClass The name of the web driver class to use
      * @return {@link WebDriver}
      */
-    public static WebDriver createWebDriver(final String webDriverClass)   {
-        final WebDriver driver;
-
-        // Set the size of the browser
-        final Properties properties;
-        try {
-            properties = SeleniumTestHelper.getProperties();
-        } catch (final IOException e) {
-            throw new SeleniumTestCaseException("Failure to load properties!", e);
-        }
-
+    public static WebDriver createWebDriver(final String webDriverClass, String webDriverPath) {
+        WebDriver driver = null;
         DesiredCapabilities dc = null;
-
         // IE specific
         if (webDriverClass.equalsIgnoreCase(ORG_OPENQA_SELENIUM_IE_INTERNET_EXPLORER_DRIVER)) {
+            System.setProperty("webdriver.ie.driver", webDriverPath);
             dc = DesiredCapabilities.internetExplorer();
-            dc.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
-            dc.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
-            dc.setCapability(CapabilityType.SUPPORTS_JAVASCRIPT, true);
+            dc.setCapability(InternetExplorerDriver.ENABLE_ELEMENT_CACHE_CLEANUP, true);
+            dc.setCapability(InternetExplorerDriver.NATIVE_EVENTS, false);
+            dc.setCapability("unexpectedAlertBehaviour", "accept");
+            dc.setCapability(InternetExplorerDriver.IGNORE_ZOOM_SETTING, true);
             dc.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-        } else  {
+            dc.setCapability("disable-popup-blocking", true);
+            dc.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+            dc.setCapability("silent", true);
+            dc.setCapability("allow-blocked-content", true);
+            dc.setCapability("allowBlockedContent", true);
+            dc.setCapability(InternetExplorerDriver.ENABLE_PERSISTENT_HOVERING, false);
+            dc.setCapability(InternetExplorerDriver.REQUIRE_WINDOW_FOCUS, true);
+            driver = new InternetExplorerDriver(dc);
+        } else {
             dc = DesiredCapabilities.chrome();
+            driver = new ChromeDriver(dc);
         }
-
-        final String hubUrl;
-        try {
-            hubUrl = getProperties().getProperty(SELENIUM_GRID_HUB_URL);
-            if (StringUtils.isNotEmpty(hubUrl)) {
-                // Driver that runs tests via Selenium Grid
-                driver = new RemoteWebDriver(new URL(hubUrl.replaceAll("\"", "")), dc);
-            } else {
-                driver = (WebDriver) Class.forName(webDriverClass).getConstructor().newInstance();
-            }
-        } catch (final IOException | InstantiationException | IllegalAccessException | InvocationTargetException |
-                       NoSuchMethodException | ClassNotFoundException e) {
-            throw new SeleniumTestCaseException("Failed to create web driver!", e);
-        }
-
-        final int width = Integer.parseInt(properties.getProperty("browser.width", DEFAULT_BROWSER_WIDTH));
-        final int height = Integer.parseInt(properties.getProperty("browser.height", DEFAULT_BROWSER_HEIGHT));
-        Dimension dimension = new Dimension(width, height);
-        driver.manage().window().setSize(dimension);
+        driver.manage().window().maximize();
         return driver;
     }
 
@@ -114,6 +97,7 @@ public class SeleniumTestHelper {
         }
         return properties;
     }
+
 
     public static void runSqlScript(final String sqlScript) throws IOException, ClassNotFoundException, SQLException {
         final Properties properties = SeleniumTestHelper.getProperties();
