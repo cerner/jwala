@@ -60,7 +60,7 @@ public class CreateWebServerRunSteps {
     public void setHttpPort(final String httpPort) {
         jwalaUi.sendKeys(By.name("portNumber"), httpPort);
     }
-    
+
     @And("^I click the \"Status Path\" Refresh status button \"(.*)\"$")
     public void clickRefreshButtonToUpdateStatusPath() {
         jwalaUi.click(By.xpath("//span[contains(@title,'Generate Status Path')]/span"));
