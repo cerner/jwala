@@ -22,6 +22,7 @@ import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
+import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
@@ -41,6 +42,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.verification.VerificationMode;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -254,6 +256,34 @@ public class ApplicationServiceImplTest {
         verify(Config.mockGroupPersistenceService).updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString());
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testUpdateAppWithNoWar() throws ApplicationServiceException,IOException {
+        when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class)))
+                .thenReturn(Config.mockApplication2);
+        Group group = mock(Group.class);
+        when(Config.mockApplication2.getName()).thenReturn("test-app-name");
+        when(Config.mockApplication2.getGroup()).thenReturn(group);
+        when(group.getName()).thenReturn("group1");
+        long id = 22;
+        JpaGroup jpaGroup = mock(JpaGroup.class);
+        when(group.getId()).thenReturn(new Identifier<Group>(id));
+        List<Long> listOfIds = new ArrayList<>();
+        listOfIds.add((long)22);
+        List<JpaGroup> jpaGroups = new ArrayList<>();
+        jpaGroups.add(jpaGroup);
+        when(Config.mockGroupPersistenceService.findGroups(listOfIds)).thenReturn(jpaGroups);
+        JpaApplication jpaApplication = mock(JpaApplication.class);
+        when(Config.applicationPersistenceService.getJpaApplication(Config.mockApplication2.getName())).thenReturn
+                (jpaApplication);
+        doThrow(new ResourceTemplateUpdateException("test-app-name", "missing war")).when(Config.mockResourceDao).updateResourceGroup(jpaApplication, jpaGroup);
+
+        UpdateApplicationRequest cac = new UpdateApplicationRequest(Config.mockApplication2.getId(), Identifier.id(1L, Group.class), "wan", "/wan", true, true, false);
+        Application created = applicationService.updateApplication(cac, new User("user"));
+
+        assertTrue(created == Config.mockApplication2);
+        verify(Config.mockResourceDao, times(0)).updateResourceGroup(jpaApplication, jpaGroup);
+    }
 
     @SuppressWarnings("unchecked")
     @Test
