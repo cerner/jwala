@@ -150,7 +150,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (jpaGroups.size() == 1) {
             JpaApplication jpaApp = applicationPersistenceService.getJpaApplication(appName);
             // only update the war info if a war is associated with the app
-            if (null != jpaApp.getName()) {
+            if (null != jpaApp.getWarName()) {
                 resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
             }
         } else {
