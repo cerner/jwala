@@ -50,6 +50,7 @@ import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
 import com.jcraft.jsch.JSchException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
