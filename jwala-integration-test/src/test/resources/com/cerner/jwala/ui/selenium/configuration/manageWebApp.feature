@@ -1,6 +1,8 @@
 Feature: Add, Edit and Delete a Web Application
 
-Scenario: Add Web Application
+Scenario: Add, Edit and Delete a Web Application
+
+    #Add Web Application
 
     Given I logged in
     And I am in the Configuration tab
