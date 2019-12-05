@@ -30,3 +30,5 @@ mavenVersion.xml
 multimarkdown.shared.xml
 find.xml
 .DS_Store
+.vscode
+.metadata
