@@ -149,7 +149,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<JpaGroup> jpaGroups = groupPersistenceService.findGroups(idList);
         if (jpaGroups.size() == 1) {
             JpaApplication jpaApp = applicationPersistenceService.getJpaApplication(appName);
-            resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
+            // only update the war info if a war is associated with the app
+            if (null != jpaApp.getWarName()) {
+                resourceDao.updateResourceGroup(jpaApp, jpaGroups.get(0));
+            }
         } else {
             throw new ApplicationServiceException("One Jpa Group expected for the application.");
         }
