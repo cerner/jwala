@@ -346,4 +346,8 @@ public class JwalaUi {
         click(By.xpath("//button[text()='Yes']"));
     }
 
+    public void selectTableRowWithContent(String content) {
+        click(By.xpath("//tr/td/button[text()='" + content + "']/../.."));
+    }
+
 }

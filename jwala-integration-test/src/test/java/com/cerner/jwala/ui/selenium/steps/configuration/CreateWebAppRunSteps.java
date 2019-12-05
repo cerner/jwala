@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -22,6 +23,11 @@ public class CreateWebAppRunSteps {
     @When("^I click the add web app button$")
     public void clickAddWebAppBtn() {
         jwalaUi.click(By.xpath("//button[span[text()='Add']]"));
+    }
+    
+    @When("^I click the delete web app button$")
+    public void clickDeleteWebAppBtn() {
+        jwalaUi.click(By.xpath("//button[span[text()='Delete']]"));
     }
 
     @And("^I see the web app add dialog$")
@@ -46,6 +52,16 @@ public class CreateWebAppRunSteps {
         }
     }
 
+    @And("^I click the Secure checkbox$")
+    public void changeSecureFlag() {
+        jwalaUi.click(By.name("secure"));
+    }
+
+    @And("^I click the Unpack WAR checkbox$")
+    public void changeUnpackWarFlag() {
+        jwalaUi.click(By.name("unpackWar"));
+    }
+
     @And("^I click the add web app dialog ok button$")
     public void clickAddDialogOkBtn() {
         jwalaUi.clickOkWithSpan();
@@ -61,5 +77,48 @@ public class CreateWebAppRunSteps {
     @And("^I see \"(.*)\" web app table$")
     public void checkForWebApp(final String webAppName) {
         jwalaUi.waitUntilElementIsVisible(By.xpath("//button[text()='" + webAppName + "']"));
+    }
+
+    @And("^I click on \"(.*)\" link to open Edit Web App dialog$")
+    public void openWebAppEditDialog(final String webAppName) {
+        jwalaUi.click(By.xpath("//button[text()='" + webAppName + "']"));
+    }
+
+    @And("^I see Unpack WAR checkbox is \"(.*)\"$")
+    public void checkUnpackWarFlag(final String flag) {
+        if (flag.equalsIgnoreCase("checked")){
+            assertTrue(jwalaUi.isCheckBoxChecked(By.name("unpackWar")));
+        } else if (flag.equalsIgnoreCase("unchecked")) {
+            assertFalse(jwalaUi.isCheckBoxChecked(By.name("unpackWar")));
+        }
+    }
+
+    @And("^I see Secure checkbox is \"(.*)\"$")
+    public void checkSecureFlag(final String flag) {
+        if (flag.equalsIgnoreCase("checked")){
+            assertTrue(jwalaUi.isCheckBoxChecked(By.name("secure")));
+        } else if (flag.equalsIgnoreCase("unchecked")) {
+            assertFalse(jwalaUi.isCheckBoxChecked(By.name("secure")));
+        }
+    }
+    
+    @And("^I select the \"(.*)\" application row in the table$")
+    public void selectGroup(final String appName) {
+        jwalaUi.selectTableRowWithContent(appName);
+    }
+    
+    @And("^I see the web app delete dialog$")
+    public void checkForDeleteWebAppDialog() {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//span[text()='Delete Web Application']"));
+    }
+    
+    @And("^I click the delete web app dialog Yes button$")
+    public void clickDeleteDialogYesBtn() {
+        jwalaUi.clickYesWithSpan();
+    }
+    
+    @And("^I see the \"The table is empty!\" message$")
+    public void checkForEmptyTable() {
+        jwalaUi.waitUntilElementIsVisible(By.xpath("//div[contains(@class,'noDataFoundMsg') and contains(text(),'The table is empty!')]"));
     }
 }
