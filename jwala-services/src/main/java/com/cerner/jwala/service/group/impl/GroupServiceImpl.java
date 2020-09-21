@@ -488,7 +488,7 @@ public class GroupServiceImpl implements GroupService {
                 LOGGER.info("JVM {} is started but resource {} is configured for hot deploy. Continuing with deploy ...", jvm.getJvmName(), fileName);
             } catch (IOException e) {
                 String errMsg = MessageFormat.format("Failed to tokenize meta data for resource {0} of JVM {1}", fileName, jvm.getJvmName());
-                LOGGER.error(errMsg);
+                LOGGER.error(errMsg, e);
                 throw new GroupServiceException(errMsg);
             }
         }
