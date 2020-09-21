@@ -7297,7 +7297,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/applications/fileExists?filePath=${webApp.warDeployPath}\\{{helloWorldWar}}&hostName={{host}}",
+							"raw": "{{url}}/v1.0/applications/fileExists?filePath={{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}&hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -7309,7 +7309,7 @@
 							"query": [
 								{
 									"key": "filePath",
-									"value": "${webApp.warDeployPath}\\{{helloWorldWar}}",
+									"value": "{{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}",
 									"equals": true,
 									"description": ""
 								},
