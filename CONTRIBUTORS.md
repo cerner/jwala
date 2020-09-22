@@ -9,3 +9,4 @@ Cerner Corporation
 - Rahul Sayini
 - Steven Ger
 - Brett Okken
+- Harsh Raj
