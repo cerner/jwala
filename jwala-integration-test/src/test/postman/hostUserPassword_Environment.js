@@ -143,8 +143,11 @@ var runPostman = function() {
 
     newman.run({
         collection: require('./jwala-collection.postman_collection.json'),
-                    environment: myEnvironment,
-                    insecure: true, bail: true,
+        environment: myEnvironment,
+        insecure: true,
+        bail: true,
+        disableUnicode: true,
+        color: 'off',
         reporters: 'cli'
     }).on('start', function (err, args) { // on start of run, log to console
         console.log('running a collection...');
