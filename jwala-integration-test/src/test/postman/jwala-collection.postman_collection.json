@@ -5809,7 +5809,7 @@
 								"id": "",
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 500\"] = pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\") ? responseCode.code === 500 : responseCode.code == 200;"
+									"tests[\"Status code is 500\"] = pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\") ? responseCode.code === 500 : responseCode.code === 200;"
 								]
 							}
 						}
@@ -5819,7 +5819,7 @@
 						"header": [],
 						"body": {},
 						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf",
-                                                "description" : "Windows will verify the username/password and fail, the Linux JVM is always installed without a username/password so will pass"
+						"description" : "Windows will verify the username/password and fail, the Linux JVM is always installed without a username/password so will pass"
 					},
 					"response": []
 				},
@@ -7297,7 +7297,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/applications/fileExists?filePath=${webApp.warDeployPath}\\{{helloWorldWar}}&hostName={{host}}",
+							"raw": "{{url}}/v1.0/applications/fileExists?filePath={{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}&hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -7309,7 +7309,7 @@
 							"query": [
 								{
 									"key": "filePath",
-									"value": "${webApp.warDeployPath}\\{{helloWorldWar}}",
+									"value": "{{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}",
 									"equals": true,
 									"description": ""
 								},
