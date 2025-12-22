@@ -8,6 +8,9 @@ import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Properties;
 
 /**
  * Created by Jedd Cuison on 6/27/2017
@@ -16,6 +19,11 @@ public class CreateWebServerRunSteps {
 
     @Autowired
     private JwalaUi jwalaUi;
+
+
+    @Autowired
+    @Qualifier("parameterProperties")
+    private Properties paramProp;
 
     @Given("^I am in the web server tab$")
     public void goToWebServersTab() {
@@ -39,7 +47,8 @@ public class CreateWebServerRunSteps {
 
     @And("^I fill in the \"Host Name\" field with \"(.*)\"$")
     public void setHostName(final String hostName) {
-        jwalaUi.sendKeys(By.name("hostName"), hostName);
+        String actualHostName = paramProp.getProperty(hostName) == null ? hostName : paramProp.getProperty(hostName);
+        jwalaUi.sendKeys(By.name("hostName"), actualHostName);
     }
 
     @And("^I fill in the \"Status Path\" field with \"(.*)\"$")
@@ -50,6 +59,11 @@ public class CreateWebServerRunSteps {
     @And("^I fill in the \"HTTP Port\" field with \"(.*)\"$")
     public void setHttpPort(final String httpPort) {
         jwalaUi.sendKeys(By.name("portNumber"), httpPort);
+    }
+
+    @And("^I click the \"Status Path\" Refresh status button \"(.*)\"$")
+    public void clickRefreshButtonToUpdateStatusPath() {
+        jwalaUi.click(By.xpath("//span[contains(@title,'Generate Status Path')]/span"));
     }
 
     @And("^I fill in the \"HTTPS Port\" field with \"(.*)\"$")
@@ -74,7 +88,7 @@ public class CreateWebServerRunSteps {
 
     @And("^I click the add web server dialog ok button$")
     public void clickAddWebServerDialogOkBtn() throws InterruptedException {
-        jwalaUi.click(By.xpath("//button[span[text()='Ok']]"));
+        jwalaUi.clickOkWithSpan();
     }
 
     @Then("^I see \"(.*)\" in the webserver table$")

@@ -44,7 +44,6 @@ import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.jvm.JvmStateService;
 import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
-import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
 import com.jcraft.jsch.JSchException;
@@ -1118,6 +1117,111 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         verify(Config.mockJvmPersistenceService, never()).removeJvm(id);
     }
 
+
+    @Test
+    public void testDeleteFailedJvm() {
+        final CommandOutput mockCommandOutput = mock(CommandOutput.class);
+        when(mockJvm.getState()).thenReturn(JvmState.JVM_FAILED);
+        when(Config.mockJvmPersistenceService.getJvm(id)).thenReturn(mockJvm);
+        when(mockCommandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+        when(Config.mockJvmControlService.controlJvm(any(ControlJvmRequest.class), eq(user))).thenReturn(mockCommandOutput);
+        jvmService.deleteJvm(id, true, user);
+        verify(Config.mockJvmControlService).controlJvm(any(ControlJvmRequest.class), eq(user));
+        verify(Config.mockJvmPersistenceService).removeJvm(id);
+    }
+
+
+	@Test(expected = InternalErrorException.class)
+	public void testUpgradeJDKNewJVM() throws CommandFailureException, IOException {
+
+		Jvm mockJvm = mock(Jvm.class);
+		when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
+		when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
+		when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+		when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+		final List<String> templateNames = new ArrayList<>();
+		templateNames.add("setenv.bat");
+		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
+		jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
+
+	}
+
+	@Test
+	public void testUpgradeJDK() throws CommandFailureException, IOException {
+
+		CommandOutput commandOutput = mock(CommandOutput.class);
+		Jvm mockJvm = mock(Jvm.class);
+		ResourceGroup mockResourceGroup = mock(ResourceGroup.class);
+		when(mockJvm.getState()).thenReturn(JvmState.JVM_STOPPED);
+		when(mockJvm.getJvmName()).thenReturn("test-jvm-deploy-config");
+		when(mockJvm.getId()).thenReturn(new Identifier<Jvm>(111L));
+		when(mockJvm.getJdkMedia())
+				.thenReturn(new Media(1L, "test JDK media", MediaType.JDK, Paths.get("x:/test/archive/path.zip"),
+						Paths.get("x:/test-destination"), Paths.get("root-dir-destination")));
+		when(mockJvm.getTomcatMedia()).thenReturn(new Media(2L, "test Tomcat media", MediaType.TOMCAT,
+				Paths.get("./src/test/resources/binaries/apache-tomcat-test.zip"),
+				Paths.get("x:/test-destination-tomcat"), Paths.get("tomcat-root-dir-destination")));
+		when(commandOutput.getReturnCode()).thenReturn(new ExecReturnCode(0));
+		when(Config.mockJvmControlService.secureCopyFile(any(ControlJvmRequest.class), anyString(), anyString(),
+				anyString(), anyBoolean())).thenReturn(commandOutput);
+		when(Config.mockJvmControlService.executeCreateDirectoryCommand(any(Jvm.class), anyString()))
+				.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.executeChangeFileModeCommand(any(Jvm.class), anyString(), anyString(),
+				anyString())).thenReturn(commandOutput);
+		when(Config.mockJvmControlService.controlJvm(
+				eq(ControlJvmRequestFactory.create(JvmControlOperation.DELETE_SERVICE, mockJvm)), any(User.class)))
+						.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.controlJvm(
+				eq(ControlJvmRequestFactory.create(JvmControlOperation.DEPLOY_JVM_ARCHIVE, mockJvm)), any(User.class)))
+						.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.controlJvm(
+				eq(ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, mockJvm)), any(User.class)))
+						.thenReturn(commandOutput);
+		when(Config.mockJvmControlService.executeCheckFileExistsCommand(any(Jvm.class), anyString()))
+				.thenReturn(commandOutput);
+
+		when(Config.mockJvmPersistenceService.findJvmByExactName(anyString())).thenReturn(mockJvm);
+		when(Config.mockJvmPersistenceService.getJvmTemplate(anyString(), any(Identifier.class)))
+				.thenReturn("<server>some xml</server>");
+
+		when(Config.mockResourceService.generateResourceGroup()).thenReturn(mockResourceGroup);
+		when(Config.mockResourceService.generateResourceFile(anyString(), anyString(), any(ResourceGroup.class),
+				anyObject(), any(ResourceGeneratorType.class))).thenReturn("<server>some xml</server>");
+		ResourceIdentifier resourceIdentifier = new ResourceIdentifier.Builder().setResourceName("setenv.bat")
+				.setJvmName("test-jvm-deploy-config").build();
+		ResourceContent resourceContent = new ResourceContent("TEST", "TEST");
+
+		final List<String> templateNames = new ArrayList<>();
+		templateNames.add("setenv.bat");
+		when(Config.mockJvmPersistenceService.getResourceTemplateNames(anyString())).thenReturn(templateNames);
+		when(Config.mockResourceService.getResourceContent(resourceIdentifier)).thenReturn(resourceContent);
+		Jvm response = jvmService.upgradeJDK(mockJvm.getJvmName(), Config.mockUser);
+
+		assertEquals(response.getJvmName(), mockJvm.getJvmName());
+		verify(Config.mockJvmPersistenceService, times(3)).findJvmByExactName(anyString());
+
+		// verify - Delete windows service and Install Service - are called
+		verify(Config.mockJvmControlService, times(2)).controlJvm(anyObject(), anyObject());
+
+		// Verify - the Setenv resource file is fetched from persistence layer
+		verify(Config.mockResourceService, times(1)).getResourceContent(anyObject());
+
+		// Very - JVM State and Binaries are checked
+		verify(mockJvm, times(1)).getTomcatMedia();
+		verify(mockJvm, times(3)).getJdkMedia();
+		verify(mockJvm, times(3)).getState();
+
+		// Verify - Binaries are distributed
+		verify(Config.mockBinaryDistributionService, times(1)).distributeUnzip(anyString());
+		verify(Config.mockBinaryDistributionService, times(1)).distributeMedia(anyString(), anyString(), anyObject(),
+				anyObject());
+
+		// Verify - Resource file(Setenv.bat/sh) is validated and generated
+		verify(Config.mockResourceService, times(1)).generateAndDeployFile(anyObject(), anyString(), anyString(),
+				anyString());
+		verify(Config.mockResourceService, times(1)).validateSingleResourceForGeneration(anyObject());
+	}
+
     @Configuration
     static class Config {
 
@@ -1267,5 +1371,8 @@ public class JvmServiceImplTest extends VerificationBehaviorSupport {
         }
 
     }
+    
+  
+    
 
 }

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+JWALA_EXIT_CODE_INVALID_OS=124
 cygwin=false
 linux=false
 case "`uname`" in
@@ -21,10 +22,20 @@ if $cygwin; then
 fi
 
 if $linux; then
-    if $linux; then
-        if [ test -e "/etc/init.d/$1" ]; then
-          echo delete /etc/init.d/$1
-          /usr/bin/sudo rm /etc/init.d/$1
-        fi
-    fi
+  os_version=$(uname -r)
+  linux_7="el7"
+  if [[ $os_version =~ $linux_7 ]];then
+    echo systemctl disable  $1
+    sudo systemctl disable  $1
+    echo delete /etc/systemd/system/$1
+    sudo rm /etc/systemd/system/$1
+    echo reload systemctl
+    sudo systemctl daemon-reload
+    echo reset all the units state
+    sudo systemctl reset-failed
+  else
+    echo $os_version found but was expecting $linux_7
+    echo Exiting with ERROR CODE $JWALA_EXIT_CODE_INVALID_OS
+    exit $JWALA_EXIT_CODE_INVALID_OS;
+  fi
 fi

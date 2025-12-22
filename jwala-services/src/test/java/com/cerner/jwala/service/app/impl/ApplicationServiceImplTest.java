@@ -22,6 +22,7 @@ import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.JpaApplication;
 import com.cerner.jwala.persistence.jpa.domain.JpaGroup;
 import com.cerner.jwala.persistence.jpa.domain.JpaJvm;
+import com.cerner.jwala.persistence.jpa.service.exception.ResourceTemplateUpdateException;
 import com.cerner.jwala.persistence.service.ApplicationPersistenceService;
 import com.cerner.jwala.persistence.service.GroupPersistenceService;
 import com.cerner.jwala.persistence.service.JvmPersistenceService;
@@ -68,7 +69,7 @@ import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationServiceImplTest.Config.class})
-@PrepareForTest(JwalaUtils.class )
+@PrepareForTest(JwalaUtils.class)
 public class ApplicationServiceImplTest {
 
     static final String META_DATA_TEST_VALUES = "{\"deployPath\":\"./test/deploy-path/conf/CatalinaSSL/localhost\",\"contentType\":\"text/xml\",\"entity\":{\"type\":\"APPLICATION\",\"target\":\"soarcom-hct\",\"group\":\"soarcom-616\",\"parentName\":null,\"deployToJvms\":true},\"templateName\":\"hctXmlTemplate.tpl\",\"deployFileName\":\"hct.xml\"}";
@@ -106,7 +107,7 @@ public class ApplicationServiceImplTest {
             PowerMockito.mockStatic(JwalaUtils.class);
             PowerMockito.when(JwalaUtils.getHostAddress("testServer")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
             PowerMockito.when(JwalaUtils.getHostAddress("testServer2")).thenReturn(Inet4Address.getLocalHost().getHostAddress());
-        }catch (UnknownHostException ex){
+        } catch (UnknownHostException ex) {
             ex.printStackTrace();
         }
         when(Config.mockApplication.getId()).thenReturn(new Identifier<Application>(1L));
@@ -222,9 +223,9 @@ public class ApplicationServiceImplTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testUpdate() throws ApplicationServiceException,IOException {
-            when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class)))
-                    .thenReturn(Config.mockApplication2);
+    public void testUpdate() throws ApplicationServiceException, IOException {
+        when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class)))
+                .thenReturn(Config.mockApplication2);
         Group group = mock(Group.class);
         when(Config.mockApplication2.getName()).thenReturn("test-app-name");
         when(Config.mockApplication2.getWarName()).thenReturn("test-war-name");
@@ -234,7 +235,7 @@ public class ApplicationServiceImplTest {
         JpaGroup jpaGroup = mock(JpaGroup.class);
         when(group.getId()).thenReturn(new Identifier<Group>(id));
         List<Long> listOfIds = new ArrayList<>();
-        listOfIds.add((long)22);
+        listOfIds.add((long) 22);
         List<JpaGroup> jpaGroups = new ArrayList<>();
         jpaGroups.add(jpaGroup);
         when(Config.mockGroupPersistenceService.findGroups(listOfIds)).thenReturn(jpaGroups);
@@ -243,7 +244,7 @@ public class ApplicationServiceImplTest {
                 (jpaApplication);
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData("group1", "test-war-name", "test-app-names"))
                 .thenReturn
-                ("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
+                        ("{\"templateName\":\"test-template-name\", \"contentType\":\"application/zip\", \"deployFileName\":\"test-app.war\", \"deployPath\":\"/fake/deploy/path\", \"entity\":{}, \"unpack\":\"true\", \"overwrite\":\"true\"}");
 
         when(Config.mockResourceService.getMetaData(anyString())).thenReturn(new ResourceTemplateMetaData("test-template-name", MediaType.APPLICATION_ZIP, "deploy-file-name", "deploy-path", null, true, false, null));
 
@@ -254,6 +255,39 @@ public class ApplicationServiceImplTest {
         verify(Config.mockGroupPersistenceService).updateGroupAppResourceMetaData(anyString(), anyString(), anyString(), anyString());
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testUpdateAppWithNoWar() throws ApplicationServiceException, IOException {
+        when(Config.applicationPersistenceService.updateApplication(any(UpdateApplicationRequest.class)))
+                .thenReturn(Config.mockApplication2);
+        Group group = mock(Group.class);
+        when(Config.mockApplication2.getName()).thenReturn("test-app-name");
+        when(Config.mockApplication2.getGroup()).thenReturn(group);
+        when(group.getName()).thenReturn("group1");
+        long id = 22;
+        JpaGroup jpaGroup = mock(JpaGroup.class);
+        when(group.getId()).thenReturn(new Identifier<Group>(id));
+        List<Long> listOfIds = new ArrayList<>();
+        listOfIds.add((long) 22);
+        List<JpaGroup> jpaGroups = new ArrayList<>();
+        jpaGroups.add(jpaGroup);
+        when(Config.mockGroupPersistenceService.findGroups(listOfIds)).thenReturn(jpaGroups);
+        JpaApplication jpaApplication = mock(JpaApplication.class);
+        when(jpaApplication.getName()).thenReturn("test-app-name");
+        when(jpaApplication.getWarDeployPath()).thenReturn(null);
+        when(jpaApplication.getWarName()).thenReturn(null);
+        when(jpaApplication.getWarPath()).thenReturn(null);
+        when(jpaApplication.getWebAppContext()).thenReturn("/test-app-name");
+        when(Config.applicationPersistenceService.getJpaApplication(Config.mockApplication2.getName())).thenReturn
+                (jpaApplication);
+        doThrow(new ResourceTemplateUpdateException("test-app-name", "missing war")).when(Config.mockResourceDao).updateResourceGroup(jpaApplication, jpaGroup);
+
+        UpdateApplicationRequest cac = new UpdateApplicationRequest(Config.mockApplication2.getId(), Identifier.id(1L, Group.class), "wan", "/wan", true, true, false);
+        Application created = applicationService.updateApplication(cac, new User("user"));
+
+        assertTrue(created == Config.mockApplication2);
+        verify(Config.mockResourceDao, times(0)).updateResourceGroup(jpaApplication, jpaGroup);
+    }
 
     @SuppressWarnings("unchecked")
     @Test
@@ -382,7 +416,7 @@ public class ApplicationServiceImplTest {
         verify(Config.mockResourceService).generateAndDeployFile(any(ResourceIdentifier.class), anyString(), anyString(), anyString());
     }
 
-    @Test (expected = ApplicationServiceException.class)
+    @Test(expected = ApplicationServiceException.class)
     public void testDeployConfJvmNotStoppedAndHotDeployThrowsException() throws IOException {
         Jvm mockJvm = mock(Jvm.class);
         when(mockJvm.getState()).thenReturn(JvmState.JVM_STARTED);
@@ -469,7 +503,7 @@ public class ApplicationServiceImplTest {
         when(Config.mockApplication.getGroup()).thenReturn(mockGroup);
         when(mockGroup.getName()).thenReturn("test-group");
         when(mockGroup.getId()).thenReturn(new Identifier<Group>(1L));
-       when(mockJvm.getHostName()).thenReturn("testserver");
+        when(mockJvm.getHostName()).thenReturn("testserver");
         when(mockJvm.getState()).thenReturn(JvmState.JVM_NEW);
         when(Config.mockGroupPersistenceService.getHosts(anyString())).thenReturn(hosts);
         when(Config.mockGroupPersistenceService.getGroupAppResourceTemplateMetaData(anyString(), anyString(), anyString())).thenReturn("");

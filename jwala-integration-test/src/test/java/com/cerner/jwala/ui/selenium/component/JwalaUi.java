@@ -38,8 +38,11 @@ public class JwalaUi {
     @Qualifier("seleniumTestProperties")
     private Properties properties;
 
+    @Autowired
+    private Actions actions;
+
     public void clickTab(final String tabLabel) {
-        final By by = By.xpath("//li[a[text()='" + tabLabel + "']]");
+        final By by = By.xpath("//li//a[text()='" + tabLabel + "']");
         if (!driver.findElement(by).getAttribute("class").equalsIgnoreCase("current")) {
             clickWhenReady(by);
             webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("AppBusyScreen")));
@@ -54,13 +57,13 @@ public class JwalaUi {
     public void clickWhenReady(final By by) {
         webDriverWait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".AppBusyScreen")));
         final WebElement webElement = webDriverWait.until(ExpectedConditions.elementToBeClickable(by));
-        scrollIntoView(webElement);
         webElement.click();
     }
 
     /**
      * Waits until the element is clickable
-     * @param by {@link By}
+     *
+     * @param by      {@link By}
      * @param timeout timeout in seconds
      */
     public void clickWhenReady(final By by, final long timeout) {
@@ -69,6 +72,7 @@ public class JwalaUi {
 
     /**
      * Expand a node, do nothing if it is already expanded
+     *
      * @param nodeLabel the node label
      */
     public void expandNode(final String nodeLabel) {
@@ -145,7 +149,8 @@ public class JwalaUi {
 
     /**
      * Check if an element exists
-     * @param by locates the element
+     *
+     * @param by      locates the element
      * @param timeout timeout in seconds
      * @return true if element exists
      */
@@ -166,14 +171,27 @@ public class JwalaUi {
         driver.findElement(by).sendKeys(val);
     }
 
+    /**
+     * Primarily used to send text to code mirror since the WebElement's sendKeys does not work for code mirror in IE
+     *
+     * @param val the value to send
+     */
+    public void sendKeysViaActions(final CharSequence val) {
+        actions.sendKeys(val).perform();
+    }
+
     public void click(final By by) {
         final WebElement webElement = driver.findElement(by);
-        scrollIntoView(webElement);
         webElement.click();
+    }
+
+    public void backSpace() {
+        actions.sendKeys(Keys.BACK_SPACE);
     }
 
     /**
      * Scrolls an element into view
+     *
      * @param webElement the element
      */
     private void scrollIntoView(WebElement webElement) {
@@ -191,7 +209,7 @@ public class JwalaUi {
     /**
      * Wait until an element is visible
      *
-     * @param by {@link By}
+     * @param by      {@link By}
      * @param timeout timeout in seconds
      */
     public void waitUntilElementIsVisible(final By by, final long timeout) {
@@ -200,7 +218,8 @@ public class JwalaUi {
 
     /**
      * Wait until an element is no longer visible
-     * @param by {@link By}
+     *
+     * @param by      {@link By}
      * @param timeout timeout in seconds
      */
     public void waitUntilElementIsNotVisible(final By by, final long timeout) {
@@ -219,7 +238,7 @@ public class JwalaUi {
      * Web driver waits until an element or several elements (as indicated by the numberOfElements parameter)
      * located by the "by" parameter is/are existing
      *
-     * @param by element locator
+     * @param by               element locator
      * @param numberOfElements the number of elements to satisfy the "to be" condition
      */
     public void waitUntilNumberOfElementsToBe(final By by, final int numberOfElements) {
@@ -230,6 +249,7 @@ public class JwalaUi {
         final Select select = new Select(driver.findElement(by));
         select.selectByVisibleText(itemName);
     }
+
     public void clickComponentForUpload(String component) {
         final WebElement webElement =
                 driver.findElement(By.xpath("//li[span[text()='" + component + "']]/span"));
@@ -272,11 +292,12 @@ public class JwalaUi {
 
     /**
      * Go to another browser tab/window
+     *
      * @param currentTabHandle the current browser tab/winow handle
      */
     public void switchToOtherTab(final String currentTabHandle) {
         final Set<String> windowHandles = driver.getWindowHandles();
-        for (final String windowHandle: windowHandles) {
+        for (final String windowHandle : windowHandles) {
             if (!windowHandle.equals(currentTabHandle)) {
                 driver.switchTo().window(windowHandle);
                 break;
@@ -286,6 +307,7 @@ public class JwalaUi {
 
     /**
      * Looks for an element
+     *
      * @param by describes the element to look for
      * @return the underlying web element
      * throws NoSuchElementException if element was not found
@@ -296,6 +318,7 @@ public class JwalaUi {
 
     /**
      * Takes a screenshot
+     *
      * @param imgPath the path where to save the screenshot
      */
     public void screenShot(final String imgPath) {
@@ -306,4 +329,25 @@ public class JwalaUi {
             throw new JwalaUiException("Screen shot failed!", e);
         }
     }
+
+    public void clickOkWithSpan() {
+        click(By.xpath("//button/span[text()='Ok']"));
+    }
+
+    public void clickOk() {
+        click(By.xpath("//button[text()='Ok']"));
+    }
+
+    public void clickYesWithSpan() {
+        click(By.xpath("//button/span[text()='Yes']"));
+    }
+
+    public void clickYes() {
+        click(By.xpath("//button[text()='Yes']"));
+    }
+
+    public void selectTableRowWithContent(String content) {
+        click(By.xpath("//tr/td/button[text()='" + content + "']/../.."));
+    }
+
 }

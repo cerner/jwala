@@ -1,5 +1,43 @@
 package com.cerner.jwala.service.jvm.impl;
 
+import static com.cerner.jwala.control.AemControl.Properties.DELETE_SERVICE_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.DEPLOY_CONFIG_ARCHIVE_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.HEAP_DUMP_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.INSTALL_SERVICE_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.SERVICE_STATUS_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.START_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.STOP_SCRIPT_NAME;
+import static com.cerner.jwala.control.AemControl.Properties.THREAD_DUMP_SCRIPT_NAME;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.NoResultException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.mime.MediaType;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.cerner.jwala.common.FileUtility;
 import com.cerner.jwala.common.JwalaUtils;
 import com.cerner.jwala.common.domain.model.app.Application;
@@ -22,7 +60,11 @@ import com.cerner.jwala.common.exec.ExecReturnCode;
 import com.cerner.jwala.common.properties.ApplicationProperties;
 import com.cerner.jwala.common.properties.PropertyKeys;
 import com.cerner.jwala.common.request.group.AddJvmToGroupRequest;
-import com.cerner.jwala.common.request.jvm.*;
+import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
+import com.cerner.jwala.common.request.jvm.ControlJvmRequestFactory;
+import com.cerner.jwala.common.request.jvm.CreateJvmAndAddToGroupsRequest;
+import com.cerner.jwala.common.request.jvm.CreateJvmRequest;
+import com.cerner.jwala.common.request.jvm.UpdateJvmRequest;
 import com.cerner.jwala.common.scrubber.ObjectStoreService;
 import com.cerner.jwala.exception.CommandFailureException;
 import com.cerner.jwala.persistence.jpa.domain.resource.config.template.JpaJvmConfigTemplate;
@@ -44,35 +86,12 @@ import com.cerner.jwala.service.jvm.exception.JvmServiceException;
 import com.cerner.jwala.service.resource.ResourceService;
 import com.cerner.jwala.service.resource.impl.ResourceGeneratorType;
 import com.cerner.jwala.service.webserver.component.ClientFactoryHelper;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.mime.MediaType;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.NoResultException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.*;
-
-import static com.cerner.jwala.control.AemControl.Properties.*;
 
 public class JvmServiceImpl implements JvmService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JvmServiceImpl.class);
     private static final String MEDIA_TYPE_TEXT = "text";
-
+    private static final String RESOURCE_FILE_SETENV_WINDOWS = "setenv.bat";
+    private static final String RESOURCE_FILE_SETENV_LINUX = "setenv.sh";
     private final BinaryDistributionLockManager binaryDistributionLockManager;
     private final String topicServerStates;
     private final JvmPersistenceService jvmPersistenceService;
@@ -86,7 +105,7 @@ public class JvmServiceImpl implements JvmService {
     private final HistoryFacadeService historyFacadeService;
     private final BinaryDistributionService binaryDistributionService;
     private final FileUtility fileUtility;
-
+ 
     @Autowired
     private JvmStateService jvmStateService;
 
@@ -347,7 +366,7 @@ public class JvmServiceImpl implements JvmService {
             LOGGER.info("Deleting JVM service {}", jvm.getJvmName());
 
             if (!JvmState.JVM_NEW.equals(jvm.getState()) && !JvmState.JVM_STOPPED.equals(jvm.getState()) &&
-                    !JvmState.FORCED_STOPPED.equals(jvm.getState())) {
+                    !JvmState.FORCED_STOPPED.equals(jvm.getState()) && !jvm.getState().equals(JvmState.JVM_FAILED)) {
                 final String msg = MessageFormat.format("Please stop JVM {0} first before attempting to delete it",
                         jvm.getJvmName());
                 LOGGER.warn(msg); // this is not a system error hence we only log it as a warning even though we throw
@@ -376,8 +395,8 @@ public class JvmServiceImpl implements JvmService {
         }
     }
 
-    @Override
-    public void deleteJvmService(Jvm jvm, User user) {
+
+    private void deleteJvmService(Jvm jvm, User user) {
         if (!jvm.getState().equals(JvmState.JVM_NEW)) {
             ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.DELETE_SERVICE, jvm);
             CommandOutput commandOutput = jvmControlService.controlJvm(controlJvmRequest, user);
@@ -704,6 +723,79 @@ public class JvmServiceImpl implements JvmService {
         }
 
     }
+    
+	/**
+	 * This method upgrades the JDK version for the mentioned JVM. For a successful
+	 * upgrade,the JVM needs to be in STOPPED state and setenv.bat/sh resource file
+	 * needs to available for the JVM for updating the JAVA_HOME.
+	 * 
+	 * @param jvmName name of the JVM that needs to be upgraded
+	 * @param user    user object performing the JVM upgrade operation
+	 * @return Jvm upgraded JVM object
+	 * 
+	 */
+	public Jvm upgradeJDK(String jvmName, User user) {
+		boolean didSucceed = false;
+		Jvm jvm = getJvm(jvmName);
+		LOGGER.info("Start upgradeJDKAndDeployJvm for {} by user {}", jvmName, user.getId());
+		historyFacadeService.write(jvm.getHostName(), jvm.getGroups(),
+				"Starting to upgrade JDK :: JVM " + jvm.getJvmName() + " on host " + jvm.getHostName(),
+				EventType.USER_ACTION_INFO, user.getId());
+
+		// add write lock for multiple write
+		binaryDistributionLockManager.writeLock(jvmName + "-" + jvm.getId().toString());
+
+		// determine the setenv file name based on the operating system
+		String resourceFileName = SystemUtils.IS_OS_WINDOWS ? RESOURCE_FILE_SETENV_WINDOWS : RESOURCE_FILE_SETENV_LINUX;
+		try {
+			// Validation 1: Application should be in STOPPED state
+			if (!jvm.getState().equals(JvmState.JVM_STOPPED)) {
+				final String errorMessage = "The remote JVM: " + jvm.getJvmName()
+						+ " must be in STOPPED state before attempting to upgrade the JDK of the JVM";
+				LOGGER.error(errorMessage);
+				throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage);
+			}
+
+			// Step 1: Check if JDK Binaries exists
+			checkForJvmBinaries(jvm);
+
+			// Step 2: Distribute JDK binaries if required
+			distributeBinaries(jvm);
+
+			// Step 3: Delete the service
+			deleteJvmService(jvm, user);
+
+			// Step 4: Generate and deploy Setenv file with upgraded JDK
+			generateAndDeployFile(jvmName, resourceFileName, user);
+
+			// Step 5: Re-install the service
+			installJvmWindowsService(jvm, user);
+
+			didSucceed = true;
+		} catch (NoResultException e) {
+			String errorMessage = "The "+ resourceFileName + " file does not exist as a resource for JVM: " + jvm.getJvmName()
+					+ ". Please create a "+ resourceFileName +" resource for the JVM in order to set the JAVA_HOME environment variable.";
+			LOGGER.error(errorMessage, jvm.getJvmName(), e);
+			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE, errorMessage, e);
+		} catch (CommandFailureException e) {
+			LOGGER.error("Failed to upgrade JDK :: the JVM config for {}", jvm.getJvmName(), e);
+			throw new InternalErrorException(FaultType.REMOTE_COMMAND_FAILURE,
+					"Failed to generate the JVM config: " + jvm.getJvmName(), e);
+		} finally {
+			binaryDistributionLockManager.writeUnlock(jvmName + "-" + jvm.getId().toString());
+			LOGGER.info("End upgrade JDK for {} by user {}", jvmName, user.getId());
+
+			final EventType eventType = didSucceed ? EventType.SYSTEM_INFO : EventType.SYSTEM_ERROR;
+
+			String historyMessage = didSucceed
+					? "Remote JDK upgrade of jvm " + jvm.getJvmName() + " with JDK " + jvm.getJdkMedia().getName()
+							+ " to host " + jvm.getHostName() + " succeeded."
+					: "Remote JDK upgrade of jvm " + jvm.getJvmName() + " to host " + jvm.getHostName() + " failed";
+
+			historyFacadeService.write(jvm.getHostName(), jvm.getGroups(), historyMessage, eventType, user.getId());
+		}
+		return jvm;
+	}
 
     String generateJvmConfigJar(Jvm jvm) throws CommandFailureException {
         long startTime = System.currentTimeMillis();
@@ -783,6 +875,7 @@ public class JvmServiceImpl implements JvmService {
         }
     }
 
+	 
     private void installJvmWindowsService(Jvm jvm, User user) {
         ControlJvmRequest controlJvmRequest = ControlJvmRequestFactory.create(JvmControlOperation.INSTALL_SERVICE, jvm);
         CommandOutput execData = jvmControlService.controlJvm(controlJvmRequest, user);
@@ -1013,33 +1106,38 @@ public class JvmServiceImpl implements JvmService {
         return jvmPersistenceService.getJvmForciblyStoppedCount(groupName);
     }
 
-    private Map<String, ScpDestination> generateResourceFiles(final String jvmName) throws IOException {
-        Map<String, ScpDestination> generatedFiles = new HashMap<>();
-        final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
-        for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
-            final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
-            final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
-            String resourceTemplateMetaDataString = "";
-            resourceTemplateMetaDataString = resourceService.generateResourceFile(jpaJvmConfigTemplate.getTemplateName(),
-                    jpaJvmConfigTemplate.getMetaData(),
-                    resourceGroup,
-                    jvm,
-                    ResourceGeneratorType.METADATA);
-            final ResourceTemplateMetaData resourceTemplateMetaData = resourceService.getMetaData(resourceTemplateMetaDataString);
-            final String deployFileName = resourceTemplateMetaData.getDeployFileName();
-            if (resourceTemplateMetaData.getContentType().getType().equalsIgnoreCase(MEDIA_TYPE_TEXT) ||
-                    MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
-                final String generatedResourceStr = resourceService.generateResourceFile(jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
-                        resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
-                generatedFiles.put(createConfigFile(ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName, deployFileName, generatedResourceStr),
-                        new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName, resourceTemplateMetaData.isOverwrite()));
-            } else {
-                generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
-                        new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName, resourceTemplateMetaData.isOverwrite()));
-            }
-        }
-        return generatedFiles;
-    }
+	private Map<String, ScpDestination> generateResourceFiles(final String jvmName) throws IOException {
+		Map<String, ScpDestination> generatedFiles = new HashMap<>();
+		final List<JpaJvmConfigTemplate> jpaJvmConfigTemplateList = jvmPersistenceService.getConfigTemplates(jvmName);
+		for (final JpaJvmConfigTemplate jpaJvmConfigTemplate : jpaJvmConfigTemplateList) {
+			final ResourceGroup resourceGroup = resourceService.generateResourceGroup();
+			final Jvm jvm = jvmPersistenceService.findJvmByExactName(jvmName);
+			String resourceTemplateMetaDataString = "";
+			resourceTemplateMetaDataString = resourceService.generateResourceFile(
+					jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getMetaData(), resourceGroup, jvm,
+					ResourceGeneratorType.METADATA);
+			final ResourceTemplateMetaData resourceTemplateMetaData = resourceService
+					.getMetaData(resourceTemplateMetaDataString);
+			final String deployFileName = resourceTemplateMetaData.getDeployFileName();
+			if (resourceTemplateMetaData.getContentType().getType().equalsIgnoreCase(MEDIA_TYPE_TEXT)
+					|| MediaType.APPLICATION_XML.equals(resourceTemplateMetaData.getContentType())) {
+				final String generatedResourceStr = resourceService.generateResourceFile(
+						jpaJvmConfigTemplate.getTemplateName(), jpaJvmConfigTemplate.getTemplateContent(),
+						resourceGroup, jvm, ResourceGeneratorType.TEMPLATE);
+				generatedFiles.put(
+						createConfigFile(
+								ApplicationProperties.get(PropertyKeys.PATHS_GENERATED_RESOURCE_DIR) + '/' + jvmName,
+								deployFileName, generatedResourceStr),
+						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
+								resourceTemplateMetaData.isOverwrite()));
+			} else {
+				generatedFiles.put(jpaJvmConfigTemplate.getTemplateContent(),
+						new ScpDestination(resourceTemplateMetaData.getDeployPath() + '/' + deployFileName,
+								resourceTemplateMetaData.isOverwrite()));
+			}
+		}
+		return generatedFiles;
+	}
 
     /**
      * This method creates a temp file .tpl file, with the generatedResourceString as the input data for the file.
@@ -1064,7 +1162,7 @@ public class JvmServiceImpl implements JvmService {
     @Transactional
     public void deleteJvm(final String name, final String userName) {
         final Jvm jvm = getJvm(name);
-        if (!jvm.getState().isStartedState()) {
+        if (!jvm.getState().isStartedState() || jvm.getState().equals(JvmState.JVM_FAILED) ) {
             LOGGER.info("Removing JVM from the database and deleting the service for jvm {}", name);
             if (!jvm.getState().equals(JvmState.JVM_NEW)) {
                 deleteJvmService(jvm, new User(userName));
@@ -1085,4 +1183,6 @@ public class JvmServiceImpl implements JvmService {
             this.overwrite = overwrite;
         }
     }
+    
+
 }

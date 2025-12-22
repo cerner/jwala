@@ -1,3 +1,6 @@
+plugins {
+    id "com.benjaminsproule.swagger" version "0.1.9"
+}
 description "The module exposes the REST webservices to the Jwala UI and other clients"
 
 sourceCompatibility = 1.8
@@ -29,6 +32,8 @@ dependencies {
 	testRuntime group: 'org.apache.tomcat', name: 'tomcat-coyote', version: "$project.versions.tomcat"
 
     testCompile group: 'org.apache.tomcat', name: 'tomcat-catalina', version: "$project.versions.tomcat"
+
+    compile group: 'io.swagger', name: 'swagger-core', version: '1.5.17'
 }
 
 test {
@@ -40,5 +45,27 @@ test {
                     "*.configuration.*",
                     "**.configuration.**",
                     "com.cerner.jwala.service.configuration.service.*"]
+    }
+}
+
+
+
+
+swagger {
+    apiSource {
+        springmvc = false
+        locations = [ 'com.cerner.jwala.ws.rest.v1' ]
+        schemes = [ 'https' ]
+        host = 'localhost:8001'
+        basePath = '/jwala/v1.0'
+        info {
+            title = 'Jwala API documentation'
+            version = 'v1.0'
+        }
+        securityDefinition {
+            name = 'basicAuth'
+            type = 'basic'
+        }
+        swaggerDirectory = "${project.rootProject.buildDir.path}/swagger-ui"
     }
 }

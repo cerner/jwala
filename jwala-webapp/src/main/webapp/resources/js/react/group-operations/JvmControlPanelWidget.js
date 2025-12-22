@@ -10,28 +10,28 @@ var JvmControlPanelWidget = React.createClass({
         var mgrBtnDisplayClass = (jwalaVars["opsJvmMgrBtnEnabled"] === "true" ? "" : "ui-button-hide");
         var diagnoseBtnDisplayClass = (jwalaVars["opsJvmMgrBtnEnabled"] === "true" ? "" : "ui-button-hide");
 
-        return <div className="jvm-control-panel-widget">
+        return <div className="ControlPanelWidget">
 
                    <RButton ref="drainBtn"
-                            className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
-                            spanClassName="ui-icon ui-icon-drain-custom"
+                            className="iconBtn ui-button ui-corner-all"
+                            spanClassName="ui-icon-drain-custom"
                             onClick={this.jvmDrain}
                             title="Drain"/>
 
                    <RButton ref="stopBtn"
-                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-stop"
                             onClick={this.stop}
                             title="Stop"/>
 
                    <RButton ref="startBtn"
-                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-play"
                             onClick={this.start}
                             title="Start"/>
 
                    <RButton ref="generateConfigBtn"
-                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-gear-custom"
                             onClick={this.generateConfig}
                             title="Generate JVM resources files and deploy as a service"
@@ -39,7 +39,7 @@ var JvmControlPanelWidget = React.createClass({
                             disabledTitle="Resource generation is disabled for this version"/>
 
                    <RButton ref="delBtn"
-                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-trash"
                             onClick={this.jvmDelete}
                             title="Delete JVM"
@@ -47,28 +47,28 @@ var JvmControlPanelWidget = React.createClass({
                             disabledTitle="Only users with admin role can access this feature"/>
 
                    <RButton ref="heapDumpBtn"
-                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-heap-dump"
                             onClick={this.doHeapDump}
                             title="Heap Dump"/>
 
                    <RButton ref="threadDumpBtn"
-                            className="zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height"
+                            className="iconBtn ui-button ui-corner-all"
                             spanClassName="ui-icon ui-icon-thread-dump"
                             onClick={this.doThreadDump}
                             title="Thread Dump"/>
 
                    <RButton ref="diagnoseBtn"
-                            className={"zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height " + mgrBtnDisplayClass}
+                            className={"iconBtn ui-button ui-corner-all " + mgrBtnDisplayClass}
                             spanClassName="ui-icon ui-icon-wrench"
                             onClick={this.diagnose}
                             title="Diagnose and resolve state"/>
 
                    <RButton ref="managerBtn"
-                            className={"zero-padding ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height " + diagnoseBtnDisplayClass}
+                            className={"iconBtn ui-button ui-corner-all " + diagnoseBtnDisplayClass}
                             spanClassName="ui-icon ui-icon-mgr"
                             onClick={this.showMgr}
-                            disabled = {!MainArea.isAdminRole}
+                            disabled={!MainArea.isAdminRole}
                             disabledTitle="Manager is disabled for this version"
                             title="Manager"/>
                </div>
@@ -92,8 +92,7 @@ var JvmControlPanelWidget = React.createClass({
         this.props.jvmHeapDumpCallback(this.props.data.id, this.refs.heapDumpBtn.getDOMNode(), this.props.data.hostName);
     },
     doThreadDump: function() {
-        var url = "jvmCommand?jvmId=" + this.props.data.id.id + "&operation=threadDump";
-        window.open(url)
+        this.props.jvmThreadDumpCallback(this.props.data.id, this.refs.threadDumpBtn.getDOMNode(), this.props.data.hostName,this.props.data.tomcat);
     },
     diagnose: function() {
         this.props.jvmDiagnoseCallback(this.props.data, this.refs.diagnoseBtn, function(){});

@@ -1,17 +1,5 @@
 package com.cerner.jwala.ws.rest.v1.service.jvm.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityExistsException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import com.cerner.jwala.common.request.jvm.ControlJvmRequestFactory;
-import org.apache.cxf.jaxrs.ext.MessageContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cerner.jwala.common.domain.model.fault.FaultType;
 import com.cerner.jwala.common.domain.model.id.Identifier;
 import com.cerner.jwala.common.domain.model.jvm.Jvm;
@@ -21,12 +9,22 @@ import com.cerner.jwala.common.exception.InternalErrorException;
 import com.cerner.jwala.common.exec.CommandOutput;
 import com.cerner.jwala.common.exec.CommandOutputReturnCode;
 import com.cerner.jwala.common.request.jvm.ControlJvmRequest;
+import com.cerner.jwala.common.request.jvm.ControlJvmRequestFactory;
 import com.cerner.jwala.service.jvm.JvmControlService;
 import com.cerner.jwala.service.jvm.JvmService;
 import com.cerner.jwala.service.jvm.exception.JvmControlServiceException;
 import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 import com.cerner.jwala.ws.rest.v1.response.ResponseBuilder;
 import com.cerner.jwala.ws.rest.v1.service.jvm.JvmServiceRest;
+import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityExistsException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JvmServiceRestImpl implements JvmServiceRest {
 
@@ -131,6 +129,12 @@ public class JvmServiceRestImpl implements JvmServiceRest {
     public Response generateAndDeployJvm(final String jvmName, final AuthenticatedUser user) {
         LOGGER.info("Generate and deploy JVM {} by user {}", jvmName, user.getUser().getId());
         return ResponseBuilder.ok(jvmService.generateAndDeployJvm(jvmName, user.getUser()));
+    }
+    
+    @Override
+    public Response upgradeJDK(final String jvmName, final AuthenticatedUser user) {
+        LOGGER.info("Upgrade the JDK and deploy JVM {} by user {}", jvmName, user.getUser().getId());
+        return ResponseBuilder.ok(jvmService.upgradeJDK(jvmName, user.getUser()));
     }
 
     @Override

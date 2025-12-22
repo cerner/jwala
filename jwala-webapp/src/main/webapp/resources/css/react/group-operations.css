@@ -8,42 +8,6 @@
     display: inline-block;
 }
 
-.web-server-control-panel-widget {
-    width: 100%;
-    padding-right: 0px;
-    text-align: right;
-}
-
-.web-server-control-panel-widget > button {
-    display: inline-block;
-    float: right;
-    margin-left: 3px !important;
-}
-
-.WebAppControlPanelWidget {
-    width: 100%;
-    padding-right: 0px;
-    text-align: right;
-}
-
-.WebAppControlPanelWidget > button {
-    display: inline-block;
-    float: left;
-    margin-left: 3px !important;
-}
-
-.jvm-control-panel-widget {
-    width: 100%;
-    padding-right: 0px;
-    text-align: right;
-}
-
-.jvm-control-panel-widget > button {
-    display: inline-block;
-    float: right;
-    margin-left: 3px !important;
-}
-
 .command-status-header {
     border: none !important;
     padding: 1px 2px !important;
@@ -73,7 +37,7 @@
 
 .ui-icon-drain-custom {
     background-image: url("../../img/react/drain-icon.png") !important;
-        background-position: -1px;
+    background-position: -1px;
 }
 
 .expand-collapse-loading-indicator-container {

@@ -8,12 +8,37 @@ esac
 export JAVA_HOME=$1
 export JVM_INSTANCE_DIR=$2
 export JVM_NAME=$3
+export DATA_DIR=$4
+export DUMP_FILE=$5
+JWALA_EXIT_CODE_SUCCESS=0
+JWALA_EXIT_CODE_FAILED=1
+
+current_time=$(date +"%m-%d-%Y-%T")
+
 if $linux; then
 	echo $(<${JVM_INSTANCE_DIR}/logs/catalina.pid)
-	/usr/bin/sudo -u tomcat ${JAVA_HOME}/bin/jstack $(<${JVM_INSTANCE_DIR}/logs/catalina.pid)
+	thread_dump_output=$(/usr/bin/sudo -u tomcat ${JAVA_HOME}/bin/jstack $(<${JVM_INSTANCE_DIR}/logs/catalina.pid) 2>&1 )
+    if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
+	   echo "$thread_dump_output" |tee ${DATA_DIR}/$DUMP_FILE
+	   echo "Creating Thread Dump file at location : ${DATA_DIR}/$DUMP_FILE, "
+	   exit $JWALA_EXIT_CODE_SUCCESS
+	else
+	   echo "Generation of thread dump failed : $thread_dump_output"
+	   exit $JWALA_EXIT_CODE_FAILED
+	fi
 fi
 
 if $cygwin; then
     export JVMPID=`sc queryex $JVM_NAME | /usr/bin/grep PID | /usr/bin/awk '{ print $3 }'`
-	${JAVA_HOME}/bin/jstack -l ${JVMPID}
+    thread_dump_output=$(${JAVA_HOME}/bin/jstack -l ${JVMPID} 2>&1 )
+    if echo "$thread_dump_output" | grep -iqF "Full thread dump"; then
+       echo "$thread_dump_output" |tee ${DATA_DIR}/$DUMP_FILE
+	   echo "Creating Thread Dump file at location : ${DATA_DIR}/$DUMP_FILE, "
+	   exit $JWALA_EXIT_CODE_SUCCESS
+	else
+	   echo "Generation of thread dump failed : $thread_dump_output"
+	   exit $JWALA_EXIT_CODE_FAILED
+	fi
 fi
+
+

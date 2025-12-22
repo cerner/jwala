@@ -310,6 +310,7 @@ var GroupOperationsDataTable = React.createClass({
                 jvmGenerateConfigCallback: this.jvmGenerateConfig,
                 jvmDeleteCallback: this.jvmDelete,
                 jvmHeapDumpCallback: this.jvmHeapDump,
+                jvmThreadDumpCallback: this.jvmThreadDump,
                 jvmDiagnoseCallback: this.jvmDiagnose }), nTd, function () {});
         }.bind(this);
     },
@@ -452,6 +453,18 @@ var GroupOperationsDataTable = React.createClass({
             $(buttonSelector).attr("class", "busy-button");
         };
     },
+   enableThreadDumpButtonThunk: function (buttonSelector) {
+        return function () {
+            $(buttonSelector).attr("class", "ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height");
+            $(buttonSelector).find("span").attr("class", "ui-icon ui-icon-thread-dump");
+        };
+    },
+    disableThreadDumpButtonThunk: function (buttonSelector) {
+        return function () {
+            $(buttonSelector).find("span").attr("class", "busy-button");
+            $(buttonSelector).attr("class", "busy-button");
+        };
+    },
     enableJvmGenerateButtonThunk: function (buttonSelector) {
         return function () {
             $(buttonSelector).attr("class", "ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-height");
@@ -465,9 +478,9 @@ var GroupOperationsDataTable = React.createClass({
         };
     },
     disableEnable: function (buttonSelector, func, iconClass) {
-        var disable = this.disableButtonThunk(buttonSelector);
-        var enable = this.enableButtonThunk(buttonSelector, iconClass);
-        Promise.method(disable)().then(func).lastly(enable);
+       var disable = this.disableButtonThunk(buttonSelector);
+       var enable = this.enableButtonThunk(buttonSelector, iconClass);
+       Promise.method(disable)().then(func).lastly(enable);
     },
     enableLinkThunk: function (linkSelector) {
         return function () {
@@ -484,6 +497,11 @@ var GroupOperationsDataTable = React.createClass({
         var enable = this.enableHeapDumpButtonThunk(selector);
         Promise.method(disable)().then(requestTask).then(requestCallbackTask).caught(errHandler).lastly(enable);
     },
+    disableEnableThreadDumpButton: function (selector, requestTask, requestCallbackTask, errHandler) {
+        var disable = this.disableThreadDumpButtonThunk(selector);
+        var enable = this.enableThreadDumpButtonThunk(selector);
+        Promise.method(disable)().then(requestTask).then(requestCallbackTask).caught(errHandler).lastly(enable);
+     },
     disableEnableJvmGenerateConfigButton: function (selector, requestTask, requestCallbackTask, errHandler) {
         var disable = this.disableJvmGenerateButtonThunk(selector);
         var enable = this.enableJvmGenerateButtonThunk(selector);
@@ -699,7 +717,7 @@ var GroupOperationsDataTable = React.createClass({
                     msg = "Oops! Something went wrong! The JVM might not have been started.";
                     $.errorAlert(msg, "Heap Dump", false);
                 } else {
-                    $.alert(msg, "Heap Dump", false);
+                    $.alert(msg + " on the host: " + host, "Heap Dump", false);
                 }
             } else {
                 msg = response.applicationResponseContent.execData.standardError;
@@ -722,6 +740,36 @@ var GroupOperationsDataTable = React.createClass({
 
         this.disableEnableHeapDumpButton(selector, requestHeapDump, heapDumpRequestCallback, heapDumpErrorHandler);
     },
+     jvmThreadDump: function (id, selector, host) {
+            var requestThreadDump = function () {
+             return jvmControlService.threadDump(id.id);
+            };
+            var threadDumpRequestCallback = function (response) {
+                var msg;
+                if (!response.applicationResponseContent.standardError) {
+                    msg = response.applicationResponseContent.standardOutput;
+                    var indexOfMessage = msg.indexOf('Creating');
+                    var endOfMessage = msg.length
+                    var message = msg.substring(indexOfMessage,endOfMessage);
+                    if (message.trim() === "" || msg.indexOf('Full thread dump') === -1) {
+                        msg = "Oops! Something went wrong! The JVM might not have been started.";
+                        $.errorAlert(msg, "Thread Dump", false);
+                    } else {
+                         $.alert(message+" on the host: "+host, "Thread Dump", false);
+                    }
+                } else {
+                    msg = response.applicationResponseContent.execData.standardError;
+                    $.errorAlert(msg, "Thread Dump", false);
+                }
+                $(selector).attr("title", "Last thread dump status: " + msg);
+            };
+            var threadDumpErrorHandler = function (e) {
+                $.errorAlert("Failure to generate thread dump, JVM may not be started", "Thread Dump Error!", false);
+
+            };
+
+            this.disableEnableThreadDumpButton(selector, requestThreadDump, threadDumpRequestCallback, threadDumpErrorHandler);
+        },
     jvmGenerateConfig: function (data, selector) {
         var self = this;
         var requestJvmGenerateConfig = function () {
