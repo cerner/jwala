@@ -14,7 +14,7 @@ Scenario: Add Web Server
     When I click the add web server button
     And I see the web server add dialog
     And I fill in the "Web Server Name" field with "WEBSERVER_X"
-    And I fill in the "Host Name" field with "localhost"
+    And I fill in the "Host Name" field with "host1"
     And I fill in the "HTTP Port" field with "80"
     And I fill in the "HTTPS Port" field with "443"
     And I select the "Status Path" field

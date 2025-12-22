@@ -2,10 +2,12 @@ package com.cerner.jwala.ui.selenium.steps.configuration;
 
 import com.cerner.jwala.ui.selenium.component.JwalaUi;
 import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,16 @@ public class HandleResourceRunSteps {
     @Autowired
     @Qualifier("parameterProperties")
     private Properties paramProp;
+
+    @Given("I click the \"(.*)\" topology node")
+    public void selectEntityTopologyNode(final String entityName) {
+        jwalaUi.clickWhenReady(By.xpath("//span[text()='" + entityName + "']"));
+    }
+
+    @And("I press enter to confirm that I don't want to save changes to the resource")
+    public void confirmNotToSaveTheResource() {
+        jwalaUi.getWebDriver().switchTo().alert().accept();
+    }
 
     @When("^I select resource file \"(.*)\"$")
     public void selectFile(String fileName) {
@@ -72,7 +84,7 @@ public class HandleResourceRunSteps {
         jwalaUi.waitUntilElementIsNotVisible(
                 By.xpath("//div[text()='Please select a JVM, Web Server or Web Application and a resource']"), 5);
         jwalaUi.click(By.xpath("//div[@class='CodeMirror-lines']"));
-        jwalaUi.sendKeys(Keys.ENTER + property + Keys.ENTER);
+        jwalaUi.sendKeysViaActions("\n" + property + "\n");
     }
 
     @And("^I expand \"(.*)\" node in data tree$")
@@ -87,16 +99,19 @@ public class HandleResourceRunSteps {
     }
 
     /**
-     * @param text
-     * @param textPosition Inserts a value in the edit box of a resource at a specific position in the file
+     * Insert text in the resource template/metadata text box
+     *
+     * @param inputStr the string that is to be inserted in the resource text box
+     * @param atStr    the String whose location is where the inputStr parameter will be inserted at
      */
-
     @When("^I enter value \"(.*)\" in the edit box at text \"(.*)\"$")
-    public void enterInEditBox(String text, String textPosition) {
-        jwalaUi.clickWhenReady(By.xpath("//*[text()='" + textPosition + "']"));
-        jwalaUi.sendKeys(Keys.ENTER);
-        jwalaUi.sendKeys(text);
-        jwalaUi.sendKeys(Keys.ENTER);
+    public void insertStrInTheResourceEditor(final String inputStr, final String atStr) {
+        try {
+            jwalaUi.click(By.xpath("(//pre[contains(@class, 'CodeMirror-line')]//span[text()='" + atStr.trim() + "'])[1]"));
+        } catch (final NoSuchElementException e) {
+            jwalaUi.click(By.xpath("(//pre[contains(@class, 'CodeMirror-line')]//span[contains(text(), '" + atStr.trim() + "')])[1]"));
+        }
+        jwalaUi.sendKeysViaActions(inputStr);
     }
 
     /*
@@ -131,7 +146,13 @@ public class HandleResourceRunSteps {
 
     @Then("^I confirm delete a resource popup$")
     public void deleteResource() {
-        jwalaUi.isElementExists(By.xpath("//[contains(text(),'Are you sure you want to delete the selected resource template(s) ?')]"));
+        jwalaUi.isElementExists(By.xpath("//div[contains(text(), 'Are you sure you want to delete the selected resource template(s) ?')]"));
+        jwalaUi.click(By.xpath("//button/span[text()='Yes']"));
+    }
+
+    @Then("^I confirm delete a external property resource popup$")
+    public void deleteResourceForExternalProperty() {
+        jwalaUi.isElementExists(By.xpath("//*[contains(text(), 'Are you sure you want to delete the property file ?')]"));
         jwalaUi.click(By.xpath("//button/span[text()='Yes']"));
     }
 
@@ -156,11 +177,9 @@ public class HandleResourceRunSteps {
 
     @And("^I enter attribute in metaData with key as \"(.*)\" and value as \"(.*)\"$")
     public void enterAttribute(String key, String value) {
-        jwalaUi.clickWhenReady(By.xpath("//*[text()='{']"));
-        jwalaUi.sendKeys(Keys.DELETE);
-        jwalaUi.sendKeys("{");
-        jwalaUi.sendKeys(Keys.ENTER);
-        jwalaUi.sendKeys(key + ":" + value + ",");
+        jwalaUi.clickWhenReady(By.xpath("(//pre[contains(@class, 'CodeMirror-line')]//span[text()='{'])[1]"));
+        jwalaUi.backSpace();
+        jwalaUi.sendKeysViaActions("{\n" + key + ":" + value + ",");
     }
 
     /*
@@ -169,32 +188,24 @@ public class HandleResourceRunSteps {
     @And("^I click the ok button to override JVM Templates$")
     public void overrideJvmTemplates() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Saving will overwrite all')]"));
-        clickOk();
+        jwalaUi.clickOkWithSpan();
     }
 
     @And("^I confirm the resource deploy to a host popup$")
     public void confirmDeployToAHost() {
         jwalaUi.isElementExists(By.xpath("//span[contains(text(),'Select a host')]"));
-        clickOk();
+        jwalaUi.clickOkWithSpan();
     }
 
     @And("^I confirm overriding individual instances popup for resourceFile \"(.*)\"$")
     public void confirmOverride(String resource) {
         jwalaUi.isElementExists(By.xpath("//*[contains(text(),'Any previous customizations to an individual instance of \"" + resource + "\" will be overwritten.')]"));
-        clickYes();
+        jwalaUi.clickYesWithSpan();
     }
 
     @And("^I don't see \"([^\"]*)\" node in the data tree$")
-    public void verifyabsenceOfNode(String nodeName)  {
+    public void verifyabsenceOfNode(String nodeName) {
         assertFalse(jwalaUi.isElementExists(By.xpath("//span[contains(@class,'nodeKey') and contains(text(),'" + nodeName + "') ]/preceding-sibling::span")));
-    }
-
-    public void clickYes() {
-        jwalaUi.click(By.xpath("//*[text()='Yes']"));
-    }
-
-    public void clickOk() {
-        jwalaUi.click(By.xpath("//*[text()='Ok']"));
     }
 
 

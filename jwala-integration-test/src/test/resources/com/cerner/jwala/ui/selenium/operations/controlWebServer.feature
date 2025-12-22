@@ -8,9 +8,9 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
 
     # create media
     And I created a media with the following parameters:
-        | mediaName       | apache-httpd-2.4.20     |
+        | mediaName       | apache.httpd.media     |
         | mediaType       | Apache HTTPD            |
-        | archiveFilename | apache-httpd-2.4.20.zip |
+        | archiveFilename | apache.httpd.media.archive |
         | remoteDir       | media.remote.dir        |
 
     # create entities
@@ -21,7 +21,7 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
         | portNumber         | ws.http.port               |
         | httpsPort          | ws.https.port              |
         | group              | CONTROL-WEBSERVER-TEST-G   |
-        | apacheHttpdMediaId | apache-httpd-2.4.20        |
+        | apacheHttpdMediaId | apache.httpd.media        |
         | statusPath         | ws.status.path             |
 
     # create resources
@@ -38,6 +38,10 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     # generate
     And I generated the web servers of "CONTROL-WEBSERVER-TEST-G" group
 
+   #individual generate
+    When I generate "CONTROL-WEBSERVER-TEST-W" web server of "CONTROL-WEBSERVER-TEST-G" group
+    Then I see the web server was successfully generated
+
     # test start
     When I click the start button of "CONTROL-WEBSERVER-TEST-W" webserver of "CONTROL-WEBSERVER-TEST-G" group
     Then I see the state of "CONTROL-WEBSERVER-TEST-W" web server of group "CONTROL-WEBSERVER-TEST-G" is "STARTED"
@@ -50,7 +54,7 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     And I see an error dialog box that tells me to stop the web server "CONTROL-WEBSERVER-TEST-W"
 
     # we need to close the expected delete web server error message box
-    Given I click the ok button
+    Given I click the ok button for popup in operations tab
 
     # test status
     # disabled to make this feature run successfully in Chrome
@@ -58,9 +62,9 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     # When I click the "status" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
     # Then I see the load balancer page
 
-    # test view httpd.conf
-    When I click the "httpd.conf" link of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
-    Then I see the httpd.conf
+    When I click the drain button of "CONTROL-WEBSERVER-TEST-W" webserver under "CONTROL-WEBSERVER-TEST-G" group
+    Then I see the drain message for webserver "CONTROL-WEBSERVER-TEST-W" and host "host1"
+    And I do not see an error message after clicking drain
 
     # test stop
     When I click the stop button of "CONTROL-WEBSERVER-TEST-W" webserver of "CONTROL-WEBSERVER-TEST-G" group
@@ -70,3 +74,4 @@ Scenario: Do a start, status, view httpd.conf, stop and deletion of a web server
     When I click the "Delete Web Server" button of web server "CONTROL-WEBSERVER-TEST-W" under group "CONTROL-WEBSERVER-TEST-G" in the operations tab
     And I click the operation's confirm delete "CONTROL-WEBSERVER-TEST-W" web server dialog yes button
     Then I see that "CONTROL-WEBSERVER-TEST-W" web server got deleted successfully from the operations tab
+

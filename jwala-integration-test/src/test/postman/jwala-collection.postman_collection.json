@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "jwala-collection",
-		"_postman_id": "8d9990bc-2a88-1a70-85d6-2212b45dbdbe",
+		"_postman_id": "1e96c494-a4ec-9d8f-fc33-1d0850acc566",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -373,8 +373,10 @@
 					},
 					"response": []
 				}
+
 			]
 		},
+
 		{
 			"name": "b) create group",
 			"description": "",
@@ -1614,8 +1616,11 @@
 					},
 					"response": []
 				}
+				
 			]
 		},
+
+
 		{
 			"name": "c) deploy",
 			"description": "",
@@ -2617,6 +2622,7 @@
 					},
 					"response": []
 				}
+				
 			]
 		},
 		{
@@ -2731,7 +2737,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"setTimeout(function(){}, 30000);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									""
 								]
 							}
 						}
@@ -2762,7 +2770,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"setTimeout(function(){}, 5000);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									""
 								]
 							}
 						}
@@ -2786,7 +2796,7 @@
 					"response": []
 				},
 				{
-					"name": "control group jvms",
+					"name": "check webserver start",
 					"event": [
 						{
 							"listen": "test",
@@ -2794,6 +2804,58 @@
 								"type": "text/javascript",
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}/index.html",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "webserver start ping test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "control group jvms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"setTimeout(function(){}, 5000);"
 								]
 							}
 						}
@@ -2824,7 +2886,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"setTimeout(function(){}, 5000);"
 								]
 							}
 						}
@@ -2875,7 +2939,9 @@
 							"query": [
 								{
 									"key": "wait",
-									"value": "TRUE"
+									"value": "TRUE",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -2928,7 +2994,7 @@
 					"response": []
 				},
 				{
-					"name": "webserver start ping test",
+					"name": "check jvm start",
 					"event": [
 						{
 							"listen": "test",
@@ -2941,7 +3007,7 @@
 						}
 					],
 					"request": {
-						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"url": "https://{{host}}:9131/hello/",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -3119,6 +3185,31 @@
 					"request": {
 						"url": "{{url}}/v1.0/balancermanager/jvm/{{JvmName}}",
 						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "webserver start ping test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "http://{{host}}:{{WebserverHttpPort}}",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -5296,37 +5387,6 @@
 			"description": "",
 			"item": [
 				{
-					"name": "stop group",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
-								]
-							}
-						}
-					],
-					"request": {
-						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"controlOperation\":\"stop\"}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
 					"name": "update jvm",
 					"event": [
 						{
@@ -5493,8 +5553,40 @@
 		},
 		{
 			"name": "p) control operation stop",
-			"description": "",
+			"description": "set up the tests by first starting the group",
 			"item": [
+				{
+					"name": "start group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"setTimeout(function(){}, 5000);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{GroupId}}/commands",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"controlOperation\":\"start\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
 				{
 					"name": "error: generate group webservers when web server is started exception",
 					"request": {
@@ -5531,7 +5623,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+									"setTimeout(function(){}, 5000);",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									""
 								]
 							}
 						}
@@ -5586,7 +5680,7 @@
 					"response": []
 				},
 				{
-					"name": "stop webserver with wait false",
+					"name": "stop webserver with wait true",
 					"event": [
 						{
 							"listen": "test",
@@ -5600,20 +5694,22 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/webservers/{{WebserverId}}/commands?wait=FALSE",
+							"raw": "{{url}}/v1.0/webservers/{{WebserverId2}}/commands?wait=TRUE",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"v1.0",
 								"webservers",
-								"{{WebserverId}}",
+								"{{WebserverId2}}",
 								"commands"
 							],
 							"query": [
 								{
 									"key": "wait",
-									"value": "FALSE"
+									"value": "TRUE",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -5642,6 +5738,7 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
+									"setTimeout(function(){}, 5000);",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
@@ -5662,6 +5759,105 @@
 							"raw": "{\"controlOperation\":\"stop\"}"
 						},
 						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "p) create JVM with bad credentials",
+			"description": "",
+			"item": [
+				{
+					"name": "create jvm with bad user credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"BadJvmId\", jsonData.applicationResponseContent.id.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"test-jvm-failed\",\"groupIds\":[{\"groupId\":{{GroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"8000\",\"httpsPort\":\"8001\",\"redirectPort\":\"8002\",\"shutdownPort\":\"8003\",\"ajpPort\":\"8004\",\"userName\":\"baduser\",\"encryptedPassword\":\"bad\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"url": "{{url}}/v1.0/jvms"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate jvm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\") ? responseCode.code === 500 : responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": "{{url}}/v1.0/jvms/test-jvm-failed/conf",
+						"description" : "Windows will verify the username/password and fail, the Linux JVM is always installed without a username/password so will pass"
+					},
+					"response": []
+				},
+				{
+					"name": "delete jvm on failed state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{BadJvmId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{BadJvmId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							]
+						}
 					},
 					"response": []
 				}
@@ -6068,10 +6264,414 @@
 					},
 					"response": []
 				}
+				
 			]
 		},
 		{
-			"name": "s)  tear down operations",
+			"name": "s)  upgrade JDK test operations",
+			"description": "Test cases to test the JDK upgrade workflow",
+			"item": [
+			{
+					"name": "create new group - for JDK upgrade testing ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JDKUpgradeGroupId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.name === postman.getEnvironmentVariable(\"JDKUpgradeGroup\");",
+									"tests[\"Successful POST request\"] = responseCode.code === 201;",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{JDKUpgradeGroup}}"
+						},
+						"description": "create group for JDKUpgradeGroup . This group will be used for JDK upgrade testing."
+					},
+					"response": []
+				},
+				
+				{
+					"name": "create jvm for JDK Upgrade",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"JDKUpgradeJvmId\", jsonData.applicationResponseContent.id.id);",
+									"tests[\"Assert response body\"] = jsonData.applicationResponseContent.jvmName === postman.getEnvironmentVariable(\"JDKUpgradeJvmName\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"groupIds\":[{\"id\":10,\"groupId\":{{JDKUpgradeGroupId}}}],\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"systemProperties\":\"\",\"httpPort\":\"{{jdkUpgradeHttpPort}}\",\"httpsPort\":\"{{jdkUpgradeHttpsPort}}\",\"redirectPort\":\"{{jdkUpgradeRedirectPort}}\",\"shutdownPort\":\"{{jdkUpgradeShutdownPort}}\",\"ajpPort\":\"{{jdkUpgradeAjpPort}}\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkMediaId}},\"tomcatMediaId\":{{TomcatMediaId}}}"
+						},
+						"description": "Creating a new JVM for JDK upgrade testing."
+					},
+					"response": []
+				},
+				
+				{
+					"name": "upgrade JDK- Negative Test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+											"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
+									"tests[\"Assert -JVM not in STOPPED state- error\"] = jsonData.message === \"The remote JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\" must be in STOPPED state before attempting to upgrade the JDK of the JVM\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/jdk",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "This webservices tries to upgrade the JDK version of the JVM which is not yet generated."
+					},
+					"response": []
+				},
+				{
+					"name": "generate jvm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/conf",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Generating the JDK upgrade JVM. "
+					},
+					"response": []
+				},
+				{
+					"name": "upgrade JDK- Negative Test case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 500\"] = responseCode.code === 500;",
+											"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Assert 500 error\"] = jsonData.status === 500;",
+									"postman.setEnvironmentVariable(\"setEnvResourceFileName\",pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\")?pm.variables.get(\"setEnvWindowsFileName\"):pm.variables.get(\"setEnvLinuxFileName\"));",
+									"postman.setEnvironmentVariable(\"setEnvResourceTemplateName\",pm.variables.get(\"targetOs\")==pm.variables.get(\"windowsOsType\")?\"setenv.bat.tpl\":\"setenv.sh.tpl\");",
+									"var noSetEnvErrMessage = \"The \"+postman.getEnvironmentVariable(\"setEnvResourceFileName\")+\" file does not exist as a resource for JVM: \"+pm.variables.get(\"JDKUpgradeJvmName\")+\". Please create a \"+postman.getEnvironmentVariable(\"setEnvResourceFileName\")+\" resource for the JVM in order to set the JAVA_HOME environment variable.\";",
+									"tests[\"Assert No setenv resource file error\"] = jsonData.message === noSetEnvErrMessage ;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/jdk",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "This webservices upgrade the JDK version of the JVM which does not have Setenv.bat."
+					},
+					"response": []
+				},
+				{
+					"name": "create new JDK media for upgrade JDK operation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"postman.setEnvironmentVariable(\"JdkUpgradeMediaId\", jsonData.applicationResponseContent.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/media",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "{{jdkMediaForUpgrade}}",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "JDK",
+									"type": "text"
+								},
+								{
+									"key": "mediaArchiveFile",
+									"type": "file",
+									"src": "{{jdkMediaSrc}}",
+									"value": ""
+								},
+								{
+									"key": "remoteDir",
+									"value": "{{mediaRemoteDir}}",
+									"type": "text"
+								}
+							]
+						},
+						"description": "This methods uploads a JDK media which will be used for upgrade JDK operation"
+					},
+					"response": []
+				},
+				{
+					"name": "update jvm values for Upgrade JVM Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"jvmId\":{{JDKUpgradeJvmId}},\"systemProperties\":\"\",\"jvmName\":\"{{JDKUpgradeJvmName}}\",\"hostName\":\"{{host}}\",\"statusPath\":\"/tomcat-power.gif\",\"httpPort\":\"{{jdkUpgradeHttpPort}}\",\"httpsPort\":\"{{jdkUpgradeHttpsPort}}\",\"redirectPort\":\"{{jdkUpgradeRedirectPort}}\",\"shutdownPort\":\"{{jdkUpgradeShutdownPort}}\",\"ajpPort\":\"{{jdkUpgradeAjpPort}}\",\"userName\":\"\",\"encryptedPassword\":\"\",\"jdkMediaId\":{{JdkUpgradeMediaId}},\"tomcatMediaId\":{{TomcatMediaId}},\"groupIds\":[{\"groupId\":{{JDKUpgradeGroupId}}}]}"
+						},
+						"description": "This Rest API updates the JVM properties including the  jdkMedia"
+					},
+					"response": []
+				},
+				{
+					"name": "upload setenv template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/resources/template/{{setEnvResourceTemplateName}}",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "metaData",
+									"type": "file",
+									"src": "../resources/postman/{{targetOs}}/setenv_upgradeJDK.json",
+									"value": ""
+								},
+								{
+									"key": "tplFile",
+									"type": "file",
+									"src": "../resources/postman/{{setEnvResourceTemplateName}}",
+									"value": ""
+								}
+							]
+						},
+						"description": "uploading the setenv resource file for JDK upgrade JVM Group.This group contains only one JVM."
+					},
+					"response": []
+				},
+						
+				{
+					"name": "upgrade JDK- Positive flow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmName}}/jdk",
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "This webservices upgrade the JDK version of the JVM after updating the JVM values and Setenv.bat.JVM in STOPPED state."
+					},
+					"response": []
+				},
+				{
+					"name": "delete JDK upgrade jvm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": {
+							"raw": "{{url}}/v1.0/jvms/{{JDKUpgradeJvmId}}?hardDelete=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1.0",
+								"jvms",
+								"{{JDKUpgradeJvmId}}"
+							],
+							"query": [
+								{
+									"key": "hardDelete",
+									"value": "true"
+								}
+							],
+							"variable": []
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Tear down operation for JDK upgrade"
+					},
+					"response": []
+				},
+				{
+					"name": "delete JDK upgrade group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/groups/{{JDKUpgradeGroupId}}",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Tear down operation for JDK upgrade"
+					},
+					"response": []
+				},
+				{
+					"name": "delete JDK upgrade media",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 204\"] = responseCode.code === 204;"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{url}}/v1.0/media/{{jdkMediaForUpgrade}}/JDK",
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "Tear down operation- deletes JDK Media for upgrade workflow"
+					},
+					"response": []
+				}
+
+	]
+		},
+
+		{
+			"name": "t)  tear down operations",
 			"description": "",
 			"item": [
 				{
@@ -6597,7 +7197,7 @@
 			]
 		},
 		{
-			"name": "t) miscellaneous",
+			"name": "u) miscellaneous",
 			"description": "",
 			"item": [
 				{
@@ -6697,7 +7297,7 @@
 					],
 					"request": {
 						"url": {
-							"raw": "{{url}}/v1.0/applications/fileExists?filePath=${webApp.warDeployPath}\\{{helloWorldWar}}&hostName={{host}}",
+							"raw": "{{url}}/v1.0/applications/fileExists?filePath={{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}&hostName={{host}}",
 							"host": [
 								"{{url}}"
 							],
@@ -6709,7 +7309,7 @@
 							"query": [
 								{
 									"key": "filePath",
-									"value": "${webApp.warDeployPath}\\{{helloWorldWar}}",
+									"value": "{{mediaRemoteDir}}/app/webapps/{{helloWorldWar}}",
 									"equals": true,
 									"description": ""
 								},

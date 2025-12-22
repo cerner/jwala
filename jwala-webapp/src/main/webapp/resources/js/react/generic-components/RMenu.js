@@ -32,7 +32,7 @@ var RMenu = React.createClass({
                 if (menuItem.menuItems && self.refs.divContainer) {
                     var left = ($(self.refs.divContainer.getDOMNode()).width() - 1) + "px";
                     listItemElementArray.push(React.createElement(RMenuItem, {key: menuItem.key, itemKey: menuItem.key, onMouseOver: self.onMenuItemMouseOver, onMouseOut: self.onMenuItemMouseOut,
-                        isFocused: isFocused}, React.createElement("span", {className: "ui-menu-icon ui-icon ui-icon-carat-1-e"}),
+                        isFocused: isFocused}, React.createElement("span", {className: "ui-menu-icon ui-icon ui-icon-caret-1-e"}),
                         menuItem.label, isFocused ? React.createElement(RMenu, {className: "ui-front subMenu", left: left, showByDefault: true, menuItems: menuItem.menuItems, onItemClick: self.onItemClick}) : null));
                 } else {
                     listItemElementArray.push(React.createElement(RMenuItem, {key: menuItem.key, itemKey: menuItem.key, onMouseOver: self.onMenuItemMouseOver, onMouseOut: self.onMenuItemMouseOut,
@@ -126,7 +126,6 @@ var ActivityMonitor = React.createClass({
         this.state.active = val;
     },
     intervalCallback: function() {
-//        console.log("intervalCallback...");
         if ($.isFunction(this.props.inactivityCallback)) {
             if (!this.state.active) {
                 this.clearInterval();

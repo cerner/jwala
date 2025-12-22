@@ -2,7 +2,7 @@ package com.cerner.jwala.web.javascript.variable.property;
 
 import org.junit.Test;
 
-import static com.cerner.jwala.web.javascript.variable.property.ApplicationPropertySourceDefinition.LOAD_BALANCER_STATUS_MOUNT;
+import static com.cerner.jwala.web.javascript.variable.property.ApplicationPropertySourceDefinition.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +18,18 @@ public class ApplicationPropertySourceDefinitionTest {
         assertEquals("mod_jk.load-balancer.status.mount", LOAD_BALANCER_STATUS_MOUNT.getPropertyKey());
         assertEquals("loadBalancerStatusMount", LOAD_BALANCER_STATUS_MOUNT.getVariableName());
         assertTrue(LOAD_BALANCER_STATUS_MOUNT.toString().contains("[variableName=loadBalancerStatusMount,propertyKey=mod_jk.load-balancer.status.mount,defaultValue=/balancer-manager]"));
+    }
+
+    @Test
+    public void testJwalaClientDetails() {
+        assertEquals("", JWALA_CLIENT_DETAILS.getDefaultValue());
+        assertEquals("jwala.client.details", JWALA_CLIENT_DETAILS.getPropertyKey());
+    }
+
+    @Test
+    public void testJwalaDataMode() {
+        assertEquals("", JWALA_DATA_MODE.getDefaultValue());
+        assertEquals("jwala.data.mode", JWALA_DATA_MODE.getPropertyKey());
     }
 
 }

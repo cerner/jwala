@@ -1,20 +1,26 @@
 package com.cerner.jwala.ws.rest.v1.service.resource;
 
+import com.cerner.jwala.common.domain.model.resource.ResourceContent;
+import com.cerner.jwala.common.domain.model.resource.ResourceGroup;
+import com.cerner.jwala.service.resource.impl.CreateResourceResponseWrapper;
+import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
+import io.swagger.annotations.*;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.springframework.beans.factory.InitializingBean;
-
-import com.cerner.jwala.ws.rest.v1.provider.AuthenticatedUser;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * RESTFul service for resource related operations
  *
  * Created by Eric Pinder on 3/16/2015.
  */
+@Api(value = "/resources", tags = "resources")
 @Path("/resources")
 @Produces(MediaType.APPLICATION_JSON)
 public interface ResourceServiceRest extends InitializingBean {
@@ -31,10 +37,20 @@ public interface ResourceServiceRest extends InitializingBean {
     @POST
     @Path("/template/{targetName: .*}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response createTemplate(List<Attachment> attachments, @PathParam("targetName") final String targetName, @BeanParam AuthenticatedUser user);
+    @ApiOperation(value = "Create a resource template (legacy)",
+            notes = "This is a legacy method that needs to be deprecated. Use the create resource method that takes deployFileName as a path parameter and uses the matrix parameters",
+            response = CreateResourceResponseWrapper.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Invalid number of attachments"))
+    Response createTemplate(@ApiParam(value = "The list of attachments  including the template and the meta data file", required = true) List<Attachment> attachments,
+                            @ApiParam(value = "The target entity associated with the template resource", required = true) @PathParam("targetName") final String targetName,
+                            @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     @GET
     @Path("/data")
+    @ApiOperation(value = "Get the entity topology for the resources",
+            response = ResourceGroup.class
+    )
     Response getResourceAttrData();
 
     /**
@@ -44,11 +60,18 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("/topology")
+    @ApiOperation(value = "Get the entity topology for the resources",
+            response = ResourceGroup.class
+    )
     Response getResourceTopology();
 
     @GET
     @Path("/{groupName}/{appName}/name")
-    Response getApplicationResourceNames(@PathParam("groupName") String groupName, @PathParam("appName") String appName);
+    @ApiOperation(value = "Get the names of all the resources for an application",
+            response = String.class
+    )
+    Response getApplicationResourceNames(@ApiParam(value = "The application's group name", required = true) @PathParam("groupName") String groupName,
+                                         @ApiParam(value = "The application name", required = true) @PathParam("appName") String appName);
 
     /**
      * Gets an application's resource template.
@@ -60,8 +83,12 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("/{groupName}/{appName}/{templateName}")
-    Response getAppTemplate(@PathParam("groupName") String groupName, @PathParam("appName") String appName,
-                            @PathParam("templateName") String templateName);
+    @ApiOperation(value = "Get an application resource's content",
+            response = String.class
+    )
+    Response getAppTemplate(@ApiParam(value = "The application's group name", required = true) @PathParam("groupName") String groupName,
+                            @ApiParam(value = "The application name", required = true) @PathParam("appName") String appName,
+                            @ApiParam(value = "The application's resource name", required = true) @PathParam("templateName") String templateName);
 
     /**
      * Checks if a group/jvm/webapp/webserver contains a resource file.
@@ -75,11 +102,14 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("/exists/{fileName}")
-    Response checkFileExists(@QueryParam("group") String groupName,
-                             @QueryParam("jvm") String jvmName,
-                             @QueryParam("webapp") String webappName,
-                             @QueryParam("webserver") String webserverName,
-                             @PathParam("fileName") String fileName);
+    @ApiOperation(value = "Check if a resource file exists for a specific JVM, application, or web server",
+            response = Map.class
+    )
+    Response checkFileExists(@ApiParam(value = "The group name to check") @QueryParam("group") String groupName,
+                             @ApiParam(value = "The JVM to check") @QueryParam("jvm") String jvmName,
+                             @ApiParam(value = "The application to check") @QueryParam("webapp") String webappName,
+                             @ApiParam(value = "The web server to check") @QueryParam("webserver") String webserverName,
+                             @ApiParam(value = "The name of the resource to check") @PathParam("fileName") String fileName);
 
     /**
      * Creates a resource
@@ -90,13 +120,26 @@ public interface ResourceServiceRest extends InitializingBean {
     @POST
     @Path("/{deployFilename}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response createResource(@PathParam("deployFilename") String deployFilename, @MatrixParam("") CreateResourceParam createResourceParam,
-                            List<Attachment> attachments);
+    @ApiOperation(value = "Create a resource template",
+            notes = "This is the preferred method for creating a resource",
+            response = CreateResourceResponseWrapper.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to create resource"))
+    Response createResource(@ApiParam(value = "The name of the resource to be created", required = true) @PathParam("deployFilename") String deployFilename,
+                            @ApiParam(value = "The target entity to be associated with the resource", required = true) @MatrixParam("") CreateResourceParam createResourceParam,
+                            @ApiParam(value = "The resource file to upload", required = true) List<Attachment> attachments);
 
     @DELETE
     @Path("/template/{name}")
     @Deprecated
-    Response deleteResource(@PathParam("name") String templateName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, @BeanParam AuthenticatedUser user);
+    @ApiOperation(value = "Delete a resource",
+            notes = "DEPRECATED METHOD. Use the /templates API for deleting resources.",
+            response = Integer.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Resource not found"))
+    Response deleteResource(@ApiParam(value = "The name of the resource to be deleted", required = true) @PathParam("name") String templateName,
+                            @ApiParam(value = "The target entity associated with the resource to be deleted", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                            @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     /**
      * Delete resources.
@@ -108,7 +151,14 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @DELETE
     @Path("/templates")
-    Response deleteResources(@MatrixParam("name") String[] templateNameArray, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, @BeanParam AuthenticatedUser user);
+    @ApiOperation(value = "Delete a resource or mulitple resources",
+            notes = "This is the preferred method for deleting resources",
+            response = Integer.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Resource not found"))
+    Response deleteResources(@ApiParam(value = "The list of the name of the resources to be deleted", required = true) @MatrixParam("name") String[] templateNameArray,
+                             @ApiParam(value = "The parameters that identify the entity associated with the resource to be deleted", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                             @ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     /**
      * Get the template content
@@ -119,7 +169,11 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("/{resourceName}/content")
-    Response getResourceContent(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam);
+    @ApiOperation(value = "Get the template content",
+            response = ResourceContent.class
+    )
+    Response getResourceContent(@ApiParam(value = "The name of the resource", required = true) @PathParam("resourceName") String resourceName,
+                                @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam);
 
     /**
      * Update the template content
@@ -131,7 +185,12 @@ public interface ResourceServiceRest extends InitializingBean {
     @PUT
     @Path("/template/{resourceName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    Response updateResourceContent(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, final String content);
+    @ApiOperation(value = "Update the template content",
+            response = String.class
+    )
+    Response updateResourceContent(@ApiParam(value = "The name of the resource to be updated", required = true) @PathParam("resourceName") String resourceName,
+                                   @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                                   @ApiParam(value = "The new resource content", required = true) final String content);
 
     /**
      * Update the template meta data
@@ -143,7 +202,13 @@ public interface ResourceServiceRest extends InitializingBean {
     @PUT
     @Path("/template/metadata/{resourceName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    Response updateResourceMetaData(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, final String metaData);
+    @ApiOperation(value = "Update the template meta data",
+            response = String.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "Failed to update the meta data"))
+    Response updateResourceMetaData(@ApiParam(value = "The name of the resource to be updated", required = true) @PathParam("resourceName") String resourceName,
+                                    @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                                    @ApiParam(value = "The new meta data", required = true) final String metaData);
 
     /**
      * Preview the template content
@@ -154,7 +219,12 @@ public interface ResourceServiceRest extends InitializingBean {
     @PUT
     @Path("/template/preview/{resourceName}")
     @Consumes(MediaType.TEXT_PLAIN)
-    Response previewResourceContent(@PathParam("resourceName") String resourceName, @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam, final String content);
+    @ApiOperation(value = "Preview the template content",
+            response = String.class
+    )
+    Response previewResourceContent(@ApiParam(value = "The name of the resource to be updated", required = true) @PathParam("resourceName") String resourceName,
+                                    @ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") ResourceHierarchyParam resourceHierarchyParam,
+                                    @ApiParam(value = "The content to be previewed", required = true) final String content);
 
     /**
      * Get the key/value pairings for any external properties that were loaded
@@ -165,6 +235,9 @@ public interface ResourceServiceRest extends InitializingBean {
     @Path("/properties")
     // TODO return mime type text/plain
 //    @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Get the key/value pairings for any external properties that were loaded",
+            response = Map.class
+    )
     Response getExternalProperties();
 
     /**
@@ -175,11 +248,17 @@ public interface ResourceServiceRest extends InitializingBean {
     @GET
     @Path("/properties/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @ApiOperation(value = "Return the external properties file as a download",
+            response = File.class
+    )
     Response getExternalPropertiesDownload();
 
     @GET
     @Path("/properties/view")
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Return the external properties as a string",
+            response = String.class
+    )
     Response getExternalPropertiesView();
 
     /**
@@ -190,7 +269,11 @@ public interface ResourceServiceRest extends InitializingBean {
     @POST
     @Path("/properties")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response uploadExternalProperties(@BeanParam AuthenticatedUser user);
+    @ApiOperation(value = "Upload the external properties file",
+            response = CreateResourceResponseWrapper.class
+    )
+    @ApiResponses(@ApiResponse(code = 500, message = "File exceptions thrown while attempting to upload external properties file"))
+    Response uploadExternalProperties(@ApiParam(value = "The authentication details of user") @BeanParam AuthenticatedUser user);
 
     /**
      * Get the name of any templates that were loaded for a resource
@@ -199,6 +282,9 @@ public interface ResourceServiceRest extends InitializingBean {
      */
     @GET
     @Path("templates/names")
-    Response getResourcesFileNames(@MatrixParam("") final ResourceHierarchyParam resourceHierarchyParam);
+    @ApiOperation(value = "Get the name of any templates that were loaded for a resource",
+            response = String.class
+    )
+    Response getResourcesFileNames(@ApiParam(value = "The parameters that identify the entity associated with the resource", required = true) @MatrixParam("") final ResourceHierarchyParam resourceHierarchyParam);
 
 }

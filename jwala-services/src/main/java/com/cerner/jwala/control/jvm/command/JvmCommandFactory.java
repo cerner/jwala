@@ -87,6 +87,7 @@ public class JvmCommandFactory {
         commands.put(JvmControlOperation.HEAP_DUMP.getExternalValue(), jvm -> {
             final String heapDumpScriptName = HEAP_DUMP_SCRIPT_NAME.getValue();
             checkExistsAndCopy(jvm, heapDumpScriptName);
+
             return remoteCommandExecutorService.executeCommand(new RemoteExecCommand(getConnection(jvm), getExecCommandForHeapDump(heapDumpScriptName, jvm)));
         });
         commands.put(JvmControlOperation.DEPLOY_JVM_ARCHIVE.getExternalValue(), jvm -> {
@@ -198,10 +199,14 @@ public class JvmCommandFactory {
      * @return
      */
     private ExecCommand getExecCommandForThreadDump(String scriptName, Jvm jvm) {
+        final String trimmedJvmName = StringUtils.deleteWhitespace(jvm.getJvmName());
         final String jvmRootDir = Paths.get(jvm.getTomcatMedia().getRemoteDir().toString() + '/' +
                 StringUtils.deleteWhitespace(jvm.getJvmName()) + '/' + jvm.getTomcatMedia().getRootDir())
                 .normalize().toString();
-        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), jvmRootDir, jvm.getJvmName());
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMdd.HHmmss");
+        final String threadDumpDir = jvm.getTomcatMedia().getRemoteDir().normalize().toString() + "/" + jvm.getJvmName();
+        final String dumpFile = "threadDump." + trimmedJvmName + "." + formatter.print(DateTime.now())+".txt";
+        return new ExecCommand(getFullPathScript(jvm, scriptName), jvm.getJavaHome(), jvmRootDir, jvm.getJvmName(), threadDumpDir, dumpFile);
     }
 
     /**
